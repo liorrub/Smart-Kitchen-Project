@@ -1,0 +1,12 @@
+[
+  {
+    "shoppingItemId": 1,
+    "userId": 1,
+    "ingredientId": 4,
+    "quantity": 2,
+    "unit": "piece",
+    "completed": false,
+    "createDate": "2026-05-11T10:00:00Z",
+    "updateDate": "2026-05-11T10:00:00Z"
+  }
+]

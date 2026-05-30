@@ -1,0 +1,34 @@
+[
+  {
+    "recipeId": 101,
+    "title": "Simple Pasta",
+    "instructions": "Boil water, cook pasta, add sauce.",
+    "difficulty": "easy",
+    "cuisine": "italian",
+    "category": "dinner",
+    "creatorId": 1,
+    "prepTime": 30,
+    "cookTime": 20,
+    "totalTime": 50,
+    "servings": 2,
+    "calories": 400,
+    "tags": ["quick", "easy", "vegetarian"],
+    "allergens": ["gluten"]
+  },
+  {
+    "recipeId": 102,
+    "title": "Tofu Stir-fry",
+    "instructions": "Pan-fry tofu, add veggies and sauce.",
+    "difficulty": "medium",
+    "cuisine": "asian",
+    "category": "dinner",
+    "creatorId": 2,
+    "prepTime": 15,
+    "cookTime": 15,
+    "totalTime": 30,
+    "servings": 2,
+    "calories": 350,
+    "tags": ["healthy", "vegan"],
+    "allergens": ["soy"]
+  }
+]

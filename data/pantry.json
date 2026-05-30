@@ -1,0 +1,12 @@
+[
+  {
+    "pantryItemId": 1,
+    "userId": 1,
+    "ingredientId": 1,
+    "quantity": 500,
+    "unit": "gram",
+    "expiryDate": "2026-12-31T23:59:59Z",
+    "location": "pantry",
+    "isExpired": false
+  }
+]

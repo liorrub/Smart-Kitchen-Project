@@ -1,0 +1,22 @@
+[
+  {
+    "mealId": 1,
+    "userId": 1,
+    "date": "2026-05-05",
+    "mealType": "breakfast",
+    "itemType": "recipe",
+    "itemId": 101,
+    "calories": 400,
+    "notes": "Light breakfast"
+  },
+  {
+    "mealId": 2,
+    "userId": 1,
+    "date": "2026-05-05",
+    "mealType": "dinner",
+    "itemType": "ingredient",
+    "itemId": 5,
+    "calories": 200,
+    "notes": "Quick dinner"
+  }
+]

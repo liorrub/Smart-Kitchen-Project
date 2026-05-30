@@ -1,0 +1,16 @@
+[
+  {
+    "storeId": 1,
+    "name": "Super-Deal Gan Yavne",
+    "location": { "lat": 31.81, "lng": 34.73 },
+    "address": "Herzl St 1, Gan Yavne",
+    "rating": 4.5
+  },
+  {
+    "storeId": 2,
+    "name": "Market-Fresh",
+    "location": { "lat": 31.82, "lng": 34.74 },
+    "address": "Main St 5, Gan Yavne",
+    "rating": 4.2
+  }
+]

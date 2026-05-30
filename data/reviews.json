@@ -1,0 +1,13 @@
+[
+  {
+    "reviewId": 1,
+    "userId": 2,
+    "recipeId": 101,
+    "rating": 5,
+    "title": "Amazing!",
+    "comment": "Amazing recipe!",
+    "isInfluencer": true,
+    "helpfulVotes": 12,
+    "createdAt": "2026-05-05T10:00:00Z"
+  }
+]

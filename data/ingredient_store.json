@@ -1,0 +1,36 @@
+[
+  {
+    "ingredientStoreId": 1,
+    "ingredientId": 1,
+    "storeId": 1,
+    "price": 4.50,
+    "lastUpdated": "2026-05-05T10:00:00Z"
+  },
+  {
+    "ingredientStoreId": 2,
+    "ingredientId": 3,
+    "storeId": 1, "price": 7.90,
+    "lastUpdated": "2026-05-05T10:00:00Z"
+  },
+  {
+    "ingredientStoreId": 3,
+    "ingredientId": 4,
+    "storeId": 1,
+    "price": 12.00,
+    "lastUpdated": "2026-05-05T10:00:00Z"
+  },
+  {
+    "ingredientStoreId": 4,
+    "ingredientId": 1,
+    "storeId": 2,
+    "price": 3.90,
+    "lastUpdated": "2026-05-05T10:00:00Z"
+  },
+  {
+    "ingredientStoreId": 5,
+    "ingredientId": 4,
+    "storeId": 2,
+    "price": 11.50,
+    "lastUpdated": "2026-05-05T10:00:00Z"
+  }
+]

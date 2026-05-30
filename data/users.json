@@ -1,0 +1,34 @@
+[
+  {
+    "userId": 1,
+    "firstName": "Lior",
+    "lastName": "Rubinshtein",
+    "email": "lior@project.com",
+    "password": "password_1",
+    "userRole": "chef",
+    "preferences": {
+      "dietary": ["vegan"],
+      "cuisine": ["italian"]
+    },
+    "cookingLevel": "advanced",
+    "age": 26,
+    "createDate": "2026-05-03T10:00:00Z",
+    "updateDate": "2026-05-03T10:00:00Z"
+  },
+  {
+    "userId": 2,
+    "firstName": "Ellen",
+    "lastName": "Levin",
+    "email": "ellen@project.com",
+    "password": "password_2",
+    "userRole": "admin",
+    "preferences": {
+      "dietary": ["gluten-free"],
+      "cuisine": ["asian", "israeli"]
+    },
+    "cookingLevel": "intermediate",
+    "age": 27,
+    "createDate": "2026-05-03T10:00:00Z",
+    "updateDate": "2026-05-03T10:00:00Z"
+  }
+]

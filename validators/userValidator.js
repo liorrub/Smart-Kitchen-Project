@@ -1,0 +1,74 @@
+const { errorResponse } = require("../utils/responseHelper");
+const { roles, cookingLevels } = require("../data/enums/usersEnums");
+
+// Validate user role
+function validateUserRole(req, res, next) {
+    const { userRole } = req.body;
+
+    if (userRole && !roles.includes(userRole)) {
+        return errorResponse(
+            res,
+            400,
+            "INVALID_ROLE",
+            "Invalid user role",
+            {
+                field: "userRole"
+            }
+        );
+    }
+
+    next();
+}
+
+// Validate cooking level
+function validateCookingLevel(req, res, next) {
+    const { cookingLevel } = req.body;
+
+    if (
+        cookingLevel &&
+        !cookingLevels.includes(cookingLevel)
+    ) {
+        return errorResponse(
+            res,
+            400,
+            "INVALID_COOKING_LEVEL",
+            "Invalid cooking level",
+            {
+                field: "cookingLevel"
+            }
+        );
+    }
+
+    next();
+}
+
+// Validate email format
+function validateEmail(req, res, next) {
+    const { email } = req.body;
+
+    if (!email) {
+        return next();
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+        return errorResponse(
+            res,
+            400,
+            "INVALID_EMAIL",
+            "Invalid email format",
+            {
+                field: "email"
+            }
+        );
+    }
+
+    next();
+}
+
+module.exports = {
+    validateUserRole,
+    validateCookingLevel,
+    validateEmail
+};

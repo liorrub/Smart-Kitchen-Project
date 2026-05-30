@@ -1,0 +1,6 @@
+[
+  { "ingredientId": 1, "name": "Flour", "category": "pantry", "isAllergen": true },
+  { "ingredientId": 2, "name": "Eggs", "category": "dairy", "isAllergen": true },
+  { "ingredientId": 3, "name": "Tomato Sauce", "category": "pantry", "isAllergen": false },
+  { "ingredientId": 4, "name": "Tofu", "category": "pantry", "isAllergen": true }
+]
