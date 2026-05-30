@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 // Import middleware
 const logger = require("./middleware/logger");
@@ -18,6 +19,8 @@ const aiRoutes = require("./routes/aiRoutes");
 
 // Parse JSON body
 app.use(express.json());
+
+app.use(cors());
 
 // Request logger
 app.use(logger);
