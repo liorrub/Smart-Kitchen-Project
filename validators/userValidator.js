@@ -67,8 +67,32 @@ function validateEmail(req, res, next) {
     next();
 }
 
+// Validate password format
+function validatePassword(req, res, next) {
+    const { password } = req.body;
+
+    if (!password) {
+        return next();
+    }
+
+    if (password.length < 6) {
+        return errorResponse(
+            res,
+            400,
+            "INVALID_PASSWORD",
+            "Password must contain at least 6 characters",
+            {
+                field: "password"
+            }
+        );
+    }
+
+    next();
+}
+
 module.exports = {
     validateUserRole,
     validateCookingLevel,
-    validateEmail
+    validateEmail,
+    validatePassword
 };

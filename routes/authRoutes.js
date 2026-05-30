@@ -8,7 +8,8 @@ const {
 } = require("../validators/commonValidator");
 
 const {
-    validateEmail
+    validateEmail,
+    validatePassword
 } = require("../validators/userValidator");
 
 // Login
@@ -19,6 +20,7 @@ router.post(
         "password"
     ]),
     validateEmail,
+    validatePassword,
     authController.login
 );
 
