@@ -50,7 +50,8 @@ function validateEmail(req, res, next) {
         return next();
     }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
     if (!emailPattern.test(email)) {
         return errorResponse(

@@ -76,7 +76,23 @@ async function getCurrentUser(req, res, next) {
     }
 }
 
+async function logout(req, res, next) {
+    try {
+        return successResponse(
+            res,
+            200,
+            {
+                message: "Logged out successfully"
+            }
+        );
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     login,
-    getCurrentUser
+    getCurrentUser,
+    logout
 };

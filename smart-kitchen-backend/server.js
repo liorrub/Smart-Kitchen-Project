@@ -16,6 +16,7 @@ const shoppingListRoutes = require("./routes/shoppingListRoutes");
 const mealPlanRoutes = require("./routes/mealPlanRoutes");
 const storesRoutes = require("./routes/storesRoutes");
 const aiRoutes = require("./routes/aiRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
 
 // Parse JSON body
 app.use(express.json());
@@ -39,6 +40,7 @@ app.use("/api/recipes", recipesRoutes);
 app.use("/api/ingredients", ingredientsRoutes);
 app.use("/api/stores", storesRoutes);
 app.use("/api", aiRoutes);
+app.use("/api/settings", settingsRoutes);
 
 // 404 handler
 app.use((req, res) => {

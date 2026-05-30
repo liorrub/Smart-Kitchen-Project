@@ -24,10 +24,17 @@ router.post(
     authController.login
 );
 
+// Logout
+router.post(
+    "/logout",
+    authController.logout
+);
+
 // Return the currently authenticated user based on request headers
 router.get(
     "/me",
     authController.getCurrentUser
 );
+
 
 module.exports = router;
