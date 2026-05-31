@@ -6,6 +6,7 @@
     "email": "lior@project.com",
     "password": "password_1",
     "userRole": "chef",
+    "city": "Gan Yavne",
     "preferences": {
       "dietary": ["vegan"],
       "cuisine": ["italian"]
@@ -22,6 +23,7 @@
     "email": "ellen@project.com",
     "password": "password_2",
     "userRole": "admin",
+    "city": "Ashdod",
     "preferences": {
       "dietary": ["gluten-free"],
       "cuisine": ["asian", "israeli"]

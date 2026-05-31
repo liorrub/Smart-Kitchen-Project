@@ -84,11 +84,11 @@
 
 # Stores
 
-| Method | Path | Access | Headers | Query Params | Request Body | Success Response Example | Error Response Example | Status Codes |
-|---|---|---|---|---|---|---|---|---|
-| GET | `/api/stores` | public | None | `minRating` | None | `{"success":true,"data":[{"storeId":1,"name":"Super-Deal Gan Yavne","location":{"lat":31.81,"lng":34.73},"address":"Herzl St 1, Gan Yavne","rating":4.5}],"error":null}` | `{"success":false,"data":null,"error":{"code":"SERVER_ERROR","message":"Unexpected server error","details":{}}}` | 200, 500 |
-| GET | `/api/stores/nearby` | public | None | `minRating` | None | `{"success":true,"data":[{"storeId":1,"name":"Super-Deal Gan Yavne","location":{"lat":31.81,"lng":34.73},"address":"Herzl St 1, Gan Yavne","rating":4.5}],"error":null}` | `{"success":false,"data":null,"error":{"code":"SERVER_ERROR","message":"Unexpected server error","details":{}}}` | 200, 500 |
-| GET | `/api/stores/:id` | public | None | None | None | `{"success":true,"data":{"storeId":1,"name":"Super-Deal Gan Yavne","location":{"lat":31.81,"lng":34.73},"address":"Herzl St 1, Gan Yavne","rating":4.5},"error":null}` | `{"success":false,"data":null,"error":{"code":"STORE_NOT_FOUND","message":"Store not found","details":{}}}` | 200, 400, 404 |
+| Method | Path | Access | Headers | Query Params | Request Body | Success Response Example                                                                                                       | Error Response Example | Status Codes       |
+|---|---|---|---|------|---|--------------------------------------------------------------------------------------------------------------------------------|---|--------------------|
+| GET | `/api/stores` | public | None | `minRating` | None | `{"success":true,"data":[{"storeId":1,"name":"Super-Deal","city":"Gan Yavne", "address":"Herzl St 1","rating":4.5}],"error":null}` | `{"success":false,"data":null,"error":{"code":"SERVER_ERROR","message":"Unexpected server error","details":{}}}` | 200, 500           |
+| GET | `/api/stores/nearby` | protected | x-user-id | None | None | `{"success":true,"data":[{"storeId":1,"name":"Super-Deal","city":"Gan Yavne", "address":"Herzl St 1","rating":4.5}],"error":null}` | `{"success":false,"data":null,"error":{"code":"SERVER_ERROR","message":"Unexpected server error","details":{}}}` | 200, 401, 404, 500 |
+| GET | `/api/stores/:id` | public | None | None | None | `{"success":true,"data":{"storeId":1,"name":"Super-Deal","city":"Gan Yavne","address":"Herzl St 1","rating":4.5},"error":null}` | `{"success":false,"data":null,"error":{"code":"STORE_NOT_FOUND","message":"Store not found","details":{}}}` | 200, 400, 404      |
 
 # AI
 

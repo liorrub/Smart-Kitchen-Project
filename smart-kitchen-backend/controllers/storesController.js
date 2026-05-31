@@ -1,8 +1,13 @@
 const {
     getAllStores,
     getStoreById,
-    getNearbyStores
+    getFilteredStores,
+    getNearbyStoresByCity
 } = require("../models/storeModel");
+
+const {
+    getUserById
+} = require("../models/usersModel");
 
 const {
     successResponse,
@@ -13,7 +18,7 @@ const {
 async function getStores(req, res, next) {
     try {
         const stores = Object.keys(req.query).length
-            ? await getNearbyStores(req.query)
+            ? await getFilteredStores(req.query)
             : await getAllStores();
 
         return successResponse(res, 200, stores);
@@ -47,8 +52,39 @@ async function getSingleStore(req, res, next) {
 // Nearby stores
 async function getNearby(req, res, next) {
     try {
-        const stores = await getNearbyStores(
-            req.query
+        const userId = Number(req.headers["x-user-id"]);
+
+        if (!userId) {
+            return errorResponse(
+                res,
+                401,
+                "UNAUTHORIZED",
+                "Authentication required"
+            );
+        }
+
+        const user = await getUserById(userId);
+
+        if (!user) {
+            return errorResponse(
+                res,
+                404,
+                "USER_NOT_FOUND",
+                "User not found"
+            );
+        }
+
+        if (!user.city) {
+            return errorResponse(
+                res,
+                400,
+                "NO_CITY",
+                "User has no city set"
+            );
+        }
+
+        const stores = await getNearbyStoresByCity(
+            user.city
         );
 
         return successResponse(res, 200, stores);

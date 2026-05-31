@@ -250,7 +250,7 @@ x-user-role: admin
 ### Features & Limitations
 - AI endpoints return mock suggestions, not real AI output
 - Image analysis is mocked (no actual image processing)
-- Store location data is hardcoded mock data
+- Store city data is hardcoded mock data and is used for city-based store recommendations
 - Favorites and reviews are based on recipe IDs
 
 ---
@@ -290,7 +290,7 @@ For detailed endpoint documentation, see:
 ✓ Meal planning by date and meal type  
 ✓ Recipe reviews and ratings  
 ✓ Favorite recipes tracking  
-✓ Store locator and ingredient pricing  
+✓ City-based store recommendations and ingredient pricing
 ✓ Mock AI-based meal suggestions
 ✓ Recipe generation from available ingredients  
 

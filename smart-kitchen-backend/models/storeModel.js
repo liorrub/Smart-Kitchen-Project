@@ -13,7 +13,7 @@ async function getStoreById(storeId) {
 }
 
 // Filter stores by optional search criteria such as minimum rating
-async function getNearbyStores(filters = {}) {
+async function getFilteredStores(filters = {}) {
     let filteredStores = [...stores];
 
     if (filters.minRating) {
@@ -26,8 +26,16 @@ async function getNearbyStores(filters = {}) {
     return filteredStores;
 }
 
+// Get stores by city
+async function getNearbyStoresByCity(city) {
+    return stores.filter(
+        store => store.city === city
+    );
+}
+
 module.exports = {
     getAllStores,
     getStoreById,
-    getNearbyStores
+    getFilteredStores,
+    getNearbyStoresByCity
 };
