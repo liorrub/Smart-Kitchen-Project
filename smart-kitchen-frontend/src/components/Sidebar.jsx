@@ -47,6 +47,12 @@ function Sidebar() {
                     </NavLink>
                 </li>
 
+                <li>
+                    <NavLink to="/settings">
+                        Settings
+                    </NavLink>
+                </li>
+
             </ul>
         </aside>
     );
