@@ -1,24 +1,21 @@
+import "./MainLayout.css";
+
 import { Outlet } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 
 function MainLayout() {
     return (
-        <>
+        <div className="app-shell">
             <Navbar />
 
-            <div>
-                <Sidebar />
-
-                <main>
-                    <Outlet />
-                </main>
-            </div>
+            <main className="layout-main">
+                <Outlet />
+            </main>
 
             <Footer />
-        </>
+        </div>
     );
 }
 

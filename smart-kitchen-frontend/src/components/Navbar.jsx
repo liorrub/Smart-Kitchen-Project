@@ -1,69 +1,154 @@
-import { Link, useNavigate } from "react-router-dom";
+import "./Navbar.css";
 
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+
+import logo from "../assets/logo.png";
 import { logout } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 
+const menuLinks = [
+    {
+        to: "/recipes",
+        label: "Recipes"
+    },
+    {
+        to: "/favorites",
+        label: "Favorites"
+    },
+    {
+        to: "/pantry",
+        label: "Pantry"
+    },
+    {
+        to: "/meal-planner",
+        label: "Meal Planner"
+    },
+    {
+        to: "/shopping-list",
+        label: "Shopping List"
+    },
+    {
+        to: "/ai-assistant",
+        label: "AI Assistant"
+    },
+    {
+        to: "/users",
+        label: "Users Management"
+    },
+    {
+        to: "/ingredients",
+        label: "Ingredients Management"
+    },
+    {
+        to: "/ai-history",
+        label: "AI History"
+    }
+];
+
 function Navbar() {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const { user, setUser } = useAuth();
 
     const navigate = useNavigate();
 
     async function handleLogout() {
-
         try {
             await logout();
-        }
-        catch (error) {
+        } catch (error) {
             console.error(error);
-        }
-        finally {
-
+        } finally {
             localStorage.removeItem("user");
-
             setUser(null);
 
-            // Replace history entry after logout
-            navigate(
-                "/",
-                {
-                    replace: true
-                }
-                );
+            navigate("/", {
+                replace: true
+            });
         }
     }
 
     return (
-        <nav>
+        <header className="navbar">
+            <div className="navbar-brand">
+                <img
+                    src={logo}
+                    alt="Smart Kitchen"
+                    className="navbar-logo-image"
+                />
+            </div>
 
-            <h2>
-                Smart Kitchen
-            </h2>
-
-            <div>
-
-                <Link to="/dashboard">
+            <nav className="navbar-links">
+                <NavLink
+                    to="/dashboard"
+                    className={({ isActive }) =>
+                        isActive ? "navbar-link active" : "navbar-link"
+                    }
+                >
                     Dashboard
-                </Link>
+                </NavLink>
 
-                <Link to="/settings">
+                <div className="navbar-menu-wrapper">
+                    <button
+                        type="button"
+                        className={
+                            isMenuOpen
+                                ? "navbar-link menu-button active"
+                                : "navbar-link menu-button"
+                        }
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    >
+                        Menu
+                        <span className="menu-arrow">
+                            {isMenuOpen ? "▲" : "▼"}
+                        </span>
+                    </button>
+
+                    {isMenuOpen && (
+                        <div className="navbar-dropdown">
+                            {menuLinks.map((link) => (
+                                <NavLink
+                                    key={link.to}
+                                    to={link.to}
+                                    className={({ isActive }) =>
+                                        isActive
+                                            ? "dropdown-link active"
+                                            : "dropdown-link"
+                                    }
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    {link.label}
+                                </NavLink>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <NavLink
+                    to="/settings"
+                    className={({ isActive }) =>
+                        isActive ? "navbar-link active" : "navbar-link"
+                    }
+                >
                     Settings
-                </Link>
+                </NavLink>
+            </nav>
+
+            <div className="navbar-user">
+                <div className="user-pill">
+                    <span>Welcome</span>
+                    <strong>{user?.firstName || "User"}</strong>
+                </div>
 
                 <button
                     type="button"
+                    className="logout-button"
                     onClick={handleLogout}
                 >
                     Logout
                 </button>
-
             </div>
-
-            <p>
-                Welcome, {user?.firstName}
-            </p>
-
-        </nav>
+        </header>
     );
 }
 
