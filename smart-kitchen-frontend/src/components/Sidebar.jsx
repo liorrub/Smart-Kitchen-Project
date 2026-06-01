@@ -1,6 +1,10 @@
 import { NavLink } from "react-router-dom";
 
+import { useAuth } from "../context/AuthContext";
+
 function Sidebar() {
+
+    const { user } = useAuth();
 
     return (
         <aside>
@@ -38,10 +42,34 @@ function Sidebar() {
                 </li>
 
                 <li>
-                    <NavLink to="/ai">
+                    <NavLink to="/ai-assistant">
                         AI Assistant
                     </NavLink>
                 </li>
+
+                {
+                    user?.userRole === "admin" && (
+                        <>
+                            <li>
+                                <NavLink to="/users">
+                                    Users Management
+                                </NavLink>
+                            </li>
+
+                            <li>
+                                <NavLink to="/ingredients">
+                                    Ingredients Management
+                                </NavLink>
+                            </li>
+
+                            <li>
+                                <NavLink to="/ai-history">
+                                    AI History
+                                </NavLink>
+                            </li>
+                        </>
+                    )
+                }
 
             </ul>
 

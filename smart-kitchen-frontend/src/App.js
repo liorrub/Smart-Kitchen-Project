@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import { AuthProvider } from "./context/AuthContext";
 
 import Login from "./pages/Login";
@@ -9,10 +8,13 @@ import Favorites from "./pages/Favorites";
 import Pantry from "./pages/Pantry";
 import MealPlanner from "./pages/MealPlanner";
 import ShoppingList from "./pages/ShoppingList";
-import AI from "./pages/AI";
+import AIAssistant from "./pages/AIAssistant";
 import Settings from "./pages/Settings";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Users from "./pages/Users";
+import Ingredients from "./pages/Ingredients";
+import AIHistory from "./pages/AIHistory";
 
 function App() {
     return (
@@ -63,13 +65,28 @@ function App() {
                         />
 
                         <Route
-                            path="/ai"
-                            element={<AI />}
+                            path="/ai-assistant"
+                            element={<AIAssistant />}
                         />
 
                         <Route
                             path="/settings"
                             element={<Settings />}
+                        />
+
+                        <Route
+                            path="/users"
+                            element={<Users />}
+                        />
+
+                        <Route
+                            path="/ingredients"
+                            element={<Ingredients />}
+                        />
+
+                        <Route
+                            path="/ai-history"
+                            element={<AIHistory />}
                         />
 
                     </Route>
