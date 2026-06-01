@@ -28,7 +28,6 @@ router.get(
 // Create ingredient
 router.post(
     "/",
-    authorize("admin"),
     validateRequiredFields([
         "name",
         "category",

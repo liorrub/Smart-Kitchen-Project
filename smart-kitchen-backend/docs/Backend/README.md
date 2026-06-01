@@ -95,11 +95,13 @@ Every protected endpoint requires the following headers:
 **Admin**
 - View all users
 - Create and delete users
-- Manage ingredients and stores
+- Update and delete ingredients
+- Manage stores
 - View AI history
 
 **User**
 - View public resources
+- Create ingredients
 - Manage only personal resources
 ```
 
@@ -179,10 +181,12 @@ docs/Smart Kitchen API.postman_collection.json
    - GET `/api/users/1/pantry` - Get your pantry
    - POST `/api/users/1/shopping-list` - Add to shopping list
 
-3. **Admin-only endpoints** (using an Admin test user):
+3. **Admin-only endpoints**:
    - GET `/api/users` - List all users
-   - POST `/api/ingredients` - Create ingredient
    - POST `/api/users` - Create new user
+
+4. **Authenticated user endpoints**:
+   - POST `/api/ingredients` - Create ingredient
 
 ---
 
@@ -252,7 +256,8 @@ x-user-role: admin
 - Image analysis is mocked (no actual image processing)
 - Store city data is hardcoded mock data and is used for city-based store recommendations
 - Favorites and reviews are based on recipe IDs
-
+- Ingredients can be created by authenticated users when a required ingredient does not already exist in the system.
+- Ingredient updates and deletions remain restricted to administrators.
 ---
 
 ## API Endpoints Summary
@@ -284,7 +289,7 @@ For detailed endpoint documentation, see:
 ### Core Features
 ✓ User authentication and role-based access control  
 ✓ Recipe creation, retrieval, and management  
-✓ Ingredient management  
+✓ Ingredient management and user-driven ingredient creation 
 ✓ Personal pantry tracking with expiry date monitoring  
 ✓ Shopping list generation and management  
 ✓ Meal planning by date and meal type  
