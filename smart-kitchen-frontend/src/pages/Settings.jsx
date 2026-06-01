@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import { validateSettings } from "../validators/settingsValidator";
 import { getSettings, updateSettings } from "../services/settingsService";
-import Footer from "../components/Footer";
 
 function Settings() {
     const [user, setUser] = useState(null);
@@ -123,8 +121,6 @@ function Settings() {
 
     return (
         <>
-            <Navbar user={user} />
-
             <div>
                 <h1>Settings</h1>
 
@@ -272,7 +268,6 @@ function Settings() {
                     </button>
                 </form>
             </div>
-            <Footer />
         </>
     );
 }

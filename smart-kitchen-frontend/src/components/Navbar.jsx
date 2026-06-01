@@ -4,10 +4,13 @@ import { logout } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
+
     const { user, setUser } = useAuth();
+
     const navigate = useNavigate();
 
     async function handleLogout() {
+
         try {
             await logout();
         }
@@ -15,19 +18,30 @@ function Navbar() {
             console.error(error);
         }
         finally {
+
             localStorage.removeItem("user");
+
             setUser(null);
-            navigate("/");
+
+            // Replace history entry after logout
+            navigate(
+                "/",
+                {
+                    replace: true
+                }
+                );
         }
     }
 
     return (
         <nav>
-            <div>
-                <h2>Smart Kitchen</h2>
-            </div>
+
+            <h2>
+                Smart Kitchen
+            </h2>
 
             <div>
+
                 <Link to="/dashboard">
                     Dashboard
                 </Link>
@@ -35,12 +49,6 @@ function Navbar() {
                 <Link to="/settings">
                     Settings
                 </Link>
-            </div>
-
-            <div>
-                <span>
-                    Welcome, {user?.firstName || "User"}
-                </span>
 
                 <button
                     type="button"
@@ -48,7 +56,13 @@ function Navbar() {
                 >
                     Logout
                 </button>
+
             </div>
+
+            <p>
+                Welcome, {user?.firstName}
+            </p>
+
         </nav>
     );
 }

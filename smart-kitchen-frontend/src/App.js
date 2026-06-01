@@ -11,8 +11,8 @@ import MealPlanner from "./pages/MealPlanner";
 import ShoppingList from "./pages/ShoppingList";
 import AI from "./pages/AI";
 import Settings from "./pages/Settings";
-
 import MainLayout from "./layouts/MainLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
     return (
@@ -25,8 +25,13 @@ function App() {
                         element={<Login />}
                     />
 
-                    <Route element={<MainLayout />}>
-
+                    <Route
+                        element={
+                            <ProtectedRoute>
+                                <MainLayout />
+                            </ProtectedRoute>
+                        }
+                    >
                         <Route
                             path="/dashboard"
                             element={<Dashboard />}

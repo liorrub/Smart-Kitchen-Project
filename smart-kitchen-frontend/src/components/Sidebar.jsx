@@ -1,15 +1,11 @@
 import { NavLink } from "react-router-dom";
 
 function Sidebar() {
+
     return (
         <aside>
-            <ul>
 
-                <li>
-                    <NavLink to="/dashboard">
-                        Dashboard
-                    </NavLink>
-                </li>
+            <ul>
 
                 <li>
                     <NavLink to="/recipes">
@@ -47,13 +43,8 @@ function Sidebar() {
                     </NavLink>
                 </li>
 
-                <li>
-                    <NavLink to="/settings">
-                        Settings
-                    </NavLink>
-                </li>
-
             </ul>
+
         </aside>
     );
 }
