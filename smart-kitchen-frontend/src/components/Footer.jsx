@@ -1,17 +1,25 @@
+import "./Footer.css";
+
 function Footer() {
     return (
-        <footer>
-            <p>
-                Smart Kitchen Project
-            </p>
+        <footer className="app-footer">
+            <div className="footer-content">
+                <div className="footer-left">
+                    <div className="footer-logo-circle">
+                        SK
+                    </div>
 
-            <p>
-                2026
-            </p>
+                    <div>
+                        <h2>Smart Kitchen Project</h2>
+                        <p>Cook smarter, waste less.</p>
+                    </div>
+                </div>
 
-            <p>
-                Cook smarter, waste less.
-            </p>
+                <div className="footer-right">
+                    <span>© 2026</span>
+                    <strong>Lior Rubinshtein and Ellen Levin</strong>
+                </div>
+            </div>
         </footer>
     );
 }
