@@ -2,7 +2,7 @@
   {
     "mealId": 1,
     "userId": 1,
-    "date": "2026-05-05",
+    "date": "2026-06-03",
     "mealType": "breakfast",
     "itemType": "recipe",
     "itemId": 101,
@@ -12,11 +12,21 @@
   {
     "mealId": 2,
     "userId": 1,
-    "date": "2026-05-05",
+    "date": "2026-06-05",
     "mealType": "dinner",
+    "itemType": "recipe",
+    "itemId": 102,
+    "calories": 350,
+    "notes": "Healthy dinner"
+  },
+  {
+    "mealId": 3,
+    "userId": 2,
+    "date": "2026-06-04",
+    "mealType": "lunch",
     "itemType": "ingredient",
-    "itemId": 5,
-    "calories": 200,
-    "notes": "Quick dinner"
+    "itemId": 8,
+    "calories": 500,
+    "notes": "Chicken lunch"
   }
 ]

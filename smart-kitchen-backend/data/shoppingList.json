@@ -6,7 +6,27 @@
     "quantity": 2,
     "unit": "piece",
     "completed": false,
-    "createDate": "2026-05-11T10:00:00Z",
-    "updateDate": "2026-05-11T10:00:00Z"
+    "createDate": "2026-06-01T10:00:00Z",
+    "updateDate": "2026-06-01T10:00:00Z"
+  },
+  {
+    "shoppingItemId": 2,
+    "userId": 1,
+    "ingredientId": 8,
+    "quantity": 1,
+    "unit": "kg",
+    "completed": false,
+    "createDate": "2026-06-01T10:00:00Z",
+    "updateDate": "2026-06-01T10:00:00Z"
+  },
+  {
+    "shoppingItemId": 3,
+    "userId": 2,
+    "ingredientId": 5,
+    "quantity": 2,
+    "unit": "liter",
+    "completed": false,
+    "createDate": "2026-06-01T10:00:00Z",
+    "updateDate": "2026-06-01T10:00:00Z"
   }
 ]

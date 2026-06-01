@@ -1,6 +1,62 @@
 [
-  { "ingredientId": 1, "name": "Flour", "category": "pantry", "isAllergen": true },
-  { "ingredientId": 2, "name": "Eggs", "category": "dairy", "isAllergen": true },
-  { "ingredientId": 3, "name": "Tomato Sauce", "category": "pantry", "isAllergen": false },
-  { "ingredientId": 4, "name": "Tofu", "category": "pantry", "isAllergen": true }
+  {
+    "ingredientId": 1,
+    "name": "Flour",
+    "category": "pantry",
+    "isAllergen": true
+  },
+  {
+    "ingredientId": 2,
+    "name": "Eggs",
+    "category": "dairy",
+    "isAllergen": true
+  },
+  {
+    "ingredientId": 3,
+    "name": "Tomato Sauce",
+    "category": "pantry",
+    "isAllergen": false
+  },
+  {
+    "ingredientId": 4,
+    "name": "Tofu",
+    "category": "protein",
+    "isAllergen": true
+  },
+  {
+    "ingredientId": 5,
+    "name": "Milk",
+    "category": "dairy",
+    "isAllergen": true
+  },
+  {
+    "ingredientId": 6,
+    "name": "Cheese",
+    "category": "dairy",
+    "isAllergen": true
+  },
+  {
+    "ingredientId": 7,
+    "name": "Rice",
+    "category": "pantry",
+    "isAllergen": false
+  },
+  {
+    "ingredientId": 8,
+    "name": "Chicken Breast",
+    "category": "protein",
+    "isAllergen": false
+  },
+  {
+    "ingredientId": 9,
+    "name": "Cucumber",
+    "category": "vegetable",
+    "isAllergen": false
+  },
+  {
+    "ingredientId": 10,
+    "name": "Yogurt",
+    "category": "dairy",
+    "isAllergen": true
+  }
 ]

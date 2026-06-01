@@ -8,5 +8,85 @@
     "expiryDate": "2026-12-31T23:59:59Z",
     "location": "pantry",
     "isExpired": false
+  },
+  {
+    "pantryItemId": 2,
+    "userId": 1,
+    "ingredientId": 2,
+    "quantity": 12,
+    "unit": "piece",
+    "expiryDate": "2026-06-05T23:59:59Z",
+    "location": "fridge",
+    "isExpired": false
+  },
+  {
+    "pantryItemId": 3,
+    "userId": 1,
+    "ingredientId": 5,
+    "quantity": 1,
+    "unit": "liter",
+    "expiryDate": "2026-06-06T23:59:59Z",
+    "location": "fridge",
+    "isExpired": false
+  },
+  {
+    "pantryItemId": 4,
+    "userId": 1,
+    "ingredientId": 6,
+    "quantity": 300,
+    "unit": "gram",
+    "expiryDate": "2026-06-07T23:59:59Z",
+    "location": "fridge",
+    "isExpired": false
+  },
+  {
+    "pantryItemId": 5,
+    "userId": 1,
+    "ingredientId": 7,
+    "quantity": 1000,
+    "unit": "gram",
+    "expiryDate": "2026-08-20T23:59:59Z",
+    "location": "pantry",
+    "isExpired": false
+  },
+  {
+    "pantryItemId": 6,
+    "userId": 2,
+    "ingredientId": 3,
+    "quantity": 2,
+    "unit": "liter",
+    "expiryDate": "2026-06-07T23:59:59Z",
+    "location": "fridge",
+    "isExpired": false
+  },
+  {
+    "pantryItemId": 7,
+    "userId": 2,
+    "ingredientId": 4,
+    "quantity": 2,
+    "unit": "piece",
+    "expiryDate": "2026-09-01T23:59:59Z",
+    "location": "freezer",
+    "isExpired": false
+  },
+  {
+    "pantryItemId": 8,
+    "userId": 2,
+    "ingredientId": 8,
+    "quantity": 500,
+    "unit": "gram",
+    "expiryDate": "2026-06-10T23:59:59Z",
+    "location": "fridge",
+    "isExpired": false
+  },
+  {
+    "pantryItemId": 9,
+    "userId": 2,
+    "ingredientId": 10,
+    "quantity": 4,
+    "unit": "piece",
+    "expiryDate": "2026-06-08T23:59:59Z",
+    "location": "fridge",
+    "isExpired": false
   }
 ]
