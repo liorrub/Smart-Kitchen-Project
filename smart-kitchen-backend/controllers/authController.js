@@ -115,6 +115,7 @@ async function register(req, res, next) {
             email: req.body.email,
             password: req.body.password,
             userRole: "user",
+            city: req.body.city,
             preferences: {
                 dietary: [],
                 cuisine: []

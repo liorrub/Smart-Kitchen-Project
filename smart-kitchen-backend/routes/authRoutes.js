@@ -21,6 +21,7 @@ router.post(
         "lastName",
         "email",
         "password",
+        "city",
         "cookingLevel",
         "age"
     ]),
