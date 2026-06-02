@@ -9,8 +9,26 @@ const {
 
 const {
     validateEmail,
-    validatePassword
+    validatePassword,
+    validateCookingLevel
 } = require("../validators/userValidator");
+
+// Register
+router.post(
+    "/register",
+    validateRequiredFields([
+        "firstName",
+        "lastName",
+        "email",
+        "password",
+        "cookingLevel",
+        "age"
+    ]),
+    validateEmail,
+    validatePassword,
+    validateCookingLevel,
+    authController.register
+);
 
 // Login
 router.post(

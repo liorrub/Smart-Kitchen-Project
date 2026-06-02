@@ -1,6 +1,7 @@
 const {
     getUserByEmail,
-    getUserById
+    getUserById,
+    createUser
 } = require("../models/usersModel");
 
 const {
@@ -91,7 +92,53 @@ async function logout(req, res, next) {
     }
 }
 
+async function register(req, res, next) {
+    try {
+
+        const existingUser =
+            await getUserByEmail(
+                req.body.email
+            );
+
+        if (existingUser) {
+            return errorResponse(
+                res,
+                409,
+                "EMAIL_ALREADY_EXISTS",
+                "Email already exists"
+            );
+        }
+
+        const newUser = await createUser({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: req.body.password,
+            userRole: "user",
+            preferences: {
+                dietary: [],
+                cuisine: []
+            },
+            cookingLevel: req.body.cookingLevel,
+            age: req.body.age
+        });
+
+        const { password, ...safeUser } =
+            newUser;
+
+        return successResponse(
+            res,
+            201,
+            safeUser
+        );
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
+    register,
     login,
     getCurrentUser,
     logout
