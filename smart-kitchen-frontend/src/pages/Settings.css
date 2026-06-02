@@ -3,45 +3,15 @@
     font-family: Arial, sans-serif;
 }
 
-.settings-hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
-    gap: 28px;
-    align-items: center;
-
-    background: rgba(246, 251, 245, 0.92);
-    border: 1px solid rgba(139, 213, 174, 0.8);
-    border-radius: 28px;
-    padding: 34px 42px;
-
-    box-shadow: 0 18px 45px rgba(63, 74, 52, 0.12);
+.settings-page .page-hero {
+    margin-bottom: 24px;
 }
 
-.settings-label {
-    margin: 0 0 14px 0;
-    color: #46ae6b;
-    font-size: 15px;
-    font-weight: 900;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+.settings-page .page-hero-side {
+    display: flex;
+    justify-content: flex-end;
 }
 
-.settings-hero h1 {
-    margin: 0;
-    max-width: 680px;
-    color: #1f3d2b;
-    font-size: 46px;
-    line-height: 1.12;
-    font-weight: 900;
-}
-
-.settings-description {
-    max-width: 620px;
-    margin: 20px 0 0 0;
-    color: #55705d;
-    font-size: 19px;
-    line-height: 1.55;
-}
 
 .settings-summary-card {
     padding: 24px;
@@ -362,15 +332,6 @@
 }
 
 @media (max-width: 900px) {
-    .settings-hero {
-        grid-template-columns: 1fr;
-        padding: 28px;
-    }
-
-    .settings-hero h1 {
-        font-size: 34px;
-    }
-
     .settings-grid {
         grid-template-columns: 1fr;
     }
@@ -585,4 +546,13 @@
 
 .show-password-button:active {
     background: #e9bfd0;
+}
+@media (max-width: 1250px) {
+    .settings-page .page-hero-side {
+        justify-content: flex-start;
+    }
+
+    .settings-page .settings-summary-card {
+        width: min(100%, 460px);
+    }
 }

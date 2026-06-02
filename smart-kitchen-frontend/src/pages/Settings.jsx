@@ -1,4 +1,5 @@
 import "./Settings.css";
+import PageHero from "../components/PageHero";
 import { useEffect, useState } from "react";
 import { validateSettings } from "../validators/settingsValidator";
 import { getSettings, updateSettings, changePassword } from "../services/settingsService";
@@ -226,17 +227,17 @@ function Settings() {
             setChangingPassword(true);
             console.log("[handlePasswordSubmit] Changing password for user:", user?.userId);
             console.log("[handlePasswordSubmit] User object:", user);
-            
+
             await changePassword(user.userId, {
                 currentPassword: passwordData.currentPassword,
                 newPassword: passwordData.newPassword
             });
-            
+
             setPasswordSuccess("Password changed successfully.");
             setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
         } catch (err) {
             console.error("[handlePasswordSubmit] Error:", err);
-            const errorMessage = 
+            const errorMessage =
                 err.response?.data?.error?.message ||
                 err.response?.data?.message ||
                 err.message ||
@@ -282,32 +283,39 @@ function Settings() {
             )}
 
             {/* Hero Section */}
-            <section className="settings-hero">
-                <div className="settings-hero-text">
-                    <p className="settings-label">User Settings</p>
-                    <h1>Personalize your Smart Kitchen profile</h1>
-                    <p className="settings-description">
-                        Update your personal information, cooking level, and food preferences.
-                    </p>
-                </div>
+            <PageHero
+                label="User Settings"
+                title="Personalize your Smart Kitchen profile"
+                description="Update your personal information, cooking level, and food preferences."
+            >
                 <div className="settings-summary-card">
                     <div className="summary-top">
-                        <div className="summary-avatar">{userInitials || "SK"}</div>
+                        <div className="summary-avatar">
+                            {userInitials || "SK"}
+                        </div>
+
                         <div>
                             <span>Current Profile</span>
-                            <strong>{formData.firstName} {formData.lastName}</strong>
+                            <strong>
+                                {formData.firstName} {formData.lastName}
+                            </strong>
                             <p>{formData.email}</p>
                         </div>
                     </div>
+
                     <div className="summary-tags">
                         <span>{formatLabel(formData.cookingLevel)}</span>
                         <span>{formData.age} years old</span>
+
                         {preferenceCount > 0 && (
-                            <span>{preferenceCount} food preference{preferenceCount !== 1 ? "s" : ""}</span>
+                            <span>
+                                {preferenceCount} food preference
+                                {preferenceCount !== 1 ? "s" : ""}
+                            </span>
                         )}
                     </div>
                 </div>
-            </section>
+            </PageHero>
 
             {/* Profile Settings Card */}
             <section className="settings-card">

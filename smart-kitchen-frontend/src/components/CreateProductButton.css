@@ -1,0 +1,128 @@
+.product-trigger-wrapper {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    width: fit-content;
+}
+
+.product-trigger-button {
+    position: relative;
+
+    min-width: 250px;
+    height: 52px;
+    padding: 0 24px;
+
+    border: none;
+    border-radius: 18px;
+
+    background: #67d656;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 900;
+    font-family: Arial, sans-serif;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    box-shadow: 0 10px 24px rgba(63, 74, 52, 0.12);
+    transition: 0.2s ease;
+}
+
+.product-trigger-button:hover {
+    background: #46ae6b;
+    transform: translateY(-1px);
+}
+
+.product-trigger-hint {
+    width: 250px;
+
+    color: #526859;
+
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+    text-align: center;
+}
+
+/* Tooltip */
+.product-trigger-button::after {
+    content: attr(data-tooltip);
+
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 12px);
+    transform: translateX(-50%) translateY(6px);
+
+    width: 260px;
+    padding: 10px 14px;
+
+    background: #1f3d2b;
+    color: white;
+
+    border-radius: 14px;
+
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+    text-align: center;
+    white-space: normal;
+
+    opacity: 0;
+    pointer-events: none;
+
+    box-shadow: 0 12px 28px rgba(31, 61, 43, 0.18);
+    transition: 0.2s ease;
+
+    z-index: 5000;
+}
+
+.product-trigger-button::before {
+    content: "";
+
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 5px);
+    transform: translateX(-50%) translateY(6px);
+
+    border-width: 7px 7px 0 7px;
+    border-style: solid;
+    border-color: #1f3d2b transparent transparent transparent;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: 0.2s ease;
+    z-index: 5000;
+}
+
+.product-trigger-button:hover::after,
+.product-trigger-button:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 760px) {
+    .product-trigger-wrapper {
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .product-trigger-button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .product-trigger-hint {
+        width: 100%;
+        text-align: left;
+    }
+
+    .product-trigger-button::after {
+        width: 240px;
+    }
+}
