@@ -103,6 +103,8 @@ Every protected endpoint requires the following headers:
 - View public resources
 - Create ingredients
 - Manage only personal resources
+- Register new account
+- Change own password
 ```
 
 ---
@@ -180,6 +182,7 @@ docs/Smart Kitchen API.postman_collection.json
    - GET `/api/auth/me` - Get your profile
    - GET `/api/users/1/pantry` - Get your pantry
    - POST `/api/users/1/shopping-list` - Add to shopping list
+   - PUT `/api/users/1/change-password` - Change password
 
 3. **Admin-only endpoints**:
    - GET `/api/users` - List all users
@@ -266,8 +269,8 @@ The Smart Kitchen API provides 49 endpoints across the following resource catego
 
 | Category | Endpoints |
 |----------|-----------|
-| **Authentication** | 2         |
-| **Users** | 5         |
+| **Authentication** | 3         |
+| **Users** | 6         |
 | **Favorites** | 3         |
 | **Pantry** | 4         |
 | **Shopping List** | 6         |
@@ -278,7 +281,7 @@ The Smart Kitchen API provides 49 endpoints across the following resource catego
 | **Stores** | 3         |
 | **AI** | 6         |
 
-**Total: 48 endpoints**
+**Total: 50 endpoints**
 
 For detailed endpoint documentation, see:
 - [API_REFERENCE.md](API_REFERENCE.md) - Comprehensive endpoint documentation
@@ -298,6 +301,8 @@ For detailed endpoint documentation, see:
 ✓ City-based store recommendations and ingredient pricing
 ✓ Mock AI-based meal suggestions
 ✓ Recipe generation from available ingredients  
+✓ User self-registration
+✓ Password change functionality
 
 ### Technical Features
 ✓ Structured error handling  

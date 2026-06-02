@@ -189,6 +189,33 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Register by user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstName\": \"Dana\",\r\n  \"lastName\": \"Levi\",\r\n  \"email\": \"dana@gmail.com\",\r\n  \"password\": \"123456\",\r\n  \"cookingLevel\": \"beginner\",\r\n  \"age\": 24\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -562,6 +589,45 @@
               "path": [
                 "users",
                 "abc"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"currentPassword\": \"password_1\",\r\n  \"newPassword\": \"newPassword123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/1/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "change-password"
               ]
             }
           },
