@@ -27,6 +27,23 @@ export async function getCurrentUser(userId) {
     return response.data;
 }
 
+export async function register(userData) {
+    const response = await axios.post(
+        `${BASE_URL}/auth/register`,
+        {
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            password: userData.password,
+            city: userData.city,
+            age: userData.age,
+            cookingLevel: userData.cookingLevel
+        }
+    );
+
+    return response.data;
+}
+
 export async function logout() {
     const response = await axios.post(
         `${BASE_URL}/auth/logout`
