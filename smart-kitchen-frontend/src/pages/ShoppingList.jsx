@@ -1,9 +1,9 @@
 import "./ShoppingList.css";
 
+import PageHero from "../components/PageHero";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import CreateProduct from "../components/CreateProduct";
-import CreateProductButton from "../components/CreateProductButton";
+import CreateProductModal from "../components/CreateProduct";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 const INGREDIENTS_API_URL = "http://localhost:3000/api/ingredients";
@@ -173,7 +173,6 @@ function ShoppingList() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
 
     const storedUser = getStoredUser();
 
@@ -267,42 +266,6 @@ function ShoppingList() {
         );
 
         return ingredient ? ingredient.name : `Ingredient #${ingredientId}`;
-    }
-
-    function openCreateProductModal() {
-        setError("");
-        setSuccess("");
-        setIsCreateProductOpen(true);
-    }
-
-    function closeCreateProductModal() {
-        setIsCreateProductOpen(false);
-    }
-
-    function handleProductReady(product, wasExisting) {
-        setIngredients((previousIngredients) => {
-            const alreadyExists = previousIngredients.some(
-                (ingredient) =>
-                    ingredient.ingredientId === product.ingredientId
-            );
-
-            if (alreadyExists) {
-                return previousIngredients;
-            }
-
-            return [...previousIngredients, product];
-        });
-
-        setFormData((previousData) => ({
-            ...previousData,
-            ingredientId: String(product.ingredientId)
-        }));
-
-        setSuccess(
-            wasExisting
-                ? `${product.name} already exists and was selected.`
-                : `${product.name} was created and selected.`
-        );
     }
 
     function handleChange(event) {
@@ -519,43 +482,25 @@ function ShoppingList() {
                 </div>
             )}
 
-            <CreateProduct
-                isOpen={isCreateProductOpen}
-                onClose={closeCreateProductModal}
-                onProductReady={handleProductReady}
-                existingIngredients={ingredients}
-                headers={getAuthHeaders()}
+            <PageHero
+                label="Shopping List"
+                title="Plan your groceries smarter"
+                description="Add items, track what you already bought and generate groceries from expired pantry products."
+                stats={[
+                    {
+                        value: shoppingItems.length,
+                        label: "Total items"
+                    },
+                    {
+                        value: activeCount,
+                        label: "Still needed"
+                    },
+                    {
+                        value: completedCount,
+                        label: "Completed"
+                    }
+                ]}
             />
-
-            <section className="shopping-hero">
-                <div>
-                    <p className="shopping-label">Shopping List</p>
-
-                    <h1>Plan your groceries smarter</h1>
-
-                    <p className="shopping-description">
-                        Add items, track what you already bought and generate
-                        groceries from expired pantry products.
-                    </p>
-                </div>
-
-                <div className="shopping-stats">
-                    <div>
-                        <span>{shoppingItems.length}</span>
-                        <p>Total items</p>
-                    </div>
-
-                    <div>
-                        <span>{activeCount}</span>
-                        <p>Still needed</p>
-                    </div>
-
-                    <div>
-                        <span>{completedCount}</span>
-                        <p>Completed</p>
-                    </div>
-                </div>
-            </section>
 
             <section className="shopping-card">
                 <div className="shopping-card-header">
@@ -564,18 +509,14 @@ function ShoppingList() {
                         <p>Choose an ingredient and add it to your list.</p>
                     </div>
 
-                    <div className="shopping-header-actions">
-                        <CreateProductButton onClick={openCreateProductModal} />
-
-                        <button
-                            type="button"
-                            className="generate-button"
-                            onClick={generateShoppingList}
-                            disabled={saving}
-                        >
-                            Generate from Pantry
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        className="generate-button"
+                        onClick={generateShoppingList}
+                        disabled={saving}
+                    >
+                        Generate from Pantry
+                    </button>
                 </div>
 
                 {error && (

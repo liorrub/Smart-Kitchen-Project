@@ -1,9 +1,9 @@
 import "./Pantry.css";
 
+import PageHero from "../components/PageHero";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import CreateProduct from "../components/CreateProduct";
-import CreateProductButton from "../components/CreateProductButton";
 import { getIngredients } from "../services/ingredientsService";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
@@ -540,45 +540,33 @@ function Pantry() {
                 headers={getAuthHeaders()}
             />
 
-            <section className="pantry-hero">
-                <div>
-                    <p className="pantry-label">Pantry</p>
-
-                    <h1>Manage your kitchen inventory</h1>
-
-                    <p className="pantry-description">
-                        Track what you have at home, where it is stored and
-                        when it expires.
-                    </p>
-                </div>
-
-                <div className="pantry-stats">
-                    <div>
-                        <span>{totalCount}</span>
-                        <p>Total Items</p>
-                    </div>
-
-                    <div>
-                        <span>{fridgeCount}</span>
-                        <p>Fridge</p>
-                    </div>
-
-                    <div>
-                        <span>{pantryCount}</span>
-                        <p>Pantry</p>
-                    </div>
-
-                    <div>
-                        <span>{freezerCount}</span>
-                        <p>Freezer</p>
-                    </div>
-
-                    <div>
-                        <span>{expiredCount}</span>
-                        <p>Expired</p>
-                    </div>
-                </div>
-            </section>
+            <PageHero
+                label="Pantry"
+                title="Manage your kitchen inventory"
+                description="Track what you have at home, where it is stored and when it expires."
+                stats={[
+                    {
+                        value: totalCount,
+                        label: "Total Items"
+                    },
+                    {
+                        value: fridgeCount,
+                        label: "Fridge"
+                    },
+                    {
+                        value: pantryCount,
+                        label: "Pantry"
+                    },
+                    {
+                        value: freezerCount,
+                        label: "Freezer"
+                    },
+                    {
+                        value: expiredCount,
+                        label: "Expired"
+                    }
+                ]}
+            />
 
             {soonCount > 0 && (
                 <section className="pantry-soon-card">
@@ -636,7 +624,13 @@ function Pantry() {
                         <p>Choose a product and add it to your kitchen.</p>
                     </div>
 
-                    <CreateProductButton onClick={openCreateProductModal} />
+                    <button
+                        type="button"
+                        className="create-product-button"
+                        onClick={openCreateProductModal}
+                    >
+                        + Create New Product
+                    </button>
                 </div>
 
                 {error && (

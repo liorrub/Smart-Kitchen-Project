@@ -3,92 +3,6 @@
     font-family: Arial, sans-serif;
 }
 
-.shopping-hero {
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    gap: 28px;
-
-    padding: 34px 42px;
-
-    background: rgba(246, 251, 245, 0.92);
-    border: 1px solid rgba(139, 213, 174, 0.8);
-    border-radius: 28px;
-
-    box-shadow: 0 18px 45px rgba(63, 74, 52, 0.12);
-}
-
-.shopping-label {
-    margin: 0 0 14px;
-
-    color: #46ae6b;
-
-    font-size: 15px;
-    font-weight: 900;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-
-.shopping-hero h1 {
-    max-width: 680px;
-    margin: 0;
-
-    color: #1f3d2b;
-
-    font-size: 46px;
-    line-height: 1.12;
-    font-weight: 900;
-}
-
-.shopping-description {
-    max-width: 650px;
-    margin: 20px 0 0;
-
-    color: #55705d;
-
-    font-size: 19px;
-    line-height: 1.55;
-    font-weight: 700;
-}
-
-.shopping-stats {
-    min-width: 360px;
-
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-}
-
-.shopping-stats div {
-    padding: 22px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    border-radius: 24px;
-    background: linear-gradient(135deg, #e9fbe5, #fffefa);
-    border: 1px solid #cde8c7;
-}
-
-.shopping-stats span {
-    color: #2a7545;
-
-    font-size: 34px;
-    font-weight: 900;
-}
-
-.shopping-stats p {
-    margin: 6px 0 0;
-
-    color: #55705d;
-
-    font-size: 12px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-}
-
 .shopping-card {
     margin-top: 24px;
     padding: 30px;
@@ -640,18 +554,6 @@
 }
 
 @media (max-width: 1050px) {
-    .shopping-hero {
-        flex-direction: column;
-        padding: 28px;
-    }
-
-    .shopping-hero h1 {
-        font-size: 34px;
-    }
-
-    .shopping-stats {
-        min-width: 0;
-    }
 
     .shopping-form-grid {
         grid-template-columns: 1fr;
@@ -684,13 +586,6 @@
 
 @media (max-width: 650px) {
     .shopping-card,
-    .shopping-hero {
-        padding: 22px;
-    }
-
-    .shopping-stats {
-        grid-template-columns: 1fr;
-    }
 
     .shopping-filters {
         width: 100%;
@@ -701,25 +596,249 @@
     }
 }
 
+/* Create product additions */
 .shopping-header-actions {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: flex-end;
     gap: 12px;
     flex-wrap: wrap;
 }
 
+.create-product-button {
+    padding: 13px 22px;
 
-.shopping-header-actions .product-trigger-wrapper {
+    border: none;
+    border-radius: 18px;
+
+    background: #fffefa;
+    color: #2a7545;
+    border: 1px solid #cde8c7;
+
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: 0.2s ease;
+    white-space: nowrap;
+}
+
+.create-product-button:hover {
+    background: #e9fbe5;
+    transform: translateY(-1px);
+}
+
+.product-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+
+    display: flex;
     align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+    background: rgba(31, 61, 43, 0.28);
+    backdrop-filter: blur(6px);
+}
+
+.product-modal {
+    position: relative;
+    z-index: 9999;
+
+    width: min(560px, 100%);
+    padding: 30px;
+
+    background: rgba(246, 251, 245, 0.98);
+    border: 1px solid rgba(139, 213, 174, 0.9);
+    border-radius: 30px;
+
+    box-shadow: 0 30px 80px rgba(63, 74, 52, 0.28);
+    animation: productModalPopIn 0.22s ease;
+}
+
+.product-modal-header {
+    margin-bottom: 22px;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.product-modal-header h2 {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 32px;
+    font-weight: 900;
+}
+
+.product-modal-header span {
+    display: block;
+    margin-top: 10px;
+
+    color: #55705d;
+
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 700;
+}
+
+.product-modal-close {
+    width: 42px;
+    height: 42px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #e9fbe5;
+    color: #2a7545;
+
+    font-size: 25px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: 0.2s ease;
+    flex-shrink: 0;
+}
+
+.product-modal-close:hover {
+    background: #67d656;
+    color: white;
+}
+
+.product-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.product-modal .shopping-custom-select-menu {
+    z-index: 10000;
+}
+
+.product-checkbox-row {
+    padding: 15px 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border-radius: 18px;
+    background: #fffefa;
+    border: 1px solid #d6d2c4;
+
+    color: #1f3d2b;
+
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.product-checkbox-row input {
+    width: 18px;
+    height: 18px;
+    accent-color: #67d656;
+    cursor: pointer;
+}
+
+.product-modal-actions {
+    margin-top: 4px;
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cancel-product-button,
+.save-product-button {
+    padding: 13px 22px;
+
+    border: none;
+    border-radius: 18px;
+
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.cancel-product-button {
+    background: #fffefa;
+    color: #2a7545;
+    border: 1px solid #cde8c7;
+}
+
+.cancel-product-button:hover {
+    background: #e9fbe5;
+}
+
+.save-product-button {
+    background: #67d656;
+    color: white;
+}
+
+.save-product-button:hover {
+    background: #46ae6b;
+}
+
+.cancel-product-button:disabled,
+.save-product-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.shopping-empty-icon {
+    width: 68px;
+    height: 68px;
+    margin-bottom: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 24px;
+    background: #e9fbe5;
+
+    font-size: 34px;
+}
+
+@keyframes productModalPopIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 @media (max-width: 1050px) {
-    .shopping-header-actions {
+    .shopping-header-actions,
+    .create-product-button,
+    .generate-button {
         width: 100%;
     }
 
-    .shopping-header-actions .product-trigger-wrapper {
+    .shopping-header-actions {
+        justify-content: stretch;
+    }
+}
+
+@media (max-width: 650px) {
+    .product-modal {
+        padding: 24px;
+    }
+
+    .product-modal-actions,
+    .cancel-product-button,
+    .save-product-button {
         width: 100%;
-        align-items: stretch;
     }
 }

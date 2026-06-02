@@ -5,7 +5,6 @@
 }
 
 .pantry-message-card,
-.pantry-hero,
 .pantry-card,
 .pantry-soon-card {
     background: rgba(246, 251, 245, 0.92);
@@ -17,73 +16,6 @@
 .pantry-message-card {
     padding: 42px;
     text-align: center;
-}
-
-.pantry-hero {
-    padding: 38px 46px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 34px;
-    align-items: center;
-}
-
-.pantry-label {
-    margin: 0 0 16px;
-    color: #46ae6b;
-    font-size: 16px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.pantry-hero h1 {
-    max-width: 620px;
-    margin: 0;
-    color: #1f3d2b;
-    font-size: clamp(38px, 4vw, 58px);
-    line-height: 1.02;
-    font-weight: 900;
-}
-
-.pantry-description {
-    max-width: 640px;
-    margin: 24px 0 0;
-    color: #526859;
-    font-size: 20px;
-    line-height: 1.65;
-    font-weight: 700;
-}
-
-.pantry-stats {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(120px, 1fr));
-    gap: 14px;
-}
-
-.pantry-stats div {
-    min-height: 138px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border: 1px solid #cde8c7;
-    border-radius: 24px;
-    background: rgba(240, 250, 237, 0.72);
-}
-
-.pantry-stats span {
-    color: #26703d;
-    font-size: 36px;
-    font-weight: 900;
-}
-
-.pantry-stats p {
-    margin: 12px 0 0;
-    color: #526859;
-    font-size: 13px;
-    font-weight: 900;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
 }
 
 .pantry-soon-card {
@@ -211,6 +143,25 @@
     color: #526859;
     font-size: 16px;
     font-weight: 800;
+}
+
+.create-product-button {
+    padding: 14px 22px;
+    border: none;
+    border-radius: 18px;
+    background: #e9fbe5;
+    color: #2a7545;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(63, 74, 52, 0.1);
+    transition: 0.2s ease;
+}
+
+.create-product-button:hover {
+    background: #67d656;
+    color: white;
+    transform: translateY(-1px);
 }
 
 .pantry-alert {
@@ -655,13 +606,6 @@
 }
 
 @media (max-width: 1200px) {
-    .pantry-hero {
-        grid-template-columns: 1fr;
-    }
-
-    .pantry-stats {
-        grid-template-columns: repeat(3, minmax(140px, 1fr));
-    }
 
     .pantry-form-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -690,15 +634,11 @@
         width: min(100% - 24px, 1320px);
     }
 
-    .pantry-hero,
     .pantry-card,
     .pantry-soon-card {
         padding: 26px;
     }
 
-    .pantry-stats {
-        grid-template-columns: 1fr;
-    }
 
     .pantry-form-grid {
         grid-template-columns: 1fr;
@@ -713,6 +653,7 @@
         justify-content: flex-start;
     }
 
+    .create-product-button,
     .add-pantry-button {
         width: 100%;
     }
