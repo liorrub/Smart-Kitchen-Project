@@ -32,5 +32,26 @@
     "storeId": 2,
     "price": 11.50,
     "lastUpdated": "2026-05-05T10:00:00Z"
+  },
+  {
+    "ingredientStoreId": 6,
+    "ingredientId": 6,
+    "storeId": 3,
+    "price": 9.90,
+    "lastUpdated": "2026-06-02T10:00:00Z"
+  },
+  {
+    "ingredientStoreId": 7,
+    "ingredientId": 7,
+    "storeId": 3,
+    "price": 5.50,
+    "lastUpdated": "2026-06-02T10:00:00Z"
+  },
+  {
+    "ingredientStoreId": 8,
+    "ingredientId": 8,
+    "storeId": 3,
+    "price": 29.90,
+    "lastUpdated": "2026-06-02T10:00:00Z"
   }
 ]

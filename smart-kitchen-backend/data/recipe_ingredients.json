@@ -1,5 +1,44 @@
 [
-  { "recipeIngredientId": 1, "recipeId": 101, "ingredientId": 1, "quantity": 200, "unit": "gram" },
-  { "recipeIngredientId": 2, "recipeId": 101, "ingredientId": 3, "quantity": 100, "unit": "ml" },
-  { "recipeIngredientId": 3, "recipeId": 102, "ingredientId": 4, "quantity": 250, "unit": "gram" }
+  {
+    "recipeIngredientId": 1,
+    "recipeId": 101,
+    "ingredientId": 1,
+    "quantity": 200,
+    "unit": "gram"
+  },
+  {
+    "recipeIngredientId": 2,
+    "recipeId": 101,
+    "ingredientId": 3,
+    "quantity": 100,
+    "unit": "ml"
+  },
+  {
+    "recipeIngredientId": 3,
+    "recipeId": 102,
+    "ingredientId": 4,
+    "quantity": 250,
+    "unit": "gram"
+  },
+  {
+    "recipeIngredientId": 4,
+    "recipeId": 103,
+    "ingredientId": 6,
+    "quantity": 100,
+    "unit": "gram"
+  },
+  {
+    "recipeIngredientId": 5,
+    "recipeId": 103,
+    "ingredientId": 9,
+    "quantity": 2,
+    "unit": "piece"
+  },
+  {
+    "recipeIngredientId": 6,
+    "recipeId": 104,
+    "ingredientId": 10,
+    "quantity": 1,
+    "unit": "piece"
+  }
 ]

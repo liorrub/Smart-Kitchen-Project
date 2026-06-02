@@ -28,5 +28,45 @@
     "itemId": 8,
     "calories": 500,
     "notes": "Chicken lunch"
+  },
+  {
+    "mealId": 4,
+    "userId": 3,
+    "date": "2026-06-06",
+    "mealType": "lunch",
+    "itemType": "recipe",
+    "itemId": 101,
+    "calories": 400,
+    "notes": "Quick lunch"
+  },
+  {
+    "mealId": 5,
+    "userId": 4,
+    "date": "2026-06-07",
+    "mealType": "dinner",
+    "itemType": "recipe",
+    "itemId": 102,
+    "calories": 350,
+    "notes": "Dinner after work"
+  },
+  {
+    "mealId": 6,
+    "userId": 5,
+    "date": "2026-06-06",
+    "mealType": "breakfast",
+    "itemType": "ingredient",
+    "itemId": 10,
+    "calories": 180,
+    "notes": "Yogurt breakfast"
+  },
+  {
+    "mealId": 7,
+    "userId": 6,
+    "date": "2026-06-08",
+    "mealType": "lunch",
+    "itemType": "recipe",
+    "itemId": 101,
+    "calories": 400,
+    "notes": "Content creation meal"
   }
 ]

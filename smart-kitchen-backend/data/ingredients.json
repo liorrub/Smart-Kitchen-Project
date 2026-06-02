@@ -58,5 +58,11 @@
     "name": "Yogurt",
     "category": "dairy",
     "isAllergen": true
+  },
+  {
+    "ingredientId": 999,
+    "name": "Other",
+    "category": "other",
+    "isAllergen": false
   }
 ]

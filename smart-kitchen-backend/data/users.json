@@ -32,5 +32,73 @@
     "age": 27,
     "createDate": "2026-05-03T10:00:00Z",
     "updateDate": "2026-05-03T10:00:00Z"
+  },
+  {
+    "userId": 3,
+    "firstName": "Noa",
+    "lastName": "Cohen",
+    "email": "noa@project.com",
+    "password": "password_3",
+    "userRole": "admin",
+    "city": "Tel Aviv",
+    "preferences": {
+      "dietary": ["vegetarian"],
+      "cuisine": ["italian", "israeli"]
+    },
+    "cookingLevel": "advanced",
+    "age": 29,
+    "createDate": "2026-05-03T10:00:00Z",
+    "updateDate": "2026-05-03T10:00:00Z"
+  },
+  {
+    "userId": 4,
+    "firstName": "Daniel",
+    "lastName": "Levi",
+    "email": "daniel@project.com",
+    "password": "password_4",
+    "userRole": "user",
+    "city": "Beer Sheva",
+    "preferences": {
+      "dietary": ["low-carb"],
+      "cuisine": ["american"]
+    },
+    "cookingLevel": "beginner",
+    "age": 24,
+    "createDate": "2026-05-03T10:00:00Z",
+    "updateDate": "2026-05-03T10:00:00Z"
+  },
+  {
+    "userId": 5,
+    "firstName": "Maya",
+    "lastName": "David",
+    "email": "maya@project.com",
+    "password": "password_5",
+    "userRole": "user",
+    "city": "Rishon LeZion",
+    "preferences": {
+      "dietary": ["gluten-free"],
+      "cuisine": ["asian"]
+    },
+    "cookingLevel": "intermediate",
+    "age": 31,
+    "createDate": "2026-05-03T10:00:00Z",
+    "updateDate": "2026-05-03T10:00:00Z"
+  },
+  {
+    "userId": 6,
+    "firstName": "Shir",
+    "lastName": "Mizrahi",
+    "email": "shir@project.com",
+    "password": "password_6",
+    "userRole": "influencer",
+    "city": "Haifa",
+    "preferences": {
+      "dietary": ["vegetarian"],
+      "cuisine": ["mexican", "israeli"]
+    },
+    "cookingLevel": "advanced",
+    "age": 28,
+    "createDate": "2026-05-03T10:00:00Z",
+    "updateDate": "2026-05-03T10:00:00Z"
   }
 ]

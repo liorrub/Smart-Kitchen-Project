@@ -12,5 +12,12 @@
     "city": "Ashdod",
     "address": "Main St 5",
     "rating": 4.2
+  },
+  {
+    "storeId": 3,
+    "name": "Green Market",
+    "city": "Tel Aviv",
+    "address": "Dizengoff 50",
+    "rating": 4.7
   }
 ]

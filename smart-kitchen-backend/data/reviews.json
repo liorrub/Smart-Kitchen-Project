@@ -9,5 +9,60 @@
     "isInfluencer": true,
     "helpfulVotes": 12,
     "createdAt": "2026-05-05T10:00:00Z"
+  },
+  {
+    "reviewId": 2,
+    "userId": 6,
+    "recipeId": 101,
+    "rating": 4,
+    "title": "Great for busy days",
+    "comment": "Easy recipe and very tasty.",
+    "isInfluencer": true,
+    "helpfulVotes": 25,
+    "createdAt": "2026-05-06T14:00:00Z"
+  },
+  {
+    "reviewId": 3,
+    "userId": 4,
+    "recipeId": 102,
+    "rating": 5,
+    "title": "Loved it",
+    "comment": "Healthy and simple to make.",
+    "isInfluencer": false,
+    "helpfulVotes": 4,
+    "createdAt": "2026-05-07T09:30:00Z"
+  },
+  {
+    "reviewId": 4,
+    "userId": 5,
+    "recipeId": 101,
+    "rating": 4,
+    "title": "Nice recipe",
+    "comment": "Will definitely make it again.",
+    "isInfluencer": false,
+    "helpfulVotes": 2,
+    "createdAt": "2026-05-08T18:20:00Z"
+  },
+  {
+    "reviewId": 5,
+    "userId": 4,
+    "recipeId": 103,
+    "rating": 5,
+    "title": "Fresh breakfast",
+    "comment": "Simple and delicious.",
+    "isInfluencer": false,
+    "helpfulVotes": 3,
+    "createdAt": "2026-05-10T12:00:00Z"
+  },
+  {
+    "reviewId": 6,
+    "userId": 6,
+    "recipeId": 104,
+    "rating": 4,
+    "title": "Perfect snack",
+    "comment": "Great high protein option.",
+    "isInfluencer": true,
+    "helpfulVotes": 8,
+    "createdAt": "2026-05-11T15:00:00Z"
   }
 ]

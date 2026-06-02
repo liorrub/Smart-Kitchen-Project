@@ -60,5 +60,81 @@
       ]
     },
     "createDate": "2026-05-11T12:45:00Z"
+  },
+  {
+    "historyId": 4,
+    "userId": 3,
+    "requestType": "smart_suggestion",
+    "inputData": {
+      "pantryItems": [
+        "flour",
+        "cheese"
+      ],
+      "preferences": [
+        "vegetarian"
+      ]
+    },
+    "result": {
+      "suggestedRecipes": [
+        "Israeli Breakfast Bowl"
+      ]
+    },
+    "createDate": "2026-05-12T09:30:00Z"
+  },
+  {
+    "historyId": 5,
+    "userId": 4,
+    "requestType": "recipe_generation",
+    "inputData": {
+      "ingredients": [
+        "rice",
+        "chicken breast"
+      ]
+    },
+    "result": {
+      "recipeTitle": "Chicken Rice Bowl",
+      "description": "Simple chicken and rice meal.",
+      "estimatedPrepTime": 20
+    },
+    "createDate": "2026-05-12T11:00:00Z"
+  },
+  {
+    "historyId": 6,
+    "userId": 5,
+    "requestType": "smart_suggestion",
+    "inputData": {
+      "pantryItems": [
+        "milk",
+        "yogurt"
+      ],
+      "preferences": [
+        "gluten-free"
+      ]
+    },
+    "result": {
+      "suggestedRecipes": [
+        "Protein Yogurt Snack"
+      ]
+    },
+    "createDate": "2026-05-12T13:15:00Z"
+  },
+  {
+    "historyId": 7,
+    "userId": 6,
+    "requestType": "image_analysis",
+    "inputData": {
+      "imageName": "healthy_breakfast.jpg"
+    },
+    "result": {
+      "detectedDish": "Israeli Breakfast Bowl",
+      "detectedIngredients": [
+        "cheese",
+        "cucumber"
+      ],
+      "suggestedRecipes": [
+        "Israeli Breakfast Bowl"
+      ]
+    },
+    "createDate": "2026-05-12T15:45:00Z"
   }
 ]
