@@ -1,61 +1,84 @@
 .app-footer {
-    width: min(1100px, calc(100% - 48px));
-    margin: 44px auto 10px;
-    padding: 24px 32px;
+    width: min(1240px, calc(100% - 56px));
+    margin: 54px auto 22px;
+    padding: 24px 6px 10px;
 
-    background: rgba(246, 251, 245, 0.88);
-    border: 1px solid rgba(139, 213, 174, 0.75);
-    border-radius: 28px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
 
-    box-shadow: 0 18px 45px rgba(63, 74, 52, 0.12);
+    box-shadow: none;
     box-sizing: border-box;
 }
 
 .footer-content {
+    position: relative;
+
+    padding-top: 22px;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 32px;
 }
 
+.footer-content::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 1px;
+
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(42, 117, 69, 0.32),
+            transparent
+    );
+}
+
 .footer-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
 }
 
 .footer-logo-circle {
-    width: 54px;
-    height: 54px;
+    width: 44px;
+    height: 44px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 18px;
-    background: linear-gradient(135deg, #67d656, #2a7545);
-    color: white;
+    border-radius: 14px;
+    background: rgba(103, 214, 86, 0.14);
+    color: #2a7545;
 
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 900;
     letter-spacing: 1px;
     text-transform: uppercase;
 
-    box-shadow: 0 10px 24px rgba(42, 117, 69, 0.22);
+    border: 1px solid rgba(103, 214, 86, 0.36);
+    box-shadow: none;
 }
 
 .footer-left h2 {
     margin: 0;
     color: #1f3d2b;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 900;
     letter-spacing: 0.5px;
 }
 
 .footer-left p {
-    margin: 6px 0 0;
+    margin: 5px 0 0;
     color: #2a7545;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 800;
 }
 
@@ -64,18 +87,18 @@
 
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
 }
 
 .footer-right span {
     color: #46ae6b;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 900;
 }
 
 .footer-right strong {
     color: #2a7545;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 800;
     white-space: nowrap;
 }
@@ -83,14 +106,15 @@
 @media (max-width: 760px) {
     .app-footer {
         width: calc(100% - 32px);
-        margin: 32px auto 28px;
-        padding: 22px;
+        margin: 36px auto 24px;
+        padding: 20px 0 8px;
     }
 
     .footer-content {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        gap: 22px;
     }
 
     .footer-left {

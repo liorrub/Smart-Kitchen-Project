@@ -1,0 +1,352 @@
+.create-product-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+    background: rgba(31, 61, 43, 0.28);
+    backdrop-filter: blur(6px);
+}
+
+.create-product-modal {
+    position: relative;
+    z-index: 9999;
+
+    width: min(560px, 100%);
+    padding: 30px;
+
+    background: rgba(246, 251, 245, 0.98);
+    border: 1px solid rgba(139, 213, 174, 0.9);
+    border-radius: 30px;
+
+    box-shadow: 0 30px 80px rgba(63, 74, 52, 0.28);
+    animation: createProductPopIn 0.22s ease;
+}
+
+.create-product-header {
+    margin-bottom: 22px;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.create-product-label {
+    margin: 0 0 10px;
+
+    color: #46ae6b;
+
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.create-product-header h2 {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 32px;
+    font-weight: 900;
+}
+
+.create-product-header span {
+    display: block;
+    margin-top: 10px;
+
+    color: #55705d;
+
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 700;
+}
+
+.create-product-close {
+    width: 42px;
+    height: 42px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #e9fbe5;
+    color: #2a7545;
+
+    font-size: 25px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: 0.2s ease;
+    flex-shrink: 0;
+}
+
+.create-product-close:hover {
+    background: #67d656;
+    color: white;
+}
+
+.create-product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.create-product-field {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.create-product-field label {
+    color: #46ae6b;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.create-product-field input {
+    width: 100%;
+    padding: 13px 15px;
+
+    border: 1px solid #d6d2c4;
+    border-radius: 16px;
+    background: #fffefa;
+
+    color: #1f3d2b;
+
+    font-size: 15px;
+    font-weight: 700;
+    font-family: Arial, sans-serif;
+
+    box-sizing: border-box;
+}
+
+.create-product-field input:focus {
+    outline: none;
+    border-color: #7f9f68;
+    box-shadow: 0 0 0 4px rgba(127, 159, 104, 0.18);
+}
+
+.create-product-select {
+    position: relative;
+}
+
+.create-product-select-trigger {
+    width: 100%;
+    padding: 13px 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    border: 1px solid #d6d2c4;
+    border-radius: 16px;
+    background: #fffefa;
+
+    color: #1f3d2b;
+
+    font-size: 15px;
+    font-weight: 800;
+    font-family: Arial, sans-serif;
+    text-align: left;
+
+    cursor: pointer;
+    box-sizing: border-box;
+
+    transition: 0.2s ease;
+}
+
+.create-product-select-trigger:hover {
+    border-color: #7f9f68;
+    background: #f6fbf5;
+}
+
+.create-product-select.open .create-product-select-trigger {
+    border-color: #7f9f68;
+    box-shadow: 0 0 0 4px rgba(127, 159, 104, 0.18);
+}
+
+.create-product-select-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    z-index: 10000;
+
+    max-height: 240px;
+    padding: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    overflow-y: auto;
+
+    background: rgba(246, 251, 245, 0.98);
+    border: 1px solid rgba(139, 213, 174, 0.85);
+    border-radius: 18px;
+
+    box-shadow: 0 18px 45px rgba(63, 74, 52, 0.16);
+
+    animation: createProductSelectOpen 0.18s ease;
+}
+
+.create-product-select-option {
+    width: 100%;
+    padding: 12px 14px;
+
+    border: none;
+    border-radius: 13px;
+    background: transparent;
+
+    color: #2a7545;
+
+    font-size: 15px;
+    font-weight: 800;
+    font-family: Arial, sans-serif;
+    text-align: left;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.create-product-select-option:hover {
+    background: #e9fbe5;
+}
+
+.create-product-select-option.selected {
+    background: #67d656;
+    color: white;
+
+    box-shadow: 0 8px 18px rgba(42, 117, 69, 0.18);
+}
+
+.create-product-checkbox-row {
+    padding: 15px 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border-radius: 18px;
+    background: #fffefa;
+    border: 1px solid #d6d2c4;
+
+    color: #1f3d2b;
+
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.create-product-checkbox-row input {
+    width: 18px;
+    height: 18px;
+    accent-color: #67d656;
+    cursor: pointer;
+}
+
+.create-product-error {
+    margin-bottom: 18px;
+    padding: 14px 16px;
+
+    border-radius: 16px;
+    background: #f8e9ee;
+    color: #cc6089;
+    border: 1px solid #f0cdd8;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.create-product-actions {
+    margin-top: 4px;
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.create-product-cancel,
+.create-product-save {
+    padding: 13px 22px;
+
+    border: none;
+    border-radius: 18px;
+
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.create-product-cancel {
+    background: #fffefa;
+    color: #2a7545;
+    border: 1px solid #cde8c7;
+}
+
+.create-product-cancel:hover {
+    background: #e9fbe5;
+}
+
+.create-product-save {
+    background: #67d656;
+    color: white;
+}
+
+.create-product-save:hover {
+    background: #46ae6b;
+}
+
+.create-product-cancel:disabled,
+.create-product-save:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+@keyframes createProductPopIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes createProductSelectOpen {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 650px) {
+    .create-product-modal {
+        padding: 24px;
+    }
+
+    .create-product-actions,
+    .create-product-cancel,
+    .create-product-save {
+        width: 100%;
+    }
+}
