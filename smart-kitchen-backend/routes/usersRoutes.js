@@ -5,7 +5,8 @@ const usersController = require("../controllers/usersController");
 
 const {
     authorize,
-    allowSelfOrAdmin
+    allowSelfOrAdmin,
+    allowSelfOnly
 } = require("../middleware/auth");
 
 const {
@@ -14,7 +15,10 @@ const {
 } = require("../validators/commonValidator");
 
 const {
-    validateEmail
+    validateEmail,
+    validatePassword,
+    validateCookingLevel,
+    validateUserRole
 } = require("../validators/userValidator");
 
 // Only admin can view all users
@@ -39,6 +43,9 @@ router.post(
         "age"
     ]),
     validateEmail,
+    validatePassword,
+    validateCookingLevel,
+    validateUserRole,
     usersController.createSingleUser
 );
 
@@ -57,6 +64,17 @@ router.put(
     allowSelfOrAdmin,
     validateEmail,
     usersController.updateSingleUser
+);
+
+router.put(
+    "/:id/change-password",
+    validateIdParam(),
+    allowSelfOnly,
+    validateRequiredFields([
+        "currentPassword",
+        "newPassword"
+    ]),
+    usersController.changePassword
 );
 
 // Delete user

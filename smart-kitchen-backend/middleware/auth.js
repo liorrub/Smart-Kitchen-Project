@@ -71,7 +71,34 @@ function allowSelfOrAdmin(req, res, next) {
     next();
 }
 
+function allowSelfOnly(req, res, next) {
+    const userRole = req.headers["x-user-role"];
+    const userId = Number(req.headers["x-user-id"]);
+    const requestedUserId = Number(req.params.id);
+
+    if (!userRole) {
+        return errorResponse(
+            res,
+            403,
+            "FORBIDDEN",
+            "You do not have permission to perform this action."
+        );
+    }
+
+    if (userId !== requestedUserId) {
+        return errorResponse(
+            res,
+            403,
+            "FORBIDDEN",
+            "You can only access your own data."
+        );
+    }
+
+    next();
+}
+
 module.exports = {
     authorize,
-    allowSelfOrAdmin
+    allowSelfOrAdmin,
+    allowSelfOnly
 };
