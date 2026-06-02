@@ -71,11 +71,4 @@ router.delete(
     aiController.deleteSingleUserHistory
 );
 
-// Admin can access AI history for all user
-router.get(
-    "/ai/history",
-    authorize("admin"),
-    aiController.getHistory
-);
-
 module.exports = router;

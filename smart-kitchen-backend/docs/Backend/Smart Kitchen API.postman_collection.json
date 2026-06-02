@@ -2415,35 +2415,6 @@
           "response": []
         },
         {
-          "name": "Get all AI history (Admin)",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "x-user-id",
-                "value": "{{adminId}}",
-                "type": "text"
-              },
-              {
-                "key": "x-user-role",
-                "value": "{{adminRole}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/ai/history",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "ai",
-                "history"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Get AI History - Forbidden",
           "request": {
             "method": "GET",

@@ -1,10 +1,8 @@
 const {
-    getAllHistory,
     getUserHistory,
     getHistoryById,
     addHistory,
-    deleteHistory,
-    filterHistory
+    deleteHistory
 } = require("../models/aiHistoryModel");
 
 const {
@@ -115,21 +113,6 @@ async function analyzeImage(req, res, next) {
             analysis,
             historyId: historyItem.historyId
         });
-    } catch (error) {
-        next(error);
-    }
-}
-
-// Get history
-async function getHistory(req, res, next) {
-    try {
-        const filters = req.query;
-
-        const history = Object.keys(filters).length
-            ? await filterHistory(filters)
-            : await getAllHistory();
-
-        return successResponse(res, 200, history);
     } catch (error) {
         next(error);
     }
@@ -248,7 +231,6 @@ module.exports = {
     generateRecipe,
     getSuggestions,
     analyzeImage,
-    getHistory,
     getUserHistory: getUserHistoryList,
     getSingleUserHistory,
     deleteSingleUserHistory

@@ -97,7 +97,7 @@ Every protected endpoint requires the following headers:
 - Create and delete users
 - Update and delete ingredients
 - Manage stores
-- View AI history
+- Access system statistics
 
 **User**
 - View public resources
@@ -266,19 +266,19 @@ The Smart Kitchen API provides 49 endpoints across the following resource catego
 
 | Category | Endpoints |
 |----------|-----------|
-| **Authentication** | 2 |
-| **Users** | 5 |
-| **Favorites** | 3 |
-| **Pantry** | 4 |
-| **Shopping List** | 6 |
-| **Meal Plan** | 4 |
-| **Recipes** | 5 |
-| **Reviews** | 4 |
-| **Ingredients** | 5 |
-| **Stores** | 3 |
-| **AI** | 7 |
+| **Authentication** | 2         |
+| **Users** | 5         |
+| **Favorites** | 3         |
+| **Pantry** | 4         |
+| **Shopping List** | 6         |
+| **Meal Plan** | 4         |
+| **Recipes** | 5         |
+| **Reviews** | 4         |
+| **Ingredients** | 5         |
+| **Stores** | 3         |
+| **AI** | 6         |
 
-**Total: 49 endpoints**
+**Total: 48 endpoints**
 
 For detailed endpoint documentation, see:
 - [API_REFERENCE.md](API_REFERENCE.md) - Comprehensive endpoint documentation
