@@ -142,9 +142,40 @@ function Settings() {
     // Profile form handlers
     function handleChange(event) {
         const { name, value } = event.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+
+        if (name === "age") {
+            const digitsOnly = value.replace(/\D/g, "");
+
+            setFormData((prev) => ({
+                ...prev,
+                age: digitsOnly
+            }));
+
+            if (digitsOnly !== "" && Number(digitsOnly) > 120) {
+                setError("Please enter an age between 0 and 120.");
+            } else {
+                setError("");
+            }
+
+            setSuccess("");
+            return;
+        }
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+
         setSuccess("");
         setError("");
+    }
+
+    function preventInvalidAgeKeys(event) {
+        const invalidKeys = ["e", "E", "+", "-", "."];
+
+        if (invalidKeys.includes(event.key)) {
+            event.preventDefault();
+        }
     }
 
     function togglePreference(type, option) {
@@ -168,6 +199,11 @@ function Settings() {
         event.preventDefault();
         setSuccess("");
         setError("");
+
+        if (formData.age !== "" && Number(formData.age) > 120) {
+            setError("Please enter an age between 0 and 120.");
+            return;
+        }
 
         const validationError = validateSettings(formData);
         if (validationError) {
@@ -359,11 +395,13 @@ function Settings() {
                         <div className="form-field">
                             <label>Age</label>
                             <input
-                                type="number"
+                                type="text"
                                 name="age"
-                                min="1"
-                                max="120"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                maxLength="3"
                                 value={formData.age}
+                                onKeyDown={preventInvalidAgeKeys}
                                 onChange={handleChange}
                                 placeholder="Enter age"
                             />
