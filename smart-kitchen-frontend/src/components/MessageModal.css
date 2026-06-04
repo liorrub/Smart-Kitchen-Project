@@ -1,0 +1,134 @@
+/* Reusable message modal */
+
+/* Dark overlay behind the modal */
+.message-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.35);
+}
+
+/* Base modal card */
+.message-modal-card {
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    padding: 24px 30px;
+
+    text-align: center;
+
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+
+    animation: messageModalPopup 0.25s ease;
+}
+
+.message-modal-card h3 {
+    margin: 0 0 14px;
+
+    font-size: 1.8rem;
+}
+
+.message-modal-card p {
+    margin: 0 0 22px;
+
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.message-modal-card button {
+    padding: 12px 22px;
+
+    border: none;
+    border-radius: 12px;
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+/* Error message style */
+.message-modal-error {
+    background: #f6e9e9;
+}
+
+.message-modal-error h3 {
+    color: #b91c1c;
+}
+
+.message-modal-error p {
+    color: #444;
+}
+
+.message-modal-error button {
+    background: #000000;
+}
+
+/* Success message style */
+.message-modal-success {
+    background: #e9fbe5;
+    border: 1px solid #cde8c7;
+}
+
+.message-modal-success h3,
+.message-modal-success p {
+    color: #2a7545;
+}
+
+.message-modal-success button {
+    background: #67d656;
+}
+
+.message-modal-success button:hover {
+    background: #46ae6b;
+}
+
+/* Warning message style */
+.message-modal-warning {
+    background: #fff4d8;
+    border: 1px solid #ead69c;
+}
+
+.message-modal-warning h3,
+.message-modal-warning p {
+    color: #7a5a12;
+}
+
+.message-modal-warning button {
+    background: #c9972f;
+}
+
+/* Info message style */
+.message-modal-info {
+    background: #edf6ff;
+    border: 1px solid #bddbf5;
+}
+
+.message-modal-info h3,
+.message-modal-info p {
+    color: #24527a;
+}
+
+.message-modal-info button {
+    background: #3b82c4;
+}
+
+/* Modal opening animation */
+@keyframes messageModalPopup {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

@@ -1,276 +1,121 @@
+/* Login and Register shared page styles */
+
+/* Full-screen wrapper for Login and Register pages */
 .login-page {
     position: relative;
+
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    padding: 10px;
 
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
-    padding: 10px;
+    overflow: hidden;
     box-sizing: border-box;
 
     font-family: Arial, sans-serif;
 }
 
+/* Main card used by both Login and Register */
 .login-card {
     position: relative;
+    z-index: 10;
+
     width: 390px;
     max-width: calc(100vw - 40px);
     max-height: calc(100vh - 24px);
-
-    background: #f6fbf5;
     padding: 16px 34px 18px;
 
+    overflow: visible;
+    box-sizing: border-box;
+
+    background: #f6fbf5;
+    border: 1px solid rgb(139, 213, 174);
     border-radius: 24px;
     box-shadow: 0 18px 45px rgba(63, 74, 52, 0.18);
-    border: 1px solid rgb(139, 213, 174);
-
-    z-index: 10;
-    box-sizing: border-box;
 }
 
+/* Logo image at the top of the card */
 .login-logo {
     display: block;
+
     width: 300px;
     max-width: 100%;
     margin: 0 auto 8px;
 }
 
+/* Rotating subtitle under the logo */
 .login-subtitle {
-    text-align: center;
+    margin: 0 0 16px;
+
     color: #2a7545;
-    margin: 0 0 16px 0;
+
     font-size: 17px;
+    text-align: center;
 }
 
+/* ==========================================================================
+   Form layout
+   ========================================================================== */
+
+/* Layout only. Field design is handled by reusable form components */
 .login-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.login-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 700;
-    font-size: 17px;
-    color: #46ae6b;
-}
-
-.login-form input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #d6d2c4;
-    border-radius: 14px;
-    font-size: 15px;
-    background: #fffefa;
-    box-sizing: border-box;
-}
-
-.login-form select {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #d6d2c4;
-    border-radius: 14px;
-    font-size: 15px;
-    background: #fffefa;
-    box-sizing: border-box;
-    color: #1f3d2b;
-    cursor: pointer;
-}
-
-.login-form input:focus,
-.login-form select:focus {
-    outline: none;
-    border-color: #7f9f68;
-    box-shadow: 0 0 0 4px rgba(127, 159, 104, 0.18);
-}
-
-.password-wrapper {
-    display: flex;
-    gap: 10px;
-}
-
-.password-wrapper input {
-    flex: 1;
-}
-
-.show-password-button {
-    padding: 0 14px;
-    border: 1px solid #c8c2af;
-    border-radius: 14px;
-    background: #f8e9ee;
-    color: #cc6089;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.login-form > button {
+/* Small spacing adjustment for AppButton inside the form */
+.login-form .app-button {
     margin-top: 6px;
-    padding: 11px;
-    border: none;
-    border-radius: 16px;
-    background: #67d656;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
 }
 
-.login-form > button:hover {
-    background: #97ff74;
-}
+/* ==========================================================================
+   Bottom navigation section
+   ========================================================================== */
 
-.login-form > button:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
+/* Section below the form: Sign Up / Login navigation */
 .register-section {
     margin-top: 16px;
+
     text-align: center;
 }
 
 .register-section p {
-    margin: 0 0 8px 0;
+    margin: 0 0 8px;
+
     color: #2a7545;
+
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
 }
 
-.register-button {
-    width: 100%;
-    padding: 11px;
-    border: 2px solid #67d656;
-    border-radius: 16px;
+/* ==========================================================================
+   Register page adjustments
+   ========================================================================== */
 
-    background: transparent;
-    color: #2a7545;
-
-    font-size: 15px;
-    font-weight: 800;
-    cursor: pointer;
-
-    transition: 0.2s ease;
-}
-
-.register-button:hover {
-    background: #e9fbe5;
-    border-color: #46ae6b;
-}
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    z-index: 9999;
-}
-
-.error-modal {
-    width: 380px;
-    max-width: calc(100vw - 40px);
-
-    background: #f6e9e9;
-    border-radius: 24px;
-    padding: 24px 30px;
-    text-align: center;
-
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-    animation: popup 0.25s ease;
-}
-
-.error-modal h3 {
-    margin: 0 0 14px 0;
-    color: #b91c1c;
-    font-size: 1.8rem;
-}
-
-.error-modal p {
-    margin: 0 0 22px 0;
-    color: #444;
-    line-height: 1.5;
-    font-size: 1.05rem;
-}
-
-.error-modal button {
-    border: none;
-    background: #000000;
-    color: #fbfbfb;
-    font-size: 16px;
-    padding: 12px 22px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.error-modal.success-modal {
-    background: #e9fbe5;
-    border: 1px solid #cde8c7;
-}
-
-.error-modal.success-modal h3 {
-    color: #2a7545;
-}
-
-.error-modal.success-modal p {
-    color: #2a7545;
-}
-
-.error-modal.success-modal button {
-    background: #67d656;
-    color: white;
-}
-
-.error-modal.success-modal button:hover {
-    background: #46ae6b;
-}
-
+/* Register page is taller than Login, so it can scroll */
 .register-page {
     min-height: 100vh;
     height: auto;
-    overflow-y: auto;
-    align-items: flex-start;
     padding: 32px 10px;
+
+    align-items: flex-start;
+
+    overflow-y: auto;
 }
 
+/* Register card can be taller than the login card */
 .register-card {
     max-height: none;
 }
 
-@keyframes popup {
-    from {
-        opacity: 0;
-        transform: scale(0.85);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.floating-foods {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.food {
-    position: absolute;
-    width: 95px;
-    opacity: 0.22;
-    transform: translate3d(0, 0, 0);
-    will-change: transform;
-}
+/* ==========================================================================
+   Responsive adjustments
+   ========================================================================== */
 
 @media (max-height: 760px) {
     .login-card {
@@ -285,23 +130,12 @@
 
     .login-subtitle {
         margin-bottom: 12px;
+
         font-size: 15px;
     }
 
     .login-form {
         gap: 8px;
-    }
-
-    .login-form label {
-        font-size: 15px;
-    }
-
-    .login-form input {
-        padding: 8px 12px;
-    }
-
-    .login-form > button {
-        padding: 10px;
     }
 
     .register-section {
@@ -310,5 +144,16 @@
 
     .register-section p {
         font-size: 13px;
+    }
+}
+
+@media (max-width: 520px) {
+    .login-card {
+        width: min(390px, calc(100vw - 28px));
+        padding: 16px 24px 18px;
+    }
+
+    .login-logo {
+        width: 250px;
     }
 }

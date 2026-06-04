@@ -1,0 +1,37 @@
+/* Floating food background */
+
+/* Full-screen container for the animated food images */
+.floating-foods {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Food images are positioned by JavaScript */
+.floating-food {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 76px;
+    max-width: 76px;
+    height: auto;
+
+    opacity: 0.16;
+
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+
+    pointer-events: none;
+    user-select: none;
+}
+
+@media (max-width: 520px) {
+    .floating-food {
+        width: 62px;
+        max-width: 62px;
+    }
+}

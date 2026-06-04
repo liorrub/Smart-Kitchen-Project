@@ -1,9 +1,14 @@
 import "./ShoppingList.css";
 
-import PageHero from "../components/PageHero";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+
 import CreateProductModal from "../components/CreateProduct";
+import CreateProductButton from "../components/CreateProductButton";
+import CustomSelect from "../components/CustomSelect";
+import FormField from "../components/FormField";
+import MessageModal from "../components/MessageModal";
+import PageHero from "../components/PageHero";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 const INGREDIENTS_API_URL = "http://localhost:3000/api/ingredients";
@@ -86,78 +91,6 @@ function getResponseData(response) {
     return response.data?.data || response.data || [];
 }
 
-function CustomSelect({
-                          label,
-                          name,
-                          value,
-                          options,
-                          onChange
-                      }) {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const selectedOption = options.find(
-        (option) => String(option.value) === String(value)
-    );
-
-    function handleSelect(option) {
-        onChange({
-            target: {
-                name,
-                value: option.value
-            }
-        });
-
-        setIsOpen(false);
-    }
-
-    return (
-        <div className="shopping-field shopping-custom-select-field">
-            <label>{label}</label>
-
-            <div
-                className={
-                    isOpen
-                        ? "shopping-custom-select open"
-                        : "shopping-custom-select"
-                }
-            >
-                <button
-                    type="button"
-                    className="shopping-custom-select-trigger"
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                    <span>
-                        {selectedOption?.label || "Choose option"}
-                    </span>
-
-                    <span className="shopping-custom-select-arrow">
-                        {isOpen ? "▲" : "▼"}
-                    </span>
-                </button>
-
-                {isOpen && (
-                    <div className="shopping-custom-select-menu">
-                        {options.map((option) => (
-                            <button
-                                key={option.value}
-                                type="button"
-                                className={
-                                    String(option.value) === String(value)
-                                        ? "shopping-custom-select-option selected"
-                                        : "shopping-custom-select-option"
-                                }
-                                onClick={() => handleSelect(option)}
-                            >
-                                {option.label}
-                            </button>
-                        ))}
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-}
-
 function ShoppingList() {
     const [shoppingItems, setShoppingItems] = useState([]);
     const [ingredients, setIngredients] = useState([]);
@@ -171,10 +104,14 @@ function ShoppingList() {
     const [filter, setFilter] = useState("all");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
+
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
     const storedUser = getStoredUser();
+
+    const activeMessage = success || error;
 
     useEffect(() => {
         loadPageData();
@@ -292,6 +229,41 @@ function ShoppingList() {
             setError("");
             setSuccess("");
         }
+    }
+
+    function handleProductReady(product, alreadyExists) {
+        const productData = product?.data || product;
+
+        if (!productData?.ingredientId) {
+            setSuccess("Product is ready to use.");
+            return;
+        }
+
+        setIngredients((previousIngredients) => {
+            const productAlreadyInList = previousIngredients.some(
+                (ingredient) =>
+                    ingredient.ingredientId === productData.ingredientId
+            );
+
+            if (productAlreadyInList) {
+                return previousIngredients;
+            }
+
+            return [...previousIngredients, productData];
+        });
+
+        setFormData((previousData) => ({
+            ...previousData,
+            ingredientId: String(productData.ingredientId)
+        }));
+
+        setError("");
+
+        setSuccess(
+            alreadyExists
+                ? "Product already exists and was selected."
+                : "Product created and selected."
+        );
     }
 
     async function handleAddItem(event) {
@@ -467,20 +439,24 @@ function ShoppingList() {
 
     return (
         <div className="shopping-page">
-            {success && (
-                <div className="shopping-toast">
-                    <strong>Success</strong>
+            <MessageModal
+                type={success ? "success" : "error"}
+                title={success ? "Success" : "Shopping List Error"}
+                message={activeMessage}
+                buttonText="Got It 👍"
+                onClose={() => {
+                    setSuccess("");
+                    setError("");
+                }}
+            />
 
-                    <p>{success}</p>
-
-                    <button
-                        type="button"
-                        onClick={() => setSuccess("")}
-                    >
-                        ×
-                    </button>
-                </div>
-            )}
+            <CreateProductModal
+                isOpen={isCreateProductOpen}
+                onClose={() => setIsCreateProductOpen(false)}
+                onProductReady={handleProductReady}
+                existingIngredients={ingredients}
+                headers={getAuthHeaders()}
+            />
 
             <PageHero
                 label="Shopping List"
@@ -509,21 +485,21 @@ function ShoppingList() {
                         <p>Choose an ingredient and add it to your list.</p>
                     </div>
 
-                    <button
-                        type="button"
-                        className="generate-button"
-                        onClick={generateShoppingList}
-                        disabled={saving}
-                    >
-                        Generate from Pantry
-                    </button>
-                </div>
+                    <div className="shopping-header-actions">
+                        <CreateProductButton
+                            onClick={() => setIsCreateProductOpen(true)}
+                        />
 
-                {error && (
-                    <div className="shopping-alert error">
-                        {error}
+                        <button
+                            type="button"
+                            className="generate-button"
+                            onClick={generateShoppingList}
+                            disabled={saving}
+                        >
+                            Generate from Pantry
+                        </button>
                     </div>
-                )}
+                </div>
 
                 <form
                     className="shopping-form"
@@ -539,18 +515,15 @@ function ShoppingList() {
                             onChange={handleChange}
                         />
 
-                        <div className="shopping-field">
-                            <label>Quantity</label>
-
-                            <input
-                                type="text"
-                                name="quantity"
-                                inputMode="decimal"
-                                value={formData.quantity}
-                                onChange={handleQuantityChange}
-                                placeholder="Amount"
-                            />
-                        </div>
+                        <FormField
+                            label="Quantity"
+                            type="text"
+                            name="quantity"
+                            inputMode="decimal"
+                            value={formData.quantity}
+                            onChange={handleQuantityChange}
+                            placeholder="Amount"
+                        />
 
                         <CustomSelect
                             label="Unit"
@@ -607,6 +580,7 @@ function ShoppingList() {
 
                 {visibleItems.length === 0 ? (
                     <div className="shopping-empty-state">
+                        <div className="shopping-empty-icon">🛒</div>
                         <h3>No items found</h3>
                         <p>Add a new item or change the current filter.</p>
                     </div>
