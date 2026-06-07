@@ -10,17 +10,18 @@ function PageHero({
     const hasStats = Array.isArray(stats) && stats.length > 0;
     const hasCustomContent = Boolean(children);
 
-    const heroClasses = [
+    const heroClassName = [
         "page-hero",
-        hasCustomContent ? "page-hero-with-custom-content" : "",
-        !hasCustomContent && stats.length >= 5 ? "page-hero-many-stats" : ""
+        hasCustomContent ? "page-hero-custom" : "",
+        hasStats ? "page-hero-with-stats" : "",
+        stats.length >= 5 ? "page-hero-many-stats" : ""
     ]
         .filter(Boolean)
         .join(" ");
 
     return (
-        <section className={heroClasses}>
-            <div className="page-hero-text">
+        <section className={heroClassName}>
+            <div className="page-hero-content">
                 {label && (
                     <p className="page-hero-label">
                         {label}

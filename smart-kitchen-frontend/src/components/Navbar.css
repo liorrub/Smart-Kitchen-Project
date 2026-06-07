@@ -254,3 +254,20 @@
         transform: none;
     }
 }
+
+/* Keep navbar and dropdown above page content */
+.navbar,
+.navbar-container,
+.navbar-center,
+.navbar-links,
+.menu-dropdown,
+.dropdown-menu {
+    position: relative;
+    z-index: 9999;
+}
+
+/* The actual open menu should be above the PageHero */
+.menu-dropdown,
+.dropdown-menu {
+    z-index: 10000;
+}

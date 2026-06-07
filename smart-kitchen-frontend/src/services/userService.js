@@ -4,13 +4,17 @@ const BASE_URL = "http://localhost:3000/api";
 
 function getAuthHeaders() {
     const storedUser = JSON.parse(
-        localStorage.getItem("user")
+        localStorage.getItem("user") || "{}"
     );
 
     return {
-        "x-user-id": storedUser.userId,
-        "x-user-role": storedUser.userRole
+        "x-user-id": storedUser?.userId,
+        "x-user-role": storedUser?.userRole || storedUser?.role
     };
+}
+
+function getResponseData(response) {
+    return response.data?.data || response.data;
 }
 
 export async function getUsers() {
@@ -21,7 +25,7 @@ export async function getUsers() {
         }
     );
 
-    return response.data.data;
+    return getResponseData(response);
 }
 
 export async function createUser(userData) {
@@ -33,19 +37,28 @@ export async function createUser(userData) {
         }
     );
 
-    return response.data.data;
+    return getResponseData(response);
 }
 
 export async function updateUser(userId, userData) {
-    const response = await axios.put(
-        `${BASE_URL}/users/${userId}`,
-        userData,
-        {
-            headers: getAuthHeaders()
-        }
-    );
+    try {
+        const response = await axios.put(
+            `${BASE_URL}/users/${userId}`,
+            userData,
+            {
+                headers: getAuthHeaders()
+            }
+        );
 
-    return response.data.data;
+        return getResponseData(response);
+    } catch (error) {
+        console.error(
+            "Update user failed:",
+            error.response?.data || error
+        );
+
+        throw error;
+    }
 }
 
 export async function deleteUser(userId) {
@@ -56,5 +69,5 @@ export async function deleteUser(userId) {
         }
     );
 
-    return response.data.data;
+    return getResponseData(response);
 }

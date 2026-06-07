@@ -1,0 +1,101 @@
+.users-page {
+    min-height: 60vh;
+    font-family: Arial, sans-serif;
+}
+
+.users-role-pill,
+.users-level-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.users-role-pill.admin {
+    background: #f8e9ee;
+    color: #cc6089;
+    border: 1px solid #f0cdd8;
+}
+
+.users-role-pill.chef {
+    background: #fff4d8;
+    color: #9a6a00;
+    border: 1px solid #f0d89a;
+}
+
+.users-role-pill.influencer {
+    background: #e9fbe5;
+    color: #2a7545;
+    border: 1px solid #cde8c7;
+}
+
+.users-role-pill.user {
+    background: #eef7ff;
+    color: #3c6d8f;
+    border: 1px solid #c9deee;
+}
+
+.users-level-pill {
+    background: #f6fbf5;
+    color: #2a7545;
+    border: 1px solid #cde8c7;
+}
+
+.users-edit-card {
+    animation: usersCardSlideIn 0.22s ease;
+}
+
+.users-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.users-alert {
+    margin-top: 24px;
+    padding: 14px 16px;
+
+    border-radius: 16px;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.users-alert.error,
+.users-error-card {
+    background: #f8e9ee;
+    color: #cc6089;
+    border-color: #f0cdd8;
+}
+
+.users-alert.success {
+    background: #e9fbe5;
+    color: #2a7545;
+    border: 1px solid #cde8c7;
+}
+
+@keyframes usersCardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 900px) {
+    .users-edit-grid {
+        grid-template-columns: 1fr;
+    }
+}

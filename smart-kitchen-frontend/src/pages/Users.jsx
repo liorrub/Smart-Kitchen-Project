@@ -1,37 +1,75 @@
+import "./Users.css";
+
 import { useEffect, useState } from "react";
+
+import AppButton from "../components/AppButton";
+import CustomSelect from "../components/CustomSelect";
+import DataTable from "../components/DataTable";
+import FormCard from "../components/FormCard";
+import FormField from "../components/FormField";
+import PageHero from "../components/PageHero";
+
 import {
     getUsers,
     createUser,
     updateUser,
     deleteUser
 } from "../services/userService";
+
 import { validateUserManagementForm } from "../validators/userValidator";
 
+const ROLE_OPTIONS = [
+    { value: "user", label: "User" },
+    { value: "chef", label: "Chef" },
+    { value: "influencer", label: "Influencer" },
+    { value: "admin", label: "Admin" }
+];
+
+const COOKING_LEVEL_OPTIONS = [
+    { value: "beginner", label: "Beginner" },
+    { value: "intermediate", label: "Intermediate" },
+    { value: "advanced", label: "Advanced" }
+];
+
+const EMPTY_USER_FORM = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    city: "",
+    age: "",
+    userRole: "user",
+    cookingLevel: "beginner",
+    preferences: []
+};
+
+function formatText(value) {
+    if (!value) {
+        return "Unknown";
+    }
+
+    return String(value)
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
 function Users() {
-
-    const emptyUserForm = {
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        city: "",
-        age: "",
-        userRole: "user",
-        cookingLevel: "beginner",
-        preferences: []
-    };
-
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
-
-    const [newUser, setNewUser] = useState(emptyUserForm);
+    const [newUser, setNewUser] = useState(EMPTY_USER_FORM);
     const [editingUser, setEditingUser] = useState(null);
     const [userToDelete, setUserToDelete] = useState(null);
 
-    const currentUser =
-        JSON.parse(localStorage.getItem("user"));
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [creating, setCreating] = useState(false);
+
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+
+    const currentUser = JSON.parse(
+        localStorage.getItem("user") || "null"
+    );
 
     useEffect(() => {
         loadUsers();
@@ -40,41 +78,51 @@ function Users() {
     async function loadUsers() {
         try {
             setLoading(true);
+            setError("");
 
             const data = await getUsers();
 
-            setUsers(data);
-            setError("");
-        }
-        catch (error) {
+            setUsers(Array.isArray(data) ? data : []);
+        } catch (error) {
             console.error(error);
             setError("Failed to load users.");
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     }
 
     function clearMessages() {
         setError("");
-        setMessage("");
+        setSuccess("");
     }
 
     function handleNewUserChange(event) {
         const { name, value } = event.target;
 
-        setNewUser(previousUser => ({
+        setNewUser((previousUser) => ({
             ...previousUser,
-            [name]: value
+            [name]: name === "age"
+                ? value.replace(/\D/g, "")
+                : value
         }));
     }
 
-    function handleEditingUserChange(event) {
-        const { name, value } = event.target;
+    function handleEditUser(user) {
+        clearMessages();
 
-        setEditingUser(previousUser => ({
+        setEditingUser({
+            ...user,
+            password: "",
+            age: user.age || ""
+        });
+    }
+
+    function handleEditingFieldChange(fieldName, value) {
+        setEditingUser((previousUser) => ({
             ...previousUser,
-            [name]: value
+            [fieldName]: fieldName === "age"
+                ? value.replace(/\D/g, "")
+                : value
         }));
     }
 
@@ -93,8 +141,10 @@ function Users() {
             preferences: []
         };
 
-        const validationError =
-            validateUserManagementForm(userData, true);
+        const validationError = validateUserManagementForm(
+            userData,
+            true
+        );
 
         if (validationError) {
             setError(validationError);
@@ -102,78 +152,81 @@ function Users() {
         }
 
         try {
+            setCreating(true);
+
             await createUser(userData);
 
-            setNewUser(emptyUserForm);
+            setNewUser(EMPTY_USER_FORM);
             await loadUsers();
 
-            setMessage("User added successfully.");
-        }
-        catch (error) {
+            setSuccess("User added successfully.");
+        } catch (error) {
             console.error(error);
 
             setError(
                 error.response?.data?.error?.message ||
                 "Failed to add user."
             );
+        } finally {
+            setCreating(false);
         }
-    }
-
-    function handleEditUser(user) {
-        clearMessages();
-
-        setEditingUser({
-            ...user,
-            password: "",
-            age: user.age || ""
-        });
     }
 
     async function handleSaveUser(event) {
         event.preventDefault();
 
+        if (!editingUser) {
+            return;
+        }
+
         clearMessages();
 
         const userData = {
-            ...editingUser,
             firstName: editingUser.firstName.trim(),
             lastName: editingUser.lastName.trim(),
             email: editingUser.email.trim(),
             city: editingUser.city.trim(),
-            age: Number(editingUser.age)
+            age: Number(editingUser.age),
+            userRole: editingUser.userRole,
+            cookingLevel: editingUser.cookingLevel,
+            preferences: editingUser.preferences || []
         };
 
-        const validationError =
-            validateUserManagementForm(userData, false);
+        const validationError = validateUserManagementForm(
+            userData,
+            false
+        );
 
         if (validationError) {
             setError(validationError);
             return;
         }
 
-        const {
-            password,
-            ...updateData
-        } = userData;
+        if (currentUser?.userId === editingUser.userId) {
+            delete userData.userRole;
+        }
 
         try {
+            setSaving(true);
+
             await updateUser(
                 editingUser.userId,
-                updateData
+                userData
             );
 
             setEditingUser(null);
             await loadUsers();
 
-            setMessage("User updated successfully.");
-        }
-        catch (error) {
+            setSuccess("User updated successfully.");
+        } catch (error) {
             console.error(error);
 
             setError(
                 error.response?.data?.error?.message ||
                 "Failed to update user."
             );
+        } finally {
+            setSaving(false);
         }
     }
 
@@ -195,9 +248,8 @@ function Users() {
             setUserToDelete(null);
             await loadUsers();
 
-            setMessage("User deleted successfully.");
-        }
-        catch (error) {
+            setSuccess("User deleted successfully.");
+        } catch (error) {
             console.error(error);
 
             setError(
@@ -218,448 +270,376 @@ function Users() {
 
     if (loading) {
         return (
-            <div>
-                <h1>
-                    Users Management
-                </h1>
+            <div className="users-page">
+                <FormCard
+                    title="Loading users..."
+                    description="Please wait while we prepare the users list."
+                />
+            </div>
+        );
+    }
 
-                <p>
-                    Loading users...
-                </p>
+    if (error && users.length === 0) {
+        return (
+            <div className="users-page">
+                <FormCard
+                    title="Something went wrong"
+                    description={error}
+                    className="users-error-card"
+                />
             </div>
         );
     }
 
     return (
-        <div>
-            <h1>
-                Users Management
-            </h1>
+        <div className="users-page">
+            {success && (
+                <div className="users-alert success">
+                    {success}
+                </div>
+            )}
 
-            {error && <p>{error}</p>}
+            {error && (
+                <div className="users-alert error">
+                    {error}
+                </div>
+            )}
 
-            {message && <p>{message}</p>}
+            <PageHero
+                label="System Users"
+                title="Users Management"
+                description="View users, add new accounts, edit profile details, and manage roles."
+                stats={[
+                    {
+                        value: users.length,
+                        label: "Total Users"
+                    },
+                    {
+                        value: users.filter(
+                            (user) => user.userRole === "admin"
+                        ).length,
+                        label: "Admins"
+                    },
+                    {
+                        value: users.filter(
+                            (user) => user.userRole === "chef"
+                        ).length,
+                        label: "Chefs"
+                    }
+                ]}
+            />
 
-            {
-                userToDelete &&
-                (
-                    <div>
-                        <p>
-                            Are you sure you want to delete
-                            {" "}
-                            {userToDelete.firstName}
-                            {" "}
-                            {userToDelete.lastName}
-                            ?
-                        </p>
-
-                        <button
+            {userToDelete && (
+                <FormCard
+                    label="Delete user"
+                    title="Are you sure?"
+                    description={`Delete ${userToDelete.firstName} ${userToDelete.lastName}? This action cannot be undone.`}
+                    className="users-delete-card"
+                >
+                    <div className="users-form-actions">
+                        <AppButton
                             type="button"
                             onClick={confirmDeleteUser}
                         >
                             Yes, delete
-                        </button>
+                        </AppButton>
 
-                        <button
+                        <AppButton
                             type="button"
+                            variant="secondary"
                             onClick={cancelDeleteUser}
                         >
                             Cancel
-                        </button>
+                        </AppButton>
                     </div>
-                )
-            }
-
-            <h2>
-                Add New User
-            </h2>
-
-            <form onSubmit={handleCreateUser}>
-                <div>
-                    <label>
-                        First Name:
-                    </label>
-
-                    <input
-                        type="text"
-                        name="firstName"
-                        value={newUser.firstName}
-                        onChange={handleNewUserChange}
-                    />
-                </div>
-
-                <div>
-                    <label>
-                        Last Name:
-                    </label>
-
-                    <input
-                        type="text"
-                        name="lastName"
-                        value={newUser.lastName}
-                        onChange={handleNewUserChange}
-                    />
-                </div>
-
-                <div>
-                    <label>
-                        Email:
-                    </label>
-
-                    <input
-                        type="text"
-                        name="email"
-                        value={newUser.email}
-                        onChange={handleNewUserChange}
-                    />
-                </div>
-
-                <div>
-                    <label>
-                        Password:
-                    </label>
-
-                    <input
-                        type="password"
-                        name="password"
-                        value={newUser.password}
-                        onChange={handleNewUserChange}
-                    />
-                </div>
-
-                <div>
-                    <label>
-                        City:
-                    </label>
-
-                    <input
-                        type="text"
-                        name="city"
-                        value={newUser.city}
-                        onChange={handleNewUserChange}
-                    />
-                </div>
-
-                <div>
-                    <label>
-                        Age:
-                    </label>
-
-                    <input
-                        type="text"
-                        name="age"
-                        value={newUser.age}
-                        onChange={handleNewUserChange}
-                    />
-                </div>
-
-                <div>
-                    <label>
-                        Role:
-                    </label>
-
-                    <select
-                        name="userRole"
-                        value={newUser.userRole}
-                        onChange={handleNewUserChange}
-                    >
-                        <option value="user">
-                            User
-                        </option>
-
-                        <option value="chef">
-                            Chef
-                        </option>
-
-                        <option value="influencer">
-                            Influencer
-                        </option>
-
-                        <option value="admin">
-                            Admin
-                        </option>
-                    </select>
-                </div>
-
-                <div>
-                    <label>
-                        Cooking Level:
-                    </label>
-
-                    <select
-                        name="cookingLevel"
-                        value={newUser.cookingLevel}
-                        onChange={handleNewUserChange}
-                    >
-                        <option value="beginner">
-                            Beginner
-                        </option>
-
-                        <option value="intermediate">
-                            Intermediate
-                        </option>
-
-                        <option value="advanced">
-                            Advanced
-                        </option>
-                    </select>
-                </div>
-
-                <button type="submit">
-                    Add User
-                </button>
-            </form>
-
-            <hr />
-
-            <h2>
-                Existing Users
-            </h2>
-
-            <table>
-                <thead>
-                <tr>
-                    <th>
-                        ID
-                    </th>
-
-                    <th>
-                        First Name
-                    </th>
-
-                    <th>
-                        Last Name
-                    </th>
-
-                    <th>
-                        Email
-                    </th>
-
-                    <th>
-                        City
-                    </th>
-
-                    <th>
-                        Role
-                    </th>
-
-                    <th>
-                        Cooking Level
-                    </th>
-
-                    <th>
-                        Actions
-                    </th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {
-                    users.map(user => (
-                        <tr key={user.userId}>
-                            <td>
-                                {user.userId}
-                            </td>
-
-                            <td>
-                                {user.firstName}
-                            </td>
-
-                            <td>
-                                {user.lastName}
-                            </td>
-
-                            <td>
-                                {user.email}
-                            </td>
-
-                            <td>
-                                {user.city}
-                            </td>
-
-                            <td>
-                                {user.userRole}
-                            </td>
-
-                            <td>
-                                {user.cookingLevel}
-                            </td>
-
-                            <td>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        handleEditUser(user)
-                                    }
-                                >
-                                    Edit
-                                </button>
-
-                                <button
-                                    type="button"
-                                    disabled={
-                                        currentUser?.userId ===
-                                        user.userId
-                                    }
-                                    onClick={() =>
-                                        handleDeleteClick(user)
-                                    }
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))
-                }
-                </tbody>
-            </table>
-
-            {
-                editingUser &&
-                (
-                    <div>
-                        <hr />
-
-                        <h2>
-                            Edit User
-                        </h2>
-
-                        <form onSubmit={handleSaveUser}>
-                            <div>
-                                <label>
-                                    First Name:
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={editingUser.firstName}
-                                    onChange={handleEditingUserChange}
-                                />
-                            </div>
-
-                            <div>
-                                <label>
-                                    Last Name:
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={editingUser.lastName}
-                                    onChange={handleEditingUserChange}
-                                />
-                            </div>
-
-                            <div>
-                                <label>
-                                    Email:
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="email"
-                                    value={editingUser.email}
-                                    onChange={handleEditingUserChange}
-                                />
-                            </div>
-
-                            <div>
-                                <label>
-                                    City:
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={editingUser.city}
-                                    onChange={handleEditingUserChange}
-                                />
-                            </div>
-
-                            <div>
-                                <label>
-                                    Age:
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="age"
-                                    value={editingUser.age}
-                                    onChange={handleEditingUserChange}
-                                />
-                            </div>
-
-                            <div>
-                                <label>
-                                    Role:
-                                </label>
-
-                                <select
-                                    name="userRole"
-                                    value={editingUser.userRole}
-                                    disabled={
-                                        currentUser?.userId ===
-                                        editingUser.userId
-                                    }
-                                    onChange={handleEditingUserChange}
-                                >
-                                    <option value="user">
-                                        User
-                                    </option>
-
-                                    <option value="chef">
-                                        Chef
-                                    </option>
-
-                                    <option value="influencer">
-                                        Influencer
-                                    </option>
-
-                                    <option value="admin">
-                                        Admin
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label>
-                                    Cooking Level:
-                                </label>
-
-                                <select
-                                    name="cookingLevel"
-                                    value={editingUser.cookingLevel}
-                                    onChange={handleEditingUserChange}
-                                >
-                                    <option value="beginner">
-                                        Beginner
-                                    </option>
-
-                                    <option value="intermediate">
-                                        Intermediate
-                                    </option>
-
-                                    <option value="advanced">
-                                        Advanced
-                                    </option>
-                                </select>
-                            </div>
-
-                            <button type="submit">
-                                Save Changes
-                            </button>
-
-                            <button
+                </FormCard>
+            )}
+
+            <FormCard
+                label="Create user"
+                title="Add New User"
+                description="Create a new system user with role and cooking level."
+                className="users-create-card"
+            >
+                <form onSubmit={handleCreateUser}>
+                    <div className="users-edit-grid">
+                        <FormField
+                            label="First Name"
+                            type="text"
+                            name="firstName"
+                            value={newUser.firstName}
+                            onChange={handleNewUserChange}
+                        />
+
+                        <FormField
+                            label="Last Name"
+                            type="text"
+                            name="lastName"
+                            value={newUser.lastName}
+                            onChange={handleNewUserChange}
+                        />
+
+                        <FormField
+                            label="Email"
+                            type="email"
+                            name="email"
+                            value={newUser.email}
+                            onChange={handleNewUserChange}
+                        />
+
+                        <FormField
+                            label="Password"
+                            type="password"
+                            name="password"
+                            value={newUser.password}
+                            onChange={handleNewUserChange}
+                        />
+
+                        <FormField
+                            label="City"
+                            type="text"
+                            name="city"
+                            value={newUser.city}
+                            onChange={handleNewUserChange}
+                        />
+
+                        <FormField
+                            label="Age"
+                            type="text"
+                            name="age"
+                            inputMode="numeric"
+                            maxLength="3"
+                            value={newUser.age}
+                            onChange={handleNewUserChange}
+                        />
+
+                        <CustomSelect
+                            label="Role"
+                            name="userRole"
+                            value={newUser.userRole}
+                            onChange={handleNewUserChange}
+                            options={ROLE_OPTIONS}
+                        />
+
+                        <CustomSelect
+                            label="Cooking Level"
+                            name="cookingLevel"
+                            value={newUser.cookingLevel}
+                            onChange={handleNewUserChange}
+                            options={COOKING_LEVEL_OPTIONS}
+                        />
+                    </div>
+
+                    <div className="users-form-actions">
+                        <AppButton
+                            type="submit"
+                            disabled={creating}
+                        >
+                            {creating ? "Adding..." : "Add User"}
+                        </AppButton>
+                    </div>
+                </form>
+            </FormCard>
+
+            <FormCard
+                label="System users"
+                title="Users Table"
+            >
+                <DataTable
+                    columns={[
+                        {
+                            key: "userId",
+                            label: "ID"
+                        },
+                        {
+                            key: "firstName",
+                            label: "First Name"
+                        },
+                        {
+                            key: "lastName",
+                            label: "Last Name"
+                        },
+                        {
+                            key: "email",
+                            label: "Email"
+                        },
+                        {
+                            key: "city",
+                            label: "City"
+                        },
+                        {
+                            key: "userRole",
+                            label: "Role",
+                            render: (user) => (
+                                <span className={`users-role-pill ${user.userRole}`}>
+                                    {formatText(user.userRole)}
+                                </span>
+                            )
+                        },
+                        {
+                            key: "cookingLevel",
+                            label: "Cooking Level",
+                            render: (user) => (
+                                <span className="users-level-pill">
+                                    {formatText(user.cookingLevel)}
+                                </span>
+                            )
+                        },
+                        {
+                            key: "actions",
+                            label: "Actions",
+                            render: (user) => (
+                                <div className="users-table-actions">
+                                    <AppButton
+                                        type="button"
+                                        size="small"
+                                        onClick={() => handleEditUser(user)}
+                                    >
+                                        Edit
+                                    </AppButton>
+
+                                    <AppButton
+                                        type="button"
+                                        size="small"
+                                        variant="secondary"
+                                        disabled={
+                                            currentUser?.userId === user.userId
+                                        }
+                                        onClick={() => handleDeleteClick(user)}
+                                    >
+                                        Delete
+                                    </AppButton>
+                                </div>
+                            )
+                        }
+                    ]}
+                    data={users}
+                />
+            </FormCard>
+
+            {editingUser && (
+                <FormCard
+                    label="Edit user"
+                    title={`${editingUser.firstName} ${editingUser.lastName}`}
+                    description="Update this user’s details and cooking preferences."
+                    className="users-edit-card"
+                >
+                    <form onSubmit={handleSaveUser}>
+                        <div className="users-edit-grid">
+                            <FormField
+                                label="First Name"
+                                type="text"
+                                value={editingUser.firstName}
+                                onChange={(event) =>
+                                    handleEditingFieldChange(
+                                        "firstName",
+                                        event.target.value
+                                    )
+                                }
+                            />
+
+                            <FormField
+                                label="Last Name"
+                                type="text"
+                                value={editingUser.lastName}
+                                onChange={(event) =>
+                                    handleEditingFieldChange(
+                                        "lastName",
+                                        event.target.value
+                                    )
+                                }
+                            />
+
+                            <FormField
+                                label="Email"
+                                type="email"
+                                value={editingUser.email}
+                                onChange={(event) =>
+                                    handleEditingFieldChange(
+                                        "email",
+                                        event.target.value
+                                    )
+                                }
+                            />
+
+                            <FormField
+                                label="City"
+                                type="text"
+                                value={editingUser.city}
+                                onChange={(event) =>
+                                    handleEditingFieldChange(
+                                        "city",
+                                        event.target.value
+                                    )
+                                }
+                            />
+
+                            <FormField
+                                label="Age"
+                                type="text"
+                                inputMode="numeric"
+                                maxLength="3"
+                                value={editingUser.age}
+                                onChange={(event) =>
+                                    handleEditingFieldChange(
+                                        "age",
+                                        event.target.value
+                                    )
+                                }
+                            />
+
+                            <CustomSelect
+                                label="Role"
+                                value={editingUser.userRole}
+                                disabled={
+                                    currentUser?.userId === editingUser.userId
+                                }
+                                helperText={
+                                    currentUser?.userId === editingUser.userId
+                                        ? "You cannot change your own role."
+                                        : ""
+                                }
+                                onChange={(event) =>
+                                    handleEditingFieldChange(
+                                        "userRole",
+                                        event.target.value
+                                    )
+                                }
+                                options={ROLE_OPTIONS}
+                            />
+
+                            <CustomSelect
+                                label="Cooking Level"
+                                value={editingUser.cookingLevel}
+                                onChange={(event) =>
+                                    handleEditingFieldChange(
+                                        "cookingLevel",
+                                        event.target.value
+                                    )
+                                }
+                                options={COOKING_LEVEL_OPTIONS}
+                            />
+                        </div>
+
+                        <div className="users-form-actions">
+                            <AppButton
+                                type="submit"
+                                disabled={saving}
+                            >
+                                {saving ? "Saving..." : "Save Changes"}
+                            </AppButton>
+
+                            <AppButton
                                 type="button"
+                                variant="secondary"
                                 onClick={cancelEditUser}
                             >
                                 Cancel
-                            </button>
-                        </form>
-                    </div>
-                )
-            }
+                            </AppButton>
+                        </div>
+                    </form>
+                </FormCard>
+            )}
         </div>
     );
 }

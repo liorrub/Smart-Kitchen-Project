@@ -1,0 +1,297 @@
+/* ==========================================================================
+   Recipe card
+   ========================================================================== */
+
+.recipe-card {
+    min-height: 315px;
+
+    overflow: hidden;
+
+    border-radius: 24px;
+    border: 1px solid #d8ead0;
+
+    background: rgba(246, 251, 245, 0.96);
+    box-shadow: 0 12px 28px rgba(63, 74, 52, 0.08);
+
+    transition:
+            transform 0.22s ease,
+            box-shadow 0.22s ease,
+            border-color 0.22s ease;
+}
+
+.recipe-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 38px rgba(63, 74, 52, 0.14);
+}
+
+.recipe-card-inner {
+    min-height: 315px;
+    padding: 16px;
+
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ==========================================================================
+   Category color themes
+   ========================================================================== */
+
+.recipe-card-breakfast {
+    border-top: 5px solid #f2c94c;
+}
+
+.recipe-card-breakfast .recipe-card-category {
+    background: #fff4c7;
+    color: #9a6a00;
+    border: 1px solid #f2d77f;
+}
+
+.recipe-card-breakfast .recipe-card-view-button {
+    background: #f2c94c;
+    color: #1f3d2b;
+}
+
+.recipe-card-lunch {
+    border-top: 5px solid #56cc83;
+}
+
+.recipe-card-lunch .recipe-card-category {
+    background: #e6f9ee;
+    color: #247148;
+    border: 1px solid #bfe8cf;
+}
+
+.recipe-card-lunch .recipe-card-view-button {
+    background: #56cc83;
+    color: white;
+}
+
+.recipe-card-dinner {
+    border-top: 5px solid #f2994a;
+}
+
+.recipe-card-dinner .recipe-card-category {
+    background: #fff0e2;
+    color: #b76518;
+    border: 1px solid #f4c59d;
+}
+
+.recipe-card-dinner .recipe-card-view-button {
+    background: #f2994a;
+    color: white;
+}
+
+.recipe-card-snack {
+    border-top: 5px solid #eb5757;
+}
+
+.recipe-card-snack .recipe-card-category {
+    background: #ffe8e8;
+    color: #b63d3d;
+    border: 1px solid #f5b7b7;
+}
+
+.recipe-card-snack .recipe-card-view-button {
+    background: #eb5757;
+    color: white;
+}
+
+.recipe-card-default {
+    border-top: 5px solid #67d656;
+}
+
+.recipe-card-default .recipe-card-category {
+    background: #e9fbe5;
+    color: #2a7545;
+    border: 1px solid #cde8c7;
+}
+
+.recipe-card-default .recipe-card-view-button {
+    background: #67d656;
+    color: white;
+}
+
+/* ==========================================================================
+   Card header
+   ========================================================================== */
+
+.recipe-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.recipe-card-image-wrapper {
+    width: 68px;
+    height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+    border: 1px solid #d9ead4;
+    background: linear-gradient(135deg, #ffffff, #f4faf1);
+}
+
+.recipe-card-image {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+
+    object-fit: contain;
+    box-sizing: border-box;
+}
+
+.recipe-card-category {
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   Card content
+   ========================================================================== */
+
+.recipe-card-content {
+    flex: 1;
+}
+
+.recipe-card-content h3 {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 21px;
+    font-weight: 900;
+    line-height: 1.2;
+}
+
+.recipe-card-meta {
+    margin-top: 12px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.recipe-card-meta span {
+    padding: 7px 10px;
+
+    border-radius: 13px;
+    background: #fffefa;
+    border: 1px solid #ddd4c7;
+
+    color: #1f3d2b;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.recipe-card-tags {
+    margin-top: 11px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.recipe-card-tags span {
+    color: #46ae6b;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+/* ==========================================================================
+   Card footer
+   ========================================================================== */
+
+.recipe-card-footer {
+    padding-top: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    border-top: 1px solid #d9ead4;
+}
+
+.recipe-card-cuisine {
+    color: #5b6f62;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.recipe-card-view-button {
+    min-width: 112px;
+    height: 38px;
+    padding: 0 14px;
+
+    border: none;
+    border-radius: 13px;
+
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    box-shadow: 0 7px 15px rgba(63, 74, 52, 0.14);
+
+    transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease,
+            filter 0.18s ease;
+}
+
+.recipe-card-view-button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.03);
+    box-shadow: 0 10px 20px rgba(63, 74, 52, 0.18);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 760px) {
+    .recipe-card,
+    .recipe-card-inner {
+        min-height: auto;
+    }
+
+    .recipe-card-inner {
+        padding: 16px;
+    }
+
+    .recipe-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .recipe-card-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .recipe-card-view-button {
+        width: 100%;
+    }
+}

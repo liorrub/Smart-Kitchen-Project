@@ -109,19 +109,19 @@ async function createSingleUser(req, res, next) {
 }
 
 // Update user
-// Update user
 async function updateSingleUser(req, res, next) {
     try {
         const userId = Number(req.params.id);
         const currentUserRole = req.headers["x-user-role"];
 
-        if (currentUser.userRole === "admin" && req.body.userRole !== "admin" &&
-            await isLastAdmin(userId)) {
+        const currentUser = await getUserById(userId);
+
+        if (!currentUser) {
             return errorResponse(
                 res,
-                400,
-                "LAST_ADMIN",
-                "At least one admin must remain in the system"
+                404,
+                "USER_NOT_FOUND",
+                "User not found"
             );
         }
 
@@ -131,6 +131,20 @@ async function updateSingleUser(req, res, next) {
                 403,
                 "FORBIDDEN",
                 "Only admin can change user role"
+            );
+        }
+
+        if (
+            req.body.userRole &&
+            currentUser.userRole === "admin" &&
+            req.body.userRole !== "admin" &&
+            await isLastAdmin(userId)
+        ) {
+            return errorResponse(
+                res,
+                400,
+                "LAST_ADMIN",
+                "At least one admin must remain in the system"
             );
         }
 
@@ -155,6 +169,9 @@ async function updateSingleUser(req, res, next) {
 
         const {
             password,
+            userId: ignoredUserId,
+            createDate,
+            updateDate,
             ...updateData
         } = req.body;
 
