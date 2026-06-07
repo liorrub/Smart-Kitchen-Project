@@ -15,6 +15,7 @@ import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Users from "./pages/Users";
 import Ingredients from "./pages/Ingredients";
+import RecipeManagement from "./pages/RecipeManagement";
 
 function App() {
     return (
@@ -87,6 +88,11 @@ function App() {
                         <Route
                             path="/ingredients"
                             element={<Ingredients />}
+                        />
+
+                        <Route
+                            path="/recipe-management"
+                            element={<RecipeManagement />}
                         />
 
                     </Route>

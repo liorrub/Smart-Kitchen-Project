@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getDashboardData } from "../services/dashboardService";
 import { useAuth } from "../context/AuthContext";
 
 function Dashboard() {
 
     const { user } = useAuth();
+    const navigate = useNavigate();
+
     const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -159,237 +162,318 @@ function Dashboard() {
                 Overview
             </h2>
 
-            <p>
-                Total Recipes:
-                {" "}
-                {dashboardData.recipes.length}
-            </p>
-
-            <p>
-                Favorites:
-                {" "}
-                {dashboardData.favorites.length}
-            </p>
-
-            <p>
-                Pantry Items:
-                {" "}
-                {dashboardData.pantry.length}
-            </p>
-
-            <p>
-                Planned Meals:
-                {" "}
-                {dashboardData.mealPlan.length}
-            </p>
-
-            <hr />
-
-            {/* Smart alerts section */}
-
-            <h2>
-                Smart Actions & Alerts
-            </h2>
-
-            {/* Expiring pantry items */}
-
-            <h3>
-                Expiring Soon
-            </h3>
-
             {
-                getExpiringItems().length === 0 ?
+                user?.userRole === "admin" ?
 
                     (
-                        <p>
-                            No expiring items found.
-                        </p>
-                    )
-
-                    :
-
-                    getExpiringItems().map(item => (
-
-                        <div
-                            key={item.pantryItemId}
-                        >
+                        <>
                             <p>
-                                {
-                                    getIngredientName(
-                                        item.ingredientId
-                                    )
-                                }
-                            </p>
-
-                            <p>
-                                Expires:
+                                Total Users:
                                 {" "}
-                                {
-                                    item.expiryDate
-                                        .split("T")[0]
-                                }
+                                {dashboardData.users.length}
                             </p>
-                        </div>
 
-                    ))
-            }
-            <hr />
+                            <p>
+                                Total Recipes:
+                                {" "}
+                                {dashboardData.recipes.length}
+                            </p>
 
-            {/* Shopping list reminders */}
+                            <p>
+                                Total Ingredients:
+                                {" "}
+                                {dashboardData.ingredients.length}
+                            </p>
 
-            <h3>
-                Shopping Reminder
-            </h3>
+                            <p>
+                                Total Stores:
+                                {" "}
+                                {dashboardData.stores.length}
+                            </p>
 
-            {
-                dashboardData.shoppingList
-                    ?.filter(
-                        item =>
-                            !item.completed
-                    )
-                    .length === 0 ?
+                            <hr />
 
-                    (
-                        <p>
-                            No shopping items.
-                        </p>
-                    )
+                            <h2>
+                                Management Center
+                            </h2>
 
-                    :
+                            <p>
+                                Manage the main system data from one place.
+                            </p>
 
-                    dashboardData.shoppingList
-                        .filter(
-                            item =>
-                                !item.completed
-                        )
-                        .map(item => (
+                            <div>
+                                <button
+                                    type="button"
+                                    onClick={() => navigate("/users")}
+                                >
+                                    Manage Users
+                                </button>
 
-                            <div
-                                key={
-                                    item.shoppingItemId
-                                }
-                            >
-                                <p>
-                                    {
-                                        getIngredientName(
-                                            item.ingredientId
-                                        )
-                                    }
-                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => navigate("/ingredients")}
+                                >
+                                    Manage Ingredients
+                                </button>
 
-                                <p>
-                                    Quantity:
-                                    {" "}
-                                    {item.quantity}
-                                    {" "}
-                                    {item.unit}
-                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => navigate("/recipe-management")}
+                                >
+                                    Manage Recipes
+                                </button>
                             </div>
-
-                        ))
-            }
-
-            <hr />
-
-            {/* Upcoming meals */}
-
-            <h3>
-                Upcoming Meals
-            </h3>
-
-            {
-                getUpcomingMeals().length === 0 ?
-
-                    (
-                        <p>
-                            No meals planned.
-                        </p>
+                        </>
                     )
 
                     :
 
-                    getUpcomingMeals().map(meal => (
-
-                        <div
-                            key={meal.mealId}
-                        >
+                    (
+                        <>
                             <p>
-                                {meal.date}
+                                Total Recipes:
+                                {" "}
+                                {dashboardData.recipes.length}
                             </p>
 
                             <p>
-                                {meal.mealType}
+                                Favorites:
+                                {" "}
+                                {dashboardData.favorites.length}
                             </p>
 
-                            {
-                                meal.notes &&
+                            <p>
+                                Pantry Items:
+                                {" "}
+                                {dashboardData.pantry.length}
+                            </p>
+
+                            <p>
+                                Planned Meals:
+                                {" "}
+                                {dashboardData.mealPlan.length}
+                            </p>
+
+                            <p>
+                                Shopping List Items:
+                                {" "}
+                                {dashboardData.shoppingList.length}
+                            </p>
+                        </>
+                    )
+            }
+
+            <hr />
+
+            {
+                user?.userRole !== "admin" &&
+                (
+                    <>
+                        {/* Smart alerts section */}
+
+                        <h2>
+                            Smart Actions & Alerts
+                        </h2>
+
+                        {/* Expiring pantry items */}
+
+                        <h3>
+                            Expiring Soon
+                        </h3>
+
+                        {
+                            getExpiringItems().length === 0 ?
+
                                 (
                                     <p>
-                                        {meal.notes}
+                                        No expiring items found.
                                     </p>
                                 )
-                            }
-                        </div>
 
-                    ))
+                                :
+
+                                getExpiringItems().map(item => (
+
+                                    <div
+                                        key={item.pantryItemId}
+                                    >
+                                        <p>
+                                            {
+                                                getIngredientName(
+                                                    item.ingredientId
+                                                )
+                                            }
+                                        </p>
+
+                                        <p>
+                                            Expires:
+                                            {" "}
+                                            {
+                                                item.expiryDate
+                                                    .split("T")[0]
+                                            }
+                                        </p>
+                                    </div>
+
+                                ))
+                        }
+
+                        <hr />
+
+                        {/* Shopping list reminders */}
+
+                        <h3>
+                            Shopping Reminder
+                        </h3>
+
+                        {
+                            dashboardData.shoppingList
+                                ?.filter(
+                                    item =>
+                                        !item.completed
+                                )
+                                .length === 0 ?
+
+                                (
+                                    <p>
+                                        No shopping items.
+                                    </p>
+                                )
+
+                                :
+
+                                dashboardData.shoppingList
+                                    .filter(
+                                        item =>
+                                            !item.completed
+                                    )
+                                    .map(item => (
+
+                                        <div
+                                            key={item.shoppingItemId}
+                                        >
+                                            <p>
+                                                {
+                                                    getIngredientName(
+                                                        item.ingredientId
+                                                    )
+                                                }
+                                            </p>
+
+                                            <p>
+                                                Quantity:
+                                                {" "}
+                                                {item.quantity}
+                                                {" "}
+                                                {item.unit}
+                                            </p>
+                                        </div>
+
+                                    ))
+                        }
+
+                        <hr />
+
+                        {/* Upcoming meals */}
+
+                        <h3>
+                            Upcoming Meals
+                        </h3>
+
+                        {
+                            getUpcomingMeals().length === 0 ?
+
+                                (
+                                    <p>
+                                        No meals planned.
+                                    </p>
+                                )
+
+                                :
+
+                                getUpcomingMeals().map(meal => (
+
+                                    <div
+                                        key={meal.mealId}
+                                    >
+                                        <p>
+                                            {meal.date}
+                                        </p>
+
+                                        <p>
+                                            {meal.mealType}
+                                        </p>
+
+                                        {
+                                            meal.notes &&
+                                            (
+                                                <p>
+                                                    {meal.notes}
+                                                </p>
+                                            )
+                                        }
+                                    </div>
+
+                                ))
+                        }
+
+                        <hr />
+
+                        {/* AI History Preview */}
+
+                        <h2>
+                            Recent AI Activity
+                        </h2>
+
+                        {
+                            dashboardData.history
+                                .slice(0, 3)
+                                .map(historyItem => {
+
+                                    let displayText =
+                                        "AI Activity";
+
+                                    if (
+                                        historyItem.result?.recipeTitle
+                                    ) {
+                                        displayText =
+                                            historyItem.result.recipeTitle;
+                                    }
+                                    else if (
+                                        historyItem.result
+                                            ?.suggestedRecipes
+                                            ?.length
+                                    ) {
+                                        displayText =
+                                            historyItem.result
+                                                .suggestedRecipes[0];
+                                    }
+                                    else if (
+                                        historyItem.result?.detectedDish
+                                    ) {
+                                        displayText =
+                                            historyItem.result
+                                                .detectedDish;
+                                    }
+
+                                    return (
+                                        <div
+                                            key={
+                                                historyItem.historyId
+                                            }
+                                        >
+                                            <p>
+                                                {displayText}
+                                            </p>
+                                        </div>
+                                    );
+                                })
+                        }
+                    </>
+                )
             }
+            </div>
+        );
+    }
 
-            <hr />
-
-            {/* AI History Preview */}
-
-            <h2>
-                Recent AI Activity
-            </h2>
-
-            {
-                dashboardData.history
-                    .slice(0, 3)
-                    .map(historyItem => {
-
-                        let displayText =
-                            "AI Activity";
-
-                        if (
-                            historyItem.result?.recipeTitle
-                        ) {
-
-                            displayText =
-                                historyItem.result.recipeTitle;
-                        }
-                        else if (
-                            historyItem.result?.suggestedRecipes?.length
-                        ) {
-
-                            displayText =
-                                historyItem.result
-                                    .suggestedRecipes[0];
-                        }
-                        else if (
-                            historyItem.result?.detectedDish
-                        ) {
-
-                            displayText =
-                                historyItem.result
-                                    .detectedDish;
-                        }
-
-                        return (
-                            <div
-                                key={
-                                    historyItem.historyId
-                                }
-                            >
-                                <p>
-                                    {displayText}
-                                </p>
-                            </div>
-                        );
-                    })
-            }
-
-        </div>
-    );
-}
-
-export default Dashboard;
+    export default Dashboard;

@@ -16,6 +16,68 @@ export async function getDashboardData() {
     const userRole =
         storedUser.userRole;
 
+    const headers = {
+        "x-user-id": userId,
+        "x-user-role": userRole
+    };
+
+    if (userRole === "admin") {
+
+        const [
+            recipesResponse,
+            ingredientsResponse,
+            usersResponse,
+            storesResponse
+        ] = await Promise.all([
+
+            axios.get(
+                `${BASE_URL}/recipes`
+            ),
+
+            axios.get(
+                `${BASE_URL}/ingredients`
+            ),
+
+            axios.get(
+                `${BASE_URL}/users`,
+                { headers }
+            ),
+
+            axios.get(
+                `${BASE_URL}/stores`
+            )
+        ]);
+
+        return {
+            recipes:
+                recipesResponse.data.data || [],
+
+            ingredients:
+                ingredientsResponse.data.data || [],
+
+            users:
+                usersResponse.data.data || [],
+
+            stores:
+                storesResponse.data.data || [],
+
+            favorites:
+                [],
+
+            pantry:
+                [],
+
+            mealPlan:
+                [],
+
+            history:
+                [],
+
+            shoppingList:
+                []
+        };
+    }
+
     const [
         recipesResponse,
         favoritesResponse,
@@ -32,42 +94,22 @@ export async function getDashboardData() {
 
         axios.get(
             `${BASE_URL}/users/${userId}/favorites`,
-            {
-                headers: {
-                    "x-user-id": userId,
-                    "x-user-role": userRole
-                }
-            }
+            { headers }
         ),
 
         axios.get(
             `${BASE_URL}/users/${userId}/pantry`,
-            {
-                headers: {
-                    "x-user-id": userId,
-                    "x-user-role": userRole
-                }
-            }
+            { headers }
         ),
 
         axios.get(
             `${BASE_URL}/users/${userId}/meal-plan`,
-            {
-                headers: {
-                    "x-user-id": userId,
-                    "x-user-role": userRole
-                }
-            }
+            { headers }
         ),
 
         axios.get(
             `${BASE_URL}/users/${userId}/ai/history`,
-            {
-                headers: {
-                    "x-user-id": userId,
-                    "x-user-role": userRole
-                }
-            }
+            { headers }
         ),
 
         axios.get(
@@ -76,35 +118,39 @@ export async function getDashboardData() {
 
         axios.get(
             `${BASE_URL}/users/${userId}/shopping-list`,
-            {
-                headers: {
-                    "x-user-id": userId,
-                    "x-user-role": userRole
-                }
-            }
+            { headers }
         )
     ]);
 
     return {
         recipes:
-        recipesResponse.data.data,
+            recipesResponse.data.data || [],
 
         favorites:
-        favoritesResponse.data.data,
+            favoritesResponse.data.data || [],
 
         pantry:
-        pantryResponse.data.data,
+            pantryResponse.data.data || [],
 
         mealPlan:
-        mealPlanResponse.data.data,
+            mealPlanResponse.data.data || [],
 
         history:
-        historyResponse.data.data,
+            historyResponse.data.data || [],
 
         ingredients:
-        ingredientsResponse.data.data,
+            ingredientsResponse.data.data || [],
 
         shoppingList:
-        shoppingListResponse.data.data
+            shoppingListResponse.data.data || [],
+
+        users:
+            [],
+
+        reviews:
+            [],
+
+        stores:
+            []
     };
 }
