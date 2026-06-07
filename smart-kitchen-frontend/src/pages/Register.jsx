@@ -11,6 +11,7 @@ import FloatingFoodBackground from "../components/FloatingFoodBackground";
 import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PasswordField from "../components/PasswordField";
+import { validateRegisterForm } from "../validators/userValidator";
 
 import logo from "../assets/logo.png";
 
@@ -136,35 +137,12 @@ function Register() {
 
         setError("");
 
-        if (
-            !formData.firstName.trim() ||
-            !formData.lastName.trim() ||
-            !formData.email.trim() ||
-            !formData.password.trim() ||
-            !formData.city.trim() ||
-            !formData.age
-        ) {
-            setError("All fields are required");
+        const validationError = validateRegisterForm(formData);
+
+        if (validationError) {
+            setError(validationError);
             return;
         }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-
-        if (!emailRegex.test(formData.email)) {
-            setError("Please enter a valid email address");
-            return;
-        }
-
-        if (formData.password.length < 6) {
-            setError("Password must be at least 6 characters");
-            return;
-        }
-
-        if (Number(formData.age) < 1 || Number(formData.age) > 120) {
-            setError("Age must be between 1 and 120");
-            return;
-        }
-
         try {
             setLoading(true);
 

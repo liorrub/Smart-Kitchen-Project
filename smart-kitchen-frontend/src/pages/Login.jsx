@@ -10,7 +10,7 @@ import MessageModal from "../components/MessageModal";
 import PasswordField from "../components/PasswordField";
 
 import { login } from "../services/authService";
-import { validateLogin } from "../validators/loginValidator";
+import { validateLogin } from "../validators/userValidator";
 import { useAuth } from "../context/AuthContext";
 
 import logo from "../assets/logo.png";
