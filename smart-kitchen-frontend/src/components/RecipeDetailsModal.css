@@ -22,7 +22,7 @@
     position: relative;
     z-index: 9999;
 
-    width: min(690px, calc(100vw - 48px));
+    width: min(760px, calc(100vw - 48px));
     max-height: 86vh;
     padding: 26px;
 
@@ -229,6 +229,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 
     border-radius: 13px;
     background: #e9fbe5;
@@ -306,6 +307,39 @@
 }
 
 /* ==========================================================================
+   Reviews section
+   ========================================================================== */
+
+.recipe-reviews-title {
+    align-items: flex-start;
+}
+
+.recipe-reviews-title p {
+    margin: 6px 0 0;
+
+    color: #55705d;
+
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.recipe-reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.recipe-reviews-error {
+    margin: 0;
+
+    color: #cc6089;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+/* ==========================================================================
    Tags and allergens
    ========================================================================== */
 
@@ -365,6 +399,10 @@
 
     .recipe-modal-stat:last-child {
         grid-column: span 2;
+    }
+
+    .recipe-reviews-grid {
+        grid-template-columns: 1fr;
     }
 }
 
