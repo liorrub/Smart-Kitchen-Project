@@ -7,6 +7,7 @@ import CustomSelect from "../components/CustomSelect";
 import DataTable from "../components/DataTable";
 import FormCard from "../components/FormCard";
 import FormField from "../components/FormField";
+import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
 
 import {
@@ -59,10 +60,12 @@ function Users() {
     const [newUser, setNewUser] = useState(EMPTY_USER_FORM);
     const [editingUser, setEditingUser] = useState(null);
     const [userToDelete, setUserToDelete] = useState(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [creating, setCreating] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -96,6 +99,20 @@ function Users() {
         setSuccess("");
     }
 
+    function openCreateModal() {
+        clearMessages();
+        setEditingUser(null);
+        setUserToDelete(null);
+        setNewUser(EMPTY_USER_FORM);
+        setIsCreateModalOpen(true);
+    }
+
+    function closeCreateModal() {
+        setIsCreateModalOpen(false);
+        setNewUser(EMPTY_USER_FORM);
+        clearMessages();
+    }
+
     function handleNewUserChange(event) {
         const { name, value } = event.target;
 
@@ -109,6 +126,8 @@ function Users() {
 
     function handleEditUser(user) {
         clearMessages();
+        setIsCreateModalOpen(false);
+        setUserToDelete(null);
 
         setEditingUser({
             ...user,
@@ -157,6 +176,8 @@ function Users() {
             await createUser(userData);
 
             setNewUser(EMPTY_USER_FORM);
+            setIsCreateModalOpen(false);
+
             await loadUsers();
 
             setSuccess("User added successfully.");
@@ -232,6 +253,8 @@ function Users() {
 
     function handleDeleteClick(user) {
         clearMessages();
+        setEditingUser(null);
+        setIsCreateModalOpen(false);
         setUserToDelete(user);
     }
 
@@ -243,6 +266,8 @@ function Users() {
         clearMessages();
 
         try {
+            setDeleting(true);
+
             await deleteUser(userToDelete.userId);
 
             setUserToDelete(null);
@@ -256,6 +281,8 @@ function Users() {
                 error.response?.data?.error?.message ||
                 "Failed to delete user."
             );
+        } finally {
+            setDeleting(false);
         }
     }
 
@@ -293,17 +320,21 @@ function Users() {
 
     return (
         <div className="users-page">
-            {success && (
-                <div className="users-alert success">
-                    {success}
-                </div>
-            )}
+            <MessageModal
+                type="success"
+                title="Success"
+                message={success}
+                buttonText="Great"
+                onClose={() => setSuccess("")}
+            />
 
-            {error && (
-                <div className="users-alert error">
-                    {error}
-                </div>
-            )}
+            <MessageModal
+                type="error"
+                title="Please check the form"
+                message={error}
+                buttonText="OK, got it"
+                onClose={() => setError("")}
+            />
 
             <PageHero
                 label="System Users"
@@ -329,117 +360,329 @@ function Users() {
                 ]}
             />
 
-            {userToDelete && (
-                <FormCard
-                    label="Delete user"
-                    title="Are you sure?"
-                    description={`Delete ${userToDelete.firstName} ${userToDelete.lastName}? This action cannot be undone.`}
-                    className="users-delete-card"
-                >
-                    <div className="users-form-actions">
-                        <AppButton
-                            type="button"
-                            onClick={confirmDeleteUser}
-                        >
-                            Yes, delete
-                        </AppButton>
-
-                        <AppButton
-                            type="button"
-                            variant="secondary"
-                            onClick={cancelDeleteUser}
-                        >
-                            Cancel
-                        </AppButton>
-                    </div>
-                </FormCard>
-            )}
-
             <FormCard
                 label="Create user"
-                title="Add New User"
-                description="Create a new system user with role and cooking level."
-                className="users-create-card"
-            >
-                <form onSubmit={handleCreateUser}>
-                    <div className="users-edit-grid">
-                        <FormField
-                            label="First Name"
-                            type="text"
-                            name="firstName"
-                            value={newUser.firstName}
-                            onChange={handleNewUserChange}
-                        />
+                title="Need to add a new user?"
+                className="users-create-cta"
+                actions={
+                    <AppButton
+                        type="button"
+                        size="large"
+                        onClick={openCreateModal}
+                    >
+                        + Add User
+                    </AppButton>
+                }
+            />
 
-                        <FormField
-                            label="Last Name"
-                            type="text"
-                            name="lastName"
-                            value={newUser.lastName}
-                            onChange={handleNewUserChange}
-                        />
-
-                        <FormField
-                            label="Email"
-                            type="email"
-                            name="email"
-                            value={newUser.email}
-                            onChange={handleNewUserChange}
-                        />
-
-                        <FormField
-                            label="Password"
-                            type="password"
-                            name="password"
-                            value={newUser.password}
-                            onChange={handleNewUserChange}
-                        />
-
-                        <FormField
-                            label="City"
-                            type="text"
-                            name="city"
-                            value={newUser.city}
-                            onChange={handleNewUserChange}
-                        />
-
-                        <FormField
-                            label="Age"
-                            type="text"
-                            name="age"
-                            inputMode="numeric"
-                            maxLength="3"
-                            value={newUser.age}
-                            onChange={handleNewUserChange}
-                        />
-
-                        <CustomSelect
-                            label="Role"
-                            name="userRole"
-                            value={newUser.userRole}
-                            onChange={handleNewUserChange}
-                            options={ROLE_OPTIONS}
-                        />
-
-                        <CustomSelect
-                            label="Cooking Level"
-                            name="cookingLevel"
-                            value={newUser.cookingLevel}
-                            onChange={handleNewUserChange}
-                            options={COOKING_LEVEL_OPTIONS}
-                        />
-                    </div>
-
-                    <div className="users-form-actions">
-                        <AppButton
-                            type="submit"
-                            disabled={creating}
+            {isCreateModalOpen && (
+                <div
+                    className="users-modal-overlay"
+                    onClick={closeCreateModal}
+                >
+                    <div
+                        className="users-modal"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <button
+                            type="button"
+                            className="users-modal-close"
+                            onClick={closeCreateModal}
+                            aria-label="Close add user modal"
                         >
-                            {creating ? "Adding..." : "Add User"}
-                        </AppButton>
+                            ×
+                        </button>
+
+                        <FormCard
+                            label="Create user"
+                            title="Add New User"
+                            description="Fill all required details and choose the user's role."
+                            className="users-create-card users-modal-card"
+                            actions={
+                                <>
+                                    <AppButton
+                                        type="submit"
+                                        form="create-user-form"
+                                        disabled={creating}
+                                    >
+                                        {creating ? "Adding..." : "Add User"}
+                                    </AppButton>
+
+                                    <AppButton
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={closeCreateModal}
+                                    >
+                                        Cancel
+                                    </AppButton>
+                                </>
+                            }
+                        >
+                            <form
+                                id="create-user-form"
+                                onSubmit={handleCreateUser}
+                            >
+                                <div className="users-edit-grid">
+                                    <FormField
+                                        label="First Name"
+                                        type="text"
+                                        name="firstName"
+                                        value={newUser.firstName}
+                                        onChange={handleNewUserChange}
+                                    />
+
+                                    <FormField
+                                        label="Last Name"
+                                        type="text"
+                                        name="lastName"
+                                        value={newUser.lastName}
+                                        onChange={handleNewUserChange}
+                                    />
+
+                                    <FormField
+                                        label="Email"
+                                        type="email"
+                                        name="email"
+                                        value={newUser.email}
+                                        onChange={handleNewUserChange}
+                                    />
+
+                                    <FormField
+                                        label="Password"
+                                        type="password"
+                                        name="password"
+                                        value={newUser.password}
+                                        onChange={handleNewUserChange}
+                                    />
+
+                                    <FormField
+                                        label="City"
+                                        type="text"
+                                        name="city"
+                                        value={newUser.city}
+                                        onChange={handleNewUserChange}
+                                    />
+
+                                    <FormField
+                                        label="Age"
+                                        type="text"
+                                        name="age"
+                                        inputMode="numeric"
+                                        maxLength="3"
+                                        value={newUser.age}
+                                        onChange={handleNewUserChange}
+                                    />
+
+                                    <CustomSelect
+                                        label="Role"
+                                        name="userRole"
+                                        value={newUser.userRole}
+                                        onChange={handleNewUserChange}
+                                        options={ROLE_OPTIONS}
+                                    />
+
+                                    <CustomSelect
+                                        label="Cooking Level"
+                                        name="cookingLevel"
+                                        value={newUser.cookingLevel}
+                                        onChange={handleNewUserChange}
+                                        options={COOKING_LEVEL_OPTIONS}
+                                    />
+                                </div>
+                            </form>
+                        </FormCard>
                     </div>
-                </form>
-            </FormCard>
+                </div>
+            )}
+
+            {editingUser && (
+                <div
+                    className="users-modal-overlay"
+                    onClick={cancelEditUser}
+                >
+                    <div
+                        className="users-modal"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <button
+                            type="button"
+                            className="users-modal-close"
+                            onClick={cancelEditUser}
+                            aria-label="Close edit user modal"
+                        >
+                            ×
+                        </button>
+
+                        <FormCard
+                            label="Edit user"
+                            title={`${editingUser.firstName} ${editingUser.lastName}`}
+                            description="Update this user’s details and cooking preferences."
+                            className="users-edit-card users-modal-card"
+                            actions={
+                                <>
+                                    <AppButton
+                                        type="submit"
+                                        form="edit-user-form"
+                                        disabled={saving}
+                                    >
+                                        {saving ? "Saving..." : "Save Changes"}
+                                    </AppButton>
+
+                                    <AppButton
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={cancelEditUser}
+                                    >
+                                        Cancel
+                                    </AppButton>
+                                </>
+                            }
+                        >
+                            <form
+                                id="edit-user-form"
+                                onSubmit={handleSaveUser}
+                            >
+                                <div className="users-edit-grid">
+                                    <FormField
+                                        label="First Name"
+                                        type="text"
+                                        value={editingUser.firstName}
+                                        onChange={(event) =>
+                                            handleEditingFieldChange(
+                                                "firstName",
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+
+                                    <FormField
+                                        label="Last Name"
+                                        type="text"
+                                        value={editingUser.lastName}
+                                        onChange={(event) =>
+                                            handleEditingFieldChange(
+                                                "lastName",
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+
+                                    <FormField
+                                        label="Email"
+                                        type="email"
+                                        value={editingUser.email}
+                                        onChange={(event) =>
+                                            handleEditingFieldChange(
+                                                "email",
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+
+                                    <FormField
+                                        label="City"
+                                        type="text"
+                                        value={editingUser.city}
+                                        onChange={(event) =>
+                                            handleEditingFieldChange(
+                                                "city",
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+
+                                    <FormField
+                                        label="Age"
+                                        type="text"
+                                        inputMode="numeric"
+                                        maxLength="3"
+                                        value={editingUser.age}
+                                        onChange={(event) =>
+                                            handleEditingFieldChange(
+                                                "age",
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+
+                                    <CustomSelect
+                                        label="Role"
+                                        name="userRole"
+                                        value={editingUser.userRole}
+                                        disabled={
+                                            currentUser?.userId === editingUser.userId
+                                        }
+                                        helperText={
+                                            currentUser?.userId === editingUser.userId
+                                                ? "You cannot change your own role."
+                                                : ""
+                                        }
+                                        onChange={(event) =>
+                                            handleEditingFieldChange(
+                                                "userRole",
+                                                event.target.value
+                                            )
+                                        }
+                                        options={ROLE_OPTIONS}
+                                    />
+
+                                    <CustomSelect
+                                        label="Cooking Level"
+                                        name="cookingLevel"
+                                        value={editingUser.cookingLevel}
+                                        onChange={(event) =>
+                                            handleEditingFieldChange(
+                                                "cookingLevel",
+                                                event.target.value
+                                            )
+                                        }
+                                        options={COOKING_LEVEL_OPTIONS}
+                                    />
+                                </div>
+                            </form>
+                        </FormCard>
+                    </div>
+                </div>
+            )}
+
+            {userToDelete && (
+                <div
+                    className="users-modal-overlay"
+                    onClick={cancelDeleteUser}
+                >
+                    <div
+                        className="users-modal users-confirm-modal"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <FormCard
+                            label="Delete user"
+                            title="Are you sure?"
+                            description={`Delete ${userToDelete.firstName} ${userToDelete.lastName}? This action cannot be undone.`}
+                            className="users-delete-card users-confirm-card"
+                            actions={
+                                <>
+                                    <AppButton
+                                        type="button"
+                                        variant="danger"
+                                        disabled={deleting}
+                                        onClick={confirmDeleteUser}
+                                    >
+                                        {deleting ? "Deleting..." : "Yes, delete"}
+                                    </AppButton>
+
+                                    <AppButton
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={cancelDeleteUser}
+                                    >
+                                        Cancel
+                                    </AppButton>
+                                </>
+                            }
+                        />
+                    </div>
+                </div>
+            )}
 
             <FormCard
                 label="System users"
@@ -501,7 +744,7 @@ function Users() {
                                     <AppButton
                                         type="button"
                                         size="small"
-                                        variant="secondary"
+                                        variant="danger"
                                         disabled={
                                             currentUser?.userId === user.userId
                                         }
@@ -516,130 +759,6 @@ function Users() {
                     data={users}
                 />
             </FormCard>
-
-            {editingUser && (
-                <FormCard
-                    label="Edit user"
-                    title={`${editingUser.firstName} ${editingUser.lastName}`}
-                    description="Update this user’s details and cooking preferences."
-                    className="users-edit-card"
-                >
-                    <form onSubmit={handleSaveUser}>
-                        <div className="users-edit-grid">
-                            <FormField
-                                label="First Name"
-                                type="text"
-                                value={editingUser.firstName}
-                                onChange={(event) =>
-                                    handleEditingFieldChange(
-                                        "firstName",
-                                        event.target.value
-                                    )
-                                }
-                            />
-
-                            <FormField
-                                label="Last Name"
-                                type="text"
-                                value={editingUser.lastName}
-                                onChange={(event) =>
-                                    handleEditingFieldChange(
-                                        "lastName",
-                                        event.target.value
-                                    )
-                                }
-                            />
-
-                            <FormField
-                                label="Email"
-                                type="email"
-                                value={editingUser.email}
-                                onChange={(event) =>
-                                    handleEditingFieldChange(
-                                        "email",
-                                        event.target.value
-                                    )
-                                }
-                            />
-
-                            <FormField
-                                label="City"
-                                type="text"
-                                value={editingUser.city}
-                                onChange={(event) =>
-                                    handleEditingFieldChange(
-                                        "city",
-                                        event.target.value
-                                    )
-                                }
-                            />
-
-                            <FormField
-                                label="Age"
-                                type="text"
-                                inputMode="numeric"
-                                maxLength="3"
-                                value={editingUser.age}
-                                onChange={(event) =>
-                                    handleEditingFieldChange(
-                                        "age",
-                                        event.target.value
-                                    )
-                                }
-                            />
-
-                            <CustomSelect
-                                label="Role"
-                                value={editingUser.userRole}
-                                disabled={
-                                    currentUser?.userId === editingUser.userId
-                                }
-                                helperText={
-                                    currentUser?.userId === editingUser.userId
-                                        ? "You cannot change your own role."
-                                        : ""
-                                }
-                                onChange={(event) =>
-                                    handleEditingFieldChange(
-                                        "userRole",
-                                        event.target.value
-                                    )
-                                }
-                                options={ROLE_OPTIONS}
-                            />
-
-                            <CustomSelect
-                                label="Cooking Level"
-                                value={editingUser.cookingLevel}
-                                onChange={(event) =>
-                                    handleEditingFieldChange(
-                                        "cookingLevel",
-                                        event.target.value
-                                    )
-                                }
-                                options={COOKING_LEVEL_OPTIONS}
-                            />
-                        </div>
-
-                        <div className="users-form-actions">
-                            <AppButton
-                                type="submit"
-                                disabled={saving}
-                            >
-                                {saving ? "Saving..." : "Save Changes"}
-                            </AppButton>
-
-                            <AppButton
-                                type="button"
-                                variant="secondary"
-                                onClick={cancelEditUser}
-                            >
-                                Cancel
-                            </AppButton>
-                        </div>
-                    </form>
-                </FormCard>
-            )}
         </div>
     );
 }

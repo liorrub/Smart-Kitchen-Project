@@ -1,7 +1,82 @@
+/* ==========================================================================
+   Users page layout
+   ========================================================================== */
+
 .users-page {
-    min-height: 60vh;
-    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
+
+/* ==========================================================================
+   Message modal position
+   ========================================================================== */
+
+.users-page .message-modal-overlay {
+    z-index: 10020;
+}
+
+/* ==========================================================================
+   Top create user call to action
+   ========================================================================== */
+
+.users-create-cta {
+    position: relative;
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 24px;
+
+    border: 1px solid rgba(103, 214, 86, 0.55);
+    background:
+            radial-gradient(circle at right center, rgba(103, 214, 86, 0.18), transparent 32%),
+            rgba(246, 251, 245, 0.95);
+}
+
+.users-create-cta::before {
+    content: "+";
+
+    position: absolute;
+    right: 34px;
+    bottom: -42px;
+
+    color: rgba(103, 214, 86, 0.12);
+
+    font-size: 150px;
+    font-weight: 900;
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+.users-create-cta .form-card-header {
+    margin-bottom: 0;
+}
+
+.users-create-cta .form-card-actions {
+    position: relative;
+    z-index: 1;
+
+    margin-top: 0;
+    justify-content: flex-end;
+}
+
+/* ==========================================================================
+   Table actions
+   ========================================================================== */
+
+.users-table-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+}
+
+/* ==========================================================================
+   User role and level pills
+   ========================================================================== */
 
 .users-role-pill,
 .users-level-pill {
@@ -9,93 +84,203 @@
     align-items: center;
     justify-content: center;
 
-    padding: 8px 12px;
+    min-width: 86px;
+    padding: 8px 14px;
 
     border-radius: 999px;
 
     font-size: 12px;
     font-weight: 900;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
-    white-space: nowrap;
 }
 
 .users-role-pill.admin {
     background: #f8e9ee;
-    color: #cc6089;
     border: 1px solid #f0cdd8;
+    color: #cc6089;
 }
 
 .users-role-pill.chef {
     background: #fff4d8;
+    border: 1px solid #f2d77f;
     color: #9a6a00;
-    border: 1px solid #f0d89a;
+}
+
+.users-role-pill.user {
+    background: #e9f5ff;
+    border: 1px solid #cfe3f7;
+    color: #28608f;
 }
 
 .users-role-pill.influencer {
     background: #e9fbe5;
-    color: #2a7545;
     border: 1px solid #cde8c7;
-}
-
-.users-role-pill.user {
-    background: #eef7ff;
-    color: #3c6d8f;
-    border: 1px solid #c9deee;
+    color: #2a7545;
 }
 
 .users-level-pill {
-    background: #f6fbf5;
-    color: #2a7545;
+    background: #e9fbe5;
     border: 1px solid #cde8c7;
+    color: #2a7545;
 }
 
-.users-edit-card {
-    animation: usersCardSlideIn 0.22s ease;
+/* ==========================================================================
+   Shared modal styles
+   ========================================================================== */
+
+.users-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+
+    padding: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(31, 61, 43, 0.34);
+    backdrop-filter: blur(6px);
+}
+
+.users-modal {
+    position: relative;
+    z-index: 9999;
+
+    width: min(960px, calc(100vw - 48px));
+    max-height: 88vh;
+
+    overflow-y: auto;
+
+    border-radius: 30px;
+    box-shadow: 0 28px 70px rgba(31, 61, 43, 0.28);
+
+    animation: usersModalPopIn 0.22s ease;
+}
+
+.users-modal-card {
+    margin: 0;
+    padding-top: 32px;
+}
+
+.users-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 2;
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #e9fbe5;
+    color: #2a7545;
+
+    font-size: 27px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+            transform 0.2s ease,
+            background 0.2s ease,
+            color 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.users-modal-close:hover {
+    transform: rotate(8deg) scale(1.05);
+    background: #67d656;
+    color: white;
+    box-shadow: 0 10px 22px rgba(42, 117, 69, 0.18);
+}
+
+/* ==========================================================================
+   Delete confirmation modal
+   ========================================================================== */
+
+.users-confirm-modal {
+    width: min(560px, calc(100vw - 48px));
+}
+
+.users-confirm-card {
+    margin: 0;
+    text-align: center;
+}
+
+.users-confirm-card .form-card-actions {
+    justify-content: center;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+.users-create-card,
+.users-edit-card,
+.users-delete-card {
+    margin-top: 0;
 }
 
 .users-edit-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+    gap: 18px 20px;
 }
 
-.users-alert {
-    margin-top: 24px;
-    padding: 14px 16px;
-
-    border-radius: 16px;
-
-    font-size: 15px;
-    font-weight: 900;
-}
-
-.users-alert.error,
-.users-error-card {
-    background: #f8e9ee;
-    color: #cc6089;
-    border-color: #f0cdd8;
-}
-
-.users-alert.success {
-    background: #e9fbe5;
-    color: #2a7545;
-    border: 1px solid #cde8c7;
-}
-
-@keyframes usersCardSlideIn {
+@keyframes usersModalPopIn {
     from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(14px) scale(0.97);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
 
 @media (max-width: 900px) {
     .users-edit-grid {
         grid-template-columns: 1fr;
+    }
+
+    .users-create-cta {
+        grid-template-columns: 1fr;
+    }
+
+    .users-create-cta .form-card-actions {
+        justify-content: stretch;
+    }
+
+    .users-create-cta .app-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 760px) {
+    .users-modal-overlay {
+        padding: 14px;
+    }
+
+    .users-modal,
+    .users-confirm-modal {
+        width: 100%;
+        max-height: 90vh;
+    }
+
+    .users-table-actions {
+        gap: 12px;
+        flex-wrap: wrap;
     }
 }
