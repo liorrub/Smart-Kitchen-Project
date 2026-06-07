@@ -39,10 +39,6 @@ const menuLinks = [
     {
         to: "/ingredients",
         label: "Ingredients Management"
-    },
-    {
-        to: "/ai-history",
-        label: "AI History"
     }
 ];
 

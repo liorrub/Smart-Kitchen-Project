@@ -15,7 +15,6 @@ import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Users from "./pages/Users";
 import Ingredients from "./pages/Ingredients";
-import AIHistory from "./pages/AIHistory";
 
 function App() {
     return (
@@ -88,11 +87,6 @@ function App() {
                         <Route
                             path="/ingredients"
                             element={<Ingredients />}
-                        />
-
-                        <Route
-                            path="/ai-history"
-                            element={<AIHistory />}
                         />
 
                     </Route>
