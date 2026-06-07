@@ -82,6 +82,12 @@ function getAverageRating(reviews) {
     return (totalRating / reviews.length).toFixed(1);
 }
 
+function renderRatingStars(rating) {
+    const roundedRating = Math.round(Number(rating) || 0);
+
+    return "★".repeat(roundedRating) + "☆".repeat(5 - roundedRating);
+}
+
 /*
     Modal for displaying the full selected recipe.
     Also loads and displays reviews for the selected recipe.
@@ -226,17 +232,38 @@ function RecipeDetailsModal({ recipe, onClose }) {
                 </section>
 
                 <section className="recipe-modal-section">
-                    <div className="recipe-modal-section-title recipe-reviews-title">
-                        <span>⭐</span>
+                    <div className="recipe-reviews-header">
+                        <div className="recipe-modal-section-title recipe-reviews-title">
+                            <span>⭐</span>
 
-                        <div>
-                            <h3>Reviews from other users</h3>
+                            <div>
+                                <h3>Reviews from other users</h3>
 
-                            <p>
+                                <p>
+                                    See what other users thought about this recipe.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="recipe-reviews-summary">
+                            <div className="recipe-reviews-score">
+                                <strong>
+                                    {otherUsersReviews.length > 0 ? averageRating : "-"}
+                                </strong>
+
+                                <span>/ 5</span>
+                            </div>
+
+                            <div className="recipe-reviews-stars">
                                 {otherUsersReviews.length > 0
-                                    ? `${averageRating}/5 average rating · ${otherUsersReviews.length} reviews · ${influencerReviewsCount} influencer reviews`
-                                    : "No reviews from other users yet."}
-                            </p>
+                                    ? renderRatingStars(averageRating)
+                                    : "☆☆☆☆☆"}
+                            </div>
+
+                            <div className="recipe-reviews-meta">
+                                <span>{otherUsersReviews.length} reviews</span>
+                                <span>{influencerReviewsCount} influencer reviews</span>
+                            </div>
                         </div>
                     </div>
 
