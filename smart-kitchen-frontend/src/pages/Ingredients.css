@@ -1,0 +1,444 @@
+/* ==========================================================================
+   Ingredients page
+   ========================================================================== */
+
+.ingredients-page {
+    min-height: 60vh;
+    font-family: Arial, sans-serif;
+}
+
+/* ==========================================================================
+   Toolbar
+   ========================================================================== */
+
+.ingredients-toolbar {
+    margin-top: 24px;
+    padding: 28px 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+
+    border-radius: 28px;
+    background: rgba(246, 251, 245, 0.95);
+    border: 1px solid rgba(139, 213, 174, 0.75);
+
+    box-shadow: 0 18px 45px rgba(63, 74, 52, 0.1);
+}
+
+.ingredients-toolbar p {
+    margin: 0 0 8px;
+
+    color: #46ae6b;
+
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.ingredients-toolbar h2 {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 30px;
+    font-weight: 900;
+}
+
+.ingredients-toolbar span {
+    display: block;
+    margin-top: 8px;
+
+    color: #55705d;
+
+    font-size: 15px;
+    font-weight: 750;
+    line-height: 1.45;
+}
+
+/* ==========================================================================
+   Table card
+   ========================================================================== */
+
+.ingredients-table-card {
+    margin-top: 24px;
+    padding: 30px;
+
+    border-radius: 28px;
+    background: rgba(246, 251, 245, 0.95);
+    border: 1px solid rgba(139, 213, 174, 0.75);
+
+    box-shadow: 0 18px 45px rgba(63, 74, 52, 0.1);
+}
+
+.ingredients-table-wrapper {
+    overflow-x: auto;
+}
+
+.ingredients-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+
+    border: 1px solid #d9ead4;
+    border-radius: 22px;
+
+    background: #fffefa;
+}
+
+.ingredients-table th,
+.ingredients-table td {
+    padding: 16px 18px;
+
+    border-bottom: 1px solid #d9ead4;
+
+    text-align: left;
+    vertical-align: middle;
+}
+
+.ingredients-table th {
+    background: #e9fbe5;
+    color: #1f3d2b;
+
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+}
+
+.ingredients-table td {
+    color: #1f3d2b;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.ingredients-table tr:last-child td {
+    border-bottom: none;
+}
+
+.ingredients-table tbody tr {
+    transition:
+            background 0.18s ease,
+            transform 0.18s ease;
+}
+
+.ingredients-table tbody tr:hover {
+    background: rgba(233, 251, 229, 0.58);
+}
+
+.ingredient-name {
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.ingredient-category-badge,
+.ingredient-allergen-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 94px;
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+.ingredient-category-badge {
+    background: #e9fbe5;
+    border: 1px solid #cde8c7;
+    color: #2a7545;
+}
+
+.ingredient-allergen-badge.yes {
+    background: #f8e9ee;
+    border: 1px solid #f0cdd8;
+    color: #cc6089;
+}
+
+.ingredient-allergen-badge.no {
+    background: #eef7ff;
+    border: 1px solid #cbe1f4;
+    color: #24577a;
+}
+
+/* ==========================================================================
+   Action buttons
+   ========================================================================== */
+
+.ingredients-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ingredients-edit-button,
+.ingredients-delete-button {
+    min-width: 78px;
+    height: 38px;
+    padding: 0 16px;
+
+    border: none;
+    border-radius: 13px;
+
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease,
+            background 0.18s ease,
+            color 0.18s ease;
+}
+
+.ingredients-edit-button {
+    background: #67d656;
+    color: #ffffff;
+    box-shadow: 0 8px 16px rgba(42, 117, 69, 0.14);
+}
+
+.ingredients-delete-button {
+    background: #f8e9ee;
+    color: #cc6089;
+}
+
+.ingredients-edit-button:hover,
+.ingredients-delete-button:hover {
+    transform: translateY(-2px);
+}
+
+.ingredients-edit-button:hover {
+    background: #46ae6b;
+    box-shadow: 0 12px 22px rgba(42, 117, 69, 0.18);
+}
+
+.ingredients-delete-button:hover {
+    background: #cc6089;
+    color: white;
+    box-shadow: 0 12px 22px rgba(204, 96, 137, 0.16);
+}
+
+/* ==========================================================================
+   Empty state
+   ========================================================================== */
+
+.ingredients-empty-state {
+    min-height: 190px;
+    padding: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    text-align: center;
+}
+
+.ingredients-empty-state div {
+    width: 70px;
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 24px;
+    background: #e9fbe5;
+
+    font-size: 34px;
+}
+
+.ingredients-empty-state h3 {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 26px;
+    font-weight: 900;
+}
+
+.ingredients-empty-state p {
+    max-width: 460px;
+    margin: 0;
+
+    color: #55705d;
+
+    font-size: 15px;
+    font-weight: 750;
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   Modals
+   ========================================================================== */
+
+.ingredient-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+
+    padding: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(31, 61, 43, 0.34);
+    backdrop-filter: blur(6px);
+}
+
+.ingredient-modal {
+    position: relative;
+    z-index: 9999;
+
+    width: min(760px, calc(100vw - 48px));
+    max-height: 88vh;
+
+    overflow-y: auto;
+
+    border-radius: 30px;
+    box-shadow: 0 28px 70px rgba(31, 61, 43, 0.28);
+
+    animation: ingredientModalPopIn 0.22s ease;
+}
+
+.ingredient-form-card {
+    margin: 0;
+    padding-top: 34px;
+}
+
+.ingredient-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 2;
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #e9fbe5;
+    color: #2a7545;
+
+    font-size: 27px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+            transform 0.2s ease,
+            background 0.2s ease,
+            color 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.ingredient-modal-close:hover {
+    transform: rotate(8deg) scale(1.05);
+    background: #67d656;
+    color: white;
+    box-shadow: 0 10px 22px rgba(42, 117, 69, 0.18);
+}
+
+.ingredient-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 20px;
+}
+
+.ingredient-form-grid .custom-select-field:last-child {
+    grid-column: span 2;
+}
+
+.ingredient-confirm-modal {
+    position: relative;
+    z-index: 9999;
+
+    width: min(560px, calc(100vw - 48px));
+
+    animation: ingredientModalPopIn 0.22s ease;
+}
+
+.ingredient-confirm-card {
+    margin: 0;
+    text-align: center;
+}
+
+.ingredient-confirm-card .form-card-actions {
+    justify-content: center;
+}
+
+@keyframes ingredientModalPopIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 800px) {
+    .ingredients-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ingredients-toolbar .app-button {
+        width: 100%;
+    }
+
+    .ingredient-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ingredient-form-grid .custom-select-field:last-child {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 650px) {
+    .ingredients-toolbar,
+    .ingredients-table-card {
+        padding: 22px;
+    }
+
+    .ingredients-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ingredients-edit-button,
+    .ingredients-delete-button {
+        width: 100%;
+    }
+
+    .ingredient-modal-overlay {
+        padding: 14px;
+    }
+
+    .ingredient-modal,
+    .ingredient-confirm-modal {
+        width: 100%;
+        max-height: 90vh;
+    }
+}
