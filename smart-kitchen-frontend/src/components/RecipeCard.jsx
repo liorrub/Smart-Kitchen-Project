@@ -1,8 +1,9 @@
 import "./RecipeCard.css";
 
 import breakfastImg from "../assets/breakfast.png";
-import lunchImg from "../assets/lunch.png";
+import defaultImg from "../assets/default.png";
 import dinnerImg from "../assets/dinner.png";
+import lunchImg from "../assets/lunch.png";
 import snackImg from "../assets/snack.png";
 
 function formatText(value) {
@@ -25,7 +26,7 @@ function getCategoryImage(category) {
         snack: snackImg
     };
 
-    return images[category] || lunchImg;
+    return images[category] || defaultImg;
 }
 
 function getCategoryClass(category) {
@@ -43,11 +44,36 @@ function getCategoryClass(category) {
 
 /*
     Reusable recipe preview card.
-    Receives recipe data using props and displays a compact recipe preview.
+    Can be used in Recipes and Favorites pages.
 */
-function RecipeCard({ recipe, onClick }) {
+function RecipeCard({
+                        recipe,
+                        onClick,
+                        showFavoriteButton = false,
+                        isFavorite = false,
+                        onFavoriteClick,
+                        favoriteLoading = false,
+                        favoriteButtonText = "",
+                        favoriteLoadingText = "Saving..."
+                    }) {
     const categoryImage = getCategoryImage(recipe.category);
     const categoryClass = getCategoryClass(recipe.category);
+
+    function handleViewClick() {
+        if (onClick) {
+            onClick(recipe);
+        }
+    }
+
+    function handleFavoriteClick() {
+        if (onFavoriteClick) {
+            onFavoriteClick(recipe);
+        }
+    }
+
+    const defaultFavoriteText = isFavorite
+        ? "♥ Saved"
+        : "♡ Save";
 
     return (
         <article className={`recipe-card ${categoryClass}`}>
@@ -91,13 +117,32 @@ function RecipeCard({ recipe, onClick }) {
                         {formatText(recipe.cuisine)} cuisine
                     </span>
 
-                    <button
-                        type="button"
-                        className="recipe-card-view-button"
-                        onClick={() => onClick(recipe)}
-                    >
-                        View Recipe
-                    </button>
+                    <div className="recipe-card-actions">
+                        {showFavoriteButton && (
+                            <button
+                                type="button"
+                                className={
+                                    isFavorite
+                                        ? "recipe-card-favorite-button active"
+                                        : "recipe-card-favorite-button"
+                                }
+                                disabled={favoriteLoading}
+                                onClick={handleFavoriteClick}
+                            >
+                                {favoriteLoading
+                                    ? favoriteLoadingText
+                                    : favoriteButtonText || defaultFavoriteText}
+                            </button>
+                        )}
+
+                        <button
+                            type="button"
+                            className="recipe-card-view-button"
+                            onClick={handleViewClick}
+                        >
+                            View Recipe
+                        </button>
+                    </div>
                 </div>
             </div>
         </article>

@@ -10,12 +10,40 @@ import PageHero from "../components/PageHero";
 import RecipeCard from "../components/RecipeCard";
 import RecipeDetailsModal from "../components/RecipeDetailsModal";
 
+import {
+    addFavorite,
+    getUserFavorites,
+    removeFavorite
+} from "../services/favoritesService";
+
 const RECIPES_API_URL = "http://localhost:3000/api/recipes";
 
 const DEFAULT_FILTER_VALUE = "all";
 
+function getStoredUser() {
+    return JSON.parse(localStorage.getItem("user") || "null");
+}
+
 function getResponseData(response) {
     return response.data?.data || response.data || [];
+}
+
+function getErrorMessage(error, fallbackMessage) {
+    const responseData = error.response?.data;
+
+    if (typeof responseData?.error?.message === "string") {
+        return responseData.error.message;
+    }
+
+    if (typeof responseData?.message === "string") {
+        return responseData.message;
+    }
+
+    if (typeof error.message === "string") {
+        return error.message;
+    }
+
+    return fallbackMessage;
 }
 
 function createFilterOptions(values, allLabel) {
@@ -35,6 +63,7 @@ function createFilterOptions(values, allLabel) {
 
 function Recipes() {
     const [recipes, setRecipes] = useState([]);
+    const [favorites, setFavorites] = useState([]);
     const [selectedRecipe, setSelectedRecipe] = useState(null);
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -43,28 +72,59 @@ function Recipes() {
     const [difficultyFilter, setDifficultyFilter] = useState(DEFAULT_FILTER_VALUE);
 
     const [loading, setLoading] = useState(true);
+    const [favoriteLoadingRecipeId, setFavoriteLoadingRecipeId] = useState(null);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+
+    const storedUser = getStoredUser();
 
     useEffect(() => {
-        async function loadRecipes() {
+        async function loadRecipesPage() {
             try {
                 setLoading(true);
                 setError("");
+                setSuccess("");
 
-                const response = await axios.get(RECIPES_API_URL);
+                const recipesRequest = axios.get(RECIPES_API_URL);
 
-                setRecipes(getResponseData(response));
+                if (!storedUser?.userId) {
+                    const recipesResponse = await recipesRequest;
+
+                    setRecipes(getResponseData(recipesResponse));
+                    setFavorites([]);
+
+                    return;
+                }
+
+                const [recipesResponse, favoritesData] = await Promise.all([
+                    recipesRequest,
+                    getUserFavorites(storedUser.userId)
+                ]);
+
+                setRecipes(getResponseData(recipesResponse));
+                setFavorites(Array.isArray(favoritesData) ? favoritesData : []);
             } catch (err) {
-                console.error("Recipes loading error:", err);
+                console.error("Recipes page loading error:", err);
 
-                setError("Failed to load recipes.");
+                setError(
+                    getErrorMessage(
+                        err,
+                        "Failed to load recipes."
+                    )
+                );
             } finally {
                 setLoading(false);
             }
         }
 
-        loadRecipes();
-    }, []);
+        loadRecipesPage();
+    }, [storedUser?.userId]);
+
+    const favoriteRecipeIds = useMemo(() => {
+        return new Set(
+            favorites.map((favorite) => favorite.recipeId)
+        );
+    }, [favorites]);
 
     const categoryOptions = useMemo(() => {
         return createFilterOptions(
@@ -141,6 +201,59 @@ function Recipes() {
         setDifficultyFilter(DEFAULT_FILTER_VALUE);
     }
 
+    async function handleFavoriteClick(recipe) {
+        if (!storedUser?.userId) {
+            setError("Please login before adding recipes to favorites.");
+            return;
+        }
+
+        const isAlreadyFavorite = favoriteRecipeIds.has(recipe.recipeId);
+
+        try {
+            setFavoriteLoadingRecipeId(recipe.recipeId);
+            setError("");
+            setSuccess("");
+
+            if (isAlreadyFavorite) {
+                await removeFavorite(
+                    storedUser.userId,
+                    recipe.recipeId
+                );
+
+                setFavorites((previousFavorites) =>
+                    previousFavorites.filter(
+                        (favorite) => favorite.recipeId !== recipe.recipeId
+                    )
+                );
+
+                setSuccess("Recipe removed from favorites.");
+            } else {
+                const favorite = await addFavorite(
+                    storedUser.userId,
+                    recipe.recipeId
+                );
+
+                setFavorites((previousFavorites) => [
+                    ...previousFavorites,
+                    favorite
+                ]);
+
+                setSuccess("Recipe added to favorites.");
+            }
+        } catch (err) {
+            console.error("Favorite update error:", err);
+
+            setError(
+                getErrorMessage(
+                    err,
+                    "Failed to update favorites."
+                )
+            );
+        } finally {
+            setFavoriteLoadingRecipeId(null);
+        }
+    }
+
     if (loading) {
         return (
             <div className="recipes-page">
@@ -158,6 +271,13 @@ function Recipes() {
     return (
         <div className="recipes-page">
             <MessageModal
+                type="success"
+                title="Success"
+                message={success}
+                onClose={() => setSuccess("")}
+            />
+
+            <MessageModal
                 type="error"
                 title="Recipes Error"
                 message={error}
@@ -172,7 +292,7 @@ function Recipes() {
             <PageHero
                 label="Recipe Collection"
                 title="Discover meals for every craving"
-                description="Browse recipes, filter by cooking style, and open each recipe for full details."
+                description="Browse recipes, filter by cooking style, and save your favorite meals."
                 stats={[
                     {
                         value: recipes.length,
@@ -181,6 +301,10 @@ function Recipes() {
                     {
                         value: visibleRecipes.length,
                         label: "Shown now"
+                    },
+                    {
+                        value: favorites.length,
+                        label: "Favorites"
                     },
                     {
                         value: quickRecipesCount,
@@ -195,7 +319,7 @@ function Recipes() {
                         <h2>Find a recipe</h2>
 
                         <p>
-                            Search and filter recipes from the backend.
+                            Search, filter and save recipes to your favorites.
                         </p>
                     </div>
 
@@ -266,13 +390,27 @@ function Recipes() {
                 </section>
             ) : (
                 <section className="recipes-grid">
-                    {visibleRecipes.map((recipe) => (
-                        <RecipeCard
-                            key={recipe.recipeId}
-                            recipe={recipe}
-                            onClick={setSelectedRecipe}
-                        />
-                    ))}
+                    {visibleRecipes.map((recipe) => {
+                        const isFavorite =
+                            favoriteRecipeIds.has(recipe.recipeId);
+
+                        return (
+                            <RecipeCard
+                                key={recipe.recipeId}
+                                recipe={recipe}
+                                onClick={setSelectedRecipe}
+                                showFavoriteButton
+                                isFavorite={isFavorite}
+                                onFavoriteClick={handleFavoriteClick}
+                                favoriteLoading={
+                                    favoriteLoadingRecipeId === recipe.recipeId
+                                }
+                                favoriteLoadingText={
+                                    isFavorite ? "Removing..." : "Saving..."
+                                }
+                            />
+                        );
+                    })}
                 </section>
             )}
         </div>
