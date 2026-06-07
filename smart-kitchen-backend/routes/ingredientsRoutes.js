@@ -8,9 +8,12 @@ const {
 } = require("../middleware/auth");
 
 const {
-    validateIdParam,
-    validateRequiredFields
+    validateIdParam
 } = require("../validators/commonValidator");
+
+const {
+    validateIngredient
+} = require("../validators/ingredientsValidator");
 
 // Get all ingredients
 router.get(
@@ -28,11 +31,8 @@ router.get(
 // Create ingredient
 router.post(
     "/",
-    validateRequiredFields([
-        "name",
-        "category",
-        "isAllergen"
-    ]),
+    authorize("admin"),
+    validateIngredient,
     ingredientsController.createSingleIngredient
 );
 
@@ -41,6 +41,7 @@ router.put(
     "/:id",
     validateIdParam(),
     authorize("admin"),
+    validateIngredient,
     ingredientsController.updateSingleIngredient
 );
 
