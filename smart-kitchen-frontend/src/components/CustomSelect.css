@@ -51,10 +51,14 @@
             background 0.18s ease;
 }
 
-.custom-select-button:hover,
-.custom-select-button.open {
-    border-color: #67d656;
-    box-shadow: 0 0 0 4px rgba(103, 214, 86, 0.16);
+.custom-select-option:hover {
+    background: #d9fdda;
+    color: #3ab867;
+}
+
+.custom-select-option.selected {
+    background: #67d656;
+    color: white;
 }
 
 .custom-select-button:disabled {
@@ -130,12 +134,6 @@
     transition:
             background 0.18s ease,
             color 0.18s ease;
-}
-
-.custom-select-option:hover,
-.custom-select-option.selected {
-    background: #67d656;
-    color: white;
 }
 
 .custom-select-helper {
