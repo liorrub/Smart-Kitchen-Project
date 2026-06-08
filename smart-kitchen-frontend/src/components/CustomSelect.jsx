@@ -1,66 +1,45 @@
-import { useEffect, useRef, useState } from "react";
-
 import "./CustomSelect.css";
 
-/*
-    Converts both string options and object options into the same format.
-    Supports:
-    "beginner"
-    or
-    { value: "beginner", label: "Beginner" }
-*/
-function normalizeOption(option) {
-    if (typeof option === "string") {
-        return {
-            value: option,
-            label: formatLabel(option)
-        };
-    }
-
-    return option;
-}
+import { useEffect, useMemo, useRef, useState } from "react";
 
 /*
-    Formats labels like:
-    gluten-free -> Gluten-Free
-*/
-function formatLabel(text) {
-    return String(text)
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join("-");
-}
-
-/*
-    Reusable custom select component.
-    Used instead of repeating dropdown logic inside pages.
+    Reusable styled select component.
+    It sends changes in the same shape as a normal input event:
+    { target: { name, value } }
 */
 function CustomSelect({
                           label,
                           name,
-                          id,
                           value,
                           onChange,
                           options = [],
-                          disabled = false,
                           placeholder = "Choose option",
                           helperText = "",
-                          className = ""
+                          disabled = false
                       }) {
     const [isOpen, setIsOpen] = useState(false);
-
     const selectRef = useRef(null);
-    const selectId = id || name;
 
-    const normalizedOptions = options.map(normalizeOption);
+    const normalizedOptions = useMemo(() => {
+        return options.map((option) => {
+            if (typeof option === "string") {
+                return {
+                    value: option,
+                    label: option
+                };
+            }
+
+            return {
+                value: option.value,
+                label: option.label
+            };
+        });
+    }, [options]);
 
     const selectedOption = normalizedOptions.find(
         (option) => String(option.value) === String(value)
     );
 
-    /*
-        Closes the dropdown when clicking outside of it.
-    */
     useEffect(() => {
         function handleClickOutside(event) {
             if (
@@ -78,11 +57,19 @@ function CustomSelect({
         };
     }, []);
 
-    function handleSelect(option) {
+    function handleToggle() {
+        if (disabled) {
+            return;
+        }
+
+        setIsOpen((previousState) => !previousState);
+    }
+
+    function handleSelect(optionValue) {
         onChange({
             target: {
                 name,
-                value: option.value
+                value: optionValue
             }
         });
 
@@ -91,25 +78,25 @@ function CustomSelect({
 
     return (
         <div
-            className={`custom-select-field ${className}`.trim()}
+            className="custom-select-field"
             ref={selectRef}
         >
             {label && (
-                <label htmlFor={selectId}>
+                <label htmlFor={`${name}-custom-select`}>
                     {label}
                 </label>
             )}
 
-            <div className={isOpen ? "custom-select open" : "custom-select"}>
+            <div className="custom-select-wrapper">
                 <button
-                    id={selectId}
+                    id={`${name}-custom-select`}
                     type="button"
-                    className="custom-select-trigger"
-                    onClick={() => {
-                        if (!disabled) {
-                            setIsOpen((current) => !current);
-                        }
-                    }}
+                    className={
+                        isOpen
+                            ? "custom-select-button open"
+                            : "custom-select-button"
+                    }
+                    onClick={handleToggle}
                     disabled={disabled}
                 >
                     <span>
@@ -117,12 +104,12 @@ function CustomSelect({
                     </span>
 
                     <span className="custom-select-arrow">
-                        {isOpen ? "▲" : "▼"}
+                        ▾
                     </span>
                 </button>
 
                 {isOpen && (
-                    <div className="custom-select-menu">
+                    <div className="custom-select-options">
                         {normalizedOptions.map((option) => (
                             <button
                                 key={option.value}
@@ -132,7 +119,7 @@ function CustomSelect({
                                         ? "custom-select-option selected"
                                         : "custom-select-option"
                                 }
-                                onClick={() => handleSelect(option)}
+                                onClick={() => handleSelect(option.value)}
                             >
                                 {option.label}
                             </button>
@@ -142,9 +129,9 @@ function CustomSelect({
             </div>
 
             {helperText && (
-                <small className="custom-select-helper">
+                <p className="custom-select-helper">
                     {helperText}
-                </small>
+                </p>
             )}
         </div>
     );

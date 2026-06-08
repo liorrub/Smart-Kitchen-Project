@@ -20,31 +20,33 @@ import {
 const MEAL_TYPES = [
     {
         value: "breakfast",
-        label: "Breakfast",
-        icon: "☕"
+        label: "Breakfast"
     },
     {
         value: "lunch",
-        label: "Lunch",
-        icon: "🥗"
+        label: "Lunch"
     },
     {
         value: "dinner",
-        label: "Dinner",
-        icon: "🍽️"
+        label: "Dinner"
     },
     {
         value: "snack",
-        label: "Snack",
-        icon: "🍎"
+        label: "Snack"
     }
 ];
+
+const MEAL_TYPE_ORDER = {
+    breakfast: 1,
+    lunch: 2,
+    dinner: 3,
+    snack: 4
+};
 
 const EMPTY_MEAL_FORM = {
     date: "",
     mealType: "breakfast",
     itemId: "",
-    calories: "",
     notes: ""
 };
 
@@ -80,10 +82,10 @@ function getWeekDates(startDate) {
             date,
             key: formatDateKey(date),
             dayName: date.toLocaleDateString("en-US", {
-                weekday: "long"
-            }),
-            shortDayName: date.toLocaleDateString("en-US", {
                 weekday: "short"
+            }),
+            fullDayName: date.toLocaleDateString("en-US", {
+                weekday: "long"
             }),
             dayNumber: date.getDate(),
             monthName: date.toLocaleDateString("en-US", {
@@ -161,32 +163,36 @@ function MealPlanner() {
     const recipeOptions = useMemo(() => {
         return recipes.map((recipe) => ({
             value: recipe.recipeId,
-            label: `${recipe.title} · ${recipe.totalTime || 0} min`
+            label: `${recipe.title} · ${recipe.calories || 0} cal`
         }));
     }, [recipes]);
 
     const weeklyMeals = useMemo(() => {
-        return mealPlan.filter((meal) =>
-            weekDateKeys.has(meal.date)
-        );
+        return mealPlan
+            .filter((meal) => weekDateKeys.has(meal.date))
+            .sort((firstMeal, secondMeal) => {
+                if (firstMeal.date !== secondMeal.date) {
+                    return firstMeal.date.localeCompare(secondMeal.date);
+                }
+
+                return (
+                    (MEAL_TYPE_ORDER[firstMeal.mealType] || 99) -
+                    (MEAL_TYPE_ORDER[secondMeal.mealType] || 99)
+                );
+            });
     }, [mealPlan, weekDateKeys]);
 
     const weeklyCalories = useMemo(() => {
-        return weeklyMeals.reduce(
-            (sum, meal) => sum + Number(meal.calories || 0),
-            0
-        );
+        return weeklyMeals.reduce((sum, meal) => {
+            const recipe = recipeMap.get(Number(meal.itemId));
+
+            return sum + Number(recipe?.calories || meal.calories || 0);
+        }, 0);
+    }, [weeklyMeals, recipeMap]);
+
+    const plannedDaysCount = useMemo(() => {
+        return new Set(weeklyMeals.map((meal) => meal.date)).size;
     }, [weeklyMeals]);
-
-    const quickMealsCount = weeklyMeals.filter((meal) => {
-        const recipe = recipeMap.get(meal.itemId);
-
-        return Number(recipe?.totalTime || 0) <= 30;
-    }).length;
-
-    const differentRecipesCount = new Set(
-        weeklyMeals.map((meal) => meal.itemId)
-    ).size;
 
     useEffect(() => {
         async function loadMealPlannerData() {
@@ -234,7 +240,7 @@ function MealPlanner() {
         loadMealPlannerData();
     }, [storedUser?.userId]);
 
-    function openCreateMealModal(date, mealType) {
+    function openCreateMealModal(date, mealType = "breakfast") {
         setError("");
         setSuccess("");
         setEditingMeal(null);
@@ -259,7 +265,6 @@ function MealPlanner() {
             date: meal.date || "",
             mealType: meal.mealType || "breakfast",
             itemId: meal.itemId || "",
-            calories: meal.calories || "",
             notes: meal.notes || ""
         });
 
@@ -278,9 +283,7 @@ function MealPlanner() {
 
         setMealForm((previousForm) => ({
             ...previousForm,
-            [name]: name === "calories"
-                ? value.replace(/\D/g, "")
-                : value
+            [name]: value
         }));
     }
 
@@ -301,12 +304,14 @@ function MealPlanner() {
     }
 
     function buildMealPayload() {
+        const selectedRecipe = recipeMap.get(Number(mealForm.itemId));
+
         return {
             date: mealForm.date,
             mealType: mealForm.mealType,
             itemType: "recipe",
             itemId: Number(mealForm.itemId),
-            calories: Number(mealForm.calories || 0),
+            calories: Number(selectedRecipe?.calories || 0),
             notes: mealForm.notes.trim()
         };
     }
@@ -446,28 +451,32 @@ function MealPlanner() {
         setWeekStartDate(getStartOfWeek(new Date()));
     }
 
-    function getMealsForSlot(date, mealType) {
-        return mealPlan.filter(
-            (meal) =>
-                meal.date === date &&
-                meal.mealType === mealType
-        );
+    function getRecipeForMeal(meal) {
+        return recipeMap.get(Number(meal.itemId));
     }
 
-    function getDayMeals(date) {
-        return mealPlan.filter((meal) => meal.date === date);
+    function getMealsForDayAndType(date, mealType) {
+        return mealPlan
+            .filter(
+                (meal) =>
+                    meal.date === date &&
+                    meal.mealType === mealType
+            )
+            .sort(
+                (firstMeal, secondMeal) =>
+                    Number(firstMeal.mealId || 0) -
+                    Number(secondMeal.mealId || 0)
+            );
     }
 
-    function getMealDisplayName(meal) {
-        return recipeMap.get(meal.itemId)?.title || `Recipe #${meal.itemId}`;
-    }
+    function getDayCalories(date) {
+        return mealPlan
+            .filter((meal) => meal.date === date)
+            .reduce((sum, meal) => {
+                const recipe = getRecipeForMeal(meal);
 
-    function getMealSubText(meal) {
-        const recipe = recipeMap.get(meal.itemId);
-
-        return recipe
-            ? `${recipe.cuisine} · ${recipe.totalTime || 0} min`
-            : "Recipe";
+                return sum + Number(recipe?.calories || meal.calories || 0);
+            }, 0);
     }
 
     if (loading) {
@@ -499,220 +508,178 @@ function MealPlanner() {
 
             <PageHero
                 label="Meal Planner"
-                title="Plan your week, one recipe at a time"
-                description="Build a weekly recipe schedule. Add, edit and remove planned meals easily."
+                title="Plan your weekly meals"
+                description="Build a simple weekly meal plan from your saved recipes and track calories automatically."
                 stats={[
                     {
                         value: weeklyMeals.length,
                         label: "Planned meals"
                     },
                     {
-                        value: differentRecipesCount,
-                        label: "Recipes used"
-                    },
-                    {
-                        value: quickMealsCount,
-                        label: "Quick meals"
+                        value: plannedDaysCount,
+                        label: "Planned days"
                     },
                     {
                         value: weeklyCalories,
-                        label: "Calories"
+                        label: "Weekly calories"
                     }
                 ]}
             />
 
-            <section className="meal-board-card">
-                <div className="meal-board-header">
-                    <div>
-                        <p>Weekly calendar</p>
-                        <h2>Your meal schedule</h2>
-                        <span>
-                            Add recipes into each day. This view is designed to stay clean even when the week is full.
-                        </span>
-                    </div>
+            <section className="meal-week-toolbar">
+                <div>
+                    <p>Weekly calendar</p>
+                    <h2>
+                        Week of {weekDates[0]?.monthName} {weekDates[0]?.dayNumber}, {weekDates[0]?.date.getFullYear()}
+                    </h2>
                 </div>
 
-                <div className="meal-week-navigation">
+                <div className="meal-week-controls">
                     <button
                         type="button"
-                        className="meal-week-arrow"
                         onClick={goToPreviousWeek}
                         aria-label="Previous week"
                     >
-                        ←
+                        ‹
                     </button>
 
                     <button
                         type="button"
-                        className="meal-week-current"
+                        className="meal-today-button"
                         onClick={goToCurrentWeek}
                     >
-                        This Week
+                        Today
                     </button>
 
                     <button
                         type="button"
-                        className="meal-week-arrow"
                         onClick={goToNextWeek}
                         aria-label="Next week"
                     >
-                        →
+                        ›
                     </button>
                 </div>
+            </section>
 
-                <div className="meal-week-range">
-                    <span>Week</span>
+            <section className="meal-calendar-card">
+                <div className="meal-calendar-wrapper">
+                    <table className="meal-calendar-table">
+                        <thead>
+                        <tr>
+                            <th className="meal-type-column">
+                                Meal
+                            </th>
 
-                    <strong>
-                        {weekDates[0]?.monthName} {weekDates[0]?.dayNumber}
-                        {" - "}
-                        {weekDates[6]?.monthName} {weekDates[6]?.dayNumber}
-                    </strong>
-                </div>
+                            {weekDates.map((day) => (
+                                <th key={day.key}>
+                                    <div className="meal-calendar-day-heading">
+                                        <span>{day.dayName}</span>
 
-                <div className="meal-days-list">
-                    {weekDates.map((day) => {
-                        const dayMeals = getDayMeals(day.key);
-
-                        return (
-                            <section
-                                key={day.key}
-                                className="meal-day-card"
-                            >
-                                <div className="meal-day-date">
-                                    <div>
-                                        <span>{day.shortDayName}</span>
                                         <strong>{day.dayNumber}</strong>
+
+                                        <p>
+                                            {getDayCalories(day.key)} daily calories
+                                        </p>
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                openCreateMealModal(day.key)
+                                            }
+                                            aria-label={`Add meal to ${day.fullDayName}`}
+                                        >
+                                            +
+                                        </button>
                                     </div>
+                                </th>
+                            ))}
+                        </tr>
+                        </thead>
 
-                                    <p>{day.monthName}</p>
-                                </div>
+                        <tbody>
+                        {MEAL_TYPES.map((mealType) => (
+                            <tr key={mealType.value}>
+                                <td className="meal-type-cell">
+                                    <span>{mealType.label}</span>
+                                </td>
 
-                                <div className="meal-day-content">
-                                    <div className="meal-day-title-row">
-                                        <div>
-                                            <h3>{day.dayName}</h3>
+                                {weekDates.map((day) => {
+                                    const meals = getMealsForDayAndType(
+                                        day.key,
+                                        mealType.value
+                                    );
 
-                                            <p>
-                                                {dayMeals.length} planned meals
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="meal-slots-grid">
-                                        {MEAL_TYPES.map((mealType) => {
-                                            const slotMeals = getMealsForSlot(
-                                                day.key,
-                                                mealType.value
-                                            );
-
-                                            return (
-                                                <div
-                                                    key={`${day.key}-${mealType.value}`}
-                                                    className={`meal-slot meal-slot-${mealType.value}`}
+                                    return (
+                                        <td
+                                            key={`${day.key}-${mealType.value}`}
+                                            className="meal-calendar-cell"
+                                        >
+                                            {meals.length === 0 ? (
+                                                <button
+                                                    type="button"
+                                                    className="meal-cell-add-button"
+                                                    onClick={() =>
+                                                        openCreateMealModal(
+                                                            day.key,
+                                                            mealType.value
+                                                        )
+                                                    }
                                                 >
-                                                    <div className="meal-slot-header">
-                                                        <div className="meal-slot-title">
-                                                            <span>
-                                                                {mealType.icon}
-                                                            </span>
+                                                    Add
+                                                </button>
+                                            ) : (
+                                                <div className="meal-cell-items">
+                                                    {meals.map((meal) => {
+                                                        const recipe =
+                                                            getRecipeForMeal(meal);
 
-                                                            <strong>
-                                                                {mealType.label}
-                                                            </strong>
-                                                        </div>
+                                                        return (
+                                                            <div
+                                                                key={meal.mealId}
+                                                                className={`meal-chip meal-chip-${meal.mealType}`}
+                                                            >
+                                                                <div>
+                                                                    <strong>
+                                                                        {recipe?.title || `Recipe #${meal.itemId}`}
+                                                                    </strong>
 
-                                                        <button
-                                                            type="button"
-                                                            className="meal-slot-add-button"
-                                                            onClick={() =>
-                                                                openCreateMealModal(
-                                                                    day.key,
-                                                                    mealType.value
-                                                                )
-                                                            }
-                                                        >
-                                                            +
-                                                        </button>
-                                                    </div>
+                                                                    <p>
+                                                                        {recipe?.calories || meal.calories || 0} cal
+                                                                        {meal.notes ? ` · ${meal.notes}` : ""}
+                                                                    </p>
+                                                                </div>
 
-                                                    {slotMeals.length === 0 ? (
-                                                        <button
-                                                            type="button"
-                                                            className="meal-slot-empty"
-                                                            onClick={() =>
-                                                                openCreateMealModal(
-                                                                    day.key,
-                                                                    mealType.value
-                                                                )
-                                                            }
-                                                        >
-                                                            Add recipe
-                                                        </button>
-                                                    ) : (
-                                                        <div className="meal-items-list">
-                                                            {slotMeals.map((meal) => (
-                                                                <article
-                                                                    key={meal.mealId}
-                                                                    className="meal-item-card"
-                                                                >
-                                                                    <div className="meal-item-content">
-                                                                        <p className="meal-item-type">
-                                                                            Recipe
-                                                                        </p>
+                                                                <div className="meal-chip-actions">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() =>
+                                                                            openEditMealModal(meal)
+                                                                        }
+                                                                    >
+                                                                        Edit
+                                                                    </button>
 
-                                                                        <h4>
-                                                                            {getMealDisplayName(meal)}
-                                                                        </h4>
-
-                                                                        <span>
-                                                                            {getMealSubText(meal)}
-                                                                        </span>
-
-                                                                        {meal.notes && (
-                                                                            <p className="meal-item-notes">
-                                                                                {meal.notes}
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
-
-                                                                    <div className="meal-item-footer">
-                                                                        <span>
-                                                                            {meal.calories || 0} cal
-                                                                        </span>
-
-                                                                        <div>
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() =>
-                                                                                    openEditMealModal(meal)
-                                                                                }
-                                                                            >
-                                                                                Edit
-                                                                            </button>
-
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() =>
-                                                                                    openDeleteMealModal(meal)
-                                                                                }
-                                                                            >
-                                                                                Delete
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </article>
-                                                            ))}
-                                                        </div>
-                                                    )}
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() =>
+                                                                            openDeleteMealModal(meal)
+                                                                        }
+                                                                    >
+                                                                        ×
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            </section>
-                        );
-                    })}
+                                            )}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
@@ -737,7 +704,7 @@ function MealPlanner() {
                         <FormCard
                             label={editingMeal ? "Update meal" : "Add meal"}
                             title={editingMeal ? "Edit Recipe Meal" : "Add Recipe Meal"}
-                            description="Choose a day, meal type and recipe."
+                            description="Choose a date, meal type and recipe. Calories are taken from the selected recipe."
                             className="meal-modal-card"
                             actions={
                                 <>
@@ -796,17 +763,6 @@ function MealPlanner() {
                                                 ? "No recipes are available."
                                                 : ""
                                         }
-                                    />
-
-                                    <FormField
-                                        label="Calories"
-                                        type="text"
-                                        name="calories"
-                                        inputMode="numeric"
-                                        maxLength="5"
-                                        value={mealForm.calories}
-                                        onChange={handleFormChange}
-                                        placeholder="Optional"
                                     />
 
                                     <FormField
