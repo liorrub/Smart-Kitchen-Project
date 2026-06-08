@@ -42,9 +42,60 @@ function getInstructionSteps(instructions) {
 
     return String(instructions)
         .replace(/\.$/, "")
-        .split(/,\s*|\.\s+/)
+        .split(/\.\s+|,\s*/)
         .map((step) => step.trim())
         .filter(Boolean);
+}
+
+function getRecipeIngredients(recipe) {
+    if (!recipe) {
+        return [];
+    }
+
+    if (Array.isArray(recipe.ingredients)) {
+        return recipe.ingredients;
+    }
+
+    if (Array.isArray(recipe.recipeIngredients)) {
+        return recipe.recipeIngredients;
+    }
+
+    return [];
+}
+
+function getIngredientName(ingredient) {
+    return (
+        ingredient.name ||
+        ingredient.ingredientName ||
+        ingredient.title ||
+        `Ingredient #${ingredient.ingredientId || ingredient.id || ""}`
+    );
+}
+
+function getIngredientCategory(ingredient) {
+    return (
+        ingredient.category ||
+        ingredient.ingredientCategory ||
+        ingredient.type ||
+        ""
+    );
+}
+
+function getIngredientQuantity(ingredient) {
+    return (
+        ingredient.quantity ||
+        ingredient.amount ||
+        ingredient.qty ||
+        ""
+    );
+}
+
+function getIngredientUnit(ingredient) {
+    return (
+        ingredient.unit ||
+        ingredient.measurementUnit ||
+        ""
+    );
 }
 
 function getStoredUser() {
@@ -89,8 +140,9 @@ function renderRatingStars(rating) {
 }
 
 /*
-    Modal for displaying the full selected recipe.
-    Also loads and displays reviews for the selected recipe.
+    Recipe details modal.
+    Keeps the title style aligned with the rest of Smart Kitchen,
+    while using a cleaner recipe-page layout for ingredients and instructions.
 */
 function RecipeDetailsModal({ recipe, onClose }) {
     const [reviews, setReviews] = useState([]);
@@ -136,18 +188,17 @@ function RecipeDetailsModal({ recipe, onClose }) {
         );
     }, [reviews, currentUser?.userId]);
 
-    const averageRating = getAverageRating(otherUsersReviews);
-    const influencerReviewsCount = otherUsersReviews.filter(
-        (review) => review.isInfluencer
-    ).length;
-
     if (!recipe) {
         return null;
     }
 
     const categoryClass = getCategoryClass(recipe.category);
     const instructionSteps = getInstructionSteps(recipe.instructions);
-    const recipeIngredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+    const ingredients = getRecipeIngredients(recipe);
+    const averageRating = getAverageRating(otherUsersReviews);
+    const influencerReviewsCount = otherUsersReviews.filter(
+        (review) => review.isInfluencer
+    ).length;
 
     return (
         <div
@@ -207,81 +258,103 @@ function RecipeDetailsModal({ recipe, onClose }) {
                     </div>
                 </section>
 
-                <section className="recipe-modal-section">
-                    <div className="recipe-modal-section-title">
-                        <span>🥕</span>
-                        <h3>Ingredients</h3>
-                    </div>
+                <section className="recipe-main-grid">
+                    <article className="recipe-detail-card recipe-ingredients-card">
+                        <div className="recipe-card-title">
+                            <span>🥕</span>
+                            <h3>Ingredients</h3>
+                        </div>
 
-                    {recipeIngredients.length > 0 ? (
-                        <ul className="recipe-ingredients-list">
-                            {recipeIngredients.map((ingredient, index) => (
-                                <li
-                                    key={
-                                        ingredient.recipeIngredientId ||
-                                        `${ingredient.ingredientId}-${index}`
-                                    }
-                                >
-                    <span className="ingredient-number">
-                        {index + 1}
-                    </span>
+                        {ingredients.length > 0 ? (
+                            <ul className="recipe-simple-ingredients">
+                                {ingredients.map((ingredient, index) => {
+                                    const ingredientName =
+                                        getIngredientName(ingredient);
+                                    const ingredientCategory =
+                                        getIngredientCategory(ingredient);
+                                    const quantity =
+                                        getIngredientQuantity(ingredient);
+                                    const unit = getIngredientUnit(ingredient);
 
-                                    <div className="ingredient-content">
-                                        <p>
-                                            <strong>
-                                                {ingredient.name || "Unknown ingredient"}
-                                            </strong>
+                                    return (
+                                        <li key={`${ingredientName}-${index}`}>
+                                            <div>
+                                                <strong>{ingredientName}</strong>
+                                            </div>
 
-                                            {ingredient.category && (
-                                                <span className="ingredient-category">
-                                    {" "}
-                                                    · {formatText(ingredient.category)}
-                                </span>
-                                            )}
-                                        </p>
+                                            <p>
+                                                {quantity} {unit}
+                                            </p>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        ) : (
+                            <p className="recipe-empty-text">
+                                No ingredients were added for this recipe.
+                            </p>
+                        )}
+                    </article>
 
-                                        <p className="ingredient-amount">
-                                            {ingredient.quantity} {ingredient.unit}
-                                        </p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="recipe-modal-empty-text">
-                            No ingredients were added for this recipe.
-                        </p>
-                    )}
+                    <article className="recipe-detail-card recipe-instructions-card">
+                        <div className="recipe-card-title">
+                            <span>👩‍🍳</span>
+                            <h3>Instructions</h3>
+                        </div>
+
+                        {instructionSteps.length > 0 ? (
+                            <ol className="recipe-simple-instructions">
+                                {instructionSteps.map((step, index) => (
+                                    <li key={`${step}-${index}`}>
+                                        <span>{index + 1}.</span>
+                                        <p>{step}</p>
+                                    </li>
+                                ))}
+                            </ol>
+                        ) : (
+                            <p className="recipe-empty-text">
+                                No instructions were added for this recipe.
+                            </p>
+                        )}
+                    </article>
                 </section>
 
-                <section className="recipe-modal-section">
-                    <div className="recipe-modal-section-title">
-                        <span>👩‍🍳</span>
-                        <h3>Instructions</h3>
-                    </div>
+                {((recipe.tags || []).length > 0 ||
+                    (recipe.allergens || []).length > 0) && (
+                    <section className="recipe-extra-row">
+                        {(recipe.tags || []).length > 0 && (
+                            <div className="recipe-extra-group">
+                                <h4>Tags</h4>
 
-                    {instructionSteps.length > 0 ? (
-                        <ol className="recipe-instructions-list">
-                            {instructionSteps.map((step, index) => (
-                                <li key={`${step}-${index}`}>
-                                    <span className="instruction-number">
-                                        {index + 1}
-                                    </span>
+                                <div className="recipe-extra-pills">
+                                    {recipe.tags.map((tag) => (
+                                        <span key={tag}>
+                                            #{formatText(tag)}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
-                                    <p>{step}</p>
-                                </li>
-                            ))}
-                        </ol>
-                    ) : (
-                        <p className="recipe-modal-empty-text">
-                            No instructions were added for this recipe.
-                        </p>
-                    )}
-                </section>
+                        {(recipe.allergens || []).length > 0 && (
+                            <div className="recipe-extra-group">
+                                <h4>Allergens</h4>
 
-                <section className="recipe-modal-section">
+                                <div className="recipe-extra-pills allergen">
+                                    {recipe.allergens.map((allergen) => (
+                                        <span key={allergen}>
+                                            {formatText(allergen)}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </section>
+                )}
+
+                <section className="recipe-detail-card recipe-reviews-card">
                     <div className="recipe-reviews-header">
-                        <div className="recipe-modal-section-title recipe-reviews-title">
+                        <div className="recipe-card-title">
                             <span>⭐</span>
 
                             <div>
@@ -294,29 +367,29 @@ function RecipeDetailsModal({ recipe, onClose }) {
                         </div>
 
                         <div className="recipe-reviews-summary">
-                            <div className="recipe-reviews-score">
-                                <strong>
-                                    {otherUsersReviews.length > 0 ? averageRating : "-"}
-                                </strong>
+                            <strong>
+                                {otherUsersReviews.length > 0
+                                    ? averageRating
+                                    : "-"}
+                            </strong>
 
-                                <span>/ 5</span>
-                            </div>
+                            <span>/ 5</span>
 
-                            <div className="recipe-reviews-stars">
+                            <p>
                                 {otherUsersReviews.length > 0
                                     ? renderRatingStars(averageRating)
                                     : "☆☆☆☆☆"}
-                            </div>
+                            </p>
 
-                            <div className="recipe-reviews-meta">
-                                <span>{otherUsersReviews.length} reviews</span>
-                                <span>{influencerReviewsCount} influencer reviews</span>
-                            </div>
+                            <small>
+                                {otherUsersReviews.length} reviews ·{" "}
+                                {influencerReviewsCount} influencer
+                            </small>
                         </div>
                     </div>
 
                     {reviewsLoading && (
-                        <p className="recipe-modal-empty-text">
+                        <p className="recipe-empty-text">
                             Loading reviews...
                         </p>
                     )}
@@ -330,8 +403,8 @@ function RecipeDetailsModal({ recipe, onClose }) {
                     {!reviewsLoading &&
                         !reviewsError &&
                         otherUsersReviews.length === 0 && (
-                            <p className="recipe-modal-empty-text">
-                                Community feedback will appear here.
+                            <p className="recipe-empty-text">
+                                No reviews from other users yet.
                             </p>
                         )}
 
@@ -348,40 +421,6 @@ function RecipeDetailsModal({ recipe, onClose }) {
                             </div>
                         )}
                 </section>
-
-                {(recipe.tags || []).length > 0 && (
-                    <section className="recipe-modal-section">
-                        <div className="recipe-modal-section-title">
-                            <span>🏷️</span>
-                            <h3>Tags</h3>
-                        </div>
-
-                        <div className="recipe-modal-tags">
-                            {recipe.tags.map((tag) => (
-                                <span key={tag}>
-                                    #{formatText(tag)}
-                                </span>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {(recipe.allergens || []).length > 0 && (
-                    <section className="recipe-modal-section">
-                        <div className="recipe-modal-section-title">
-                            <span>⚠️</span>
-                            <h3>Allergens</h3>
-                        </div>
-
-                        <div className="recipe-modal-allergens">
-                            {recipe.allergens.map((allergen) => (
-                                <span key={allergen}>
-                                    {formatText(allergen)}
-                                </span>
-                            ))}
-                        </div>
-                    </section>
-                )}
             </div>
         </div>
     );

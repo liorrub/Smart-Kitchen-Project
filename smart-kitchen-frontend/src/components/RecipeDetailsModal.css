@@ -1,7 +1,6 @@
 /* ==========================================================================
-Recipe details modal
-Compact professional modal
-========================================================================== */
+   Recipe details modal - site aligned header
+   ========================================================================== */
 
 .recipe-modal-overlay {
     position: fixed;
@@ -22,9 +21,9 @@ Compact professional modal
     position: relative;
     z-index: 9999;
 
-    width: min(760px, calc(100vw - 48px));
-    max-height: 86vh;
-    padding: 26px;
+    width: min(1080px, calc(100vw - 48px));
+    max-height: 88vh;
+    padding: 28px;
 
     overflow-y: auto;
 
@@ -107,13 +106,13 @@ Compact professional modal
 }
 
 /* ==========================================================================
-   Header
+   Header - same style as the rest of the site
    ========================================================================== */
 
 .recipe-modal-header {
-    max-width: 560px;
+    max-width: 700px;
     margin: 0 auto 22px;
-    padding: 0 42px;
+    padding: 0 44px;
 
     text-align: center;
 }
@@ -140,7 +139,7 @@ Compact professional modal
 
     color: #1f3d2b;
 
-    font-size: clamp(28px, 3vw, 38px);
+    font-size: clamp(30px, 3.5vw, 42px);
     font-weight: 900;
     line-height: 1.08;
     letter-spacing: -0.8px;
@@ -162,13 +161,13 @@ Compact professional modal
 .recipe-modal-stats {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 9px;
+    gap: 10px;
 
-    margin-bottom: 22px;
+    margin-bottom: 24px;
 }
 
 .recipe-modal-stat {
-    padding: 13px 8px;
+    padding: 14px 8px;
 
     border-radius: 18px;
     background: rgba(255, 254, 250, 0.94);
@@ -202,34 +201,43 @@ Compact professional modal
 }
 
 /* ==========================================================================
-   Sections
+   Main recipe content
    ========================================================================== */
 
-.recipe-modal-section {
-    margin-top: 18px;
-    padding: 18px;
+.recipe-main-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.9fr) minmax(380px, 1.55fr);
+    gap: 24px;
+    align-items: stretch;
+
+    margin-top: 8px;
+}
+
+.recipe-detail-card {
+    padding: 28px 32px;
 
     border-radius: 22px;
-    background: rgba(255, 254, 250, 0.72);
-    border: 1px solid rgba(205, 232, 199, 0.8);
+    background: rgba(255, 254, 250, 0.82);
+    border: 1px solid rgba(205, 232, 199, 0.85);
+
+    box-shadow: 0 12px 30px rgba(63, 74, 52, 0.07);
 }
 
-.recipe-modal-section-title {
+.recipe-card-title {
+    margin-bottom: 22px;
+
     display: flex;
     align-items: center;
-    gap: 9px;
-
-    margin-bottom: 14px;
+    gap: 12px;
 }
 
-.recipe-modal-section-title span {
-    width: 34px;
-    height: 34px;
+.recipe-card-title > span {
+    width: 36px;
+    height: 36px;
 
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
 
     border-radius: 13px;
     background: #e9fbe5;
@@ -237,82 +245,110 @@ Compact professional modal
     font-size: 18px;
 }
 
-.recipe-modal-section-title h3 {
+.recipe-card-title h3 {
     margin: 0;
 
     color: #1f3d2b;
 
-    font-size: 23px;
+    font-size: 24px;
     font-weight: 900;
 }
 
+.recipe-card-title p {
+    margin: 6px 0 0;
+
+    color: #55705d;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
 /* ==========================================================================
-   Numbered instructions
+   Ingredients - clean recipe-page list
    ========================================================================== */
 
-.recipe-instructions-list {
+.recipe-simple-ingredients {
     margin: 0;
     padding: 0;
 
     display: flex;
     flex-direction: column;
-    gap: 11px;
+    gap: 17px;
 
     list-style: none;
 }
 
-.recipe-ingredient-item {
-    padding: 14px;
-
+.recipe-simple-ingredients li {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 12px;
-    align-items: flex-start;
-
-    border-radius: 17px;
-    background: rgba(255, 254, 250, 0.92);
-    border: 1px solid #d9ead4;
-
-    box-shadow: 0 8px 18px rgba(63, 74, 52, 0.04);
+    grid-template-columns: 1fr auto;
+    gap: 18px;
+    align-items: baseline;
 }
 
-.recipe-instructions-list li {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 12px;
-    align-items: flex-start;
+.recipe-simple-ingredients div {
+    min-width: 0;
 }
 
-.instruction-number {
-    width: 30px;
-    height: 30px;
+.recipe-simple-ingredients strong {
+    display: block;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    color: #1f3d2b;
 
-    border-radius: 11px;
-
-    background: #67d656;
-    color: white;
-
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 900;
-    box-shadow: 0 7px 14px rgba(42, 117, 69, 0.16);
+    line-height: 1.2;
 }
 
-.recipe-instructions-list p {
-    margin: 3px 0 0;
+.recipe-simple-ingredients p {
+    margin: 0;
 
     color: #55705d;
 
-    font-size: 15px;
+    font-size: 16px;
+    font-weight: 850;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   Instructions - clean numbered list
+   ========================================================================== */
+
+.recipe-simple-instructions {
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    list-style: none;
+}
+
+.recipe-simple-instructions li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 9px;
+}
+
+.recipe-simple-instructions span {
+    color: #2a7545;
+
+    font-size: 17px;
+    font-weight: 900;
+    line-height: 1.5;
+}
+
+.recipe-simple-instructions p {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 17px;
     font-weight: 750;
     line-height: 1.5;
 }
 
-.recipe-modal-empty-text {
+.recipe-empty-text {
     margin: 0;
 
     color: #55705d;
@@ -322,54 +358,88 @@ Compact professional modal
 }
 
 /* ==========================================================================
-   Reviews section
+   Tags and allergens
    ========================================================================== */
+
+.recipe-extra-row {
+    margin-top: 24px;
+    padding: 22px 24px;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+
+    border-radius: 22px;
+    background: rgba(255, 254, 250, 0.72);
+    border: 1px solid rgba(205, 232, 199, 0.8);
+}
+
+.recipe-extra-group h4 {
+    margin: 0 0 12px;
+
+    color: #1f3d2b;
+
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.recipe-extra-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.recipe-extra-pills span {
+    padding: 8px 12px;
+
+    border-radius: 999px;
+    background: #e9fbe5;
+    border: 1px solid #cde8c7;
+
+    color: #2a7545;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.recipe-extra-pills.allergen span {
+    background: #f8e9ee;
+    border-color: #f0cdd8;
+    color: #cc6089;
+}
+
+/* ==========================================================================
+   Reviews
+   ========================================================================== */
+
+.recipe-reviews-card {
+    margin-top: 24px;
+}
 
 .recipe-reviews-header {
     margin-bottom: 18px;
 
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.recipe-reviews-title {
-    margin-bottom: 0;
     align-items: flex-start;
-}
-
-.recipe-reviews-title p {
-    margin: 6px 0 0;
-
-    color: #55705d;
-
-    font-size: 13px;
-    font-weight: 800;
-    line-height: 1.35;
+    justify-content: space-between;
+    gap: 20px;
 }
 
 .recipe-reviews-summary {
+    min-width: 210px;
     padding: 14px 16px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: baseline;
+    gap: 3px 6px;
 
-    border-radius: 20px;
+    border-radius: 18px;
     background: linear-gradient(135deg, #fffefa, #fff7df);
     border: 1px solid #f0d89a;
-
-    box-shadow: 0 10px 24px rgba(154, 106, 0, 0.08);
 }
 
-.recipe-reviews-score {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-}
-
-.recipe-reviews-score strong {
+.recipe-reviews-summary strong {
     color: #9a6a00;
 
     font-size: 34px;
@@ -377,41 +447,37 @@ Compact professional modal
     line-height: 1;
 }
 
-.recipe-reviews-score span {
+.recipe-reviews-summary span {
     color: #55705d;
 
     font-size: 14px;
     font-weight: 900;
 }
 
-.recipe-reviews-stars {
+.recipe-reviews-summary p {
+    grid-column: span 2;
+    margin: 4px 0 0;
+
     color: #f2c94c;
 
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 900;
-    letter-spacing: 1.5px;
-    white-space: nowrap;
+    letter-spacing: 1px;
 }
 
-.recipe-reviews-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.recipe-reviews-summary small {
+    grid-column: span 2;
 
-    text-align: right;
-}
-
-.recipe-reviews-meta span {
     color: #55705d;
 
     font-size: 12px;
-    font-weight: 900;
+    font-weight: 800;
 }
 
 .recipe-reviews-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 14px;
 }
 
 .recipe-reviews-error {
@@ -424,46 +490,13 @@ Compact professional modal
 }
 
 /* ==========================================================================
-   Tags and allergens
-   ========================================================================== */
-
-.recipe-modal-tags,
-.recipe-modal-allergens {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.recipe-modal-tags span,
-.recipe-modal-allergens span {
-    padding: 8px 11px;
-
-    border-radius: 999px;
-
-    font-size: 12px;
-    font-weight: 900;
-}
-
-.recipe-modal-tags span {
-    background: #e9fbe5;
-    border: 1px solid #cde8c7;
-    color: #2a7545;
-}
-
-.recipe-modal-allergens span {
-    background: #f8e9ee;
-    border: 1px solid #f0cdd8;
-    color: #cc6089;
-}
-
-/* ==========================================================================
    Animation
    ========================================================================== */
 
 @keyframes recipeModalPopIn {
     from {
         opacity: 0;
-        transform: translateY(14px) scale(0.97);
+        transform: translateY(14px) scale(0.98);
     }
 
     to {
@@ -476,38 +509,38 @@ Compact professional modal
    Responsive
    ========================================================================== */
 
-@media (max-width: 850px) {
-    .recipe-modal-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .recipe-modal-stat:last-child {
-        grid-column: span 2;
-    }
-
+@media (max-width: 950px) {
+    .recipe-main-grid,
+    .recipe-extra-row,
     .recipe-reviews-grid {
         grid-template-columns: 1fr;
+    }
+
+    .recipe-reviews-header {
+        flex-direction: column;
+    }
+
+    .recipe-reviews-summary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 760px) {
+    .recipe-modal-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 650px) {
     .recipe-modal-overlay {
-        padding: 14px;
+        padding: 12px;
     }
 
     .recipe-modal {
         width: 100%;
-        max-height: 88vh;
+        max-height: 90vh;
         padding: 22px 18px;
-        border-radius: 26px;
-    }
-
-    .recipe-modal-close {
-        top: 14px;
-        right: 14px;
-
-        width: 38px;
-        height: 38px;
+        border-radius: 24px;
     }
 
     .recipe-modal-header {
@@ -515,92 +548,19 @@ Compact professional modal
     }
 
     .recipe-modal h2 {
-        font-size: 29px;
+        font-size: 30px;
     }
 
-    .recipe-modal-stats {
+    .recipe-detail-card {
+        padding: 24px 20px;
+    }
+
+    .recipe-simple-ingredients li {
         grid-template-columns: 1fr;
+        gap: 5px;
     }
 
-    .recipe-modal-stat:last-child {
-        grid-column: auto;
-    }
-
-    .recipe-modal-section {
-        padding: 17px;
-    }
-
-    .recipe-reviews-summary {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .recipe-reviews-meta {
-        text-align: left;
-    }
-
-    .recipe-ingredients-list {
-        margin: 0;
-        padding: 0;
-
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-
-        list-style: none;
-    }
-
-    .recipe-ingredients-list li {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 12px;
-        align-items: flex-start;
-    }
-
-    .ingredient-number {
-        width: 30px;
-        height: 30px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 11px;
-
-        background: #67d656;
-        color: white;
-
-        font-size: 14px;
-        font-weight: 900;
-    }
-
-    .ingredient-content p {
-        margin: 0;
-
-        color: #55705d;
-
-        font-size: 15px;
-        font-weight: 750;
-        line-height: 1.5;
-    }
-
-    .ingredient-content strong {
-        color: #1f3d2b;
-        font-weight: 900;
-    }
-
-    .ingredient-category {
-        color: #6f7f73;
-        font-size: 13px;
-        font-weight: 800;
-    }
-
-    .ingredient-amount {
-        margin-top: 4px !important;
-
-        color: #2a7545 !important;
-
-        font-size: 14px !important;
-        font-weight: 900 !important;
+    .recipe-simple-ingredients p {
+        white-space: normal;
     }
 }
