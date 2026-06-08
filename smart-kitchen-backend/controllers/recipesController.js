@@ -24,16 +24,105 @@ const {
     errorResponse
 } = require("../utils/responseHelper");
 
+const {
+    getIngredientsByRecipeId,
+    addRecipeIngredient,
+    deleteIngredientsByRecipeId
+} = require("../models/recipeIngredientModel");
+
+const {
+    getIngredientById
+} = require("../models/ingredientsModel");
+
+// Build a full recipe object for API responses.
+// The recipe itself is stored in recipes.json,
+// while its ingredients are stored in recipe_ingredients.json.
+// This helper joins the recipe with its related ingredient details.
+async function buildRecipeWithIngredients(recipe) {
+    const recipeIngredients = await getIngredientsByRecipeId(recipe.recipeId);
+
+    const ingredients = await Promise.all(
+        recipeIngredients.map(async (recipeIngredient) => {
+            const ingredient = await getIngredientById(recipeIngredient.ingredientId);
+
+            if (!ingredient) {
+                return {
+                    recipeIngredientId: recipeIngredient.recipeIngredientId,
+                    ingredientId: recipeIngredient.ingredientId,
+                    name: "Unknown ingredient",
+                    quantity: recipeIngredient.quantity,
+                    unit: recipeIngredient.unit
+                };
+            }
+
+            return {
+                recipeIngredientId: recipeIngredient.recipeIngredientId,
+                ingredientId: ingredient.ingredientId,
+                name: ingredient.name,
+                category: ingredient.category,
+                isAllergen: ingredient.isAllergen,
+                quantity: recipeIngredient.quantity,
+                unit: recipeIngredient.unit
+            };
+        })
+    );
+
+    return {
+        ...recipe,
+        ingredients
+    };
+}
+
+// Add ingredient relations for a recipe.
+// This does not save ingredients inside the recipe object.
+// Instead, it creates rows in the recipe_ingredients relation data.
+async function addIngredientsToRecipe(recipeId, ingredients) {
+    await Promise.all(
+        ingredients.map(async (ingredient) => {
+            const existingIngredient = await getIngredientById(
+                Number(ingredient.ingredientId)
+            );
+
+            if (!existingIngredient) {
+                const error = new Error(
+                    `Ingredient with id ${ingredient.ingredientId} was not found`
+                );
+
+                error.status = 404;
+                error.code = "INGREDIENT_NOT_FOUND";
+
+                throw error;
+            }
+
+            await addRecipeIngredient({
+                recipeId,
+                ingredientId: Number(ingredient.ingredientId),
+                quantity: Number(ingredient.quantity),
+                unit: ingredient.unit
+            });
+        })
+    );
+}
+
+// Replace the full ingredient list of a recipe.
+// Used when a chef/admin updates the ingredients of an existing recipe.
+// First deletes the old relations, then creates the new relations.
+async function replaceRecipeIngredients(recipeId, ingredients) {
+    await deleteIngredientsByRecipeId(recipeId);
+    await addIngredientsToRecipe(recipeId, ingredients);
+}
+
 // Get all recipes
 async function getRecipes(req, res, next) {
     try {
         const filters = req.query;
+        const recipes = Object.keys(filters).length ? await filterRecipes(filters) : await getAllRecipes();
 
-        const recipes = Object.keys(filters).length
-            ? await filterRecipes(filters)
-            : await getAllRecipes();
+        const recipesWithIngredients = await Promise.all(
+            recipes.map(recipe =>
+                buildRecipeWithIngredients(recipe)));
 
-        return successResponse(res, 200, recipes);
+        return successResponse(res, 200, recipesWithIngredients);
     } catch (error) {
         next(error);
     }
@@ -43,19 +132,15 @@ async function getRecipes(req, res, next) {
 async function getSingleRecipe(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
-
         const recipe = await getRecipeById(recipeId);
 
         if (!recipe) {
-            return errorResponse(
-                res,
-                404,
-                "RECIPE_NOT_FOUND",
-                "Recipe not found"
-            );
+            return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
         }
 
-        return successResponse(res, 200, recipe);
+        const recipeWithIngredients = await buildRecipeWithIngredients(recipe);
+        return successResponse(res, 200, recipeWithIngredients);
+
     } catch (error) {
         next(error);
     }
@@ -68,17 +153,19 @@ async function createSingleRecipe(req, res, next) {
         const creator = await getUserById(req.body.creatorId);
 
         if (!creator) {
-            return errorResponse(
-                res,
-                404,
-                "USER_NOT_FOUND",
-                "Creator user not found"
-            );
+            return errorResponse(res, 404, "USER_NOT_FOUND", "Creator user not found");
         }
 
-        const recipe = await createRecipe(req.body);
+        // Keep ingredients separate from recipeData.
+        // Recipe fields are saved in recipes.json,
+        // while ingredients are saved in recipe_ingredients.json.
+        const { ingredients, ...recipeData } = req.body;
 
-        return successResponse(res, 201, recipe);
+        const recipe = await createRecipe(recipeData);
+        await addIngredientsToRecipe(recipe.recipeId, ingredients);
+        const recipeWithIngredients = await buildRecipeWithIngredients(recipe);
+
+        return successResponse(res, 201, recipeWithIngredients);
     } catch (error) {
         next(error);
     }
@@ -89,10 +176,10 @@ async function updateSingleRecipe(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
 
-        const updatedRecipe = await updateRecipe(
-            recipeId,
-            req.body
-        );
+        // Keep ingredients separate from recipeData.
+        // If ingredients are provided, they will update the recipe_ingredients relation data.
+        const { ingredients, ...recipeData } = req.body;
+        const updatedRecipe = await updateRecipe(recipeId, recipeData);
 
         if (!updatedRecipe) {
             return errorResponse(
@@ -103,7 +190,12 @@ async function updateSingleRecipe(req, res, next) {
             );
         }
 
-        return successResponse(res, 200, updatedRecipe);
+        if (ingredients !== undefined) {
+            await replaceRecipeIngredients(recipeId, ingredient);
+        }
+
+        const recipeWithIngredients = await buildRecipeWithIngredients(updatedRecipe);
+        return successResponse(res, 200, recipeWithIngredients);
     } catch (error) {
         next(error);
     }
@@ -113,16 +205,10 @@ async function updateSingleRecipe(req, res, next) {
 async function deleteSingleRecipe(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
-
         const deleted = await deleteRecipe(recipeId);
 
         if (!deleted) {
-            return errorResponse(
-                res,
-                404,
-                "RECIPE_NOT_FOUND",
-                "Recipe not found"
-            );
+            return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
         }
 
         return successResponse(res, 200, {
@@ -137,20 +223,13 @@ async function deleteSingleRecipe(req, res, next) {
 async function getRecipeReviews(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
-
         const recipe = await getRecipeById(recipeId);
 
         if (!recipe) {
-            return errorResponse(
-                res,
-                404,
-                "RECIPE_NOT_FOUND",
-                "Recipe not found"
-            );
+            return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
         }
 
         const reviews = await getReviewsByRecipeId(recipeId);
-
         return successResponse(res, 200, reviews);
     } catch (error) {
         next(error);
@@ -212,25 +291,11 @@ async function updateRecipeReview(req, res, next) {
             review.userId !== userId &&
             userRole !== "admin"
         ) {
-            return errorResponse(
-                res,
-                403,
-                "FORBIDDEN",
-                "You can only edit your own review"
-            );
+            return errorResponse(res, 403, "FORBIDDEN", "You can only edit your own review");
         }
 
-        const updatedReview = await updateReview(
-            recipeId,
-            reviewId,
-            req.body
-        );
-
-        return successResponse(
-            res,
-            200,
-            updatedReview
-        );
+        const updatedReview = await updateReview(recipeId, reviewId, req.body);
+        return successResponse(res, 200, updatedReview);
 
     } catch (error) {
         next(error);
@@ -261,19 +326,10 @@ async function deleteRecipeReview(req, res, next) {
             review.userId !== userId &&
             userRole !== "admin"
         ) {
-            return errorResponse(
-                res,
-                403,
-                "FORBIDDEN",
-                "You can only delete your own review"
-            );
+            return errorResponse(res, 403, "FORBIDDEN", "You can only delete your own review");
         }
 
-        await deleteReview(
-            recipeId,
-            reviewId
-        );
-
+        await deleteReview(recipeId, reviewId);
         return successResponse(res, 200, {
             message: "Review deleted successfully"
         });

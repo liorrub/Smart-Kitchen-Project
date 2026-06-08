@@ -187,6 +187,9 @@ docs/Smart Kitchen API.postman_collection.json
 3. **Admin-only endpoints**:
    - GET `/api/users` - List all users
    - POST `/api/users` - Create new user
+   - POST `/api/ingredients` - Create ingredient
+   - PUT `/api/ingredients/:id` - Update ingredient
+   - DELETE `/api/ingredients/:id` - Delete ingredient
 
 4. **Authenticated user endpoints**:
    - POST `/api/ingredients` - Create ingredient
@@ -261,6 +264,9 @@ x-user-role: admin
 - Favorites and reviews are based on recipe IDs
 - Ingredients can be created by authenticated users when a required ingredient does not already exist in the system.
 - Ingredient updates and deletions remain restricted to administrators.
+- - Creating a recipe requires at least one ingredient.
+- Recipe ingredients are stored separately in the `recipe_ingredients` relation data.
+- Updating a recipe can also replace its ingredient list when an `ingredients` array is provided.
 ---
 
 ## API Endpoints Summary

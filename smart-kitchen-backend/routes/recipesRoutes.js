@@ -15,7 +15,9 @@ const {
 const {
     validateRecipeCategory,
     validateDifficulty,
-    validateCuisine
+    validateCuisine,
+    validateRecipeIngredientsRequired,
+    validateRecipeIngredientsOptional
 } = require("../validators/recipeValidator");
 
 // Get all recipes
@@ -41,11 +43,13 @@ router.post(
         "difficulty",
         "cuisine",
         "category",
-        "creatorId"
+        "creatorId",
+        "ingredients"
     ]),
     validateDifficulty,
     validateCuisine,
     validateRecipeCategory,
+    validateRecipeIngredientsRequired,
     recipesController.createSingleRecipe
 );
 
@@ -57,6 +61,7 @@ router.put(
     validateDifficulty,
     validateCuisine,
     validateRecipeCategory,
+    validateRecipeIngredientsOptional,
     recipesController.updateSingleRecipe
 );
 

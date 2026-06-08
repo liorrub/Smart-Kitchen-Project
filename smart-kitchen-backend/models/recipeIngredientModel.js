@@ -55,10 +55,23 @@ async function deleteRecipeIngredient(
     return true;
 }
 
+// Delete all ingredient relations for a specific recipe.
+// Used when updating a recipe's ingredient list.
+async function deleteIngredientsByRecipeId(recipeId) {
+    for (let i = recipeIngredients.length - 1; i >= 0; i--) {
+        if (recipeIngredients[i].recipeId === recipeId) {
+            recipeIngredients.splice(i, 1);
+        }
+    }
+
+    return true;
+}
+
 module.exports = {
     getAllRecipeIngredients,
     getIngredientsByRecipeId,
     getRecipesByIngredientId,
     addRecipeIngredient,
-    deleteRecipeIngredient
+    deleteRecipeIngredient,
+    deleteIngredientsByRecipeId
 };
