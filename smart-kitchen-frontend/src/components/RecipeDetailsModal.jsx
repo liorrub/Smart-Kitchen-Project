@@ -147,6 +147,7 @@ function RecipeDetailsModal({ recipe, onClose }) {
 
     const categoryClass = getCategoryClass(recipe.category);
     const instructionSteps = getInstructionSteps(recipe.instructions);
+    const recipeIngredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
 
     return (
         <div
@@ -204,6 +205,53 @@ function RecipeDetailsModal({ recipe, onClose }) {
                         <strong>{recipe.calories || 0}</strong>
                         <span>Calories</span>
                     </div>
+                </section>
+
+                <section className="recipe-modal-section">
+                    <div className="recipe-modal-section-title">
+                        <span>🥕</span>
+                        <h3>Ingredients</h3>
+                    </div>
+
+                    {recipeIngredients.length > 0 ? (
+                        <ul className="recipe-ingredients-list">
+                            {recipeIngredients.map((ingredient, index) => (
+                                <li
+                                    key={
+                                        ingredient.recipeIngredientId ||
+                                        `${ingredient.ingredientId}-${index}`
+                                    }
+                                >
+                    <span className="ingredient-number">
+                        {index + 1}
+                    </span>
+
+                                    <div className="ingredient-content">
+                                        <p>
+                                            <strong>
+                                                {ingredient.name || "Unknown ingredient"}
+                                            </strong>
+
+                                            {ingredient.category && (
+                                                <span className="ingredient-category">
+                                    {" "}
+                                                    · {formatText(ingredient.category)}
+                                </span>
+                                            )}
+                                        </p>
+
+                                        <p className="ingredient-amount">
+                                            {ingredient.quantity} {ingredient.unit}
+                                        </p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="recipe-modal-empty-text">
+                            No ingredients were added for this recipe.
+                        </p>
+                    )}
                 </section>
 
                 <section className="recipe-modal-section">

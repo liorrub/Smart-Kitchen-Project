@@ -261,6 +261,21 @@ Compact professional modal
     list-style: none;
 }
 
+.recipe-ingredient-item {
+    padding: 14px;
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: flex-start;
+
+    border-radius: 17px;
+    background: rgba(255, 254, 250, 0.92);
+    border: 1px solid #d9ead4;
+
+    box-shadow: 0 8px 18px rgba(63, 74, 52, 0.04);
+}
+
 .recipe-instructions-list li {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -522,5 +537,70 @@ Compact professional modal
 
     .recipe-reviews-meta {
         text-align: left;
+    }
+
+    .recipe-ingredients-list {
+        margin: 0;
+        padding: 0;
+
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        list-style: none;
+    }
+
+    .recipe-ingredients-list li {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .ingredient-number {
+        width: 30px;
+        height: 30px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        background: #67d656;
+        color: white;
+
+        font-size: 14px;
+        font-weight: 900;
+    }
+
+    .ingredient-content p {
+        margin: 0;
+
+        color: #55705d;
+
+        font-size: 15px;
+        font-weight: 750;
+        line-height: 1.5;
+    }
+
+    .ingredient-content strong {
+        color: #1f3d2b;
+        font-weight: 900;
+    }
+
+    .ingredient-category {
+        color: #6f7f73;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .ingredient-amount {
+        margin-top: 4px !important;
+
+        color: #2a7545 !important;
+
+        font-size: 14px !important;
+        font-weight: 900 !important;
     }
 }
