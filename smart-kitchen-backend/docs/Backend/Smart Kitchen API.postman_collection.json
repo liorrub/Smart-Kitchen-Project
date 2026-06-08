@@ -1223,7 +1223,18 @@
           "name": "Create Ingredient",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\r\n  \"name\": \"Avocado\",\r\n  \"category\": \"produce\",\r\n  \"isAllergen\": false\r\n}",
