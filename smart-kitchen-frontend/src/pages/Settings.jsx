@@ -16,6 +16,7 @@ import {
     getSettings,
     updateSettings
 } from "../services/settingsService";
+import { getMyChefRequest, submitChefRequest } from "../services/chefRequestService";
 
 // Constants
 const COOKING_LEVELS = ["beginner", "intermediate", "advanced"];
@@ -62,6 +63,11 @@ function Settings() {
         confirmPassword: ""
     });
 
+    // Chef request state
+    const [chefRequest, setChefRequest] = useState(null);
+    const [requestReason, setRequestReason] = useState("");
+    const [submittingRequest, setSubmittingRequest] = useState(false);
+
     // UI states
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -107,6 +113,15 @@ function Settings() {
                         cuisine: data.preferences?.cuisine || []
                     }
                 });
+
+                if (["user", "influencer"].includes(data.userRole)) {
+                    try {
+                        const myRequest = await getMyChefRequest();
+                        setChefRequest(myRequest);
+                    } catch (requestErr) {
+                        console.error(requestErr);
+                    }
+                }
             } catch (err) {
                 console.error(err);
 
@@ -118,6 +133,34 @@ function Settings() {
 
         loadSettings();
     }, []);
+
+    // Submits a chef account request
+    async function handleSubmitChefRequest(event) {
+        event.preventDefault();
+        setSuccess("");
+        setError("");
+
+        if (!requestReason.trim()) {
+            setError("Please provide a reason for your request.");
+            return;
+        }
+
+        try {
+            setSubmittingRequest(true);
+            const newRequest = await submitChefRequest(requestReason.trim());
+            setChefRequest(newRequest);
+            setRequestReason("");
+            setSuccess("Your chef request has been submitted successfully.");
+        } catch (err) {
+            console.error(err);
+            setError(
+                err.response?.data?.error?.message ||
+                "Failed to submit chef request."
+            );
+        } finally {
+            setSubmittingRequest(false);
+        }
+    }
 
     // Handles profile form changes
     function handleChange(event) {
@@ -454,6 +497,76 @@ function Settings() {
                     </div>
                 </form>
             </section>
+
+            {/* Chef Account Request Card — visible to regular users and influencers only */}
+            {(user?.userRole === "user" || user?.userRole === "influencer") && (
+                <section className="settings-card">
+                    <div className="settings-card-header">
+                        <h2>Chef Account Request</h2>
+                        <p>Request to become a chef and start publishing your own recipes.</p>
+                    </div>
+
+                    {!chefRequest && (
+                        <form className="settings-form" onSubmit={handleSubmitChefRequest} noValidate>
+                            <div className="settings-grid">
+                                <FormField
+                                    label="Why do you want to become a chef?"
+                                    type="text"
+                                    name="requestReason"
+                                    value={requestReason}
+                                    onChange={(e) => setRequestReason(e.target.value)}
+                                    placeholder="Tell us a little about yourself and your cooking..."
+                                />
+                            </div>
+
+                            <div className="settings-actions">
+                                <AppButton type="submit" disabled={submittingRequest}>
+                                    {submittingRequest ? "Submitting..." : "Submit Request"}
+                                </AppButton>
+                            </div>
+                        </form>
+                    )}
+
+                    {chefRequest?.status === "pending" && (
+                        <p className="settings-info-text">
+                            Your request is pending review. We will notify you once an admin has reviewed it.
+                        </p>
+                    )}
+
+                    {chefRequest?.status === "approved" && (
+                        <p className="settings-info-text">
+                            Your chef request was approved! Please log out and log back in to access chef features.
+                        </p>
+                    )}
+
+                    {chefRequest?.status === "rejected" && (
+                        <>
+                            <p className="settings-info-text">
+                                Your previous request was not approved. You may submit a new request below.
+                            </p>
+
+                            <form className="settings-form" onSubmit={handleSubmitChefRequest} noValidate>
+                                <div className="settings-grid">
+                                    <FormField
+                                        label="Why do you want to become a chef?"
+                                        type="text"
+                                        name="requestReason"
+                                        value={requestReason}
+                                        onChange={(e) => setRequestReason(e.target.value)}
+                                        placeholder="Tell us a little about yourself and your cooking..."
+                                    />
+                                </div>
+
+                                <div className="settings-actions">
+                                    <AppButton type="submit" disabled={submittingRequest}>
+                                        {submittingRequest ? "Submitting..." : "Submit New Request"}
+                                    </AppButton>
+                                </div>
+                            </form>
+                        </>
+                    )}
+                </section>
+            )}
 
             {/* Security Settings Card */}
             <section className="settings-card">
