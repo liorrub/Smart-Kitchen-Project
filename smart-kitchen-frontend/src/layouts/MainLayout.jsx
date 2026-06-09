@@ -2,13 +2,16 @@ import "./MainLayout.css";
 
 import { Outlet } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import KitchenSidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 
 function MainLayout() {
     return (
         <div className="app-shell">
             <Navbar />
+
+            <KitchenSidebar />
 
             <main className="layout-main">
                 <Outlet />

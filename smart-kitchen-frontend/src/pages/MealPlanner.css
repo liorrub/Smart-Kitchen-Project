@@ -12,83 +12,178 @@
    ========================================================================== */
 
 .meal-week-toolbar {
-    margin-top: 24px;
-    padding: 26px 30px;
+    margin-top: 22px;
+    padding: 20px 22px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 22px;
+    align-items: center;
 
-    border-radius: 28px;
-    background: rgba(246, 251, 245, 0.95);
-    border: 1px solid rgba(139, 213, 174, 0.75);
+    border-radius: 26px;
+    border: 1px solid rgba(89, 144, 99, 0.18);
 
-    box-shadow: 0 18px 45px rgba(63, 74, 52, 0.1);
+    background:
+            linear-gradient(135deg, rgba(255, 253, 247, 0.96), rgba(247, 250, 243, 0.94));
+
+    box-shadow:
+            0 14px 34px rgba(48, 64, 42, 0.08);
 }
 
-.meal-week-toolbar p {
-    margin: 0 0 8px;
-
-    color: #46ae6b;
-
-    font-size: 14px;
-    font-weight: 900;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
+.meal-week-info {
+    min-width: 0;
 }
 
-.meal-week-toolbar h2 {
-    margin: 0;
-
-    color: #1f3d2b;
-
-    font-size: 30px;
-    font-weight: 900;
-}
-
-.meal-week-controls {
+.meal-week-kicker {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
+}
+
+.meal-week-kicker span {
+    color: #2f6746;
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.meal-week-kicker strong {
+    padding: 5px 10px;
+
+    border-radius: 999px;
+    border: 1px solid rgba(47, 103, 70, 0.14);
+    background: rgba(233, 251, 229, 0.9);
+
+    color: #2f6746;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.meal-week-toolbar h2 {
+    margin: 7px 0 6px;
+
+    color: #1f3d2b;
+
+    font-size: clamp(24px, 2.5vw, 34px);
+    line-height: 1.15;
+    font-weight: 850;
+    letter-spacing: -0.8px;
+}
+
+.meal-week-subtitle {
+    margin: 0;
+
+    color: #617160;
+
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 600;
+}
+
+.meal-week-controls {
+    padding: 6px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 999px;
+    border: 1px solid rgba(39, 86, 57, 0.1);
+    background: rgba(255, 255, 255, 0.7);
+
+    box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.9),
+            0 8px 20px rgba(48, 64, 42, 0.05);
 }
 
 .meal-week-controls button {
-    height: 48px;
-    min-width: 48px;
+    height: 40px;
     padding: 0 16px;
 
-    border: 1px solid #d9ead4;
-    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
 
-    background: #fffefa;
-    color: #1f3d2b;
+    border: none;
+    border-radius: 999px;
 
-    font-size: 25px;
-    font-weight: 900;
+    background: transparent;
+    color: #24452f;
+
+    font-size: 14px;
+    font-weight: 800;
     cursor: pointer;
-
-    box-shadow: 0 8px 18px rgba(63, 74, 52, 0.06);
 
     transition:
             transform 0.18s ease,
-            border-color 0.18s ease,
-            box-shadow 0.18s ease,
-            background 0.18s ease;
+            background 0.18s ease,
+            color 0.18s ease,
+            box-shadow 0.18s ease;
 }
 
 .meal-week-controls button:hover {
-    transform: translateY(-2px);
-    border-color: #67d656;
-    background: #e9fbe5;
-    box-shadow: 0 12px 24px rgba(63, 74, 52, 0.1);
+    transform: translateY(-1px);
+    background: #f3f8ef;
 }
 
-.meal-week-controls .meal-today-button {
-    min-width: 104px;
+.meal-week-arrow span {
+    font-size: 22px;
+    line-height: 1;
+}
 
-    font-size: 16px;
-    letter-spacing: 0.3px;
+.meal-this-week-button {
+    min-width: 112px;
+
+    background: #46ae6b !important;
+    color: #fffefa !important;
+
+    box-shadow: 0 8px 18px rgba(36, 79, 53, 0.18);
+}
+
+.meal-this-week-button:hover {
+    background: #2f6746 !important;
+}
+
+.meal-this-week-button.is-current-week {
+    background: #e9fbe5 !important;
+    color: #2f6746 !important;
+
+    box-shadow: none;
+}
+
+@media (max-width: 900px) {
+    .meal-week-toolbar {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .meal-week-controls {
+        width: fit-content;
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 560px) {
+    .meal-week-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .meal-week-controls button {
+        flex: 1;
+        padding: 0 12px;
+    }
+
+    .meal-this-week-button {
+        min-width: unset;
+    }
 }
 
 /* ==========================================================================

@@ -1,0 +1,643 @@
+/* ==========================================================================
+   Floating kitchen panel button
+   ========================================================================== */
+
+.kitchen-panel-button {
+    position: fixed;
+    top: 116px;
+    left: 24px;
+    z-index: 9000;
+
+    width: 56px;
+    height: 56px;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    border: 1px solid rgba(139, 213, 174, 0.82);
+    border-radius: 18px;
+
+    background: rgba(255, 254, 250, 0.92);
+
+    box-shadow: 0 14px 32px rgba(63, 74, 52, 0.16);
+    backdrop-filter: blur(12px);
+
+    cursor: pointer;
+
+    transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease,
+            background 0.18s ease;
+}
+
+.kitchen-panel-button:hover {
+    transform: translateY(-2px);
+    background: #e9fbe5;
+    box-shadow: 0 18px 40px rgba(63, 74, 52, 0.2);
+}
+
+.kitchen-panel-button span {
+    width: 22px;
+    height: 3px;
+
+    border-radius: 999px;
+    background: #2a7545;
+}
+
+/* ==========================================================================
+   Sidebar shell
+   ========================================================================== */
+
+.kitchen-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9090;
+
+    border: none;
+    background: rgba(31, 61, 43, 0.22);
+    backdrop-filter: blur(3px);
+
+    cursor: pointer;
+}
+
+.kitchen-sidebar {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    bottom: 24px;
+    z-index: 9100;
+
+    width: min(390px, calc(100vw - 48px));
+    padding: 18px;
+
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 30px;
+    background:
+            radial-gradient(circle at top left, rgba(103, 214, 86, 0.12), transparent 34%),
+            rgba(255, 254, 250, 0.94);
+    border: 1px solid rgba(139, 213, 174, 0.72);
+
+    box-shadow: 0 26px 70px rgba(31, 61, 43, 0.26);
+    backdrop-filter: blur(16px);
+
+    transform: translateX(calc(-100% - 40px));
+    opacity: 0;
+    pointer-events: none;
+
+    transition:
+            transform 0.24s ease,
+            opacity 0.24s ease;
+}
+
+.kitchen-sidebar.open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.sidebar-scroll {
+    margin-top: 16px;
+    padding-right: 4px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    overflow-y: auto;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: #e9fbe5;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #9edb91;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.sidebar-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-mark {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+    background: #e9fbe5;
+    border: 1px solid #cde8c7;
+
+    color: #2a7545;
+
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+}
+
+.sidebar-header-text {
+    min-width: 0;
+}
+
+.sidebar-header-text p {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 19px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.sidebar-header-text span {
+    display: block;
+    margin-top: 4px;
+
+    color: #55705d;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.sidebar-close {
+    width: 40px;
+    height: 40px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #e9fbe5;
+    color: #2a7545;
+
+    font-size: 28px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+            transform 0.18s ease,
+            background 0.18s ease,
+            color 0.18s ease;
+}
+
+.sidebar-close:hover {
+    transform: rotate(8deg) scale(1.04);
+    background: #67d656;
+    color: white;
+}
+
+/* ==========================================================================
+   Sections
+   ========================================================================== */
+
+.sidebar-section {
+    padding: 15px;
+
+    border-radius: 24px;
+    background: rgba(246, 251, 245, 0.86);
+    border: 1px solid rgba(217, 234, 212, 0.95);
+}
+
+.sidebar-section-title {
+    margin-bottom: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.sidebar-section-title span {
+    color: #1f3d2b;
+
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+.sidebar-section-title small {
+    padding: 4px 8px;
+
+    border-radius: 999px;
+    background: #fff7df;
+    border: 1px solid #f0d89a;
+
+    color: #9a6a00;
+
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Today snapshot
+   ========================================================================== */
+
+.today-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.today-card {
+    min-height: 78px;
+    padding: 13px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+
+    border-radius: 18px;
+    background: #fffefa;
+    border: 1px solid #d9ead4;
+}
+
+.today-card strong {
+    color: #2a7545;
+
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.today-card span {
+    color: #55705d;
+
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Quick actions
+   ========================================================================== */
+
+.quick-actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.quick-action {
+    width: 100%;
+    padding: 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border: 1px solid #d9ead4;
+    border-radius: 16px;
+
+    background: #fffefa;
+    color: #1f3d2b;
+
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    transition:
+            transform 0.18s ease,
+            background 0.18s ease,
+            border-color 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+.quick-action:hover {
+    transform: translateY(-1px);
+    background: #e9fbe5;
+    border-color: #67d656;
+    box-shadow: 0 10px 22px rgba(42, 117, 69, 0.09);
+}
+
+.quick-action-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    border-radius: 12px;
+    background: #e9fbe5;
+
+    color: #2a7545;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.quick-action-text {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.quick-action-text strong {
+    color: #1f3d2b;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.quick-action-text small {
+    color: #55705d;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* ==========================================================================
+   Smart alerts
+   ========================================================================== */
+
+.alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.smart-alert {
+    padding: 11px 12px;
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 9px;
+    align-items: start;
+
+    border-radius: 16px;
+    background: #fffefa;
+    border: 1px solid #d9ead4;
+}
+
+.smart-alert span {
+    width: 8px;
+    height: 8px;
+    margin-top: 5px;
+
+    border-radius: 50%;
+    background: #67d656;
+}
+
+.smart-alert p {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1.35;
+}
+
+.smart-alert.warning span {
+    background: #f2994a;
+}
+
+.smart-alert.shopping span {
+    background: #cc6089;
+}
+
+.smart-alert.info span {
+    background: #4a90e2;
+}
+
+.smart-alert.success span {
+    background: #67d656;
+}
+
+/* ==========================================================================
+   Chat history
+   ========================================================================== */
+
+.sidebar-chat-history {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.sidebar-chat-row {
+    width: 100%;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+
+    border-radius: 16px;
+    border: 1px solid #d9ead4;
+    border-left: 6px solid #67d656;
+
+    background: #fffefa;
+    font-family: inherit;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+            transform 0.18s ease,
+            background 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+.sidebar-chat-row:hover {
+    transform: translateY(-1px);
+    background: #f6fbf5;
+    box-shadow: 0 10px 22px rgba(63, 74, 52, 0.08);
+}
+
+.sidebar-chat-row strong {
+    max-width: 100%;
+    overflow: hidden;
+
+    color: #1f3d2b;
+
+    font-size: 14px;
+    font-weight: 900;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.sidebar-chat-row small {
+    max-width: 100%;
+    overflow: hidden;
+
+    color: #55705d;
+
+    font-size: 12px;
+    font-weight: 750;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.chat-history-type {
+    padding: 5px 8px;
+
+    border-radius: 999px;
+    background: #e9fbe5;
+    border: 1px solid #cde8c7;
+
+    color: #2a7545;
+
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.sidebar-chat-row.suggestion {
+    border-left-color: #f2994a;
+}
+
+.sidebar-chat-row.suggestion .chat-history-type {
+    background: #fff0e2;
+    border-color: #f4c59d;
+    color: #b76518;
+}
+
+.sidebar-chat-row.image {
+    border-left-color: #cc6089;
+}
+
+.sidebar-chat-row.image .chat-history-type {
+    background: #f8e9ee;
+    border-color: #f0cdd8;
+    color: #cc6089;
+}
+
+.sidebar-chat-row.general {
+    border-left-color: #4a90e2;
+}
+
+.sidebar-chat-row.general .chat-history-type {
+    background: #eef7ff;
+    border-color: #cbe1f4;
+    color: #24577a;
+}
+
+/* ==========================================================================
+   AI card
+   ========================================================================== */
+
+.sidebar-ai-card {
+    padding: 17px;
+
+    border-radius: 24px;
+    background:
+            radial-gradient(circle at top right, rgba(103, 214, 86, 0.18), transparent 42%),
+            #fffefa;
+    border: 1px solid #cde8c7;
+
+    box-shadow: 0 12px 28px rgba(63, 74, 52, 0.07);
+}
+
+.sidebar-ai-card p {
+    margin: 0 0 8px;
+
+    color: #46ae6b;
+
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.sidebar-ai-card h3 {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 19px;
+    font-weight: 900;
+    line-height: 1.15;
+}
+
+.sidebar-ai-card span {
+    display: block;
+    margin-top: 8px;
+
+    color: #55705d;
+
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
+.sidebar-ai-card button {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 14px;
+
+    border: none;
+    border-radius: 15px;
+
+    background: #67d656;
+    color: white;
+
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+            transform 0.18s ease,
+            background 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+.sidebar-ai-card button:hover {
+    transform: translateY(-1px);
+    background: #46ae6b;
+    box-shadow: 0 12px 22px rgba(42, 117, 69, 0.18);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 650px) {
+    .kitchen-panel-button {
+        top: 96px;
+        left: 16px;
+    }
+
+    .kitchen-sidebar {
+        top: 14px;
+        left: 14px;
+        bottom: 14px;
+
+        width: calc(100vw - 28px);
+        padding: 16px;
+        border-radius: 24px;
+    }
+
+    .today-grid {
+        grid-template-columns: 1fr;
+    }
+}

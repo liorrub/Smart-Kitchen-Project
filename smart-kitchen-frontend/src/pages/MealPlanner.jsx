@@ -64,9 +64,8 @@ function formatDateKey(date) {
 function getStartOfWeek(date) {
     const currentDate = new Date(date);
     const day = currentDate.getDay();
-    const difference = day === 0 ? -6 : 1 - day;
 
-    currentDate.setDate(currentDate.getDate() + difference);
+    currentDate.setDate(currentDate.getDate() - day);
     currentDate.setHours(0, 0, 0, 0);
 
     return currentDate;
@@ -93,6 +92,43 @@ function getWeekDates(startDate) {
             })
         };
     });
+}
+
+function formatWeekRange(weekDays) {
+    const start = weekDays[0];
+    const end = weekDays[weekDays.length - 1];
+
+    if (!start || !end) {
+        return "";
+    }
+
+    const startYear = start.date.getFullYear();
+    const endYear = end.date.getFullYear();
+
+    if (startYear === endYear && start.monthName === end.monthName) {
+        return `${start.monthName} ${start.dayNumber}–${end.dayNumber}, ${startYear}`;
+    }
+
+    if (startYear === endYear) {
+        return `${start.monthName} ${start.dayNumber} – ${end.monthName} ${end.dayNumber}, ${startYear}`;
+    }
+
+    return `${start.monthName} ${start.dayNumber}, ${startYear} – ${end.monthName} ${end.dayNumber}, ${endYear}`;
+}
+
+function formatCompactDate(day) {
+    if (!day) {
+        return "";
+    }
+
+    return `${day.dayName}, ${day.monthName} ${day.dayNumber}`;
+}
+
+function isSameWeek(firstDate, secondDate) {
+    return (
+        formatDateKey(getStartOfWeek(firstDate)) ===
+        formatDateKey(getStartOfWeek(secondDate))
+    );
 }
 
 function formatMealType(mealType) {
@@ -147,6 +183,22 @@ function MealPlanner() {
         return getWeekDates(weekStartDate);
     }, [weekStartDate]);
 
+    const weekRangeLabel = useMemo(() => {
+        return formatWeekRange(weekDates);
+    }, [weekDates]);
+
+    const weekStartLabel = useMemo(() => {
+        return formatCompactDate(weekDates[0]);
+    }, [weekDates]);
+
+    const weekEndLabel = useMemo(() => {
+        return formatCompactDate(weekDates[6]);
+    }, [weekDates]);
+
+    const isViewingCurrentWeek = useMemo(() => {
+        return isSameWeek(weekStartDate, new Date());
+    }, [weekStartDate]);
+
     const weekDateKeys = useMemo(() => {
         return new Set(weekDates.map((day) => day.key));
     }, [weekDates]);
@@ -181,14 +233,6 @@ function MealPlanner() {
                 );
             });
     }, [mealPlan, weekDateKeys]);
-
-    const weeklyCalories = useMemo(() => {
-        return weeklyMeals.reduce((sum, meal) => {
-            const recipe = recipeMap.get(Number(meal.itemId));
-
-            return sum + Number(recipe?.calories || meal.calories || 0);
-        }, 0);
-    }, [weeklyMeals, recipeMap]);
 
     const plannedDaysCount = useMemo(() => {
         return new Set(weeklyMeals.map((meal) => meal.date)).size;
@@ -509,7 +553,7 @@ function MealPlanner() {
             <PageHero
                 label="Meal Planner"
                 title="Plan your weekly meals"
-                description="Build a simple weekly meal plan from your saved recipes and track calories automatically."
+                description="Build a simple weekly meal plan from your saved recipes."
                 stats={[
                     {
                         value: weeklyMeals.length,
@@ -518,45 +562,54 @@ function MealPlanner() {
                     {
                         value: plannedDaysCount,
                         label: "Planned days"
-                    },
-                    {
-                        value: weeklyCalories,
-                        label: "Weekly calories"
                     }
                 ]}
             />
 
             <section className="meal-week-toolbar">
-                <div>
-                    <p>Weekly calendar</p>
-                    <h2>
-                        Week of {weekDates[0]?.monthName} {weekDates[0]?.dayNumber}, {weekDates[0]?.date.getFullYear()}
-                    </h2>
+                <div className="meal-week-info">
+                    <div className="meal-week-kicker">
+                        <span>Weekly Calendar</span>
+
+                        {isViewingCurrentWeek && (
+                            <strong>This week</strong>
+                        )}
+                    </div>
+
+                    <h2>{weekRangeLabel}</h2>
+
                 </div>
 
-                <div className="meal-week-controls">
+                <div
+                    className="meal-week-controls"
+                    aria-label="Week navigation"
+                >
                     <button
                         type="button"
+                        className="meal-week-arrow"
                         onClick={goToPreviousWeek}
                         aria-label="Previous week"
                     >
-                        ‹
+                        <span>‹</span>
+                        Prev
                     </button>
 
                     <button
                         type="button"
-                        className="meal-today-button"
+                        className={`meal-this-week-button ${isViewingCurrentWeek ? "is-current-week" : ""}`}
                         onClick={goToCurrentWeek}
                     >
-                        Today
+                        This week
                     </button>
 
                     <button
                         type="button"
+                        className="meal-week-arrow"
                         onClick={goToNextWeek}
                         aria-label="Next week"
                     >
-                        ›
+                        Next
+                        <span>›</span>
                     </button>
                 </div>
             </section>
