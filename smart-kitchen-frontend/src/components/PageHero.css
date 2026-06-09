@@ -4,47 +4,47 @@
 
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 28px;
     align-items: center;
+    gap: 18px;
 
-    padding: 26px 32px;
-    margin-bottom: 22px;
+    width: min(100%, 1180px);
+    margin: 0 auto 22px;
+    padding: 18px 22px;
 
-    border-radius: 26px;
-    border: 1px solid rgba(39, 86, 57, 0.1);
+    border-radius: 22px;
+    border: 1px solid rgba(96, 64, 38, 0.1);
 
-    background:
-            linear-gradient(135deg, rgba(255, 253, 247, 0.96), rgba(247, 250, 243, 0.92));
+    background: rgba(255, 252, 243, 0.76);
+    box-shadow: 0 12px 28px rgba(78, 52, 35, 0.075);
 
-    box-shadow:
-            0 14px 35px rgba(48, 64, 42, 0.08);
+    backdrop-filter: blur(12px);
 }
 
 .page-hero::before {
     content: "";
     position: absolute;
-    top: -45px;
-    right: 22%;
+    top: -85px;
+    left: -70px;
 
-    width: 130px;
-    height: 130px;
+    width: 170px;
+    height: 170px;
 
     border-radius: 50%;
-    background: rgba(226, 196, 130, 0.14);
-    filter: blur(18px);
+    background: rgba(255, 198, 109, 0.16);
+    filter: blur(20px);
 }
 
 .page-hero::after {
     content: "";
     position: absolute;
-    bottom: -60px;
-    left: 10%;
+    right: -80px;
+    bottom: -95px;
 
-    width: 150px;
-    height: 150px;
+    width: 190px;
+    height: 190px;
 
     border-radius: 50%;
-    background: rgba(89, 144, 99, 0.1);
+    background: rgba(124, 157, 112, 0.13);
     filter: blur(22px);
 }
 
@@ -60,74 +60,65 @@
 }
 
 .page-hero-label {
-    width: fit-content;
-    margin: 0 0 12px;
-    padding: 6px 12px;
+    margin: 0 0 7px;
 
-    border-radius: 999px;
-    border: 1px solid rgba(39, 86, 57, 0.14);
-    background: rgba(255, 255, 255, 0.72);
+    color: #8b5e34;
 
-    color: #2f6746;
-
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.2px;
+    font-size: 0.64rem;
+    font-weight: 850;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
 }
 
 .page-hero h1 {
-    max-width: 560px;
+    max-width: 680px;
     margin: 0;
 
-    color: #203d2c;
+    color: #2d2118;
 
-    font-size: clamp(30px, 3vw, 42px);
-    line-height: 1.12;
-    font-weight: 800;
-    letter-spacing: -1px;
+    font-size: clamp(1.55rem, 2.1vw, 2.15rem);
+    line-height: 1.08;
+    font-weight: 850;
+    letter-spacing: -0.7px;
 }
 
 .page-hero-description {
-    max-width: 560px;
-    margin: 12px 0 0;
+    max-width: 650px;
+    margin: 8px 0 0;
 
-    color: #60715f;
+    color: #6e5c4c;
 
-    font-size: 15.5px;
-    line-height: 1.55;
+    font-size: 0.9rem;
+    line-height: 1.5;
     font-weight: 500;
 }
 
 .page-hero-side {
-    min-width: 0;
-
     display: flex;
     justify-content: flex-end;
+    min-width: 0;
 }
 
+/* Compact stats */
 .page-hero-stats {
     display: grid;
-    grid-template-columns: repeat(2, 118px);
-    gap: 10px;
+    grid-template-columns: repeat(4, 82px);
+    gap: 9px;
 }
 
 .page-hero-stat-card {
-    min-height: 82px;
-    padding: 14px 16px;
+    height: 76px;
+    padding: 11px 12px;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
+    grid-template-rows: 28px 1fr;
+    align-items: start;
 
-    border-radius: 20px;
-    border: 1px solid rgba(39, 86, 57, 0.1);
+    border-radius: 16px;
+    border: 1px solid rgba(96, 64, 38, 0.09);
 
-    background: rgba(255, 255, 255, 0.68);
-    backdrop-filter: blur(10px);
-
-    box-shadow:
-            0 8px 22px rgba(48, 64, 42, 0.06);
+    background: rgba(255, 255, 255, 0.54);
+    box-shadow: 0 7px 16px rgba(78, 52, 35, 0.055);
 
     transition:
             transform 0.18s ease,
@@ -137,57 +128,64 @@
 
 .page-hero-stat-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(47, 103, 70, 0.22);
-    box-shadow: 0 12px 26px rgba(48, 64, 42, 0.09);
+    border-color: rgba(139, 94, 52, 0.18);
+    box-shadow: 0 10px 22px rgba(74, 50, 32, 0.09);
 }
 
-.page-hero-stat-card span {
-    color: #217246;
+.page-hero-stat-icon {
+    display: none;
+}
 
-    font-size: 25px;
-    line-height: 1;
-    font-weight: 800;
+/* Fixed number row */
+.page-hero-stat-card span {
+    display: block;
+
+    height: 28px;
+    margin: 0;
+
+    color: #2d2118;
+
+    font-size: 1.35rem;
+    line-height: 28px;
+    font-weight: 850;
+    letter-spacing: -0.35px;
 }
 
 .page-hero-stat-card p {
-    margin: 8px 0 0;
+    margin: 0;
 
-    color: #657465;
+    color: #7e654f;
 
-    font-size: 10px;
+    font-size: 0.6rem;
     line-height: 1.25;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: 850;
+    letter-spacing: 0.095em;
     text-transform: uppercase;
 }
 
-/* Pantry usually has 5 stats */
+/* Many stats */
 .page-hero-many-stats {
     grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .page-hero-many-stats .page-hero-stats {
-    grid-template-columns: repeat(3, 112px);
+    grid-template-columns: repeat(5, 78px);
 }
 
-.page-hero-many-stats h1 {
-    max-width: 520px;
-}
-
-.page-hero-many-stats .page-hero-description {
-    max-width: 500px;
-}
-
-/* Settings profile card */
+/* Custom right side, like dashboard role card */
 .page-hero-custom {
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
+    grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.page-hero-custom h1 {
-    max-width: 680px;
-}
-
+/* Responsive */
 @media (max-width: 1100px) {
+    .page-hero-stats,
+    .page-hero-many-stats .page-hero-stats {
+        grid-template-columns: repeat(2, 82px);
+    }
+}
+
+@media (max-width: 850px) {
     .page-hero,
     .page-hero-many-stats,
     .page-hero-custom {
@@ -200,28 +198,27 @@
 
     .page-hero-stats,
     .page-hero-many-stats .page-hero-stats {
-        grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
         width: 100%;
+        grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
     }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 720px) {
     .page-hero {
-        padding: 22px;
-        border-radius: 22px;
+        padding: 16px;
+        border-radius: 20px;
     }
 
-    .page-hero h1,
-    .page-hero-many-stats h1 {
-        font-size: 29px;
-        letter-spacing: -0.6px;
+    .page-hero h1 {
+        font-size: 1.55rem;
+        letter-spacing: -0.5px;
     }
 
     .page-hero-description {
-        font-size: 14.5px;
+        font-size: 0.86rem;
     }
 
     .page-hero-stat-card {
-        min-height: 76px;
+        height: 72px;
     }
 }

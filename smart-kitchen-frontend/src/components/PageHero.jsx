@@ -5,7 +5,8 @@ function PageHero({
                       title,
                       description,
                       stats = [],
-                      children
+                      children,
+                      className = ""
                   }) {
     const hasStats = Array.isArray(stats) && stats.length > 0;
     const hasCustomContent = Boolean(children);
@@ -14,7 +15,8 @@ function PageHero({
         "page-hero",
         hasCustomContent ? "page-hero-custom" : "",
         hasStats ? "page-hero-with-stats" : "",
-        stats.length >= 5 ? "page-hero-many-stats" : ""
+        stats.length >= 5 ? "page-hero-many-stats" : "",
+        className
     ]
         .filter(Boolean)
         .join(" ");
@@ -45,14 +47,20 @@ function PageHero({
 
             {!hasCustomContent && hasStats && (
                 <div className="page-hero-stats">
-                    {stats.map((stat) => (
-                        <div
+                    {stats.map(stat => (
+                        <article
                             key={stat.label}
                             className="page-hero-stat-card"
                         >
+                            {stat.icon && (
+                                <div className="page-hero-stat-icon">
+                                    {stat.icon}
+                                </div>
+                            )}
+
                             <span>{stat.value}</span>
                             <p>{stat.label}</p>
-                        </div>
+                        </article>
                     ))}
                 </div>
             )}

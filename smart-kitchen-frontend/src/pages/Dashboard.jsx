@@ -1,86 +1,115 @@
+import "./Dashboard.css";
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+import PageHero from "../components/PageHero";
+import RecipeDetailsModal from "../components/RecipeDetailsModal";
+import MessageModal from "../components/MessageModal";
+
 import { getDashboardData } from "../services/dashboardService";
 import { useAuth } from "../context/AuthContext";
 import { getRecipeReviews } from "../services/reviewsService";
 
-function Dashboard() {
+const USERS_API_URL = "http://localhost:3000/api/users";
 
+const ROUTES = {
+    users: "/users",
+    ingredients: "/ingredients",
+    recipeManagement: "/recipe-management",
+    stores: "/stores",
+    chefRecipes: "/chef/my-recipes",
+    chefCreateRecipe: "/chef/my-recipes",
+    shoppingList: "/shopping-list"
+};
+
+function Dashboard() {
     const { user } = useAuth();
     const navigate = useNavigate();
 
     const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+
     const [chefStats, setChefStats] = useState({
         myRecipesCount: 0,
         averageRating: 0,
         totalReviews: 0
     });
 
-    // Load dashboard data when page loads
+    const [selectedRecipe, setSelectedRecipe] = useState(null);
+    const [dashboardMessage, setDashboardMessage] = useState("");
+    const [dashboardActionError, setDashboardActionError] = useState("");
+    const [actionLoadingId, setActionLoadingId] = useState("");
+
+    const role = String(user?.userRole || user?.role || "user").toLowerCase();
+    const isAdmin = role === "admin";
+    const isChef = role === "chef";
+
+    const users = dashboardData?.users || [];
+    const recipes = dashboardData?.recipes || [];
+    const ingredients = dashboardData?.ingredients || [];
+    const stores = dashboardData?.stores || [];
+    const favorites = dashboardData?.favorites || [];
+    const pantry = dashboardData?.pantry || [];
+    const mealPlan = dashboardData?.mealPlan || [];
+    const shoppingList = dashboardData?.shoppingList || [];
+
     useEffect(() => {
-
         loadDashboard();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.userId, user?.userRole]);
 
-    }, []);
-
-    // Fetch all dashboard information
     async function loadDashboard() {
         try {
-            const data =
-                await getDashboardData();
+            setLoading(true);
+            setError("");
+            setDashboardMessage("");
+            setDashboardActionError("");
+
+            const data = await getDashboardData();
 
             setDashboardData(data);
 
-            if (user?.userRole === "chef") {
+            if (String(user?.userRole || user?.role).toLowerCase() === "chef") {
                 await loadChefStats(data);
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.error(error);
-            setError(
-                "Failed to load dashboard"
-            );
-        }
-        finally {
-
+            setError("Failed to load dashboard");
+        } finally {
             setLoading(false);
         }
     }
 
-    // Calculate statistics for the logged-in chef
     async function loadChefStats(data) {
         try {
-            const chefRecipes =
-                data.recipes.filter(recipe =>
-                        String(recipe.creatorId) === String(user?.userId));
+            const chefRecipes = (data?.recipes || []).filter(
+                (recipe) => String(recipe.creatorId) === String(user?.userId)
+            );
 
-            const reviewsByRecipe =
-                await Promise.all(
-                    chefRecipes.map(
-                        recipe =>
-                            getRecipeReviews(recipe.recipeId)
-                    )
-                );
+            const reviewsByRecipe = await Promise.all(
+                chefRecipes.map((recipe) => getRecipeReviews(recipe.recipeId))
+            );
 
             const allReviews = reviewsByRecipe.flat();
-
             const totalReviews = allReviews.length;
 
             const ratingSum = allReviews.reduce(
-                    (sum, review) =>
-                        sum + Number(review.rating), 0);
+                (sum, review) => sum + Number(review.rating || 0),
+                0
+            );
 
-            const averageRating = totalReviews === 0 ? 0 : ratingSum / totalReviews;
+            const averageRating =
+                totalReviews === 0 ? 0 : ratingSum / totalReviews;
 
             setChefStats({
                 myRecipesCount: chefRecipes.length,
-                averageRating: averageRating,
-                totalReviews: totalReviews
+                averageRating,
+                totalReviews
             });
-        }
-        catch (error) {
+        } catch (error) {
             console.error(error);
 
             setChefStats({
@@ -91,494 +120,883 @@ function Dashboard() {
         }
     }
 
-    // Return ingredient name from ingredient id
-    function getIngredientName(
-        ingredientId
-    ) {
+    function getAuthHeaders() {
+        return {
+            "x-user-id": user?.userId,
+            "x-user-role": user?.userRole || user?.role
+        };
+    }
 
-        const ingredient =
-            dashboardData?.ingredients?.find(
-                ingredient =>
-                    ingredient.ingredientId ===
-                    ingredientId
-            );
+    function getResponseData(response) {
+        return response.data?.data || response.data;
+    }
 
-        return (
-            ingredient?.name ||
-            "Unknown Ingredient"
+    function getItemId(item, firstKey, secondKey) {
+        return item?.[firstKey] || item?.[secondKey];
+    }
+
+    function getIngredientName(ingredientId) {
+        const ingredient = ingredients.find(
+            (ingredient) =>
+                String(ingredient.ingredientId || ingredient.id) ===
+                String(ingredientId)
+        );
+
+        return ingredient?.name || `Ingredient #${ingredientId}`;
+    }
+
+    function getRecipeById(recipeId) {
+        return recipes.find(
+            (recipe) =>
+                String(recipe.recipeId || recipe.id) === String(recipeId)
         );
     }
 
-// Return pantry items that expire within 7 days
+    function getRecipeTitle(recipeId) {
+        const recipe = getRecipeById(recipeId);
+
+        return recipe?.title || recipe?.name || "Planned meal";
+    }
+
+    function formatDate(dateValue) {
+        if (!dateValue) {
+            return "No date";
+        }
+
+        const date = new Date(dateValue);
+
+        if (Number.isNaN(date.getTime())) {
+            return String(dateValue).split("T")[0];
+        }
+
+        return date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+    }
+
+    function getDaysUntilDate(dateValue) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const targetDate = new Date(dateValue);
+        targetDate.setHours(0, 0, 0, 0);
+
+        return Math.ceil(
+            (targetDate.getTime() - today.getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
+    }
+
     function getExpiringItems() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        if (!dashboardData?.pantry) {
-            return [];
-        }
+        return pantry
+            .filter((item) => {
+                if (!item.expiryDate) {
+                    return false;
+                }
 
-        const today =
-            new Date();
+                const daysUntilExpiry = getDaysUntilDate(item.expiryDate);
 
-        return dashboardData.pantry.filter(
-            item => {
-
-                const expiryDate =
-                    new Date(item.expiryDate);
-
-                const daysUntilExpiry =
-                    (
-                        expiryDate - today
-                    ) /
-                    (
-                        1000 *
-                        60 *
-                        60 *
-                        24
-                    );
-
-                return (
-                    daysUntilExpiry >= 0 &&
-                    daysUntilExpiry <= 7
-                );
-            }
-        );
-    }
-
-// Return future planned meals
-    function getUpcomingMeals() {
-
-        if (!dashboardData?.mealPlan) {
-            return [];
-        }
-
-        const today =
-            new Date();
-
-        return dashboardData.mealPlan
-            .filter(
-                meal =>
-                    new Date(
-                        meal.date
-                    ) >= today
-            )
+                return daysUntilExpiry >= 0 && daysUntilExpiry <= 7;
+            })
             .sort(
                 (a, b) =>
-                    new Date(a.date) -
-                    new Date(b.date)
+                    new Date(a.expiryDate).getTime() -
+                    new Date(b.expiryDate).getTime()
             );
     }
 
-    // Loading state
-    if (loading) {
-        return (
-            <div>
-                <h1>Dashboard</h1>
+    function getUpcomingMeals() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-                <p>
-                    Loading dashboard...
-                </p>
-            </div>
+        return mealPlan
+            .filter((meal) => {
+                if (!meal.date) {
+                    return false;
+                }
+
+                const mealDate = new Date(meal.date);
+                mealDate.setHours(0, 0, 0, 0);
+
+                return mealDate >= today;
+            })
+            .sort(
+                (a, b) =>
+                    new Date(a.date).getTime() - new Date(b.date).getTime()
+            )
+            .slice(0, 4);
+    }
+
+    function getOpenShoppingItems() {
+        return shoppingList.filter(
+            (item) => !item.completed && !item.isCompleted
         );
     }
 
-    // Error state
+    function getPendingChefRequests() {
+        return users.filter((candidate) => {
+            const requestStatus = String(
+                candidate.chefRequestStatus ||
+                candidate.roleRequestStatus ||
+                candidate.requestStatus ||
+                candidate.chefRequest ||
+                ""
+            ).toLowerCase();
+
+            const requestedRole = String(
+                candidate.requestedRole ||
+                candidate.roleRequest ||
+                candidate.requestedUserRole ||
+                ""
+            ).toLowerCase();
+
+            return (
+                (requestStatus === "pending" &&
+                    requestedRole.includes("chef")) ||
+                requestStatus === "pending_chef" ||
+                candidate.requestedChef === true ||
+                candidate.wantsToBeChef === true
+            );
+        });
+    }
+
+    function getUserDisplayName(person) {
+        return (
+            [person?.firstName, person?.lastName].filter(Boolean).join(" ") ||
+            person?.username ||
+            person?.email ||
+            "Unknown user"
+        );
+    }
+
+    function getRoleLabel() {
+        if (isAdmin) {
+            return "Admin";
+        }
+
+        if (isChef) {
+            return "Chef";
+        }
+
+        return "User";
+    }
+
+    function clearDashboardMessages() {
+        setDashboardMessage("");
+        setDashboardActionError("");
+    }
+
+    function openRecipeFromMeal(meal) {
+        clearDashboardMessages();
+
+        const recipe = getRecipeById(meal.recipeId);
+
+        if (!recipe) {
+            setDashboardActionError("Recipe details were not found.");
+            return;
+        }
+
+        setSelectedRecipe(recipe);
+    }
+
+    async function addExpiringItemToShoppingList(item) {
+        const pantryItemId = getItemId(item, "pantryItemId", "id");
+
+        try {
+            setActionLoadingId(`add-shopping-${pantryItemId}`);
+            clearDashboardMessages();
+
+            const alreadyInShoppingList = shoppingList.some(
+                (shoppingItem) =>
+                    String(shoppingItem.ingredientId) ===
+                    String(item.ingredientId) &&
+                    !shoppingItem.completed &&
+                    !shoppingItem.isCompleted
+            );
+
+            if (alreadyInShoppingList) {
+                setDashboardMessage(
+                    `${getIngredientName(
+                        item.ingredientId
+                    )} is already in your shopping list.`
+                );
+                return;
+            }
+
+            const response = await axios.post(
+                `${USERS_API_URL}/${user.userId}/shopping-list`,
+                {
+                    ingredientId: Number(item.ingredientId),
+                    quantity: Number(item.quantity) || 1,
+                    unit: item.unit || "piece"
+                },
+                {
+                    headers: getAuthHeaders()
+                }
+            );
+
+            const newShoppingItem = getResponseData(response);
+
+            setDashboardData((previousData) => ({
+                ...previousData,
+                shoppingList: [
+                    ...(previousData?.shoppingList || []),
+                    newShoppingItem
+                ]
+            }));
+
+            setDashboardMessage(
+                `${getIngredientName(
+                    item.ingredientId
+                )} was added to your shopping list.`
+            );
+        } catch (error) {
+            console.error(error);
+            setDashboardActionError("Failed to add item to shopping list.");
+        } finally {
+            setActionLoadingId("");
+        }
+    }
+
+    async function removePantryItemFromDashboard(item) {
+        const pantryItemId = getItemId(item, "pantryItemId", "id");
+
+        try {
+            setActionLoadingId(`remove-pantry-${pantryItemId}`);
+            clearDashboardMessages();
+
+            await axios.delete(
+                `${USERS_API_URL}/${user.userId}/pantry/${pantryItemId}`,
+                {
+                    headers: getAuthHeaders()
+                }
+            );
+
+            setDashboardData((previousData) => ({
+                ...previousData,
+                pantry: (previousData?.pantry || []).filter(
+                    (pantryItem) =>
+                        String(
+                            getItemId(pantryItem, "pantryItemId", "id")
+                        ) !== String(pantryItemId)
+                )
+            }));
+
+            setDashboardMessage(
+                `${getIngredientName(item.ingredientId)} was removed.`
+            );
+        } catch (error) {
+            console.error(error);
+            setDashboardActionError("Failed to remove pantry item.");
+        } finally {
+            setActionLoadingId("");
+        }
+    }
+
+    async function markShoppingItemAsBought(item) {
+        const shoppingItemId = getItemId(item, "shoppingItemId", "id");
+
+        try {
+            setActionLoadingId(`bought-${shoppingItemId}`);
+            clearDashboardMessages();
+
+            const response = await axios.put(
+                `${USERS_API_URL}/${user.userId}/shopping-list/${shoppingItemId}`,
+                {
+                    completed: true
+                },
+                {
+                    headers: getAuthHeaders()
+                }
+            );
+
+            const updatedItem = getResponseData(response);
+
+            setDashboardData((previousData) => ({
+                ...previousData,
+                shoppingList: (previousData?.shoppingList || []).map(
+                    (shoppingItem) =>
+                        String(
+                            getItemId(shoppingItem, "shoppingItemId", "id")
+                        ) === String(shoppingItemId)
+                            ? updatedItem
+                            : shoppingItem
+                )
+            }));
+
+            setDashboardMessage(
+                `${getIngredientName(item.ingredientId)} was marked as bought.`
+            );
+        } catch (error) {
+            console.error(error);
+            setDashboardActionError("Failed to update shopping item.");
+        } finally {
+            setActionLoadingId("");
+        }
+    }
+
+    const pendingChefRequests = getPendingChefRequests();
+    const expiringItems = getExpiringItems();
+    const upcomingMeals = getUpcomingMeals();
+    const openShoppingItems = getOpenShoppingItems();
+    const activeDashboardMessage = dashboardMessage || dashboardActionError;
+
+    const adminStats = [
+        {
+            label: "Users",
+            value: users.length,
+            icon: "👥",
+            description: "Registered accounts"
+        },
+        {
+            label: "Recipes",
+            value: recipes.length,
+            icon: "📖",
+            description: "Recipes in the system"
+        },
+        {
+            label: "Ingredients",
+            value: ingredients.length,
+            icon: "🥕",
+            description: "Ingredient catalog"
+        },
+        {
+            label: "Stores",
+            value: stores.length,
+            icon: "🏪",
+            description: "Available stores"
+        },
+        {
+            label: "Chef Requests",
+            value: pendingChefRequests.length,
+            icon: "🧑‍🍳",
+            description: "Pending role requests"
+        }
+    ];
+
+    const userStats = [
+        {
+            label: "Recipes",
+            value: recipes.length,
+            icon: "📖",
+            description: "Available recipes"
+        },
+        {
+            label: "Favorites",
+            value: favorites.length,
+            icon: "❤️",
+            description: "Saved favorites"
+        },
+        {
+            label: "Pantry Items",
+            value: pantry.length,
+            icon: "🥫",
+            description: "Items in your pantry"
+        },
+        {
+            label: "Planned Meals",
+            value: mealPlan.length,
+            icon: "📅",
+            description: "Meals in your plan"
+        },
+        {
+            label: "Shopping Items",
+            value: shoppingList.length,
+            icon: "🛒",
+            description: "Items on your list"
+        }
+    ];
+
+    if (loading) {
+        return (
+            <main className="dashboard-page">
+
+                <div className="dashboard-state-card">
+                    <div className="dashboard-loader" />
+                    <h1>Loading dashboard...</h1>
+                    <p>Preparing your kitchen overview.</p>
+                </div>
+            </main>
+        );
+    }
+
     if (error) {
         return (
-            <div>
-                <h1>Dashboard</h1>
+            <main className="dashboard-page">
+                <div className="dashboard-state-card dashboard-error">
+                    <span>⚠️</span>
+                    <h1>Dashboard error</h1>
+                    <p>{error}</p>
 
-                <p>
-                    {error}
-                </p>
-            </div>
+                    <button
+                        type="button"
+                        className="dashboard-primary-button"
+                        onClick={loadDashboard}
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </main>
         );
     }
 
     return (
-        <div>
-            <h1>
-                Smart Kitchen Dashboard
-            </h1>
+        <main className="dashboard-page">
+            <MessageModal
+                type={dashboardMessage ? "success" : "error"}
+                title={dashboardMessage ? "Success" : "Dashboard Error"}
+                message={activeDashboardMessage}
+                buttonText="Got It 👍"
+                onClose={() => {
+                    setDashboardMessage("");
+                    setDashboardActionError("");
+                }}
+            />
 
-            <p>
-                Welcome back,
-                {" "}
-                {user?.firstName}
-                !
-            </p>
+            <PageHero
+                label="Smart Kitchen Dashboard"
+                title={`Welcome back, ${user?.firstName || "Food Lover"} 👋`}
+                description="Your kitchen overview, alerts and management tools in one place."
+            >
+                <div className={`dashboard-role-card ${role}`}>
+                    <span>{isAdmin ? "🛠️" : isChef ? "🧑‍🍳" : "🍽️"}</span>
+                    <p>Logged in as</p>
+                    <strong>{getRoleLabel()}</strong>
+                </div>
+            </PageHero>
 
-            <hr />
+            <section className="dashboard-section">
+                <div className="dashboard-section-header">
+                    <div>
+                        <p className="dashboard-section-kicker">Overview</p>
+                        <h2>{isAdmin ? "System Snapshot" : "My Kitchen Snapshot"}</h2>
+                    </div>
+                </div>
 
-            {/* Statistics Section */}
-
-            <h2>
-                Overview
-            </h2>
-
-            {
-                user?.userRole === "admin" ?
-
-                    (
-                        <>
-                            <p>
-                                Total Users:
-                                {" "}
-                                {dashboardData.users.length}
-                            </p>
-
-                            <p>
-                                Total Recipes:
-                                {" "}
-                                {dashboardData.recipes.length}
-                            </p>
-
-                            <p>
-                                Total Ingredients:
-                                {" "}
-                                {dashboardData.ingredients.length}
-                            </p>
-
-                            <p>
-                                Total Stores:
-                                {" "}
-                                {dashboardData.stores.length}
-                            </p>
-
-                            <hr />
-
-                            <h2>
-                                Management Center
-                            </h2>
-
-                            <p>
-                                Manage the main system data from one place.
-                            </p>
+                <div className="dashboard-stats-grid">
+                    {(isAdmin ? adminStats : userStats).map((stat) => (
+                        <article className="dashboard-stat-card" key={stat.label}>
+                            <div className="dashboard-stat-icon">{stat.icon}</div>
 
                             <div>
-                                <button
-                                    type="button"
-                                    onClick={() => navigate("/users")}
-                                >
-                                    Manage Users
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => navigate("/ingredients")}
-                                >
-                                    Manage Ingredients
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => navigate("/recipe-management")}
-                                >
-                                    Manage Recipes
-                                </button>
+                                <span>{stat.label}</span>
+                                <strong>{stat.value}</strong>
+                                <p>{stat.description}</p>
                             </div>
-                        </>
-                    )
+                        </article>
+                    ))}
+                </div>
+            </section>
 
-                    :
-
-                    (
-                        <>
-                            <p>
-                                Total Recipes:
-                                {" "}
-                                {dashboardData.recipes.length}
-                            </p>
-
-                            <p>
-                                Favorites:
-                                {" "}
-                                {dashboardData.favorites.length}
-                            </p>
+            {isAdmin && (
+                <>
+                    <section className="dashboard-section">
+                        <div className="dashboard-section-header">
+                            <div>
+                                <p className="dashboard-section-kicker">Admin Area</p>
+                                <h2>Management Center</h2>
+                            </div>
 
                             <p>
-                                Pantry Items:
-                                {" "}
-                                {dashboardData.pantry.length}
+                                Manage users, ingredients and recipes from one control panel.
                             </p>
+                        </div>
 
-                            <p>
-                                Planned Meals:
-                                {" "}
-                                {dashboardData.mealPlan.length}
-                            </p>
+                        <div className="dashboard-management-grid">
+                            <ManagementCard
+                                icon="👥"
+                                title="Users"
+                                description="Add users, remove users and manage roles."
+                                buttonLabel="Manage Users"
+                                onClick={() => navigate(ROUTES.users)}
+                            />
 
-                            <p>
-                                Shopping List Items:
-                                {" "}
-                                {dashboardData.shoppingList.length}
-                            </p>
+                            <ManagementCard
+                                icon="🥕"
+                                title="Ingredients"
+                                description="Create, update and delete ingredients."
+                                buttonLabel="Manage Ingredients"
+                                onClick={() => navigate(ROUTES.ingredients)}
+                            />
 
-                            {
-                                user?.userRole === "chef" &&
-                                (
-                                    <>
-                                        <hr />
+                            <ManagementCard
+                                icon="📖"
+                                title="Recipes"
+                                description="Review, edit or remove recipes."
+                                buttonLabel="Manage Recipes"
+                                onClick={() => navigate(ROUTES.recipeManagement)}
+                            />
 
-                                        <h2>
-                                            Chef Tools
-                                        </h2>
+                            <ManagementCard
+                                icon="🏪"
+                                title="Stores"
+                                description="Keep store information organized."
+                                buttonLabel="Manage Stores"
+                                onClick={() => navigate(ROUTES.stores)}
+                            />
+                        </div>
+                    </section>
 
-                                        <p>
-                                            Manage your recipes and track their performance.
-                                        </p>
+                    <section className="dashboard-section dashboard-two-columns">
+                        <article className="dashboard-panel">
+                            <div className="dashboard-panel-header">
+                                <span>🧑‍🍳</span>
+                                <div>
+                                    <h3>Pending Chef Requests</h3>
+                                    <p>Users who may want chef permissions.</p>
+                                </div>
+                            </div>
 
-                                        <div>
-                                            <p>
-                                                My Recipes:
-                                                {" "}
-                                                {chefStats.myRecipesCount}
-                                            </p>
+                            {pendingChefRequests.length === 0 ? (
+                                <EmptyState text="No pending chef requests right now." />
+                            ) : (
+                                <div className="dashboard-mini-list">
+                                    {pendingChefRequests.slice(0, 4).map((request) => (
+                                        <div
+                                            className="dashboard-mini-item"
+                                            key={
+                                                request.userId ||
+                                                request.id ||
+                                                request.email
+                                            }
+                                        >
+                                            <div>
+                                                <strong>{getUserDisplayName(request)}</strong>
+                                                <p>{request.email || "No email available"}</p>
+                                            </div>
 
-                                            <p>
-                                                Average Rating:
-                                                {" "}
-                                                {
-                                                    chefStats.totalReviews === 0
-                                                        ? "No ratings yet"
-                                                        : chefStats.averageRating.toFixed(1)
-                                                }
-                                                {" "}
-                                                ⭐
-                                            </p>
-
-                                            <p>
-                                                Total Reviews:
-                                                {" "}
-                                                {chefStats.totalReviews}
-                                            </p>
-                                        </div>
-
-                                        <div>
                                             <button
                                                 type="button"
-                                                onClick={() => navigate("/chef/my-recipes")}
+                                                className="dashboard-small-button"
+                                                onClick={() => navigate(ROUTES.users)}
                                             >
-                                                Manage My Recipes
+                                                Review
                                             </button>
                                         </div>
-                                    </>
-                                )
-                            }
-                        </>
-                    )
-            }
+                                    ))}
+                                </div>
+                            )}
+                        </article>
 
-            <hr />
+                        <article className="dashboard-panel dashboard-highlight-panel">
+                            <span>✨</span>
+                            <h3>Admin Tip</h3>
+                            <p>
+                                A good next step is to make Users and Ingredients support
+                                full add, edit and delete actions.
+                            </p>
+                        </article>
+                    </section>
+                </>
+            )}
 
-            {
-                user?.userRole !== "admin" &&
-                (
-                    <>
-                        {/* Smart alerts section */}
+            {isChef && (
+                <section className="dashboard-section">
+                    <div className="dashboard-section-header">
+                        <div>
+                            <p className="dashboard-section-kicker">Chef Tools</p>
+                            <h2>Recipe Performance</h2>
+                        </div>
+                    </div>
 
-                        <h2>
-                            Smart Actions & Alerts
-                        </h2>
+                    <div className="dashboard-chef-card">
+                        <div>
+                            <span className="dashboard-chef-badge">🧑‍🍳 Chef Mode</span>
+                            <h3>Manage your recipes beautifully</h3>
+                            <p>
+                                Create new recipes, update existing ones and track how users rate them.
+                            </p>
+                        </div>
 
-                        {/* Expiring pantry items */}
+                        <div className="dashboard-chef-stats">
+                            <div>
+                                <strong>{chefStats.myRecipesCount}</strong>
+                                <span>My Recipes</span>
+                            </div>
 
-                        <h3>
-                            Expiring Soon
-                        </h3>
+                            <div>
+                                <strong>
+                                    {chefStats.totalReviews === 0
+                                        ? "—"
+                                        : chefStats.averageRating.toFixed(1)}
+                                </strong>
+                                <span>Average Rating ⭐</span>
+                            </div>
 
-                        {
-                            getExpiringItems().length === 0 ?
+                            <div>
+                                <strong>{chefStats.totalReviews}</strong>
+                                <span>Total Reviews</span>
+                            </div>
+                        </div>
 
-                                (
-                                    <p>
-                                        No expiring items found.
-                                    </p>
-                                )
+                        <div className="dashboard-button-row">
+                            <button
+                                type="button"
+                                className="dashboard-primary-button"
+                                onClick={() => navigate(ROUTES.chefCreateRecipe)}
+                            >
+                                Create Recipe
+                            </button>
 
-                                :
+                            <button
+                                type="button"
+                                className="dashboard-secondary-button"
+                                onClick={() => navigate(ROUTES.chefRecipes)}
+                            >
+                                Manage My Recipes
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            )}
 
-                                getExpiringItems().map(item => (
+            {!isAdmin && (
+                <section className="dashboard-section">
+                    <div className="dashboard-section-header">
+                        <div>
+                            <p className="dashboard-section-kicker">Smart Actions</p>
+                            <h2>Alerts & Reminders</h2>
+                        </div>
+                    </div>
 
-                                    <div
-                                        key={item.pantryItemId}
-                                    >
-                                        <p>
-                                            {
-                                                getIngredientName(
-                                                    item.ingredientId
-                                                )
-                                            }
-                                        </p>
+                    <div className="dashboard-alerts-grid">
+                        <article className="dashboard-alert-panel">
+                            <div className="dashboard-panel-header">
+                                <span>⏳</span>
+                                <div>
+                                    <h3>Expiring Soon</h3>
+                                    <p>Items that expire within 7 days.</p>
+                                </div>
+                            </div>
 
-                                        <p>
-                                            Expires:
-                                            {" "}
-                                            {
-                                                item.expiryDate
-                                                    .split("T")[0]
-                                            }
-                                        </p>
-                                    </div>
+                            {expiringItems.length === 0 ? (
+                                <EmptyState text="No expiring items found." />
+                            ) : (
+                                <div className="dashboard-mini-list">
+                                    {expiringItems.slice(0, 4).map((item) => {
+                                        const pantryItemId = getItemId(
+                                            item,
+                                            "pantryItemId",
+                                            "id"
+                                        );
 
-                                ))
-                        }
+                                        const daysLeft = getDaysUntilDate(
+                                            item.expiryDate
+                                        );
 
-                        <hr />
+                                        return (
+                                            <div
+                                                className="dashboard-mini-item"
+                                                key={pantryItemId}
+                                            >
+                                                <div>
+                                                    <strong>
+                                                        {getIngredientName(item.ingredientId)}
+                                                    </strong>
+                                                    <p>Expires: {formatDate(item.expiryDate)}</p>
+                                                </div>
 
-                        {/* Shopping list reminders */}
+                                                <div className="dashboard-mini-actions">
+                                                    <span className="dashboard-tag warning">
+                                                        {daysLeft === 0
+                                                            ? "Today"
+                                                            : `${daysLeft} days`}
+                                                    </span>
 
-                        <h3>
-                            Shopping Reminder
-                        </h3>
+                                                    <button
+                                                        type="button"
+                                                        className="dashboard-tag dashboard-tag-button"
+                                                        onClick={() =>
+                                                            addExpiringItemToShoppingList(item)
+                                                        }
+                                                        disabled={
+                                                            actionLoadingId ===
+                                                            `add-shopping-${pantryItemId}`
+                                                        }
+                                                    >
+                                                        Add to shopping
+                                                    </button>
 
-                        {
-                            dashboardData.shoppingList
-                                ?.filter(
-                                    item =>
-                                        !item.completed
-                                )
-                                .length === 0 ?
+                                                    <button
+                                                        type="button"
+                                                        className="dashboard-tag dashboard-tag-button danger"
+                                                        onClick={() =>
+                                                            removePantryItemFromDashboard(item)
+                                                        }
+                                                        disabled={
+                                                            actionLoadingId ===
+                                                            `remove-pantry-${pantryItemId}`
+                                                        }
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </article>
 
-                                (
-                                    <p>
-                                        No shopping items.
-                                    </p>
-                                )
+                        <article className="dashboard-alert-panel">
+                            <div className="dashboard-panel-header">
+                                <span>🛒</span>
+                                <div>
+                                    <h3>Shopping Reminder</h3>
+                                    <p>Open items from your shopping list.</p>
+                                </div>
+                            </div>
 
-                                :
+                            {openShoppingItems.length === 0 ? (
+                                <EmptyState text="No shopping items." />
+                            ) : (
+                                <div className="dashboard-mini-list">
+                                    {openShoppingItems.slice(0, 4).map((item) => {
+                                        const shoppingItemId = getItemId(
+                                            item,
+                                            "shoppingItemId",
+                                            "id"
+                                        );
 
-                                dashboardData.shoppingList
-                                    .filter(
-                                        item =>
-                                            !item.completed
-                                    )
-                                    .map(item => (
+                                        return (
+                                            <div
+                                                className="dashboard-mini-item"
+                                                key={shoppingItemId}
+                                            >
+                                                <div>
+                                                    <strong>
+                                                        {getIngredientName(item.ingredientId)}
+                                                    </strong>
+                                                    <p>
+                                                        Quantity: {item.quantity} {item.unit}
+                                                    </p>
+                                                </div>
 
+                                                <div className="dashboard-mini-actions">
+                                                    <button
+                                                        type="button"
+                                                        className="dashboard-tag dashboard-tag-button"
+                                                        onClick={() =>
+                                                            markShoppingItemAsBought(item)
+                                                        }
+                                                        disabled={
+                                                            actionLoadingId ===
+                                                            `bought-${shoppingItemId}`
+                                                        }
+                                                    >
+                                                        Bought
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        className="dashboard-tag dashboard-tag-button"
+                                                        onClick={() =>
+                                                            navigate(ROUTES.shoppingList)
+                                                        }
+                                                    >
+                                                        Open list
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </article>
+
+                        <article className="dashboard-alert-panel">
+                            <div className="dashboard-panel-header">
+                                <span>📅</span>
+                                <div>
+                                    <h3>Upcoming Meals</h3>
+                                    <p>Your next planned meals.</p>
+                                </div>
+                            </div>
+
+                            {upcomingMeals.length === 0 ? (
+                                <EmptyState text="No meals planned." />
+                            ) : (
+                                <div className="dashboard-mini-list">
+                                    {upcomingMeals.map((meal) => (
                                         <div
-                                            key={item.shoppingItemId}
+                                            className="dashboard-mini-item"
+                                            key={meal.mealId || meal.id}
                                         >
-                                            <p>
-                                                {
-                                                    getIngredientName(
-                                                        item.ingredientId
-                                                    )
-                                                }
-                                            </p>
+                                            <div>
+                                                <strong>
+                                                    {meal.recipeId
+                                                        ? getRecipeTitle(meal.recipeId)
+                                                        : meal.mealType || "Meal"}
+                                                </strong>
 
-                                            <p>
-                                                Quantity:
-                                                {" "}
-                                                {item.quantity}
-                                                {" "}
-                                                {item.unit}
-                                            </p>
+                                                <p>{formatDate(meal.date)}</p>
+
+                                                {meal.notes && <p>{meal.notes}</p>}
+                                            </div>
+
+                                            <div className="dashboard-mini-actions">
+                                                <span className="dashboard-tag">
+                                                    {meal.mealType || "Meal"}
+                                                </span>
+
+                                                <button
+                                                    type="button"
+                                                    className="dashboard-tag dashboard-tag-button"
+                                                    onClick={() => openRecipeFromMeal(meal)}
+                                                    disabled={!meal.recipeId}
+                                                >
+                                                    Open
+                                                </button>
+                                            </div>
                                         </div>
+                                    ))}
+                                </div>
+                            )}
+                        </article>
+                    </div>
+                </section>
+            )}
 
-                                    ))
-                        }
+            {selectedRecipe && (
+                <RecipeDetailsModal
+                    recipe={selectedRecipe}
+                    onClose={() => setSelectedRecipe(null)}
+                />
+            )}
+        </main>
+    );
+}
 
-                        <hr />
+function ManagementCard({ icon, title, description, buttonLabel, onClick }) {
+    return (
+        <article className="dashboard-management-card">
+            <span>{icon}</span>
+            <h3>{title}</h3>
+            <p>{description}</p>
 
-                        {/* Upcoming meals */}
+            <button
+                type="button"
+                className="dashboard-secondary-button"
+                onClick={onClick}
+            >
+                {buttonLabel}
+            </button>
+        </article>
+    );
+}
 
-                        <h3>
-                            Upcoming Meals
-                        </h3>
+function EmptyState({ text }) {
+    return (
+        <div className="dashboard-empty-state">
+            <span>🌿</span>
+            <p>{text}</p>
+        </div>
+    );
+}
 
-                        {
-                            getUpcomingMeals().length === 0 ?
-
-                                (
-                                    <p>
-                                        No meals planned.
-                                    </p>
-                                )
-
-                                :
-
-                                getUpcomingMeals().map(meal => (
-
-                                    <div
-                                        key={meal.mealId}
-                                    >
-                                        <p>
-                                            {meal.date}
-                                        </p>
-
-                                        <p>
-                                            {meal.mealType}
-                                        </p>
-
-                                        {
-                                            meal.notes &&
-                                            (
-                                                <p>
-                                                    {meal.notes}
-                                                </p>
-                                            )
-                                        }
-                                    </div>
-
-                                ))
-                        }
-
-                        <hr />
-
-                        {/* AI History Preview */}
-
-                        <h2>
-                            Recent AI Activity
-                        </h2>
-
-                        {
-                            dashboardData.history
-                                .slice(0, 3)
-                                .map(historyItem => {
-
-                                    let displayText =
-                                        "AI Activity";
-
-                                    if (
-                                        historyItem.result?.recipeTitle
-                                    ) {
-                                        displayText =
-                                            historyItem.result.recipeTitle;
-                                    }
-                                    else if (
-                                        historyItem.result
-                                            ?.suggestedRecipes
-                                            ?.length
-                                    ) {
-                                        displayText =
-                                            historyItem.result
-                                                .suggestedRecipes[0];
-                                    }
-                                    else if (
-                                        historyItem.result?.detectedDish
-                                    ) {
-                                        displayText =
-                                            historyItem.result
-                                                .detectedDish;
-                                    }
-
-                                    return (
-                                        <div
-                                            key={
-                                                historyItem.historyId
-                                            }
-                                        >
-                                            <p>
-                                                {displayText}
-                                            </p>
-                                        </div>
-                                    );
-                                })
-                        }
-                    </>
-                )
-            }
-            </div>
-        );
-    }
-
-    export default Dashboard;
+export default Dashboard;
