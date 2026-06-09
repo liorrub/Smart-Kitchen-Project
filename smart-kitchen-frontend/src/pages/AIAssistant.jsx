@@ -39,47 +39,6 @@ const AI_FEATURES = [
     }
 ];
 
-const DEMO_HISTORY = [
-    {
-        historyId: "demo-1",
-        requestType: "recipe_generation",
-        createDate: "2026-05-11T10:30:00Z",
-        inputData: {
-            ingredients: ["egg", "cheese", "tomato"]
-        },
-        result: {
-            recipeTitle: "Quick Cheese Omelette",
-            description: "A simple omelette with cheese and tomato."
-        }
-    },
-    {
-        historyId: "demo-2",
-        requestType: "smart_suggestion",
-        createDate: "2026-05-11T11:15:00Z",
-        inputData: {
-            pantryItems: ["pasta", "tomato sauce", "cheese"]
-        },
-        result: {
-            suggestedRecipes: [
-                "Simple Pasta",
-                "Cheesy Pasta Bake",
-                "Tomato Pasta"
-            ]
-        }
-    },
-    {
-        historyId: "demo-3",
-        requestType: "image_analysis",
-        createDate: "2026-05-11T12:45:00Z",
-        inputData: {
-            imageName: "pasta_dish.jpg"
-        },
-        result: {
-            detectedDish: "Pasta with tomato sauce",
-            suggestedRecipes: ["Simple Pasta"]
-        }
-    }
-];
 
 function formatText(value) {
     if (!value) {
@@ -279,22 +238,12 @@ function AIAssistant() {
     }, []);
 
     const visibleHistory = useMemo(() => {
-        if (history.length > 0) {
-            return history;
-        }
-
-        if (!loadingHistory) {
-            return DEMO_HISTORY;
-        }
-
-        return [];
-    }, [history, loadingHistory]);
+        return history;
+    }, [history]);
 
     const chatMessages = useMemo(() => {
         return buildConversationMessages(activeConversation);
     }, [activeConversation]);
-
-    const isDemoHistory = !loadingHistory && history.length === 0;
 
     function handleChatSubmit(event) {
         event.preventDefault();
@@ -540,9 +489,9 @@ function AIAssistant() {
                     </div>
                 )}
 
-                {!loadingHistory && isDemoHistory && !historyError && (
+                {!loadingHistory && !historyError && history.length === 0 && (
                     <div className="ai-history-warning">
-                        No saved AI conversations were found, so sample conversations are displayed for now.
+                        No saved AI conversations yet.
                     </div>
                 )}
 
