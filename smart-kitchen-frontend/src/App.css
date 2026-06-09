@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Shared modal layout pattern
+   Used by all full-screen overlay modals across the app.
+
+   Usage:
+     overlay  → className="sk-modal-overlay [page-modal-overlay]"
+     container → className="sk-modal [page-modal]"   (page class sets width only)
+     body     → className="sk-modal-body"
+     close btn → position: absolute, sits outside sk-modal-body so it never scrolls
+
+   Body scroll lock must be added per-component via useEffect:
+     document.body.style.overflow = "hidden" on mount
+     document.body.style.overflow = "" on unmount
+   ========================================================================== */
+
+.sk-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+
+    padding: 110px 24px 24px; /* 110px clears the fixed navbar + logo */
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden; /* overlay never creates a scrollbar */
+
+    background: rgba(31, 61, 43, 0.34);
+    backdrop-filter: blur(6px);
+}
+
+.sk-modal {
+    position: relative;
+    z-index: 9999;
+
+    max-height: calc(100vh - 134px); /* 110px top + 24px bottom */
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* clips children — only sk-modal-body scrolls */
+
+    border-radius: 30px;
+    box-shadow: 0 28px 70px rgba(31, 61, 43, 0.28);
+
+    background:
+        radial-gradient(circle at top left, rgba(103, 214, 86, 0.08), transparent 34%),
+        linear-gradient(135deg, rgba(255, 254, 250, 0.98), rgba(246, 251, 245, 0.98));
+    border: 1px solid rgba(139, 213, 174, 0.85);
+
+    animation: skModalPopIn 0.22s ease;
+}
+
+/* Scrollable inner area — the only element that should ever scroll */
+.sk-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px;
+}
+
+/* FormCard used inside sk-modal: strip its own card decoration.
+   The sk-modal box already provides background, border, and border-radius.
+   Leaving FormCard's decoration creates a visible "box inside a box". */
+.sk-modal .form-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+}
+
+@keyframes skModalPopIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 650px) {
+    .sk-modal-overlay {
+        padding: 80px 14px 14px;
+    }
+
+    .sk-modal {
+        max-height: calc(100vh - 94px);
+    }
+}
