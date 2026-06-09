@@ -281,6 +281,21 @@ function KitchenSidebar() {
         };
     }, []);
 
+    useEffect(() => {
+        const originalBodyOverflow = document.body.style.overflow;
+        const originalHtmlOverflow = document.documentElement.style.overflow;
+
+        if (isOpen) {
+            document.body.style.overflow = "hidden";
+            document.documentElement.style.overflow = "hidden";
+        }
+
+        return () => {
+            document.body.style.overflow = originalBodyOverflow;
+            document.documentElement.style.overflow = originalHtmlOverflow;
+        };
+    }, [isOpen]);
+
     const todayMeals = useMemo(() => {
         return panelData.mealPlan.filter((meal) => meal.date === todayKey);
     }, [panelData.mealPlan, todayKey]);
@@ -439,11 +454,6 @@ function KitchenSidebar() {
                 <div className="sidebar-header">
                     <div className="sidebar-mark">
                         SK
-                    </div>
-
-                    <div className="sidebar-header-text">
-                        <p>Kitchen Panel</p>
-                        <span>Smart overview for today</span>
                     </div>
 
                     <button
