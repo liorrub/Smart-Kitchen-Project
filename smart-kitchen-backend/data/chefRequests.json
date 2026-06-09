@@ -1,0 +1,29 @@
+[
+  {
+    "requestId": 1,
+    "userId": 4,
+    "status": "pending",
+    "reason": "I love cooking and want to share my recipes with the community.",
+    "requestDate": "2026-06-01T09:00:00Z",
+    "reviewedDate": null,
+    "reviewedBy": null
+  },
+  {
+    "requestId": 2,
+    "userId": 5,
+    "status": "approved",
+    "reason": "I am an experienced home cook and would love to contribute recipes.",
+    "requestDate": "2026-05-20T14:30:00Z",
+    "reviewedDate": "2026-05-22T10:00:00Z",
+    "reviewedBy": 2
+  },
+  {
+    "requestId": 3,
+    "userId": 6,
+    "status": "rejected",
+    "reason": "I create food content online and want to publish my own recipes.",
+    "requestDate": "2026-05-25T11:15:00Z",
+    "reviewedDate": "2026-05-27T09:45:00Z",
+    "reviewedBy": 3
+  }
+]
