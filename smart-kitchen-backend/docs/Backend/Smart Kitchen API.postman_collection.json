@@ -727,7 +727,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"title\": \"Protein Omelette\",\r\n  \"instructions\": \"Beat eggs, cook in pan, add cheese.\",\r\n  \"difficulty\": \"easy\",\r\n  \"cuisine\": \"israeli\",\r\n  \"category\": \"breakfast\",\r\n  \"creatorId\": 1,\r\n  \"prepTime\": 10,\r\n  \"cookTime\": 10,\r\n  \"totalTime\": 20,\r\n  \"servings\": 1,\r\n  \"calories\": 350,\r\n  \"tags\": [\"quick\", \"high-protein\"],\r\n  \"allergens\": [\"eggs\", \"dairy\"]\r\n}",
+              "raw": "{\r\n  \"title\": \"Protein Omelette\",\r\n  \"instructions\": \"Beat eggs, cook in pan, add cheese.\",\r\n  \"difficulty\": \"easy\",\r\n  \"cuisine\": \"israeli\",\r\n  \"category\": \"breakfast\",\r\n  \"creatorId\": 1,\r\n  \"prepTime\": 10,\r\n  \"cookTime\": 10,\r\n  \"totalTime\": 20,\r\n  \"servings\": 1,\r\n  \"calories\": 350,\r\n  \"tags\": [\"quick\", \"high-protein\"],\r\n  \"allergens\": [\"eggs\", \"dairy\"],\r\n  \"ingredients\": [\r\n    {\r\n      \"ingredientId\": 2,\r\n      \"quantity\": 2,\r\n      \"unit\": \"piece\"\r\n    },\r\n    {\r\n      \"ingredientId\": 6,\r\n      \"quantity\": 50,\r\n      \"unit\": \"gram\"\r\n    }\r\n  ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -764,7 +764,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"title\": \"Protein Omelette\",\r\n  \"instructions\": \"Beat eggs, cook in pan, add cheese.\",\r\n  \"difficulty\": \"easy\",\r\n  \"cuisine\": \"israeli\",\r\n  \"category\": \"breakfast\",\r\n  \"creatorId\": 999,\r\n  \"prepTime\": 10,\r\n  \"cookTime\": 10,\r\n  \"totalTime\": 20,\r\n  \"servings\": 1,\r\n  \"calories\": 350,\r\n  \"tags\": [\"quick\", \"high-protein\"],\r\n  \"allergens\": [\"eggs\", \"dairy\"]\r\n}",
+              "raw": "{\r\n  \"title\": \"Protein Omelette\",\r\n  \"instructions\": \"Beat eggs, cook in pan, add cheese.\",\r\n  \"difficulty\": \"easy\",\r\n  \"cuisine\": \"israeli\",\r\n  \"category\": \"breakfast\",\r\n  \"creatorId\": 991,\r\n  \"prepTime\": 10,\r\n  \"cookTime\": 10,\r\n  \"totalTime\": 20,\r\n  \"servings\": 1,\r\n  \"calories\": 350,\r\n  \"tags\": [\"quick\", \"high-protein\"],\r\n  \"allergens\": [\"eggs\", \"dairy\"],\r\n  \"ingredients\": [\r\n    {\r\n      \"ingredientId\": 2,\r\n      \"quantity\": 2,\r\n      \"unit\": \"piece\"\r\n    },\r\n    {\r\n      \"ingredientId\": 6,\r\n      \"quantity\": 50,\r\n      \"unit\": \"gram\"\r\n    }\r\n  ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2740,6 +2740,209 @@
                 "2",
                 "ai",
                 "history"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Options",
+      "item": [
+        {
+          "name": "Get All Options",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/options",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "options"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Chef Requests",
+      "item": [
+        {
+          "name": "Submit Chef Request - conflict, already exists",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "4",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"reason\": \"I want to share my recipes with the community.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Chef Request",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "4",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests",
+                "my"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Pending Chef Requests - Admin",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Chef Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests/1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests",
+                "1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Chef Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests/1/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests",
+                "1",
+                "reject"
               ]
             }
           },
