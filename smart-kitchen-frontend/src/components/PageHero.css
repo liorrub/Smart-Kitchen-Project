@@ -102,19 +102,19 @@
 /* Compact stats */
 .page-hero-stats {
     display: grid;
-    grid-template-columns: repeat(4, 82px);
-    gap: 9px;
+    grid-template-columns: repeat(4, 108px);
+    gap: 10px;
 }
 
 .page-hero-stat-card {
-    height: 76px;
-    padding: 11px 12px;
+    height: 84px;
+    padding: 12px 14px;
 
     display: grid;
-    grid-template-rows: 28px 1fr;
+    grid-template-rows: 30px 1fr;
     align-items: start;
 
-    border-radius: 16px;
+    border-radius: 17px;
     border: 1px solid rgba(96, 64, 38, 0.09);
 
     background: rgba(255, 255, 255, 0.54);
@@ -140,13 +140,13 @@
 .page-hero-stat-card span {
     display: block;
 
-    height: 28px;
+    height: 30px;
     margin: 0;
 
     color: #2d2118;
 
     font-size: 1.35rem;
-    line-height: 28px;
+    line-height: 30px;
     font-weight: 850;
     letter-spacing: -0.35px;
 }
@@ -156,10 +156,10 @@
 
     color: #7e654f;
 
-    font-size: 0.6rem;
-    line-height: 1.25;
+    font-size: 0.62rem;
+    line-height: 1.22;
     font-weight: 850;
-    letter-spacing: 0.095em;
+    letter-spacing: 0.075em;
     text-transform: uppercase;
 }
 
@@ -169,7 +169,7 @@
 }
 
 .page-hero-many-stats .page-hero-stats {
-    grid-template-columns: repeat(5, 78px);
+    grid-template-columns: repeat(5, 104px);
 }
 
 /* Custom right side, like dashboard role card */

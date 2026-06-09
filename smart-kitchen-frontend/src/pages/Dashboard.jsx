@@ -682,15 +682,6 @@ function Dashboard() {
                                 </div>
                             )}
                         </article>
-
-                        <article className="dashboard-panel dashboard-highlight-panel">
-                            <span>✨</span>
-                            <h3>Admin Tip</h3>
-                            <p>
-                                A good next step is to make Users and Ingredients support
-                                full add, edit and delete actions.
-                            </p>
-                        </article>
                     </section>
                 </>
             )}

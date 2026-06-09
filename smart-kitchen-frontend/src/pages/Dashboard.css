@@ -224,7 +224,7 @@
 
 .dashboard-two-columns {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
+    grid-template-columns: 1fr;
     gap: 18px;
 }
 
@@ -249,14 +249,6 @@
     border-radius: 16px;
     background: #f7dfae;
     font-size: 1.3rem;
-}
-
-.dashboard-highlight-panel {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background: linear-gradient(145deg, #4f6f52, #7c9d70);
-    color: #fffaf0;
 }
 
 .dashboard-highlight-panel span {
