@@ -648,14 +648,6 @@ function Dashboard() {
                                 buttonLabel="Manage Recipes"
                                 onClick={() => navigate(ROUTES.recipeManagement)}
                             />
-
-                            <ManagementCard
-                                icon="🏪"
-                                title="Stores"
-                                description="Keep store information organized."
-                                buttonLabel="Manage Stores"
-                                onClick={() => navigate(ROUTES.stores)}
-                            />
                         </div>
                     </section>
 
@@ -713,15 +705,6 @@ function Dashboard() {
                                 </div>
                             )}
                         </article>
-
-                        <article className="dashboard-panel dashboard-highlight-panel">
-                            <span>✨</span>
-                            <h3>Admin Tip</h3>
-                            <p>
-                                A good next step is to make Users and Ingredients support
-                                full add, edit and delete actions.
-                            </p>
-                        </article>
                     </section>
                 </>
             )}
@@ -769,14 +752,6 @@ function Dashboard() {
                             <button
                                 type="button"
                                 className="dashboard-primary-button"
-                                onClick={() => navigate(ROUTES.chefCreateRecipe)}
-                            >
-                                Create Recipe
-                            </button>
-
-                            <button
-                                type="button"
-                                className="dashboard-secondary-button"
                                 onClick={() => navigate(ROUTES.chefRecipes)}
                             >
                                 Manage My Recipes

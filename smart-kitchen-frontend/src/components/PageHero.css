@@ -7,7 +7,8 @@
     align-items: center;
     gap: 18px;
 
-    width: min(100%, 1180px);
+    width: min(100%, 1320px);
+    max-width: calc(100vw - 64px);
     margin: 0 auto 22px;
     padding: 18px 22px;
 
@@ -18,6 +19,7 @@
     box-shadow: 0 12px 28px rgba(78, 52, 35, 0.075);
 
     backdrop-filter: blur(12px);
+    box-sizing: border-box;
 }
 
 .page-hero::before {
@@ -99,22 +101,27 @@
     min-width: 0;
 }
 
+
 /* Compact stats */
 .page-hero-stats {
     display: grid;
-    grid-template-columns: repeat(4, 82px);
-    gap: 9px;
+    grid-template-columns: repeat(4, minmax(108px, 1fr));
+    gap: 10px;
+
+    width: min(100%, 560px);
+    min-width: 0;
 }
 
 .page-hero-stat-card {
-    height: 76px;
-    padding: 11px 12px;
+    min-width: 0;
+    height: 84px;
+    padding: 12px 14px;
 
     display: grid;
-    grid-template-rows: 28px 1fr;
+    grid-template-rows: 30px 1fr;
     align-items: start;
 
-    border-radius: 16px;
+    border-radius: 17px;
     border: 1px solid rgba(96, 64, 38, 0.09);
 
     background: rgba(255, 255, 255, 0.54);
@@ -136,17 +143,16 @@
     display: none;
 }
 
-/* Fixed number row */
 .page-hero-stat-card span {
     display: block;
 
-    height: 28px;
+    height: 30px;
     margin: 0;
 
     color: #2d2118;
 
     font-size: 1.35rem;
-    line-height: 28px;
+    line-height: 30px;
     font-weight: 850;
     letter-spacing: -0.35px;
 }
@@ -156,11 +162,14 @@
 
     color: #7e654f;
 
-    font-size: 0.6rem;
-    line-height: 1.25;
+    font-size: 0.61rem;
+    line-height: 1.22;
     font-weight: 850;
-    letter-spacing: 0.095em;
+    letter-spacing: 0.065em;
     text-transform: uppercase;
+
+    word-break: normal;
+    overflow-wrap: normal;
 }
 
 /* Many stats */
@@ -169,7 +178,7 @@
 }
 
 .page-hero-many-stats .page-hero-stats {
-    grid-template-columns: repeat(5, 78px);
+    grid-template-columns: repeat(5, 104px);
 }
 
 /* Custom right side, like dashboard role card */
@@ -181,7 +190,8 @@
 @media (max-width: 1100px) {
     .page-hero-stats,
     .page-hero-many-stats .page-hero-stats {
-        grid-template-columns: repeat(2, 82px);
+        justify-content: flex-start;
+        flex-wrap: wrap;
     }
 }
 
