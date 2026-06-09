@@ -21,6 +21,7 @@ import {
 
 import { getIngredients } from "../services/ingredientsService";
 import { getOptions } from "../services/optionsService";
+import { getRecipeReviews } from "../services/reviewsService";
 import { validateRecipeForm } from "../validators/recipeValidation";
 
 // Default empty state for the create recipe form
@@ -89,6 +90,7 @@ function ChefRecipes() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [recipeFormData, setRecipeFormData] = useState(EMPTY_RECIPE_FORM_DATA);
     const [savingRecipe, setSavingRecipe] = useState(false);
+    const [averageRating, setAverageRating] = useState(null);
 
     // Options are fetched from the backend so they stay in sync with the enums
     const [options, setOptions] = useState({
@@ -119,6 +121,26 @@ function ChefRecipes() {
                 setRecipes(recipesData);
                 setIngredients(ingredientsData);
                 setOptions(optionsData);
+
+                // Fetch reviews only for this chef's recipes to compute their average rating.
+                // Runs after the main fetch so a review failure doesn't break the page.
+                try {
+                    const myRecipes = recipesData.filter(
+                        (recipe) => String(recipe.creatorId) === String(storedUser?.userId)
+                    );
+                    const reviewsByRecipe = await Promise.all(
+                        myRecipes.map((recipe) => getRecipeReviews(recipe.recipeId))
+                    );
+                    const allReviews = reviewsByRecipe.flat();
+                    if (allReviews.length > 0) {
+                        const ratingSum = allReviews.reduce(
+                            (sum, review) => sum + Number(review.rating), 0
+                        );
+                        setAverageRating(ratingSum / allReviews.length);
+                    }
+                } catch (reviewErr) {
+                    console.error("Failed to load reviews for average rating:", reviewErr);
+                }
 
             } catch (err) {
                 console.error("Chef recipes loading error:", err);
@@ -719,6 +741,10 @@ function ChefRecipes() {
                     {
                         value: chefRecipes.length,
                         label: "My recipes"
+                    },
+                    {
+                        value: averageRating === null ? "—" : averageRating.toFixed(1) + " ⭐",
+                        label: "Average rating"
                     },
                     {
                         value: recipes.length,
