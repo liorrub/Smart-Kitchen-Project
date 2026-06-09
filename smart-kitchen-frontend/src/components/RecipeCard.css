@@ -271,7 +271,6 @@
     cursor: pointer;
 
     white-space: nowrap;
-    flex-shrink: 0;
 
     transition:
             transform 0.18s ease,
@@ -282,12 +281,12 @@
 }
 
 .recipe-card-view-button {
-    min-width: 112px;
+    min-width: 100px;
     box-shadow: 0 7px 15px rgba(63, 74, 52, 0.14);
 }
 
 .recipe-card-favorite-button {
-    min-width: 92px;
+    min-width: 75px;
     background: #fffefa;
     color: #cc6089;
     border: 1px solid #f0cdd8;
