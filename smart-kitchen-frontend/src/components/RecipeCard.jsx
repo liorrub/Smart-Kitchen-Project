@@ -54,7 +54,8 @@ function RecipeCard({
                         onFavoriteClick,
                         favoriteLoading = false,
                         favoriteButtonText = "",
-                        favoriteLoadingText = "Saving..."
+                        favoriteLoadingText = "Saving...",
+                        actions
                     }) {
     const categoryImage = getCategoryImage(recipe.category);
     const categoryClass = getCategoryClass(recipe.category);
@@ -143,6 +144,13 @@ function RecipeCard({
                             View Recipe
                         </button>
                     </div>
+
+                    {actions && (
+                        <div className="recipe-card-extra-actions">
+                            {actions}
+                        </div>
+                    )}
+
                 </div>
             </div>
         </article>
