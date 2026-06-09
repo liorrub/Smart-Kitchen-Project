@@ -761,9 +761,6 @@ function ChefRecipes() {
                     <div>
                         <h2>Manage my recipes</h2>
 
-                        <p>
-                            These are the recipes connected to your chef account.
-                        </p>
                     </div>
 
                     <AppButton
