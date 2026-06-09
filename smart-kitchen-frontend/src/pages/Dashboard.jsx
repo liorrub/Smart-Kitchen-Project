@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDashboardData } from "../services/dashboardService";
 import { useAuth } from "../context/AuthContext";
+import { getRecipeReviews } from "../services/reviewsService";
 
 function Dashboard() {
 
@@ -11,6 +12,11 @@ function Dashboard() {
     const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [chefStats, setChefStats] = useState({
+        myRecipesCount: 0,
+        averageRating: 0,
+        totalReviews: 0
+    });
 
     // Load dashboard data when page loads
     useEffect(() => {
@@ -24,7 +30,12 @@ function Dashboard() {
         try {
             const data =
                 await getDashboardData();
+
             setDashboardData(data);
+
+            if (user?.userRole === "chef") {
+                await loadChefStats(data);
+            }
         }
         catch (error) {
             console.error(error);
@@ -35,6 +46,48 @@ function Dashboard() {
         finally {
 
             setLoading(false);
+        }
+    }
+
+    // Calculate statistics for the logged-in chef
+    async function loadChefStats(data) {
+        try {
+            const chefRecipes =
+                data.recipes.filter(recipe =>
+                        String(recipe.creatorId) === String(user?.userId));
+
+            const reviewsByRecipe =
+                await Promise.all(
+                    chefRecipes.map(
+                        recipe =>
+                            getRecipeReviews(recipe.recipeId)
+                    )
+                );
+
+            const allReviews = reviewsByRecipe.flat();
+
+            const totalReviews = allReviews.length;
+
+            const ratingSum = allReviews.reduce(
+                    (sum, review) =>
+                        sum + Number(review.rating), 0);
+
+            const averageRating = totalReviews === 0 ? 0 : ratingSum / totalReviews;
+
+            setChefStats({
+                myRecipesCount: chefRecipes.length,
+                averageRating: averageRating,
+                totalReviews: totalReviews
+            });
+        }
+        catch (error) {
+            console.error(error);
+
+            setChefStats({
+                myRecipesCount: 0,
+                averageRating: 0,
+                totalReviews: 0
+            });
         }
     }
 
@@ -259,6 +312,58 @@ function Dashboard() {
                                 {" "}
                                 {dashboardData.shoppingList.length}
                             </p>
+
+                            {
+                                user?.userRole === "chef" &&
+                                (
+                                    <>
+                                        <hr />
+
+                                        <h2>
+                                            Chef Tools
+                                        </h2>
+
+                                        <p>
+                                            Manage your recipes and track their performance.
+                                        </p>
+
+                                        <div>
+                                            <p>
+                                                My Recipes:
+                                                {" "}
+                                                {chefStats.myRecipesCount}
+                                            </p>
+
+                                            <p>
+                                                Average Rating:
+                                                {" "}
+                                                {
+                                                    chefStats.totalReviews === 0
+                                                        ? "No ratings yet"
+                                                        : chefStats.averageRating.toFixed(1)
+                                                }
+                                                {" "}
+                                                ⭐
+                                            </p>
+
+                                            <p>
+                                                Total Reviews:
+                                                {" "}
+                                                {chefStats.totalReviews}
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <button
+                                                type="button"
+                                                onClick={() => navigate("/chef/my-recipes")}
+                                            >
+                                                Manage My Recipes
+                                            </button>
+                                        </div>
+                                    </>
+                                )
+                            }
                         </>
                     )
             }

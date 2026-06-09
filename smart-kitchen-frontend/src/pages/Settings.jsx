@@ -7,6 +7,7 @@ import CustomSelect from "../components/CustomSelect";
 import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
+import CheckboxGroup, { formatCheckboxLabel } from "../components/CheckboxGroup";
 
 import { useAuth } from "../context/AuthContext";
 import { validateSettings } from "../validators/settingsValidator";
@@ -36,42 +37,6 @@ const CUISINE_OPTIONS = [
     "american",
     "israeli"
 ];
-
-// Formats labels like "gluten-free" into "Gluten-Free"
-function formatLabel(text) {
-    return text
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join("-");
-}
-
-// Checkbox group component used only inside Settings
-function CheckboxGroup({ label, options, values, onChange }) {
-    return (
-        <div className="checkbox-group-wrapper">
-            <label className="checkbox-group-label">
-                {label}
-            </label>
-
-            <div className="checkbox-group">
-                {options.map((option) => (
-                    <label
-                        key={option}
-                        className="checkbox-option"
-                    >
-                        <input
-                            type="checkbox"
-                            checked={values.includes(option)}
-                            onChange={() => onChange(option)}
-                        />
-
-                        <span>{formatLabel(option)}</span>
-                    </label>
-                ))}
-            </div>
-        </div>
-    );
-}
 
 // Main Settings component
 function Settings() {
@@ -388,7 +353,7 @@ function Settings() {
                     </div>
 
                     <div className="summary-tags">
-                        <span>{formatLabel(formData.cookingLevel)}</span>
+                        <span>{formatCheckboxLabel(formData.cookingLevel)}</span>
 
                         <span>{formData.age} years old</span>
 
