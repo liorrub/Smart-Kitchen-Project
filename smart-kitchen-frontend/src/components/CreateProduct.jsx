@@ -1,6 +1,6 @@
 import "./CreateProduct.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createIngredient } from "../services/ingredientsService";
 
 const categoryOptions = [
@@ -107,6 +107,14 @@ function CreateProductModal({
 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        if (!isOpen) return;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isOpen]);
 
     if (!isOpen) {
         return null;

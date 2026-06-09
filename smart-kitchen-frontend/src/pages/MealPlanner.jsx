@@ -271,6 +271,15 @@ function MealPlanner() {
     }, [weeklyMeals]);
 
     useEffect(() => {
+        const isOpen = isMealModalOpen || !!mealToDelete;
+        if (!isOpen) return;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isMealModalOpen, mealToDelete]);
+
+    useEffect(() => {
         async function loadMealPlannerData() {
             try {
                 setLoading(true);
@@ -802,6 +811,7 @@ function MealPlanner() {
                             ×
                         </button>
 
+                        <div className="meal-modal-body">
                         <FormCard
                             label={editingMeal ? "Update meal" : "Add meal"}
                             title={editingMeal ? "Edit Meal" : "Add Meal"}
@@ -901,6 +911,7 @@ function MealPlanner() {
                                 </div>
                             </form>
                         </FormCard>
+                        </div>
                     </div>
                 </div>
             )}

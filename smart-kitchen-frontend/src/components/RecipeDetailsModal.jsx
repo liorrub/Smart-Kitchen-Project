@@ -182,6 +182,15 @@ function RecipeDetailsModal({ recipe, onClose }) {
         loadReviews();
     }, [recipe?.recipeId]);
 
+    useEffect(() => {
+        if (recipe) {
+            document.body.style.overflow = "hidden";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [recipe]);
+
     const otherUsersReviews = useMemo(() => {
         return reviews.filter(
             (review) => review.userId !== currentUser?.userId
@@ -218,6 +227,7 @@ function RecipeDetailsModal({ recipe, onClose }) {
                     ×
                 </button>
 
+                <div className="recipe-modal-body">
                 <header className="recipe-modal-header">
                     <p className="recipe-modal-label">
                         {formatText(recipe.category)}
@@ -421,6 +431,7 @@ function RecipeDetailsModal({ recipe, onClose }) {
                             </div>
                         )}
                 </section>
+                </div>
             </div>
         </div>
     );
