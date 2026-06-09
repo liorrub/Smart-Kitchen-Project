@@ -5,7 +5,10 @@
 .users-page {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+}
+
+.users-page .form-card {
+    margin-top: 16px;
 }
 
 /* ==========================================================================

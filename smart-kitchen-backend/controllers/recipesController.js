@@ -191,7 +191,7 @@ async function updateSingleRecipe(req, res, next) {
         }
 
         if (ingredients !== undefined) {
-            await replaceRecipeIngredients(recipeId, ingredient);
+            await replaceRecipeIngredients(recipeId, ingredients);
         }
 
         const recipeWithIngredients = await buildRecipeWithIngredients(updatedRecipe);

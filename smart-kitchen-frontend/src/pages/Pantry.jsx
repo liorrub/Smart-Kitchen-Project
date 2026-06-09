@@ -1,6 +1,7 @@
 import "./Pantry.css";
 
 import PageHero from "../components/PageHero";
+import MessageModal from "../components/MessageModal";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import CreateProduct from "../components/CreateProduct";
@@ -517,20 +518,17 @@ function Pantry() {
 
     return (
         <div className="pantry-page">
-            {success && (
-                <div className="pantry-toast">
-                    <strong>Success</strong>
+            <MessageModal
+                type="success"
+                message={success}
+                onClose={() => setSuccess("")}
+            />
 
-                    <p>{success}</p>
-
-                    <button
-                        type="button"
-                        onClick={() => setSuccess("")}
-                    >
-                        ×
-                    </button>
-                </div>
-            )}
+            <MessageModal
+                type="error"
+                message={error}
+                onClose={() => setError("")}
+            />
 
             <CreateProduct
                 isOpen={isCreateProductOpen}
@@ -632,12 +630,6 @@ function Pantry() {
                         + Create New Product
                     </button>
                 </div>
-
-                {error && (
-                    <div className="pantry-alert error">
-                        {error}
-                    </div>
-                )}
 
                 <form
                     className="pantry-form"
