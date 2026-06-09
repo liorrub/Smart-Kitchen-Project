@@ -12,36 +12,23 @@ import PageHero from "../components/PageHero";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 const INGREDIENTS_API_URL = "http://localhost:3000/api/ingredients";
+const STORES_API_URL = "http://localhost:3000/api/stores";
 
 const unitOptions = [
-    {
-        value: "piece",
-        label: "Piece"
-    },
-    {
-        value: "kg",
-        label: "Kg"
-    },
-    {
-        value: "gram",
-        label: "Gram"
-    },
-    {
-        value: "liter",
-        label: "Liter"
-    },
-    {
-        value: "ml",
-        label: "Ml"
-    },
-    {
-        value: "pack",
-        label: "Pack"
-    }
+    { value: "piece", label: "Piece" },
+    { value: "kg", label: "Kg" },
+    { value: "gram", label: "Gram" },
+    { value: "liter", label: "Liter" },
+    { value: "ml", label: "Ml" },
+    { value: "pack", label: "Pack" }
 ];
 
 function getStoredUser() {
-    return JSON.parse(localStorage.getItem("user"));
+    try {
+        return JSON.parse(localStorage.getItem("user"));
+    } catch {
+        return null;
+    }
 }
 
 function getAuthHeaders() {
@@ -94,6 +81,8 @@ function getResponseData(response) {
 function ShoppingList() {
     const [shoppingItems, setShoppingItems] = useState([]);
     const [ingredients, setIngredients] = useState([]);
+    const [stores, setStores] = useState([]);
+    const [storeRecommendations, setStoreRecommendations] = useState([]);
 
     const [formData, setFormData] = useState({
         ingredientId: "",
@@ -110,11 +99,11 @@ function ShoppingList() {
     const [success, setSuccess] = useState("");
 
     const storedUser = getStoredUser();
-
     const activeMessage = success || error;
 
     useEffect(() => {
         loadPageData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     async function loadPageData() {
@@ -127,30 +116,46 @@ function ShoppingList() {
                 return;
             }
 
-            const [shoppingResponse, ingredientsResponse] =
-                await Promise.all([
-                    axios.get(
-                        `${USERS_API_URL}/${storedUser.userId}/shopping-list`,
-                        {
-                            headers: getAuthHeaders(),
-                            params: {
-                                _t: Date.now()
-                            }
-                        }
-                    ),
-                    axios.get(
-                        INGREDIENTS_API_URL,
-                        {
-                            headers: getAuthHeaders(),
-                            params: {
-                                _t: Date.now()
-                            }
-                        }
-                    )
-                ]);
+            const [
+                shoppingResponse,
+                ingredientsResponse,
+                storesResponse,
+                recommendationsResponse
+            ] = await Promise.all([
+                axios.get(
+                    `${USERS_API_URL}/${storedUser.userId}/shopping-list`,
+                    {
+                        headers: getAuthHeaders(),
+                        params: { _t: Date.now() }
+                    }
+                ),
+                axios.get(
+                    INGREDIENTS_API_URL,
+                    {
+                        headers: getAuthHeaders(),
+                        params: { _t: Date.now() }
+                    }
+                ),
+                axios.get(
+                    STORES_API_URL,
+                    {
+                        headers: getAuthHeaders(),
+                        params: { _t: Date.now() }
+                    }
+                ),
+                axios.get(
+                    `${USERS_API_URL}/${storedUser.userId}/shopping-list/recommendations`,
+                    {
+                        headers: getAuthHeaders(),
+                        params: { _t: Date.now() }
+                    }
+                )
+            ]);
 
             setShoppingItems(getResponseData(shoppingResponse));
             setIngredients(getResponseData(ingredientsResponse));
+            setStores(getResponseData(storesResponse));
+            setStoreRecommendations(getResponseData(recommendationsResponse));
         } catch (err) {
             console.error("Shopping list loading error:", err);
             console.error("Server response:", err.response?.data);
@@ -163,6 +168,27 @@ function ShoppingList() {
             );
         } finally {
             setLoading(false);
+        }
+    }
+
+    async function loadStoreRecommendations() {
+        try {
+            if (!storedUser?.userId) {
+                return;
+            }
+
+            const response = await axios.get(
+                `${USERS_API_URL}/${storedUser.userId}/shopping-list/recommendations`,
+                {
+                    headers: getAuthHeaders(),
+                    params: { _t: Date.now() }
+                }
+            );
+
+            setStoreRecommendations(getResponseData(response));
+        } catch (err) {
+            console.error("Store recommendations loading error:", err);
+            setStoreRecommendations([]);
         }
     }
 
@@ -191,15 +217,49 @@ function ShoppingList() {
         return shoppingItems;
     }, [shoppingItems, filter]);
 
+    const storesById = useMemo(() => {
+        return stores.reduce((map, store) => {
+            map[String(store.storeId)] = store;
+            return map;
+        }, {});
+    }, [stores]);
+
+    const storeRecommendationsByIngredient = useMemo(() => {
+        return storeRecommendations.reduce((map, recommendation) => {
+            map[String(recommendation.ingredientId)] =
+                recommendation.stores || [];
+
+            return map;
+        }, {});
+    }, [storeRecommendations]);
+
     const completedCount = shoppingItems.filter(
         (item) => item.completed
     ).length;
 
     const activeCount = shoppingItems.length - completedCount;
 
+    function getStoresForIngredient(ingredientId) {
+        const recommendedStores =
+            storeRecommendationsByIngredient[String(ingredientId)] || [];
+
+        return recommendedStores.map((recommendation) => {
+            const storeDetails = storesById[String(recommendation.storeId)];
+
+            return {
+                ...recommendation,
+                name: storeDetails?.name || `Store #${recommendation.storeId}`,
+                city: storeDetails?.city,
+                address: storeDetails?.address,
+                rating: storeDetails?.rating
+            };
+        });
+    }
+
     function getIngredientName(ingredientId) {
         const ingredient = ingredients.find(
-            (item) => item.ingredientId === ingredientId
+            (item) =>
+                String(item.ingredientId) === String(ingredientId)
         );
 
         return ingredient ? ingredient.name : `Ingredient #${ingredientId}`;
@@ -303,7 +363,7 @@ function ShoppingList() {
 
             setShoppingItems((previousItems) => [
                 ...previousItems,
-                response.data.data
+                getResponseData(response)
             ]);
 
             setFormData({
@@ -311,6 +371,8 @@ function ShoppingList() {
                 quantity: "",
                 unit: "piece"
             });
+
+            await loadStoreRecommendations();
 
             setSuccess("Item added to shopping list.");
         } catch (err) {
@@ -345,7 +407,7 @@ function ShoppingList() {
             setShoppingItems((previousItems) =>
                 previousItems.map((currentItem) =>
                     currentItem.shoppingItemId === item.shoppingItemId
-                        ? response.data.data
+                        ? getResponseData(response)
                         : currentItem
                 )
             );
@@ -379,6 +441,8 @@ function ShoppingList() {
                 )
             );
 
+            await loadStoreRecommendations();
+
             setSuccess("Item deleted successfully.");
         } catch (err) {
             console.error(err);
@@ -408,8 +472,10 @@ function ShoppingList() {
 
             setShoppingItems((previousItems) => [
                 ...previousItems,
-                ...(response.data.data || [])
+                ...(getResponseData(response) || [])
             ]);
+
+            await loadStoreRecommendations();
 
             setSuccess("Shopping list generated from expired pantry items.");
         } catch (err) {
@@ -439,16 +505,18 @@ function ShoppingList() {
 
     return (
         <div className="shopping-page">
-            <MessageModal
-                type={success ? "success" : "error"}
-                title={success ? "Success" : "Shopping List Error"}
-                message={activeMessage}
-                buttonText="Got It 👍"
-                onClose={() => {
-                    setSuccess("");
-                    setError("");
-                }}
-            />
+            {activeMessage && (
+                <MessageModal
+                    type={success ? "success" : "error"}
+                    title={success ? "Success" : "Shopping List Error"}
+                    message={activeMessage}
+                    buttonText="Got It 👍"
+                    onClose={() => {
+                        setSuccess("");
+                        setError("");
+                    }}
+                />
+            )}
 
             <CreateProductModal
                 isOpen={isCreateProductOpen}
@@ -461,7 +529,7 @@ function ShoppingList() {
             <PageHero
                 label="Shopping List"
                 title="Plan your groceries smarter"
-                description="Add items, track what you already bought and generate groceries from expired pantry products."
+                description="Add items, track what you already bought and see where you can buy each product."
                 stats={[
                     {
                         value: shoppingItems.length,
@@ -611,6 +679,12 @@ function ShoppingList() {
                                     <p>
                                         {item.quantity} {formatText(item.unit)}
                                     </p>
+
+                                    <StoreSuggestions
+                                        stores={getStoresForIngredient(
+                                            item.ingredientId
+                                        )}
+                                    />
                                 </div>
 
                                 <span className="shopping-status">
@@ -631,6 +705,48 @@ function ShoppingList() {
                     </div>
                 )}
             </section>
+        </div>
+    );
+}
+
+function StoreSuggestions({ stores }) {
+    if (!stores || stores.length === 0) {
+        return (
+            <div className="shopping-store-suggestions empty">
+                No store suggestions yet
+            </div>
+        );
+    }
+
+    return (
+        <div className="shopping-store-suggestions">
+            <span className="shopping-store-title">
+                Available at
+            </span>
+
+            <div className="shopping-store-list">
+                {stores.slice(0, 3).map((store, index) => (
+                    <div
+                        className="shopping-store-chip"
+                        key={`${store.storeId}-${store.price}-${index}`}
+                    >
+                        <strong>{store.name}</strong>
+
+                        {(store.city || store.address) && (
+                            <small>
+                                {[store.city, store.address]
+                                    .filter(Boolean)
+                                    .join(" · ")}
+                            </small>
+                        )}
+
+                        <small>
+                            ₪{Number(store.price).toFixed(2)}
+                            {store.rating && ` · ⭐ ${store.rating}`}
+                        </small>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
