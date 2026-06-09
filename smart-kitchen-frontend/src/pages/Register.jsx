@@ -1,4 +1,5 @@
 import "./Login.css";
+import "./Register.css";
 
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";

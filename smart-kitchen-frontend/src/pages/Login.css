@@ -94,26 +94,6 @@
 }
 
 /* ==========================================================================
-   Register page adjustments
-   ========================================================================== */
-
-/* Register page is taller than Login, so it can scroll */
-.register-page {
-    min-height: 100vh;
-    height: auto;
-    padding: 32px 10px;
-
-    align-items: flex-start;
-
-    overflow-y: auto;
-}
-
-/* Register card can be taller than the login card */
-.register-card {
-    max-height: none;
-}
-
-/* ==========================================================================
    Responsive adjustments
    ========================================================================== */
 
