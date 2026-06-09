@@ -239,6 +239,12 @@
 /* ==========================================================================
    General panels
    ========================================================================== */
+.dashboard-alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: start;
+}
 
 .dashboard-two-columns {
     display: grid;
