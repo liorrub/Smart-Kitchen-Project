@@ -35,17 +35,19 @@ async function getMealPlan(req, res, next) {
 async function createMeal(req, res, next) {
     try {
         const userId = Number(req.params.id);
-        const recipeId = Number(req.body.itemId);
 
-        const recipe = await getRecipeById(recipeId);
+        // Only validate recipe existence when the item is a recipe
+        if (!req.body.itemType || req.body.itemType === "recipe") {
+            const recipe = await getRecipeById(Number(req.body.itemId));
 
-        if (!recipe) {
-            return errorResponse(
-                res,
-                404,
-                "RECIPE_NOT_FOUND",
-                "Recipe not found"
-            );
+            if (!recipe) {
+                return errorResponse(
+                    res,
+                    404,
+                    "RECIPE_NOT_FOUND",
+                    "Recipe not found"
+                );
+            }
         }
 
         const newMeal = await addMeal({
@@ -76,8 +78,8 @@ async function updateSingleMeal(req, res, next) {
             );
         }
 
-        // Validate recipe existence only if recipe reference is being changed
-        if (req.body.itemId) {
+        // Validate recipe existence only if a recipe reference is being changed
+        if (req.body.itemId && (!req.body.itemType || req.body.itemType === "recipe")) {
             const recipe = await getRecipeById(
                 Number(req.body.itemId)
             );
