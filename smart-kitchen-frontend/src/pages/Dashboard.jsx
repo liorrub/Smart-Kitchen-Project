@@ -631,14 +631,6 @@ function Dashboard() {
                                 buttonLabel="Manage Recipes"
                                 onClick={() => navigate(ROUTES.recipeManagement)}
                             />
-
-                            <ManagementCard
-                                icon="🏪"
-                                title="Stores"
-                                description="Keep store information organized."
-                                buttonLabel="Manage Stores"
-                                onClick={() => navigate(ROUTES.stores)}
-                            />
                         </div>
                     </section>
 
@@ -729,14 +721,6 @@ function Dashboard() {
                             <button
                                 type="button"
                                 className="dashboard-primary-button"
-                                onClick={() => navigate(ROUTES.chefCreateRecipe)}
-                            >
-                                Create Recipe
-                            </button>
-
-                            <button
-                                type="button"
-                                className="dashboard-secondary-button"
                                 onClick={() => navigate(ROUTES.chefRecipes)}
                             >
                                 Manage My Recipes
