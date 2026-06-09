@@ -11,6 +11,11 @@ import MessageModal from "../components/MessageModal";
 import { getDashboardData } from "../services/dashboardService";
 import { useAuth } from "../context/AuthContext";
 import { getRecipeReviews } from "../services/reviewsService";
+import {
+    getChefRequests,
+    approveChefRequest,
+    rejectChefRequest
+} from "../services/chefRequestService";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 
@@ -38,6 +43,7 @@ function Dashboard() {
         totalReviews: 0
     });
 
+    const [pendingChefRequests, setPendingChefRequests] = useState([]);
     const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [dashboardMessage, setDashboardMessage] = useState("");
     const [dashboardActionError, setDashboardActionError] = useState("");
@@ -71,6 +77,11 @@ function Dashboard() {
             const data = await getDashboardData();
 
             setDashboardData(data);
+
+            if (String(user?.userRole || user?.role).toLowerCase() === "admin") {
+                const requests = await getChefRequests();
+                setPendingChefRequests(requests);
+            }
 
             if (String(user?.userRole || user?.role).toLowerCase() === "chef") {
                 await loadChefStats(data);
@@ -238,31 +249,38 @@ function Dashboard() {
         );
     }
 
-    function getPendingChefRequests() {
-        return users.filter((candidate) => {
-            const requestStatus = String(
-                candidate.chefRequestStatus ||
-                candidate.roleRequestStatus ||
-                candidate.requestStatus ||
-                candidate.chefRequest ||
-                ""
-            ).toLowerCase();
-
-            const requestedRole = String(
-                candidate.requestedRole ||
-                candidate.roleRequest ||
-                candidate.requestedUserRole ||
-                ""
-            ).toLowerCase();
-
-            return (
-                (requestStatus === "pending" &&
-                    requestedRole.includes("chef")) ||
-                requestStatus === "pending_chef" ||
-                candidate.requestedChef === true ||
-                candidate.wantsToBeChef === true
+    async function handleApproveRequest(requestId) {
+        try {
+            setActionLoadingId(`approve-${requestId}`);
+            clearDashboardMessages();
+            await approveChefRequest(requestId);
+            setPendingChefRequests((prev) =>
+                prev.filter((r) => r.requestId !== requestId)
             );
-        });
+            setDashboardMessage("Chef request approved successfully.");
+        } catch (err) {
+            console.error(err);
+            setDashboardActionError("Failed to approve chef request.");
+        } finally {
+            setActionLoadingId("");
+        }
+    }
+
+    async function handleRejectRequest(requestId) {
+        try {
+            setActionLoadingId(`reject-${requestId}`);
+            clearDashboardMessages();
+            await rejectChefRequest(requestId);
+            setPendingChefRequests((prev) =>
+                prev.filter((r) => r.requestId !== requestId)
+            );
+            setDashboardMessage("Chef request rejected.");
+        } catch (err) {
+            console.error(err);
+            setDashboardActionError("Failed to reject chef request.");
+        } finally {
+            setActionLoadingId("");
+        }
     }
 
     function getUserDisplayName(person) {
@@ -440,7 +458,6 @@ function Dashboard() {
         }
     }
 
-    const pendingChefRequests = getPendingChefRequests();
     const expiringItems = getExpiringItems();
     const upcomingMeals = getUpcomingMeals();
     const openShoppingItems = getOpenShoppingItems();
@@ -656,29 +673,43 @@ function Dashboard() {
                                 <EmptyState text="No pending chef requests right now." />
                             ) : (
                                 <div className="dashboard-mini-list">
-                                    {pendingChefRequests.slice(0, 4).map((request) => (
-                                        <div
-                                            className="dashboard-mini-item"
-                                            key={
-                                                request.userId ||
-                                                request.id ||
-                                                request.email
-                                            }
-                                        >
-                                            <div>
-                                                <strong>{getUserDisplayName(request)}</strong>
-                                                <p>{request.email || "No email available"}</p>
-                                            </div>
-
-                                            <button
-                                                type="button"
-                                                className="dashboard-small-button"
-                                                onClick={() => navigate(ROUTES.users)}
+                                    {pendingChefRequests.slice(0, 4).map((request) => {
+                                        const requester = users.find(
+                                            (u) => String(u.userId) === String(request.userId)
+                                        );
+                                        return (
+                                            <div
+                                                className="dashboard-mini-item"
+                                                key={request.requestId}
                                             >
-                                                Review
-                                            </button>
-                                        </div>
-                                    ))}
+                                                <div>
+                                                    <strong>{getUserDisplayName(requester || {})}</strong>
+                                                    <p>{formatDate(request.requestDate)}</p>
+                                                    {request.reason && <p>{request.reason}</p>}
+                                                </div>
+
+                                                <div className="dashboard-mini-actions">
+                                                    <button
+                                                        type="button"
+                                                        className="dashboard-tag dashboard-tag-button"
+                                                        onClick={() => handleApproveRequest(request.requestId)}
+                                                        disabled={actionLoadingId === `approve-${request.requestId}`}
+                                                    >
+                                                        Approve
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        className="dashboard-tag dashboard-tag-button danger"
+                                                        onClick={() => handleRejectRequest(request.requestId)}
+                                                        disabled={actionLoadingId === `reject-${request.requestId}`}
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
                         </article>
