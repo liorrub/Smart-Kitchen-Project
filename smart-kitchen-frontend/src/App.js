@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Users from "./pages/Users";
 import Ingredients from "./pages/Ingredients";
 import RecipeManagement from "./pages/RecipeManagement";
+import ChefRecipes from "./pages/ChefRecipes";
 
 function App() {
     return (
@@ -93,6 +94,11 @@ function App() {
                         <Route
                             path="/recipe-management"
                             element={<RecipeManagement />}
+                        />
+
+                        <Route
+                            path="/chef/my-recipes"
+                            element={<ChefRecipes />}
                         />
 
                     </Route>
