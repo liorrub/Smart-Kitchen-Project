@@ -68,6 +68,17 @@ export async function deleteMealPlanItem(userId, mealId) {
     return getResponseData(response);
 }
 
+export async function getUserPantry(userId) {
+    const response = await axios.get(
+        `${BASE_URL}/users/${userId}/pantry`,
+        {
+            headers: getAuthHeaders()
+        }
+    );
+
+    return getResponseData(response);
+}
+
 export async function getRecipes() {
     const response = await axios.get(
         `${BASE_URL}/recipes`,

@@ -9,11 +9,13 @@ import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
 
+import { getIngredients } from "../services/ingredientsService";
 import {
     createMealPlanItem,
     deleteMealPlanItem,
     getRecipes,
     getUserMealPlan,
+    getUserPantry,
     updateMealPlanItem
 } from "../services/mealPlanService";
 
@@ -36,6 +38,11 @@ const MEAL_TYPES = [
     }
 ];
 
+const ITEM_TYPE_OPTIONS = [
+    { value: "recipe", label: "Recipe" },
+    { value: "ingredient", label: "Pantry Item" }
+];
+
 const MEAL_TYPE_ORDER = {
     breakfast: 1,
     lunch: 2,
@@ -46,6 +53,7 @@ const MEAL_TYPE_ORDER = {
 const EMPTY_MEAL_FORM = {
     date: "",
     mealType: "breakfast",
+    itemType: "recipe",
     itemId: "",
     notes: ""
 };
@@ -164,6 +172,8 @@ function MealPlanner() {
 
     const [mealPlan, setMealPlan] = useState([]);
     const [recipes, setRecipes] = useState([]);
+    const [pantryItems, setPantryItems] = useState([]);
+    const [ingredientMap, setIngredientMap] = useState(new Map());
 
     const [mealForm, setMealForm] = useState(EMPTY_MEAL_FORM);
     const [editingMeal, setEditingMeal] = useState(null);
@@ -219,6 +229,28 @@ function MealPlanner() {
         }));
     }, [recipes]);
 
+    // Build pantry dropdown options — one entry per unique ingredient in the user's pantry
+    const pantryOptions = useMemo(() => {
+        const seen = new Set();
+        const options = [];
+
+        pantryItems.forEach((item) => {
+            if (!seen.has(item.ingredientId)) {
+                seen.add(item.ingredientId);
+
+                const ingredient = ingredientMap.get(item.ingredientId);
+                const name = ingredient?.name || `Ingredient #${item.ingredientId}`;
+
+                options.push({
+                    value: item.ingredientId,
+                    label: `${name} (${item.quantity} ${item.unit})`
+                });
+            }
+        });
+
+        return options;
+    }, [pantryItems, ingredientMap]);
+
     const weeklyMeals = useMemo(() => {
         return mealPlan
             .filter((meal) => weekDateKeys.has(meal.date))
@@ -252,21 +284,26 @@ function MealPlanner() {
 
                 const [
                     mealPlanData,
-                    recipesData
+                    recipesData,
+                    pantryData,
+                    ingredientsData
                 ] = await Promise.all([
                     getUserMealPlan(storedUser.userId),
-                    getRecipes()
+                    getRecipes(),
+                    getUserPantry(storedUser.userId),
+                    getIngredients()
                 ]);
 
-                setMealPlan(
-                    Array.isArray(mealPlanData)
-                        ? mealPlanData.filter(
-                            (meal) => meal.itemType === "recipe"
-                        )
-                        : []
-                );
-
+                setMealPlan(Array.isArray(mealPlanData) ? mealPlanData : []);
                 setRecipes(Array.isArray(recipesData) ? recipesData : []);
+                setPantryItems(Array.isArray(pantryData) ? pantryData : []);
+                setIngredientMap(
+                    new Map(
+                        (Array.isArray(ingredientsData) ? ingredientsData : []).map(
+                            (ingredient) => [ingredient.ingredientId, ingredient]
+                        )
+                    )
+                );
             } catch (err) {
                 console.error("Meal planner loading error:", err);
 
@@ -308,6 +345,7 @@ function MealPlanner() {
         setMealForm({
             date: meal.date || "",
             mealType: meal.mealType || "breakfast",
+            itemType: meal.itemType || "recipe",
             itemId: meal.itemId || "",
             notes: meal.notes || ""
         });
@@ -322,12 +360,14 @@ function MealPlanner() {
         setError("");
     }
 
+    // Reset itemId when the item type changes so the previous selection is cleared
     function handleFormChange(event) {
         const { name, value } = event.target;
 
         setMealForm((previousForm) => ({
             ...previousForm,
-            [name]: value
+            [name]: value,
+            ...(name === "itemType" ? { itemId: "" } : {})
         }));
     }
 
@@ -341,21 +381,23 @@ function MealPlanner() {
         }
 
         if (!mealForm.itemId) {
-            return "Please choose a recipe.";
+            return "Please choose an item.";
         }
 
         return null;
     }
 
     function buildMealPayload() {
-        const selectedRecipe = recipeMap.get(Number(mealForm.itemId));
+        const calories = mealForm.itemType === "recipe"
+            ? Number(recipeMap.get(Number(mealForm.itemId))?.calories || 0)
+            : 0;
 
         return {
             date: mealForm.date,
             mealType: mealForm.mealType,
-            itemType: "recipe",
+            itemType: mealForm.itemType,
             itemId: Number(mealForm.itemId),
-            calories: Number(selectedRecipe?.calories || 0),
+            calories,
             notes: mealForm.notes.trim()
         };
     }
@@ -499,6 +541,17 @@ function MealPlanner() {
         return recipeMap.get(Number(meal.itemId));
     }
 
+    // Return the display name for a meal chip based on its item type
+    function getItemLabel(meal) {
+        if (meal.itemType === "ingredient") {
+            const ingredient = ingredientMap.get(Number(meal.itemId));
+            return ingredient?.name || `Ingredient #${meal.itemId}`;
+        }
+
+        const recipe = recipeMap.get(Number(meal.itemId));
+        return recipe?.title || `Recipe #${meal.itemId}`;
+    }
+
     function getMealsForDayAndType(date, mealType) {
         return mealPlan
             .filter(
@@ -553,7 +606,7 @@ function MealPlanner() {
             <PageHero
                 label="Meal Planner"
                 title="Plan your weekly meals"
-                description="Build a simple weekly meal plan from your saved recipes."
+                description="Build a simple weekly meal plan from your saved recipes and pantry items."
                 stats={[
                     {
                         value: weeklyMeals.length,
@@ -682,48 +735,43 @@ function MealPlanner() {
                                                 </button>
                                             ) : (
                                                 <div className="meal-cell-items">
-                                                    {meals.map((meal) => {
-                                                        const recipe =
-                                                            getRecipeForMeal(meal);
+                                                    {meals.map((meal) => (
+                                                        <div
+                                                            key={meal.mealId}
+                                                            className={`meal-chip meal-chip-${meal.mealType}`}
+                                                        >
+                                                            <div>
+                                                                <strong>
+                                                                    {getItemLabel(meal)}
+                                                                </strong>
 
-                                                        return (
-                                                            <div
-                                                                key={meal.mealId}
-                                                                className={`meal-chip meal-chip-${meal.mealType}`}
-                                                            >
-                                                                <div>
-                                                                    <strong>
-                                                                        {recipe?.title || `Recipe #${meal.itemId}`}
-                                                                    </strong>
-
-                                                                    <p>
-                                                                        {recipe?.calories || meal.calories || 0} cal
-                                                                        {meal.notes ? ` · ${meal.notes}` : ""}
-                                                                    </p>
-                                                                </div>
-
-                                                                <div className="meal-chip-actions">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() =>
-                                                                            openEditMealModal(meal)
-                                                                        }
-                                                                    >
-                                                                        Edit
-                                                                    </button>
-
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() =>
-                                                                            openDeleteMealModal(meal)
-                                                                        }
-                                                                    >
-                                                                        ×
-                                                                    </button>
-                                                                </div>
+                                                                <p>
+                                                                    {getRecipeForMeal(meal)?.calories || meal.calories || 0} cal
+                                                                    {meal.notes ? ` · ${meal.notes}` : ""}
+                                                                </p>
                                                             </div>
-                                                        );
-                                                    })}
+
+                                                            <div className="meal-chip-actions">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        openEditMealModal(meal)
+                                                                    }
+                                                                >
+                                                                    Edit
+                                                                </button>
+
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        openDeleteMealModal(meal)
+                                                                    }
+                                                                >
+                                                                    ×
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             )}
                                         </td>
@@ -756,8 +804,8 @@ function MealPlanner() {
 
                         <FormCard
                             label={editingMeal ? "Update meal" : "Add meal"}
-                            title={editingMeal ? "Edit Recipe Meal" : "Add Recipe Meal"}
-                            description="Choose a date, meal type and recipe. Calories are taken from the selected recipe."
+                            title={editingMeal ? "Edit Meal" : "Add Meal"}
+                            description="Choose a date, meal type, and item. For recipes, calories are added automatically."
                             className="meal-modal-card"
                             actions={
                                 <>
@@ -805,18 +853,42 @@ function MealPlanner() {
                                     />
 
                                     <CustomSelect
-                                        label="Recipe"
-                                        name="itemId"
-                                        value={mealForm.itemId}
+                                        label="Item Type"
+                                        name="itemType"
+                                        value={mealForm.itemType}
                                         onChange={handleFormChange}
-                                        options={recipeOptions}
-                                        placeholder="Choose recipe"
-                                        helperText={
-                                            recipeOptions.length === 0
-                                                ? "No recipes are available."
-                                                : ""
-                                        }
+                                        options={ITEM_TYPE_OPTIONS}
                                     />
+
+                                    {mealForm.itemType === "recipe" ? (
+                                        <CustomSelect
+                                            label="Recipe"
+                                            name="itemId"
+                                            value={mealForm.itemId}
+                                            onChange={handleFormChange}
+                                            options={recipeOptions}
+                                            placeholder="Choose recipe"
+                                            helperText={
+                                                recipeOptions.length === 0
+                                                    ? "No recipes are available."
+                                                    : ""
+                                            }
+                                        />
+                                    ) : (
+                                        <CustomSelect
+                                            label="Pantry Item"
+                                            name="itemId"
+                                            value={mealForm.itemId}
+                                            onChange={handleFormChange}
+                                            options={pantryOptions}
+                                            placeholder="Choose pantry item"
+                                            helperText={
+                                                pantryOptions.length === 0
+                                                    ? "Your pantry is empty."
+                                                    : ""
+                                            }
+                                        />
+                                    )}
 
                                     <FormField
                                         label="Notes"
