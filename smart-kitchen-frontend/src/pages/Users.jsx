@@ -78,6 +78,15 @@ function Users() {
         loadUsers();
     }, []);
 
+    useEffect(() => {
+        const isOpen = isCreateModalOpen || !!editingUser || !!userToDelete;
+        if (!isOpen) return;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isCreateModalOpen, editingUser, userToDelete]);
+
     async function loadUsers() {
         try {
             setLoading(true);
@@ -393,6 +402,7 @@ function Users() {
                             ×
                         </button>
 
+                        <div className="users-modal-body">
                         <FormCard
                             label="Create user"
                             title="Add New User"
@@ -491,6 +501,7 @@ function Users() {
                                 </div>
                             </form>
                         </FormCard>
+                        </div>
                     </div>
                 </div>
             )}
@@ -513,6 +524,7 @@ function Users() {
                             ×
                         </button>
 
+                        <div className="users-modal-body">
                         <FormCard
                             label="Edit user"
                             title={`${editingUser.firstName} ${editingUser.lastName}`}
@@ -641,6 +653,7 @@ function Users() {
                                 </div>
                             </form>
                         </FormCard>
+                        </div>
                     </div>
                 </div>
             )}

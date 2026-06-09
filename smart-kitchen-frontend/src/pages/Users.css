@@ -134,11 +134,13 @@
     inset: 0;
     z-index: 9998;
 
-    padding: 24px;
+    padding: 90px 24px 24px;
 
     display: flex;
     align-items: center;
     justify-content: center;
+
+    overflow: hidden;
 
     background: rgba(31, 61, 43, 0.34);
     backdrop-filter: blur(6px);
@@ -149,14 +151,21 @@
     z-index: 9999;
 
     width: min(960px, calc(100vw - 48px));
-    max-height: 88vh;
+    max-height: 80vh;
 
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 
     border-radius: 30px;
     box-shadow: 0 28px 70px rgba(31, 61, 43, 0.28);
 
     animation: usersModalPopIn 0.22s ease;
+}
+
+.users-modal-body {
+    flex: 1;
+    overflow-y: auto;
 }
 
 .users-modal-card {
@@ -270,7 +279,7 @@
 
 @media (max-width: 760px) {
     .users-modal-overlay {
-        padding: 14px;
+        padding: 80px 14px 14px;
     }
 
     .users-modal,

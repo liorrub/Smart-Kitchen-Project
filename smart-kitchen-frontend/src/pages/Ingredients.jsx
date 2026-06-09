@@ -89,6 +89,15 @@ function Ingredients() {
         loadIngredients();
     }, []);
 
+    useEffect(() => {
+        const isOpen = isFormModalOpen || !!ingredientToDelete;
+        if (!isOpen) return;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isFormModalOpen, ingredientToDelete]);
+
     const allergenCount = useMemo(() => {
         return ingredients.filter((ingredient) => ingredient.isAllergen).length;
     }, [ingredients]);
@@ -409,6 +418,7 @@ function Ingredients() {
                             ×
                         </button>
 
+                        <div className="ingredient-modal-body">
                         <FormCard
                             label={
                                 editingIngredientId
@@ -478,6 +488,7 @@ function Ingredients() {
                                 </div>
                             </form>
                         </FormCard>
+                        </div>
                     </div>
                 </div>
             )}
