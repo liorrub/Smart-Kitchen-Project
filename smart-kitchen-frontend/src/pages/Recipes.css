@@ -228,15 +228,9 @@
 .recipe-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 20000;
-
-    padding: 170px 24px 24px;
 
     display: flex;
-    align-items: flex-start;
     justify-content: center;
-
-    overflow-y: auto;
 
     background: rgba(31, 61, 43, 0.34);
     backdrop-filter: blur(6px);
@@ -254,12 +248,26 @@
     border-radius: 30px;
     box-shadow: 0 28px 70px rgba(31, 61, 43, 0.28);
 
+    background:
+        radial-gradient(circle at top left, rgba(103, 214, 86, 0.08), transparent 34%),
+        linear-gradient(135deg, rgba(255, 254, 250, 0.98), rgba(246, 251, 245, 0.98));
+    border: 1px solid rgba(139, 213, 174, 0.85);
+
     animation: recipeModalPopIn 0.22s ease;
 }
 
 .recipe-form-card {
     margin: 0;
     padding-top: 30px;
+}
+
+/* Strip FormCard box decoration inside the recipe modal */
+.recipe-modal .recipe-form-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    margin: 0;
 }
 
 .recipe-modal-close {
@@ -393,13 +401,14 @@
    so only the create-recipe form is affected, not the general recipe page.
    ========================================================================== */
 
-.recipe-management-modal-overlay {
-    padding: 110px 24px 40px !important;
+.recipe-modal-overlay.recipe-management-modal-overlay {
+    z-index: 20000;
+    padding: 110px 24px 40px;
 
-    align-items: flex-start !important;
-    justify-content: center !important;
+    align-items: center;
+    justify-content: center;
 
-    overflow-y: hidden !important;
+    overflow: hidden;
 }
 
 /* The modal container itself does not scroll — the inner body scrolls.

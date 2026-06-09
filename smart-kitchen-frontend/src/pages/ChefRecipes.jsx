@@ -1,7 +1,6 @@
 import "./Recipes.css";
 
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
@@ -16,6 +15,7 @@ import CheckboxGroup from "../components/CheckboxGroup";
 import {
     getAllRecipes,
     createRecipe,
+    updateRecipe,
     deleteRecipe
 } from "../services/recipeService";
 
@@ -73,8 +73,6 @@ function getErrorMessage(error, fallbackMessage) {
 }
 
 function ChefRecipes() {
-    const navigate = useNavigate();
-
     // -----------------------------------------------------------------------
     // State
     // -----------------------------------------------------------------------
@@ -91,6 +89,8 @@ function ChefRecipes() {
     const [recipeFormData, setRecipeFormData] = useState(EMPTY_RECIPE_FORM_DATA);
     const [savingRecipe, setSavingRecipe] = useState(false);
     const [averageRating, setAverageRating] = useState(null);
+    const [editingRecipe, setEditingRecipe] = useState(null);
+    const [confirmDeleteRecipe, setConfirmDeleteRecipe] = useState(null);
 
     // Options are fetched from the backend so they stay in sync with the enums
     const [options, setOptions] = useState({
@@ -314,21 +314,52 @@ function ChefRecipes() {
     function closeCreateRecipeModal() {
         setIsCreateModalOpen(false);
         setRecipeFormData(EMPTY_RECIPE_FORM_DATA);
+        setEditingRecipe(null);
         setError("");
+    }
+
+    function openEditModal(recipe) {
+        setError("");
+        setSuccess("");
+        const instructionSteps = recipe.instructions
+            ? recipe.instructions.split(/,\s*/).filter(Boolean)
+            : [""];
+        setRecipeFormData({
+            title: recipe.title || "",
+            category: recipe.category || "dinner",
+            cuisine: recipe.cuisine || "italian",
+            difficulty: recipe.difficulty || "easy",
+            prepTime: String(recipe.prepTime ?? ""),
+            cookTime: String(recipe.cookTime ?? ""),
+            servings: String(recipe.servings ?? ""),
+            calories: String(recipe.calories ?? ""),
+            tags: recipe.tags || [],
+            ingredients: (recipe.ingredients || []).map((ing) => ({
+                ingredientId: ing.ingredientId,
+                name: ing.name || "",
+                quantity: ing.quantity || "",
+                unit: ing.unit || ""
+            })),
+            selectedIngredientId: "",
+            ingredientQuantity: "",
+            ingredientUnit: "",
+            instructionSteps: instructionSteps.length > 0 ? instructionSteps : [""]
+        });
+        setEditingRecipe(recipe);
+        setIsCreateModalOpen(true);
     }
 
     // -----------------------------------------------------------------------
     // Recipe actions
     // -----------------------------------------------------------------------
 
-    async function handleDeleteRecipe(recipe) {
-        const confirmed = window.confirm(
-            `Are you sure you want to delete "${recipe.title}"?`
-        );
+    function handleDeleteRecipe(recipe) {
+        setConfirmDeleteRecipe(recipe);
+    }
 
-        if (!confirmed) {
-            return;
-        }
+    async function handleConfirmDelete() {
+        const recipe = confirmDeleteRecipe;
+        setConfirmDeleteRecipe(null);
 
         try {
             setError("");
@@ -398,13 +429,18 @@ function ChefRecipes() {
 
         try {
             setSavingRecipe(true);
-            await createRecipe(newRecipe, storedUser);
 
-            // Reload the full list so the new recipe appears
+            if (editingRecipe) {
+                await updateRecipe(editingRecipe.recipeId, newRecipe, storedUser);
+            } else {
+                await createRecipe(newRecipe, storedUser);
+            }
+
+            // Reload the full list so changes appear
             const recipesData = await getAllRecipes();
             setRecipes(recipesData);
 
-            setSuccess("Recipe created successfully.");
+            setSuccess(editingRecipe ? "Recipe updated successfully." : "Recipe created successfully.");
             closeCreateRecipeModal();
         } catch (err) {
             console.error("Create recipe error:", err);
@@ -465,6 +501,38 @@ function ChefRecipes() {
                 onClose={() => setSelectedRecipe(null)}
             />
 
+            {/* Delete confirmation modal */}
+            {confirmDeleteRecipe && (
+                <div className="message-modal-overlay">
+                    <div className="message-modal-card message-modal-error">
+                        <h3>Delete Recipe</h3>
+
+                        <p>
+                            Are you sure you want to delete &quot;{confirmDeleteRecipe.title}&quot;?
+                            This action cannot be undone.
+                        </p>
+
+                        <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "8px" }}>
+                            <AppButton
+                                type="button"
+                                variant="secondary"
+                                onClick={() => setConfirmDeleteRecipe(null)}
+                            >
+                                Cancel
+                            </AppButton>
+
+                            <AppButton
+                                type="button"
+                                variant="danger"
+                                onClick={handleConfirmDelete}
+                            >
+                                Confirm Delete
+                            </AppButton>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* ----------------------------------------------------------------
                 Create recipe modal
             ---------------------------------------------------------------- */}
@@ -491,9 +559,9 @@ function ChefRecipes() {
                         {/* Only this inner div scrolls */}
                         <div className="recipe-management-modal-body">
                             <FormCard
-                                label="Create recipe"
-                                title="Add New Recipe"
-                                description="Fill in the recipe details. The recipe will be connected to your chef account."
+                                label={editingRecipe ? "Edit recipe" : "Create recipe"}
+                                title={editingRecipe ? "Edit Recipe" : "Add New Recipe"}
+                                description={editingRecipe ? "Update the recipe details below." : "Fill in the recipe details. The recipe will be connected to your chef account."}
                                 className="recipe-form-card"
                                 actions={
                                     <>
@@ -502,7 +570,7 @@ function ChefRecipes() {
                                             form="recipe-form"
                                             disabled={savingRecipe}
                                         >
-                                            {savingRecipe ? "Saving..." : "Add Recipe"}
+                                            {savingRecipe ? "Saving..." : editingRecipe ? "Save Changes" : "Add Recipe"}
                                         </AppButton>
 
                                         <AppButton
@@ -803,9 +871,7 @@ function ChefRecipes() {
                                             <AppButton
                                                 type="button"
                                                 size="small"
-                                                onClick={() =>
-                                                    navigate(`/recipes/${recipe.recipeId}/edit`)
-                                                }
+                                                onClick={() => openEditModal(recipe)}
                                             >
                                                 Edit
                                             </AppButton>
