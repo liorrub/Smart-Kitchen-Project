@@ -47,6 +47,12 @@
 
 # Meal Plan
 
+Meal plan items support two item types controlled by the `itemType` field:
+- `"recipe"` — references a recipe by `itemId`; recipe existence is validated on create/update
+- `"ingredient"` — references a pantry ingredient by `itemId`; no recipe lookup is performed
+
+When `itemType` is omitted it defaults to `"recipe"`.
+
 | Method | Path | Access | Headers | Query Params | Request Body | Success Response Example | Error Response Example | Status Codes |
 |---|---|---|---|---|---|---|---|---|
 | GET | `/api/users/:id/meal-plan/:mealId` | protected, self or admin | `x-user-id`, `x-user-role` | None | None | `{"success":true,"data":{"mealId":1,"userId":1,"date":"2026-05-05","mealType":"breakfast","itemType":"recipe","itemId":101,"calories":400,"notes":"Light breakfast"},"error":null}` | `{"success":false,"data":null,"error":{"code":"MEAL_NOT_FOUND","message":"Meal plan item not found","details":{}}}` | 200, 400, 403, 404 |
@@ -118,4 +124,26 @@ When a recipe has no related ingredients yet, the API returns `ingredients: []`.
 | GET | `/api/users/:id/ai/history/:historyId` | protected, self or admin | `x-user-id`, `x-user-role` | None | None | `{"success":true,"data":{"historyId":1,"userId":1,"requestType":"recipe_generation","inputData":{"ingredients":["egg","cheese","tomato"]},"outputData":{"recipeTitle":"Quick Cheese Omelette","description":"A simple omelette with cheese and tomato.","estimatedPrepTime":10},"createdAt":"2026-05-11T10:30:00Z"},"error":null}` | `{"success":false,"data":null,"error":{"code":"HISTORY_NOT_FOUND","message":"AI history item not found","details":{}}}` | 200, 400, 403, 404 |
 | DELETE | `/api/users/:id/ai/history/:historyId` | protected, self or admin | `x-user-id`, `x-user-role` | None | None | `{"success":true,"data":{"message":"AI history deleted successfully"},"error":null}` | `{"success":false,"data":null,"error":{"code":"HISTORY_NOT_FOUND","message":"AI history item not found","details":{}}}` | 200, 400, 403, 404 |
 
-TOTAL ENDPOINT COUNT: 50
+# Options
+
+Returns all valid enum values used across the API (recipe categories, difficulties, cuisines, pantry locations, cooking levels, meal types, and AI request types). Use this endpoint to populate dropdowns without hardcoding values on the frontend.
+
+| Method | Path | Access | Headers | Query Params | Request Body | Success Response Example | Error Response Example | Status Codes |
+|---|---|---|---|---|---|---|---|---|
+| GET | `/api/options` | public | None | None | None | `{"success":true,"data":{"recipes":{"categories":["breakfast","lunch","dinner","snack","dessert"],"difficulties":["easy","medium","hard"],"cuisines":["italian","asian","mexican","american","israeli"]},"pantry":{"locations":["fridge","freezer","pantry","other"]},"users":{"cookingLevels":["beginner","intermediate","advanced"]},"mealPlan":{"mealTypes":["breakfast","lunch","dinner","snack"]},"ai":{"requestTypes":["recipe_generation","suggestions","image_analysis"]}},"error":null}` | `{"success":false,"data":null,"error":{"code":"SERVER_ERROR","message":"Unexpected server error","details":{}}}` | 200, 500 |
+
+# Chef Requests
+
+Regular users and influencers can submit a request to become a chef. Admins can view all pending requests and approve or reject them. Approving a request automatically promotes the user's role to `"chef"`.
+
+A user cannot submit a new request if they already have one with `"pending"` status. After a rejection the user may submit a new request.
+
+| Method | Path | Access | Headers | Query Params | Request Body | Success Response Example | Error Response Example | Status Codes |
+|---|---|---|---|---|---|---|---|---|
+| POST | `/api/chef-requests` | protected, any authenticated user | `x-user-id`, `x-user-role`, `Content-Type: application/json` | None | `{"reason":"I love cooking and want to share recipes with the community."}` | `{"success":true,"data":{"requestId":4,"userId":4,"status":"pending","reason":"I love cooking and want to share recipes with the community.","requestDate":"2026-06-09T10:00:00Z","reviewedDate":null,"reviewedBy":null},"error":null}` | `{"success":false,"data":null,"error":{"code":"REQUEST_ALREADY_EXISTS","message":"You already have a pending chef request.","details":{}}}` | 201, 400, 401, 409 |
+| GET | `/api/chef-requests` | protected, admin only | `x-user-role: admin` | None | None | `{"success":true,"data":[{"requestId":1,"userId":4,"status":"pending","reason":"I love cooking and want to share my recipes with the community.","requestDate":"2026-06-01T09:00:00Z","reviewedDate":null,"reviewedBy":null}],"error":null}` | `{"success":false,"data":null,"error":{"code":"FORBIDDEN","message":"You do not have permission to perform this action.","details":{}}}` | 200, 403 |
+| GET | `/api/chef-requests/my` | protected, any authenticated user | `x-user-id`, `x-user-role` | None | None | `{"success":true,"data":{"requestId":1,"userId":4,"status":"pending","reason":"I love cooking.","requestDate":"2026-06-01T09:00:00Z","reviewedDate":null,"reviewedBy":null},"error":null}` | `{"success":false,"data":null,"error":{"code":"UNAUTHORIZED","message":"You must be logged in.","details":{}}}` | 200, 401 |
+| PUT | `/api/chef-requests/:requestId/approve` | protected, admin only | `x-user-id`, `x-user-role: admin` | None | None | `{"success":true,"data":{"requestId":1,"userId":4,"status":"approved","reason":"I love cooking.","requestDate":"2026-06-01T09:00:00Z","reviewedDate":"2026-06-09T10:00:00Z","reviewedBy":2},"error":null}` | `{"success":false,"data":null,"error":{"code":"REQUEST_NOT_FOUND","message":"Chef request not found.","details":{}}}` | 200, 400, 403, 404 |
+| PUT | `/api/chef-requests/:requestId/reject` | protected, admin only | `x-user-id`, `x-user-role: admin` | None | None | `{"success":true,"data":{"requestId":1,"userId":4,"status":"rejected","reason":"I love cooking.","requestDate":"2026-06-01T09:00:00Z","reviewedDate":"2026-06-09T10:00:00Z","reviewedBy":2},"error":null}` | `{"success":false,"data":null,"error":{"code":"REQUEST_NOT_FOUND","message":"Chef request not found.","details":{}}}` | 200, 400, 403, 404 |
+
+TOTAL ENDPOINT COUNT: 56

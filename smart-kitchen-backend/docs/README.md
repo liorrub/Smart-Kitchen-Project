@@ -1,7 +1,7 @@
 # Smart Kitchen API
 
 A backend REST API for the Smart Kitchen project.
-The system supports management of users, recipes, ingredients, pantry items, shopping lists, meal planning, and mock AI-based food suggestion features through a structured REST API.
+The system supports management of users, recipes, ingredients, pantry items, shopping lists, meal planning, chef account requests, and mock AI-based food suggestion features through a structured REST API.
 
 ---
 
@@ -98,13 +98,15 @@ Every protected endpoint requires the following headers:
 - Update and delete ingredients
 - Manage stores
 - Access system statistics
+- Review, approve, and reject chef account requests
 
-**User**
+**User / Influencer**
 - View public resources
 - Create ingredients
 - Manage only personal resources
 - Register new account
 - Change own password
+- Submit a request to become a chef
 ```
 
 ---
@@ -286,8 +288,10 @@ The Smart Kitchen API provides 49 endpoints across the following resource catego
 | **Ingredients** | 5         |
 | **Stores** | 3         |
 | **AI** | 6         |
+| **Options** | 1         |
+| **Chef Requests** | 5         |
 
-**Total: 50 endpoints**
+**Total: 56 endpoints**
 
 For detailed endpoint documentation, see:
 - [API_REFERENCE.md](API_REFERENCE.md) - Comprehensive endpoint documentation
@@ -309,6 +313,8 @@ For detailed endpoint documentation, see:
 ✓ Recipe generation from available ingredients  
 ✓ User self-registration
 ✓ Password change functionality
+✓ Chef account request workflow (submit, review, approve, reject)
+✓ Meal plan items support both recipes and pantry ingredients
 
 ### Technical Features
 ✓ Structured error handling  
