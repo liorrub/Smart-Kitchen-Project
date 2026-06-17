@@ -18,6 +18,7 @@ import {
 } from "../services/userService";
 
 import { validateUserManagementForm } from "../validators/userValidator";
+import { formatText } from "../utils/formatUtils";
 
 const ROLE_OPTIONS = [
     { value: "user", label: "User" },
@@ -43,17 +44,6 @@ const EMPTY_USER_FORM = {
     cookingLevel: "beginner",
     preferences: []
 };
-
-function formatText(value) {
-    if (!value) {
-        return "Unknown";
-    }
-
-    return String(value)
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-}
 
 function Users() {
     const [users, setUsers] = useState([]);

@@ -8,6 +8,7 @@ import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
 
 import { getAIHistory } from "../services/aiHistoryService";
+import { formatText } from "../utils/formatUtils";
 
 const AI_FEATURES = [
     {
@@ -39,19 +40,6 @@ const AI_FEATURES = [
     }
 ];
 
-
-function formatText(value) {
-    if (!value) {
-        return "Unknown";
-    }
-
-    return String(value)
-        .replace(/_/g, " ")
-        .replace(/-/g, " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-}
 
 function formatDate(value) {
     if (!value) {

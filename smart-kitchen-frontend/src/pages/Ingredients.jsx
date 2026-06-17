@@ -17,6 +17,7 @@ import {
 } from "../services/ingredientsService";
 
 import { validateIngredientForm } from "../validators/ingredientValidation";
+import { formatText } from "../utils/formatUtils";
 
 const EMPTY_FORM_DATA = {
     name: "",
@@ -57,18 +58,6 @@ const ALLERGEN_OPTIONS = [
         label: "Yes"
     }
 ];
-
-function formatText(value) {
-    if (!value) {
-        return "Unknown";
-    }
-
-    return String(value)
-        .replace("-", " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-}
 
 function Ingredients() {
     const [ingredients, setIngredients] = useState([]);

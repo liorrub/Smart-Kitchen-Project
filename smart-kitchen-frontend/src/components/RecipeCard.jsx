@@ -6,17 +6,7 @@ import dinnerImg from "../assets/dinner.png";
 import lunchImg from "../assets/lunch.png";
 import snackImg from "../assets/snack.png";
 
-function formatText(value) {
-    if (!value) {
-        return "Unknown";
-    }
-
-    return String(value)
-        .replace(/-/g, " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-}
+import { formatText } from "../utils/formatUtils";
 
 function getCategoryImage(category) {
     const images = {

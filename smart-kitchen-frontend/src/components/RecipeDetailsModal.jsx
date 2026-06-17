@@ -7,18 +7,7 @@ import ReviewCard from "./ReviewCard";
 import { getRecipeReviews } from "../services/reviewsService";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
-
-function formatText(value) {
-    if (!value) {
-        return "Unknown";
-    }
-
-    return String(value)
-        .replace("-", " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-}
+import { formatText } from "../utils/formatUtils";
 
 function getCategoryClass(category) {
     const validCategories = [

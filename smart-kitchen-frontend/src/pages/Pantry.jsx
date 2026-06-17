@@ -9,6 +9,7 @@ import CreateProductButton from "../components/CreateProductButton";
 import { getIngredients } from "../services/ingredientsService";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser, getAuthHeaders } from "../utils/authUtils";
+import { formatText } from "../utils/formatUtils";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 
@@ -28,18 +29,6 @@ const locationOptions = [
     { value: "fridge", label: "Fridge" },
     { value: "freezer", label: "Freezer" }
 ];
-
-function formatText(value) {
-    if (!value) {
-        return "Unknown";
-    }
-
-    return value
-        .replace(/-/g, " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-}
 
 function formatDate(value) {
     if (!value) {

@@ -10,6 +10,7 @@ import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
+import { formatText } from "../utils/formatUtils";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 const INGREDIENTS_API_URL = "http://localhost:3000/api/ingredients";
@@ -39,18 +40,6 @@ function getAuthHeaders() {
         "x-user-id": storedUser?.userId,
         "x-user-role": storedUser?.userRole || storedUser?.role
     };
-}
-
-function formatText(value) {
-    if (!value) {
-        return "Unknown";
-    }
-
-    return value
-        .replace(/-/g, " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
 }
 
 function ShoppingList() {
