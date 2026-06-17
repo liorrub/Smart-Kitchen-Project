@@ -224,11 +224,12 @@ function KitchenSidebar() {
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const currentUser = user || getStoredUser();
     const todayKey = getDateKey(new Date());
 
     useEffect(() => {
         async function loadPanelData() {
+            const currentUser = user || getStoredUser();
+
             if (!currentUser?.userId) {
                 setPanelData(EMPTY_PANEL_DATA);
                 setIsLoading(false);
@@ -265,7 +266,7 @@ function KitchenSidebar() {
         }
 
         loadPanelData();
-    }, [currentUser?.userId]);
+    }, [user]);
 
     useEffect(() => {
         function handleEscape(event) {

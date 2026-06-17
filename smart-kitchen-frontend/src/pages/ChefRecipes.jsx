@@ -106,6 +106,8 @@ function ChefRecipes() {
 
     useEffect(() => {
         async function loadChefRecipes() {
+            const storedUser = getStoredUser();
+
             try {
                 setLoading(true);
                 setError("");

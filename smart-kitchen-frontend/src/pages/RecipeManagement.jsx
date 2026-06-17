@@ -1,7 +1,6 @@
 import "./Recipes.css";
 
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
@@ -74,8 +73,6 @@ function getErrorMessage(error, fallbackMessage) {
 }
 
 function RecipeManagement() {
-    const navigate = useNavigate();
-
     // -----------------------------------------------------------------------
     // State
     // -----------------------------------------------------------------------

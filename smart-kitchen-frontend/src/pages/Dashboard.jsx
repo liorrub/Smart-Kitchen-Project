@@ -312,7 +312,7 @@ function Dashboard() {
     function openRecipeFromMeal(meal) {
         clearDashboardMessages();
 
-        const recipe = getRecipeById(meal.recipeId);
+        const recipe = getRecipeById(meal.itemId);
 
         if (!recipe) {
             setDashboardActionError("Recipe details were not found.");
@@ -935,8 +935,8 @@ function Dashboard() {
                                         >
                                             <div>
                                                 <strong>
-                                                    {meal.recipeId
-                                                        ? getRecipeTitle(meal.recipeId)
+                                                    {meal.itemType === "recipe"
+                                                        ? getRecipeTitle(meal.itemId)
                                                         : meal.mealType || "Meal"}
                                                 </strong>
 
@@ -954,7 +954,7 @@ function Dashboard() {
                                                     type="button"
                                                     className="dashboard-tag dashboard-tag-button"
                                                     onClick={() => openRecipeFromMeal(meal)}
-                                                    disabled={!meal.recipeId}
+                                                    disabled={meal.itemType !== "recipe" || !meal.itemId}
                                                 >
                                                     Open
                                                 </button>

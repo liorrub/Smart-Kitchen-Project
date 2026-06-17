@@ -72,15 +72,6 @@ function getIngredientName(ingredient) {
     );
 }
 
-function getIngredientCategory(ingredient) {
-    return (
-        ingredient.category ||
-        ingredient.ingredientCategory ||
-        ingredient.type ||
-        ""
-    );
-}
-
 function getIngredientQuantity(ingredient) {
     return (
         ingredient.quantity ||
@@ -280,8 +271,6 @@ function RecipeDetailsModal({ recipe, onClose }) {
                                 {ingredients.map((ingredient, index) => {
                                     const ingredientName =
                                         getIngredientName(ingredient);
-                                    const ingredientCategory =
-                                        getIngredientCategory(ingredient);
                                     const quantity =
                                         getIngredientQuantity(ingredient);
                                     const unit = getIngredientUnit(ingredient);

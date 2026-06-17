@@ -71,7 +71,7 @@ function formatText(value) {
     }
 
     return value
-        .replace("-", " ")
+        .replace(/-/g, " ")
         .split(" ")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
@@ -233,49 +233,51 @@ function Pantry() {
     const storedUser = getStoredUser();
 
     useEffect(() => {
+        async function loadPageData() {
+            const storedUser = getStoredUser();
+
+            try {
+                setLoading(true);
+                setError("");
+
+                if (!storedUser?.userId) {
+                    setError("User was not found. Please login again.");
+                    return;
+                }
+
+                const [pantryResponse, ingredientsResponse] =
+                    await Promise.all([
+                        axios.get(
+                            `${USERS_API_URL}/${storedUser.userId}/pantry`,
+                            {
+                                headers: getAuthHeaders(),
+                                params: {
+                                    _t: Date.now()
+                                }
+                            }
+                        ),
+                        getIngredients(getAuthHeaders())
+                    ]);
+
+                setPantryItems(getResponseData(pantryResponse));
+                setIngredients(ingredientsResponse);
+            } catch (err) {
+                console.error("Pantry loading error:", err);
+                console.error("Server response:", err.response?.data);
+
+                setError(
+                    getErrorMessage(
+                        err,
+                        "Failed to load pantry."
+                    )
+                );
+            } finally {
+                setLoading(false);
+            }
+        }
+
         loadPageData();
     }, []);
-
-    async function loadPageData() {
-        try {
-            setLoading(true);
-            setError("");
-
-            if (!storedUser?.userId) {
-                setError("User was not found. Please login again.");
-                return;
-            }
-
-            const [pantryResponse, ingredientsResponse] =
-                await Promise.all([
-                    axios.get(
-                        `${USERS_API_URL}/${storedUser.userId}/pantry`,
-                        {
-                            headers: getAuthHeaders(),
-                            params: {
-                                _t: Date.now()
-                            }
-                        }
-                    ),
-                    getIngredients(getAuthHeaders())
-                ]);
-
-            setPantryItems(getResponseData(pantryResponse));
-            setIngredients(ingredientsResponse);
-        } catch (err) {
-            console.error("Pantry loading error:", err);
-            console.error("Server response:", err.response?.data);
-
-            setError(
-                getErrorMessage(
-                    err,
-                    "Failed to load pantry."
-                )
-            );
-        } finally {
-            setLoading(false);
-        }
-    }
 
     const ingredientOptions = useMemo(() => {
         return [

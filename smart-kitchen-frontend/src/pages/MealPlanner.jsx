@@ -124,14 +124,6 @@ function formatWeekRange(weekDays) {
     return `${start.monthName} ${start.dayNumber}, ${startYear} – ${end.monthName} ${end.dayNumber}, ${endYear}`;
 }
 
-function formatCompactDate(day) {
-    if (!day) {
-        return "";
-    }
-
-    return `${day.dayName}, ${day.monthName} ${day.dayNumber}`;
-}
-
 function isSameWeek(firstDate, secondDate) {
     return (
         formatDateKey(getStartOfWeek(firstDate)) ===
@@ -195,14 +187,6 @@ function MealPlanner() {
 
     const weekRangeLabel = useMemo(() => {
         return formatWeekRange(weekDates);
-    }, [weekDates]);
-
-    const weekStartLabel = useMemo(() => {
-        return formatCompactDate(weekDates[0]);
-    }, [weekDates]);
-
-    const weekEndLabel = useMemo(() => {
-        return formatCompactDate(weekDates[6]);
     }, [weekDates]);
 
     const isViewingCurrentWeek = useMemo(() => {
