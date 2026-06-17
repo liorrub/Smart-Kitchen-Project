@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const BASE_URL =
-    "http://localhost:3000/api/settings";
+import { API_BASE_URL } from "../utils/apiConfig";
+
+const SETTINGS_API_URL = `${API_BASE_URL}/settings`;
 
 export async function getSettings() {
 
@@ -10,7 +11,7 @@ export async function getSettings() {
     );
 
     const response = await axios.get(
-        BASE_URL,
+        SETTINGS_API_URL,
         {
             headers: {
                 "x-user-id":
@@ -31,7 +32,7 @@ export async function updateSettings(
     );
 
     const response = await axios.put(
-        BASE_URL,
+        SETTINGS_API_URL,
         settingsData,
         {
             headers: {
@@ -49,7 +50,7 @@ export async function changePassword(userId, passwordData) {
         localStorage.getItem("user")
     );
 
-    const url = `http://localhost:3000/api/users/${userId}/change-password`;
+    const url = `${API_BASE_URL}/users/${userId}/change-password`;
     const headers = {
         "x-user-id": userId,
         "x-user-role": storedUser?.userRole || "user"
