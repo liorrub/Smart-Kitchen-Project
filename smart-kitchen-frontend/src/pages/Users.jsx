@@ -19,18 +19,13 @@ import {
 
 import { validateUserManagementForm } from "../validators/userValidator";
 import { formatText } from "../utils/formatUtils";
+import { COOKING_LEVEL_OPTIONS } from "../constants/options";
 
 const ROLE_OPTIONS = [
     { value: "user", label: "User" },
     { value: "chef", label: "Chef" },
     { value: "influencer", label: "Influencer" },
     { value: "admin", label: "Admin" }
-];
-
-const COOKING_LEVEL_OPTIONS = [
-    { value: "beginner", label: "Beginner" },
-    { value: "intermediate", label: "Intermediate" },
-    { value: "advanced", label: "Advanced" }
 ];
 
 const EMPTY_USER_FORM = {

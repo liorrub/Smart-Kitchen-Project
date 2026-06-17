@@ -13,6 +13,7 @@ import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PasswordField from "../components/PasswordField";
 import { validateRegisterForm } from "../validators/userValidator";
+import { COOKING_LEVEL_OPTIONS } from "../constants/options";
 
 import logo from "../assets/logo.png";
 
@@ -56,13 +57,6 @@ const foodImages = [
     login12,
     login13,
     login14
-];
-
-/* Options for the cooking level select field */
-const cookingLevelOptions = [
-    { value: "beginner", label: "Beginner" },
-    { value: "intermediate", label: "Intermediate" },
-    { value: "advanced", label: "Advanced" }
 ];
 
 function Register() {
@@ -289,7 +283,7 @@ function Register() {
                         name="cookingLevel"
                         value={formData.cookingLevel}
                         onChange={handleChange}
-                        options={cookingLevelOptions}
+                        options={COOKING_LEVEL_OPTIONS}
                     />
 
                     <AppButton

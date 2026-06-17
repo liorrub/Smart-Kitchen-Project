@@ -17,9 +17,7 @@ import {
     updateSettings
 } from "../services/settingsService";
 import { getMyChefRequest, submitChefRequest } from "../services/chefRequestService";
-
-// Constants
-const COOKING_LEVELS = ["beginner", "intermediate", "advanced"];
+import { COOKING_LEVEL_OPTIONS } from "../constants/options";
 
 const DIETARY_OPTIONS = [
     "vegan",
@@ -468,7 +466,7 @@ function Settings() {
                             label="Cooking Level"
                             name="cookingLevel"
                             value={formData.cookingLevel}
-                            options={COOKING_LEVELS}
+                            options={COOKING_LEVEL_OPTIONS}
                             onChange={handleChange}
                         />
                     </div>
