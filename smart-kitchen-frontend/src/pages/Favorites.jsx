@@ -14,8 +14,9 @@ import {
 } from "../services/favoritesService";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
+import { API_BASE_URL } from "../utils/apiConfig";
 
-const RECIPES_API_URL = "http://localhost:3000/api/recipes";
+const RECIPES_API_URL = `${API_BASE_URL}/recipes`;
 
 function Favorites() {
     const [favorites, setFavorites] = useState([]);

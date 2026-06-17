@@ -16,8 +16,9 @@ import {
     approveChefRequest,
     rejectChefRequest
 } from "../services/chefRequestService";
+import { API_BASE_URL } from "../utils/apiConfig";
 
-const USERS_API_URL = "http://localhost:3000/api/users";
+const USERS_API_URL = `${API_BASE_URL}/users`;
 
 const ROUTES = {
     users: "/users",

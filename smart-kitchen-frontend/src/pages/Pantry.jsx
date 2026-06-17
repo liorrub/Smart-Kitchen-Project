@@ -10,8 +10,9 @@ import { getIngredients } from "../services/ingredientsService";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser, getAuthHeaders } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
+import { API_BASE_URL } from "../utils/apiConfig";
 
-const USERS_API_URL = "http://localhost:3000/api/users";
+const USERS_API_URL = `${API_BASE_URL}/users`;
 
 const unitOptions = [
     { value: "piece", label: "Piece" },

@@ -8,8 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import { getResponseData } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { toLocalDateKey } from "../utils/dateUtils";
-
-const API_BASE_URL = "http://localhost:3000/api";
+import { API_BASE_URL } from "../utils/apiConfig";
 
 const QUICK_ACTIONS = [
     {

@@ -11,10 +11,11 @@ import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 import { formatText } from "../utils/formatUtils";
+import { API_BASE_URL } from "../utils/apiConfig";
 
-const USERS_API_URL = "http://localhost:3000/api/users";
-const INGREDIENTS_API_URL = "http://localhost:3000/api/ingredients";
-const STORES_API_URL = "http://localhost:3000/api/stores";
+const USERS_API_URL = `${API_BASE_URL}/users`;
+const INGREDIENTS_API_URL = `${API_BASE_URL}/ingredients`;
+const STORES_API_URL = `${API_BASE_URL}/stores`;
 
 const unitOptions = [
     { value: "piece", label: "Piece" },
