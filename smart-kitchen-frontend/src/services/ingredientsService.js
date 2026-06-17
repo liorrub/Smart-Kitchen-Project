@@ -2,17 +2,7 @@ import axios from "axios";
 
 import { API_BASE_URL } from "../utils/apiConfig";
 import { getNestedResponseData } from "../utils/apiUtils";
-
-function getAuthHeaders() {
-    const storedUser = JSON.parse(
-        localStorage.getItem("user")
-    );
-
-    return {
-        "x-user-id": storedUser?.userId,
-        "x-user-role": storedUser?.userRole
-    };
-}
+import { getAuthHeaders } from "../utils/authUtils";
 
 export async function getIngredients(headers = {}) {
     const response = await axios.get(

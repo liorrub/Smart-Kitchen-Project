@@ -12,6 +12,7 @@ import PageHero from "../components/PageHero";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 import { formatText } from "../utils/formatUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
+import { getAuthHeaders } from "../utils/authUtils";
 
 const USERS_API_URL = `${API_BASE_URL}/users`;
 const INGREDIENTS_API_URL = `${API_BASE_URL}/ingredients`;
@@ -32,15 +33,6 @@ function getStoredUser() {
     } catch {
         return null;
     }
-}
-
-function getAuthHeaders() {
-    const storedUser = getStoredUser();
-
-    return {
-        "x-user-id": storedUser?.userId,
-        "x-user-role": storedUser?.userRole || storedUser?.role
-    };
 }
 
 function ShoppingList() {

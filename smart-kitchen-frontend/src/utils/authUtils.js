@@ -3,7 +3,7 @@ export function getStoredUser() {
 }
 
 export function getUserRole(user) {
-    return user?.userRole || user?.role || null;
+    return user?.userRole || user?.role;
 }
 
 export function getAuthHeaders() {
