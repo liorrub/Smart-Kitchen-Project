@@ -1,3 +1,4 @@
+/* Base style shared by all app buttons. */
 .app-button {
     border: none;
     border-radius: 18px;
@@ -13,81 +14,97 @@
             color 0.2s ease;
 }
 
+/* Small lift effect when the button is clickable. */
 .app-button:hover:not(:disabled) {
     transform: translateY(-1px);
 }
 
+/* Disabled buttons look faded and cannot be clicked. */
 .app-button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
 
+/* Medium button size. */
 .app-button-medium {
     padding: 13px 24px;
     font-size: 15px;
 }
 
+/* Small button size. */
 .app-button-small {
     padding: 9px 16px;
     font-size: 14px;
 }
 
+/* Large button size. */
 .app-button-large {
     padding: 15px 28px;
     font-size: 17px;
 }
 
+/* Makes the button take the full width of its container. */
 .app-button-full {
     width: 100%;
 }
 
+/* Main green button style. */
 .app-button-primary {
     background: #67d656;
     color: white;
     box-shadow: 0 10px 22px rgba(42, 117, 69, 0.16);
 }
 
+/* Hover style for the primary button. */
 .app-button-primary:hover:not(:disabled) {
     background: #46ae6b;
     box-shadow: 0 14px 28px rgba(42, 117, 69, 0.22);
 }
 
+/* Soft secondary button style. */
 .app-button-secondary {
     background: #f8e9ee;
     color: #cc6089;
 }
 
+/* Hover style for the secondary button. */
 .app-button-secondary:hover:not(:disabled) {
     background: #cc6089;
     color: white;
 }
 
+/* Outline button with transparent background. */
 .app-button-outline {
     background: transparent;
     color: #2a7545;
     border: 2px solid #67d656;
 }
 
+/* Hover style for the outline button. */
 .app-button-outline:hover:not(:disabled) {
     background: #e9fbe5;
     border-color: #46ae6b;
 }
 
+/* Button style for dangerous actions like delete. */
 .app-button-danger {
     background: #f8e9ee;
     color: #cc6089;
 }
 
+/* Hover style for the danger button. */
 .app-button-danger:hover:not(:disabled) {
     background: #cc6089;
     color: white;
 }
 
+/* Light green button style for less dominant actions. */
 .app-button-ghost {
     background: #e9fbe5;
     color: #2a7545;
 }
 
+/* Hover style for the ghost button. */
 .app-button-ghost:hover:not(:disabled) {
     background: #67d656;
     color: white;

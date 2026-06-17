@@ -1,9 +1,11 @@
+/* Main wrapper for the checkbox group. */
 .checkbox-group-wrapper {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
+/* Title shown above the checkbox options. */
 .checkbox-group-label {
     color: #46ae6b;
 
@@ -11,12 +13,14 @@
     font-weight: 900;
 }
 
+/* Responsive grid for all checkbox options. */
 .checkbox-group {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;
 }
 
+/* Style for each checkbox option card. */
 .checkbox-option {
     padding: 12px 14px;
 
@@ -38,11 +42,13 @@
     transition: 0.2s ease;
 }
 
+/* Highlight an option when the user hovers over it. */
 .checkbox-option:hover {
     background: #f6fbf5;
     border-color: #7f9f68;
 }
 
+/* Size and color of the checkbox input itself. */
 .checkbox-option input[type="checkbox"] {
     width: 18px;
     height: 18px;
@@ -53,16 +59,19 @@
     cursor: pointer;
 }
 
+/* Make selected option text stronger. */
 .checkbox-option input[type="checkbox"]:checked + span {
     color: #2a7545;
 
     font-weight: 900;
 }
 
+/* Remove the default focus outline from the checkbox. */
 .checkbox-option input[type="checkbox"]:focus {
     outline: none;
 }
 
+/* Small helper text under the checkbox group. */
 .checkbox-group-helper {
     color: #55705d;
 

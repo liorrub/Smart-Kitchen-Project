@@ -1,16 +1,6 @@
 /* ==========================================================================
    Shared modal layout pattern
    Used by all full-screen overlay modals across the app.
-
-   Usage:
-     overlay  → className="sk-modal-overlay [page-modal-overlay]"
-     container → className="sk-modal [page-modal]"   (page class sets width only)
-     body     → className="sk-modal-body"
-     close btn → position: absolute, sits outside sk-modal-body so it never scrolls
-
-   Body scroll lock must be added per-component via useEffect:
-     document.body.style.overflow = "hidden" on mount
-     document.body.style.overflow = "" on unmount
    ========================================================================== */
 
 .sk-modal-overlay {

@@ -8,8 +8,8 @@ function getAuthHeaders() {
     );
 
     return {
-        "x-user-id": storedUser.userId,
-        "x-user-role": storedUser.userRole
+        "x-user-id": storedUser?.userId,
+        "x-user-role": storedUser?.userRole
     };
 }
 

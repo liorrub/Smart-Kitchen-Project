@@ -3,6 +3,7 @@ import "./CreateProduct.css";
 import { useEffect, useState } from "react";
 import { createIngredient } from "../services/ingredientsService";
 
+// List of category options shown in the product form.
 const categoryOptions = [
     { value: "pantry", label: "Pantry" },
     { value: "dairy", label: "Dairy" },
@@ -37,18 +38,22 @@ function getErrorMessage(err, fallbackMessage) {
     return fallbackMessage;
 }
 
+// Custom select component used for choosing the product category.
 function ProductCustomSelect({ label, value, options, onChange }) {
     const [isOpen, setIsOpen] = useState(false);
 
+    // Find the option that matches the current selected value.
     const selectedOption = options.find(
         (option) => String(option.value) === String(value)
     );
 
+    // Update the selected option and close the dropdown.
     function handleSelect(option) {
         onChange(option.value);
         setIsOpen(false);
     }
 
+    // Render the dropdown field and its options.
     return (
         <div className="create-product-field">
             <label>{label}</label>
@@ -92,6 +97,7 @@ function ProductCustomSelect({ label, value, options, onChange }) {
     );
 }
 
+// Modal for creating a new product or using an existing one.
 function CreateProductModal({
                                 isOpen,
                                 onClose,
@@ -99,15 +105,20 @@ function CreateProductModal({
                                 existingIngredients = [],
                                 headers = {}
                             }) {
+    // Store the form values for the new product.
     const [formData, setFormData] = useState({
         name: "",
         category: "pantry",
         isAllergen: false
     });
 
+    // Track whether the product is currently being saved.
     const [saving, setSaving] = useState(false);
+
+    // Store validation or server error messages.
     const [error, setError] = useState("");
 
+    // Prevent page scrolling while the modal is open.
     useEffect(() => {
         if (!isOpen) return;
         document.body.style.overflow = "hidden";
@@ -116,10 +127,12 @@ function CreateProductModal({
         };
     }, [isOpen]);
 
+    // Do not render the modal when it is closed.
     if (!isOpen) {
         return null;
     }
 
+    // Clear the form and remove any error message.
     function resetForm() {
         setFormData({
             name: "",
@@ -130,6 +143,7 @@ function CreateProductModal({
         setError("");
     }
 
+    // Close the modal only when a save action is not running.
     function handleClose() {
         if (saving) {
             return;
@@ -139,6 +153,7 @@ function CreateProductModal({
         onClose();
     }
 
+    // Update one field in the form and clear the current error.
     function updateField(name, value) {
         setFormData((previousData) => ({
             ...previousData,
@@ -148,6 +163,7 @@ function CreateProductModal({
         setError("");
     }
 
+    // Validate the form and create the product if needed.
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -158,11 +174,13 @@ function CreateProductModal({
             return;
         }
 
+        // Check if a product with the same name already exists.
         const existingIngredient = existingIngredients.find(
             (ingredient) =>
                 ingredient.name.toLowerCase() === productName.toLowerCase()
         );
 
+        // Use the existing product instead of creating a duplicate.
         if (existingIngredient) {
             onProductReady(existingIngredient, true);
             resetForm();
@@ -174,6 +192,7 @@ function CreateProductModal({
             setSaving(true);
             setError("");
 
+            // Send the new product data to the server.
             const createdIngredient = await createIngredient(
                 {
                     name: productName,
@@ -183,6 +202,7 @@ function CreateProductModal({
                 headers
             );
 
+            // Return the created product to the parent component.
             onProductReady(createdIngredient, false);
             resetForm();
             onClose();
@@ -198,6 +218,7 @@ function CreateProductModal({
         }
     }
 
+    // Render the modal, form fields, and action buttons.
     return (
         <div
             className="create-product-overlay"

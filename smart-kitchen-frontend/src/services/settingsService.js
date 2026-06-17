@@ -14,7 +14,7 @@ export async function getSettings() {
         {
             headers: {
                 "x-user-id":
-                storedUser.userId
+                storedUser?.userId
             }
         }
     );
@@ -36,7 +36,7 @@ export async function updateSettings(
         {
             headers: {
                 "x-user-id":
-                storedUser.userId
+                storedUser?.userId
             }
         }
     );
@@ -54,11 +54,6 @@ export async function changePassword(userId, passwordData) {
         "x-user-id": userId,
         "x-user-role": storedUser?.userRole || "user"
     };
-
-    console.log("[changePassword] Request details:");
-    console.log("URL:", url);
-    console.log("Headers:", headers);
-    console.log("Body:", { currentPassword: "***", newPassword: "***" });
 
     try {
         const response = await axios.put(

@@ -11,10 +11,10 @@ export async function getDashboardData() {
         );
 
     const userId =
-        storedUser.userId;
+        storedUser?.userId;
 
     const userRole =
-        storedUser.userRole;
+        storedUser?.userRole;
 
     const headers = {
         "x-user-id": userId,

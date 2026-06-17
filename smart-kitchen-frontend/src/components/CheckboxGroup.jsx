@@ -1,5 +1,6 @@
 import "./CheckboxGroup.css";
 
+// Format option text so it looks nicer in the UI.
 export function formatCheckboxLabel(text) {
     return text
         .split("-")
@@ -7,6 +8,7 @@ export function formatCheckboxLabel(text) {
         .join("-");
 }
 
+// Reusable group of checkbox options.
 function CheckboxGroup({
                            label,
                            options,
@@ -15,12 +17,14 @@ function CheckboxGroup({
                            helperText,
                            className = ""
                        }) {
+    // Get the real value from either a string option or an object option.
     function getOptionValue(option) {
         return typeof option === "string"
             ? option
             : option.value;
     }
 
+    // Get the text that should be shown next to the checkbox.
     function getOptionLabel(option) {
         if (typeof option !== "string") {
             return option.label;
@@ -29,6 +33,7 @@ function CheckboxGroup({
         return formatCheckboxLabel(option);
     }
 
+    // Render the label, all checkboxes, and optional helper text.
     return (
         <div className={`checkbox-group-wrapper ${className}`}>
             <label className="checkbox-group-label">
