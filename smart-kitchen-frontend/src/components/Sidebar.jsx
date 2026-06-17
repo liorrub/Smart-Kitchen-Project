@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 import { getResponseData } from "../utils/apiUtils";
-import { getStoredUser, getUserRole } from "../utils/authUtils";
+import { getStoredUser, getUserRole, getAuthHeadersForUser } from "../utils/authUtils";
 import { toLocalDateKey } from "../utils/dateUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
 
@@ -70,12 +70,7 @@ const EMPTY_PANEL_DATA = {
 };
 
 function getAuthHeaders(user) {
-    const storedUser = user || getStoredUser();
-
-    return {
-        "x-user-id": storedUser?.userId,
-        "x-user-role": getUserRole(storedUser)
-    };
+    return getAuthHeadersForUser(user || getStoredUser());
 }
 
 function normalizeArray(value) {

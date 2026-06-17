@@ -6,11 +6,13 @@ export function getUserRole(user) {
     return user?.userRole || user?.role;
 }
 
-export function getAuthHeaders() {
-    const storedUser = getStoredUser();
-
+export function getAuthHeadersForUser(user) {
     return {
-        "x-user-id": storedUser?.userId,
-        "x-user-role": getUserRole(storedUser)
+        "x-user-id": user?.userId,
+        "x-user-role": getUserRole(user)
     };
+}
+
+export function getAuthHeaders() {
+    return getAuthHeadersForUser(getStoredUser());
 }

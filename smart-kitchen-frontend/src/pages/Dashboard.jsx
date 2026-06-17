@@ -18,7 +18,7 @@ import {
 } from "../services/chefRequestService";
 import { API_BASE_URL } from "../utils/apiConfig";
 import { getResponseDataOrBody } from "../utils/apiUtils";
-import { getUserRole } from "../utils/authUtils";
+import { getUserRole, getAuthHeadersForUser } from "../utils/authUtils";
 
 const USERS_API_URL = `${API_BASE_URL}/users`;
 
@@ -132,13 +132,6 @@ function Dashboard() {
                 totalReviews: 0
             });
         }
-    }
-
-    function getAuthHeaders() {
-        return {
-            "x-user-id": user?.userId,
-            "x-user-role": getUserRole(user)
-        };
     }
 
     function getItemId(item, firstKey, secondKey) {
@@ -353,7 +346,7 @@ function Dashboard() {
                     unit: item.unit || "piece"
                 },
                 {
-                    headers: getAuthHeaders()
+                    headers: getAuthHeadersForUser(user)
                 }
             );
 
@@ -390,7 +383,7 @@ function Dashboard() {
             await axios.delete(
                 `${USERS_API_URL}/${user.userId}/pantry/${pantryItemId}`,
                 {
-                    headers: getAuthHeaders()
+                    headers: getAuthHeadersForUser(user)
                 }
             );
 
@@ -428,7 +421,7 @@ function Dashboard() {
                     completed: true
                 },
                 {
-                    headers: getAuthHeaders()
+                    headers: getAuthHeadersForUser(user)
                 }
             );
 
