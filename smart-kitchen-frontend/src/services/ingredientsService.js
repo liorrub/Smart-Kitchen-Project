@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { API_BASE_URL } from "../utils/apiConfig";
+import { getNestedResponseData } from "../utils/apiUtils";
 
 function getAuthHeaders() {
     const storedUser = JSON.parse(
@@ -19,7 +20,7 @@ export async function getIngredients(headers = {}) {
         { headers }
     );
 
-    return response.data.data;
+    return getNestedResponseData(response);
 }
 
 export async function createIngredient(ingredientData) {
@@ -31,7 +32,7 @@ export async function createIngredient(ingredientData) {
         }
     );
 
-    return response.data.data;
+    return getNestedResponseData(response);
 }
 
 export async function updateIngredient(ingredientId, ingredientData) {
@@ -43,7 +44,7 @@ export async function updateIngredient(ingredientId, ingredientData) {
         }
     );
 
-    return response.data.data;
+    return getNestedResponseData(response);
 }
 
 export async function deleteIngredient(ingredientId) {
@@ -54,5 +55,5 @@ export async function deleteIngredient(ingredientId) {
         }
     );
 
-    return response.data.data;
+    return getNestedResponseData(response);
 }

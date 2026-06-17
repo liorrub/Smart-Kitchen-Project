@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { API_BASE_URL } from "../utils/apiConfig";
+import { getNestedResponseDataOrEmptyArray } from "../utils/apiUtils";
 
 export async function getDashboardData() {
 
@@ -49,16 +50,16 @@ export async function getDashboardData() {
 
         return {
             recipes:
-                recipesResponse.data.data || [],
+                getNestedResponseDataOrEmptyArray(recipesResponse),
 
             ingredients:
-                ingredientsResponse.data.data || [],
+                getNestedResponseDataOrEmptyArray(ingredientsResponse),
 
             users:
-                usersResponse.data.data || [],
+                getNestedResponseDataOrEmptyArray(usersResponse),
 
             stores:
-                storesResponse.data.data || [],
+                getNestedResponseDataOrEmptyArray(storesResponse),
 
             favorites:
                 [],
@@ -123,25 +124,25 @@ export async function getDashboardData() {
 
     return {
         recipes:
-            recipesResponse.data.data || [],
+            getNestedResponseDataOrEmptyArray(recipesResponse),
 
         favorites:
-            favoritesResponse.data.data || [],
+            getNestedResponseDataOrEmptyArray(favoritesResponse),
 
         pantry:
-            pantryResponse.data.data || [],
+            getNestedResponseDataOrEmptyArray(pantryResponse),
 
         mealPlan:
-            mealPlanResponse.data.data || [],
+            getNestedResponseDataOrEmptyArray(mealPlanResponse),
 
         history:
-            historyResponse.data.data || [],
+            getNestedResponseDataOrEmptyArray(historyResponse),
 
         ingredients:
-            ingredientsResponse.data.data || [],
+            getNestedResponseDataOrEmptyArray(ingredientsResponse),
 
         shoppingList:
-            shoppingListResponse.data.data || [],
+            getNestedResponseDataOrEmptyArray(shoppingListResponse),
 
         users:
             [],

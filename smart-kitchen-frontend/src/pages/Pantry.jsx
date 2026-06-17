@@ -7,7 +7,7 @@ import axios from "axios";
 import CreateProduct from "../components/CreateProduct";
 import CreateProductButton from "../components/CreateProductButton";
 import { getIngredients } from "../services/ingredientsService";
-import { getResponseData, getErrorMessage } from "../utils/apiUtils";
+import { getResponseData, getErrorMessage, getNestedResponseData } from "../utils/apiUtils";
 import { getStoredUser, getAuthHeaders } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
@@ -402,7 +402,7 @@ function Pantry() {
 
             setPantryItems((previousItems) => [
                 ...previousItems,
-                response.data.data
+                getNestedResponseData(response)
             ]);
 
             setFormData({

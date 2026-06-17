@@ -6,6 +6,14 @@ export function getResponseDataOrBody(response) {
     return response.data?.data || response.data;
 }
 
+export function getNestedResponseData(response) {
+    return response.data.data;
+}
+
+export function getNestedResponseDataOrEmptyArray(response) {
+    return response.data.data || [];
+}
+
 export function getErrorMessage(error, fallbackMessage) {
     const responseData = error.response?.data;
 
