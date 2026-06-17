@@ -15,6 +15,7 @@ import {
     getUserFavorites,
     removeFavorite
 } from "../services/favoritesService";
+import { getResponseData } from "../utils/apiUtils";
 
 const RECIPES_API_URL = "http://localhost:3000/api/recipes";
 
@@ -22,10 +23,6 @@ const DEFAULT_FILTER_VALUE = "all";
 
 function getStoredUser() {
     return JSON.parse(localStorage.getItem("user") || "null");
-}
-
-function getResponseData(response) {
-    return response.data?.data || response.data || [];
 }
 
 function getErrorMessage(error, fallbackMessage) {

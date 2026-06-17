@@ -31,7 +31,7 @@ router.get(
 // Create ingredient
 router.post(
     "/",
-    authorize("admin"),
+    authorize("admin", "chef", "user", "influencer"),
     validateIngredient,
     ingredientsController.createSingleIngredient
 );

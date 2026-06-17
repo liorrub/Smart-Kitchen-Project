@@ -5,7 +5,9 @@ import MessageModal from "../components/MessageModal";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import CreateProduct from "../components/CreateProduct";
+import CreateProductButton from "../components/CreateProductButton";
 import { getIngredients } from "../services/ingredientsService";
+import { getResponseData } from "../utils/apiUtils";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 
@@ -37,10 +39,6 @@ function getAuthHeaders() {
         "x-user-id": storedUser?.userId,
         "x-user-role": storedUser?.userRole || storedUser?.role
     };
-}
-
-function getResponseData(response) {
-    return response.data?.data || response.data || [];
 }
 
 function getErrorMessage(err, fallbackMessage) {
@@ -624,13 +622,9 @@ function Pantry() {
                         <p>Choose a product and add it to your kitchen.</p>
                     </div>
 
-                    <button
-                        type="button"
-                        className="create-product-button"
+                    <CreateProductButton
                         onClick={openCreateProductModal}
-                    >
-                        + Create New Product
-                    </button>
+                    />
                 </div>
 
                 <form

@@ -9,6 +9,7 @@ import CustomSelect from "../components/CustomSelect";
 import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
+import { getResponseData } from "../utils/apiUtils";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 const INGREDIENTS_API_URL = "http://localhost:3000/api/ingredients";
@@ -72,10 +73,6 @@ function getErrorMessage(err, fallbackMessage) {
     }
 
     return fallbackMessage;
-}
-
-function getResponseData(response) {
-    return response.data?.data || response.data || [];
 }
 
 function ShoppingList() {

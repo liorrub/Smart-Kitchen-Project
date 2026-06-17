@@ -145,25 +145,6 @@
     font-weight: 800;
 }
 
-.create-product-button {
-    padding: 14px 22px;
-    border: none;
-    border-radius: 18px;
-    background: #e9fbe5;
-    color: #2a7545;
-    font-size: 15px;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 10px 24px rgba(63, 74, 52, 0.1);
-    transition: 0.2s ease;
-}
-
-.create-product-button:hover {
-    background: #67d656;
-    color: white;
-    transform: translateY(-1px);
-}
-
 .pantry-alert {
     margin-bottom: 22px;
     padding: 14px 16px;
@@ -653,7 +634,6 @@
         justify-content: flex-start;
     }
 
-    .create-product-button,
     .add-pantry-button {
         width: 100%;
     }

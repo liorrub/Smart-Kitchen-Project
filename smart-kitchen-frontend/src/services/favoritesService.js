@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import { getResponseData } from "../utils/apiUtils";
+
 const BASE_URL = "http://localhost:3000/api";
 
 function getStoredUser() {
@@ -13,10 +15,6 @@ function getAuthHeaders() {
         "x-user-id": storedUser?.userId,
         "x-user-role": storedUser?.userRole || storedUser?.role
     };
-}
-
-function getResponseData(response) {
-    return response.data?.data || response.data || [];
 }
 
 export async function getUserFavorites(userId) {

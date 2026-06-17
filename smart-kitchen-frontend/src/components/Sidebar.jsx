@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import { getResponseData } from "../utils/apiUtils";
 
 const API_BASE_URL = "http://localhost:3000/api";
 
@@ -84,10 +85,6 @@ function getAuthHeaders(user) {
         "x-user-id": storedUser?.userId,
         "x-user-role": storedUser?.userRole || storedUser?.role
     };
-}
-
-function getResponseData(response) {
-    return response.data?.data || response.data || [];
 }
 
 function normalizeArray(value) {
