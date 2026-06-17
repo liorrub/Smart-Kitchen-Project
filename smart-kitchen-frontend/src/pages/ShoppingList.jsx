@@ -9,7 +9,7 @@ import CustomSelect from "../components/CustomSelect";
 import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
-import { getResponseData } from "../utils/apiUtils";
+import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 const INGREDIENTS_API_URL = "http://localhost:3000/api/ingredients";
@@ -51,28 +51,6 @@ function formatText(value) {
         .split(" ")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
-}
-
-function getErrorMessage(err, fallbackMessage) {
-    const responseData = err.response?.data;
-
-    if (typeof responseData?.message === "string") {
-        return responseData.message;
-    }
-
-    if (typeof responseData?.error === "string") {
-        return responseData.error;
-    }
-
-    if (typeof responseData?.error?.message === "string") {
-        return responseData.error.message;
-    }
-
-    if (typeof err.message === "string") {
-        return err.message;
-    }
-
-    return fallbackMessage;
 }
 
 function ShoppingList() {

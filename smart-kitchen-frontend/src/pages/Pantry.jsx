@@ -7,7 +7,7 @@ import axios from "axios";
 import CreateProduct from "../components/CreateProduct";
 import CreateProductButton from "../components/CreateProductButton";
 import { getIngredients } from "../services/ingredientsService";
-import { getResponseData } from "../utils/apiUtils";
+import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 
@@ -39,28 +39,6 @@ function getAuthHeaders() {
         "x-user-id": storedUser?.userId,
         "x-user-role": storedUser?.userRole || storedUser?.role
     };
-}
-
-function getErrorMessage(err, fallbackMessage) {
-    const responseData = err.response?.data;
-
-    if (typeof responseData?.message === "string") {
-        return responseData.message;
-    }
-
-    if (typeof responseData?.error === "string") {
-        return responseData.error;
-    }
-
-    if (typeof responseData?.error?.message === "string") {
-        return responseData.error.message;
-    }
-
-    if (typeof err.message === "string") {
-        return err.message;
-    }
-
-    return fallbackMessage;
 }
 
 function formatText(value) {

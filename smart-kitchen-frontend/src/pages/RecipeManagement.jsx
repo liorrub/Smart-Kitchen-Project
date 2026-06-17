@@ -23,6 +23,7 @@ import { getIngredients } from "../services/ingredientsService";
 import { getOptions } from "../services/optionsService";
 import { getRecipeReviews } from "../services/reviewsService";
 import { validateRecipeForm } from "../validators/recipeValidation";
+import { getErrorMessage } from "../utils/apiUtils";
 
 // Default empty state for the create recipe form
 const EMPTY_RECIPE_FORM_DATA = {
@@ -51,25 +52,6 @@ function capitalize(str) {
 
 function getStoredUser() {
     return JSON.parse(localStorage.getItem("user") || "null");
-}
-
-// Extract a human-readable error message from an API error response
-function getErrorMessage(error, fallbackMessage) {
-    const responseData = error.response?.data;
-
-    if (typeof responseData?.error?.message === "string") {
-        return responseData.error.message;
-    }
-
-    if (typeof responseData?.message === "string") {
-        return responseData.message;
-    }
-
-    if (typeof error.message === "string") {
-        return error.message;
-    }
-
-    return fallbackMessage;
 }
 
 function RecipeManagement() {

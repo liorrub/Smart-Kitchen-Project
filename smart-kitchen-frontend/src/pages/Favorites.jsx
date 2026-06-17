@@ -12,30 +12,12 @@ import {
     getUserFavorites,
     removeFavorite
 } from "../services/favoritesService";
-import { getResponseData } from "../utils/apiUtils";
+import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 
 const RECIPES_API_URL = "http://localhost:3000/api/recipes";
 
 function getStoredUser() {
     return JSON.parse(localStorage.getItem("user") || "null");
-}
-
-function getErrorMessage(error, fallbackMessage) {
-    const responseData = error.response?.data;
-
-    if (typeof responseData?.error?.message === "string") {
-        return responseData.error.message;
-    }
-
-    if (typeof responseData?.message === "string") {
-        return responseData.message;
-    }
-
-    if (typeof error.message === "string") {
-        return error.message;
-    }
-
-    return fallbackMessage;
 }
 
 function Favorites() {

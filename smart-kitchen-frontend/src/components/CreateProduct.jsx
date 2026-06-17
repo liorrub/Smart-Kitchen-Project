@@ -2,6 +2,8 @@ import "./CreateProduct.css";
 
 import { useEffect, useState } from "react";
 import { createIngredient } from "../services/ingredientsService";
+import { getErrorMessage } from "../utils/apiUtils";
+import MessageModal from "./MessageModal";
 
 // List of category options shown in the product form.
 const categoryOptions = [
@@ -15,28 +17,6 @@ const categoryOptions = [
     { value: "household", label: "Household" },
     { value: "other", label: "Other" }
 ];
-
-function getErrorMessage(err, fallbackMessage) {
-    const responseData = err.response?.data;
-
-    if (typeof responseData?.message === "string") {
-        return responseData.message;
-    }
-
-    if (typeof responseData?.error === "string") {
-        return responseData.error;
-    }
-
-    if (typeof responseData?.error?.message === "string") {
-        return responseData.error.message;
-    }
-
-    if (typeof err.message === "string") {
-        return err.message;
-    }
-
-    return fallbackMessage;
-}
 
 // Custom select component used for choosing the product category.
 function ProductCustomSelect({ label, value, options, onChange }) {
@@ -220,98 +200,101 @@ function CreateProductModal({
 
     // Render the modal, form fields, and action buttons.
     return (
-        <div
-            className="create-product-overlay"
-            onMouseDown={handleClose}
-        >
+        <>
             <div
-                className="create-product-modal"
-                onMouseDown={(event) => event.stopPropagation()}
+                className="create-product-overlay"
+                onMouseDown={handleClose}
             >
-                <div className="create-product-header">
-                    <div>
-                        <p className="create-product-label">New Product</p>
-                        <h2>Create Product</h2>
-                        <span>
-                            Add a new product to the system and use it in
-                            your pantry or shopping list.
-                        </span>
-                    </div>
-
-                    <button
-                        type="button"
-                        className="create-product-close"
-                        onClick={handleClose}
-                    >
-                        ×
-                    </button>
-                </div>
-
-                {error && (
-                    <div className="create-product-error">
-                        {error}
-                    </div>
-                )}
-
-                <form
-                    className="create-product-form"
-                    onSubmit={handleSubmit}
-                    noValidate
+                <div
+                    className="create-product-modal"
+                    onMouseDown={(event) => event.stopPropagation()}
                 >
-                    <div className="create-product-field">
-                        <label>Product Name</label>
+                    <div className="create-product-header">
+                        <div>
+                            <p className="create-product-label">New Product</p>
+                            <h2>Create Product</h2>
+                            <span>
+                                Add a new product to the system and use it in
+                                your pantry or shopping list.
+                            </span>
+                        </div>
 
-                        <input
-                            type="text"
-                            value={formData.name}
-                            onChange={(event) =>
-                                updateField("name", event.target.value)
-                            }
-                            placeholder="Product name"
-                            autoFocus
-                        />
-                    </div>
-
-                    <ProductCustomSelect
-                        label="Category"
-                        value={formData.category}
-                        options={categoryOptions}
-                        onChange={(value) => updateField("category", value)}
-                    />
-
-                    <label className="create-product-checkbox-row">
-                        <input
-                            type="checkbox"
-                            checked={formData.isAllergen}
-                            onChange={(event) =>
-                                updateField("isAllergen", event.target.checked)
-                            }
-                        />
-
-                        <span>Mark as allergen</span>
-                    </label>
-
-                    <div className="create-product-actions">
                         <button
                             type="button"
-                            className="create-product-cancel"
+                            className="create-product-close"
                             onClick={handleClose}
-                            disabled={saving}
                         >
-                            Cancel
-                        </button>
-
-                        <button
-                            type="submit"
-                            className="create-product-save"
-                            disabled={saving}
-                        >
-                            {saving ? "Saving..." : "Save Product"}
+                            ×
                         </button>
                     </div>
-                </form>
+
+                    <form
+                        className="create-product-form"
+                        onSubmit={handleSubmit}
+                        noValidate
+                    >
+                        <div className="create-product-field">
+                            <label>Product Name</label>
+
+                            <input
+                                type="text"
+                                value={formData.name}
+                                onChange={(event) =>
+                                    updateField("name", event.target.value)
+                                }
+                                placeholder="Product name"
+                                autoFocus
+                            />
+                        </div>
+
+                        <ProductCustomSelect
+                            label="Category"
+                            value={formData.category}
+                            options={categoryOptions}
+                            onChange={(value) => updateField("category", value)}
+                        />
+
+                        <label className="create-product-checkbox-row">
+                            <input
+                                type="checkbox"
+                                checked={formData.isAllergen}
+                                onChange={(event) =>
+                                    updateField("isAllergen", event.target.checked)
+                                }
+                            />
+
+                            <span>Mark as allergen</span>
+                        </label>
+
+                        <div className="create-product-actions">
+                            <button
+                                type="button"
+                                className="create-product-cancel"
+                                onClick={handleClose}
+                                disabled={saving}
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                type="submit"
+                                className="create-product-save"
+                                disabled={saving}
+                            >
+                                {saving ? "Saving..." : "Save Product"}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
+
+            <MessageModal
+                type="error"
+                title="Error"
+                message={error}
+                onClose={() => setError("")}
+            />
+        </>
     );
 }
 

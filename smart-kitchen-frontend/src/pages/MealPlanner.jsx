@@ -18,6 +18,7 @@ import {
     getUserPantry,
     updateMealPlanItem
 } from "../services/mealPlanService";
+import { getErrorMessage } from "../utils/apiUtils";
 
 const MEAL_TYPES = [
     {
@@ -137,24 +138,6 @@ function formatMealType(mealType) {
     );
 
     return meal?.label || mealType;
-}
-
-function getErrorMessage(error, fallbackMessage) {
-    const responseData = error.response?.data;
-
-    if (typeof responseData?.error?.message === "string") {
-        return responseData.error.message;
-    }
-
-    if (typeof responseData?.message === "string") {
-        return responseData.message;
-    }
-
-    if (typeof error.message === "string") {
-        return error.message;
-    }
-
-    return fallbackMessage;
 }
 
 function MealPlanner() {

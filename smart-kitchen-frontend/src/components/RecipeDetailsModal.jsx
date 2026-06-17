@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import ReviewCard from "./ReviewCard";
 
 import { getRecipeReviews } from "../services/reviewsService";
+import { getErrorMessage } from "../utils/apiUtils";
 
 function formatText(value) {
     if (!value) {
@@ -91,24 +92,6 @@ function getIngredientUnit(ingredient) {
 
 function getStoredUser() {
     return JSON.parse(localStorage.getItem("user") || "null");
-}
-
-function getErrorMessage(error, fallbackMessage) {
-    const responseData = error.response?.data;
-
-    if (typeof responseData?.error?.message === "string") {
-        return responseData.error.message;
-    }
-
-    if (typeof responseData?.message === "string") {
-        return responseData.message;
-    }
-
-    if (typeof error.message === "string") {
-        return error.message;
-    }
-
-    return fallbackMessage;
 }
 
 function getAverageRating(reviews) {
