@@ -20,6 +20,7 @@ import {
 } from "../services/mealPlanService";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
+import { toLocalDateKey } from "../utils/dateUtils";
 
 const MEAL_TYPES = [
     {
@@ -60,13 +61,6 @@ const EMPTY_MEAL_FORM = {
     notes: ""
 };
 
-function formatDateKey(date) {
-    const timezoneOffset = date.getTimezoneOffset() * 60000;
-    const localDate = new Date(date.getTime() - timezoneOffset);
-
-    return localDate.toISOString().slice(0, 10);
-}
-
 function getStartOfWeek(date) {
     const currentDate = new Date(date);
     const day = currentDate.getDay();
@@ -85,7 +79,7 @@ function getWeekDates(startDate) {
 
         return {
             date,
-            key: formatDateKey(date),
+            key: toLocalDateKey(date),
             dayName: date.toLocaleDateString("en-US", {
                 weekday: "short"
             }),
@@ -124,8 +118,8 @@ function formatWeekRange(weekDays) {
 
 function isSameWeek(firstDate, secondDate) {
     return (
-        formatDateKey(getStartOfWeek(firstDate)) ===
-        formatDateKey(getStartOfWeek(secondDate))
+        toLocalDateKey(getStartOfWeek(firstDate)) ===
+        toLocalDateKey(getStartOfWeek(secondDate))
     );
 }
 

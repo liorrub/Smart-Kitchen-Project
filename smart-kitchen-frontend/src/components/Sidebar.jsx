@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getResponseData } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
+import { toLocalDateKey } from "../utils/dateUtils";
 
 const API_BASE_URL = "http://localhost:3000/api";
 
@@ -68,13 +69,6 @@ const EMPTY_PANEL_DATA = {
     pantry: [],
     aiHistory: []
 };
-
-function getDateKey(date) {
-    const timezoneOffset = date.getTimezoneOffset() * 60000;
-    const localDate = new Date(date.getTime() - timezoneOffset);
-
-    return localDate.toISOString().slice(0, 10);
-}
 
 function getAuthHeaders(user) {
     const storedUser = user || getStoredUser();
@@ -222,7 +216,7 @@ function KitchenSidebar() {
     const currentUser = user || getStoredUser();
     const currentUserRole = currentUser?.userRole || currentUser?.role;
 
-    const todayKey = getDateKey(new Date());
+    const todayKey = toLocalDateKey(new Date());
 
     useEffect(() => {
         async function loadPanelData() {
