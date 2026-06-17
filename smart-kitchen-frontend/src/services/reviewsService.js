@@ -1,18 +1,9 @@
 import axios from "axios";
 
 import { getResponseData } from "../utils/apiUtils";
-import { getStoredUser } from "../utils/authUtils";
+import { getAuthHeaders } from "../utils/authUtils";
 
 const BASE_URL = "http://localhost:3000/api";
-
-function getAuthHeaders() {
-    const storedUser = getStoredUser();
-
-    return {
-        "x-user-id": storedUser?.userId,
-        "x-user-role": storedUser?.userRole || storedUser?.role
-    };
-}
 
 export async function getRecipeReviews(recipeId) {
     const response = await axios.get(

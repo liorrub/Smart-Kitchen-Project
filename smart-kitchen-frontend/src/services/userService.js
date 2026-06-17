@@ -1,17 +1,8 @@
 import axios from "axios";
 
+import { getAuthHeaders } from "../utils/authUtils";
+
 const BASE_URL = "http://localhost:3000/api";
-
-function getAuthHeaders() {
-    const storedUser = JSON.parse(
-        localStorage.getItem("user") || "{}"
-    );
-
-    return {
-        "x-user-id": storedUser?.userId,
-        "x-user-role": storedUser?.userRole || storedUser?.role
-    };
-}
 
 function getResponseData(response) {
     return response.data?.data || response.data;

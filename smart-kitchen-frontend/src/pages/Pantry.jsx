@@ -8,7 +8,7 @@ import CreateProduct from "../components/CreateProduct";
 import CreateProductButton from "../components/CreateProductButton";
 import { getIngredients } from "../services/ingredientsService";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
-import { getStoredUser } from "../utils/authUtils";
+import { getStoredUser, getAuthHeaders } from "../utils/authUtils";
 
 const USERS_API_URL = "http://localhost:3000/api/users";
 
@@ -28,15 +28,6 @@ const locationOptions = [
     { value: "fridge", label: "Fridge" },
     { value: "freezer", label: "Freezer" }
 ];
-
-function getAuthHeaders() {
-    const storedUser = getStoredUser();
-
-    return {
-        "x-user-id": storedUser?.userId,
-        "x-user-role": storedUser?.userRole || storedUser?.role
-    };
-}
 
 function formatText(value) {
     if (!value) {
