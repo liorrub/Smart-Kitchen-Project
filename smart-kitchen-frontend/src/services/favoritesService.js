@@ -1,12 +1,9 @@
 import axios from "axios";
 
 import { getResponseData } from "../utils/apiUtils";
+import { getStoredUser } from "../utils/authUtils";
 
 const BASE_URL = "http://localhost:3000/api";
-
-function getStoredUser() {
-    return JSON.parse(localStorage.getItem("user") || "null");
-}
 
 function getAuthHeaders() {
     const storedUser = getStoredUser();

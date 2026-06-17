@@ -16,14 +16,11 @@ import {
     removeFavorite
 } from "../services/favoritesService";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
+import { getStoredUser } from "../utils/authUtils";
 
 const RECIPES_API_URL = "http://localhost:3000/api/recipes";
 
 const DEFAULT_FILTER_VALUE = "all";
-
-function getStoredUser() {
-    return JSON.parse(localStorage.getItem("user") || "null");
-}
 
 function createFilterOptions(values, allLabel) {
     const uniqueValues = [...new Set(values.filter(Boolean))];

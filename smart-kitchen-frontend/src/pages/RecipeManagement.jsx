@@ -24,6 +24,7 @@ import { getOptions } from "../services/optionsService";
 import { getRecipeReviews } from "../services/reviewsService";
 import { validateRecipeForm } from "../validators/recipeValidation";
 import { getErrorMessage } from "../utils/apiUtils";
+import { getStoredUser } from "../utils/authUtils";
 
 // Default empty state for the create recipe form
 const EMPTY_RECIPE_FORM_DATA = {
@@ -48,10 +49,6 @@ const EMPTY_RECIPE_FORM_DATA = {
 // Capitalize the first letter of a string (used for dropdown labels)
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function getStoredUser() {
-    return JSON.parse(localStorage.getItem("user") || "null");
 }
 
 function RecipeManagement() {

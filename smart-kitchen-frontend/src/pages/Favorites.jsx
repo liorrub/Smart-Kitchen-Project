@@ -13,12 +13,9 @@ import {
     removeFavorite
 } from "../services/favoritesService";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
+import { getStoredUser } from "../utils/authUtils";
 
 const RECIPES_API_URL = "http://localhost:3000/api/recipes";
-
-function getStoredUser() {
-    return JSON.parse(localStorage.getItem("user") || "null");
-}
 
 function Favorites() {
     const [favorites, setFavorites] = useState([]);

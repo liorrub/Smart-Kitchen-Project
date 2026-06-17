@@ -19,6 +19,7 @@ import {
     updateMealPlanItem
 } from "../services/mealPlanService";
 import { getErrorMessage } from "../utils/apiUtils";
+import { getStoredUser } from "../utils/authUtils";
 
 const MEAL_TYPES = [
     {
@@ -58,10 +59,6 @@ const EMPTY_MEAL_FORM = {
     itemId: "",
     notes: ""
 };
-
-function getStoredUser() {
-    return JSON.parse(localStorage.getItem("user") || "null");
-}
 
 function formatDateKey(date) {
     const timezoneOffset = date.getTimezoneOffset() * 60000;

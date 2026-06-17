@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 import { getResponseData } from "../utils/apiUtils";
+import { getStoredUser } from "../utils/authUtils";
 
 const API_BASE_URL = "http://localhost:3000/api";
 
@@ -26,7 +27,8 @@ const QUICK_ACTIONS = [
         label: "Add Ingredient",
         description: "Update ingredients",
         path: "/ingredients",
-        icon: "+"
+        icon: "+",
+        adminOnly: true
     },
     {
         label: "Ask AI",
@@ -72,10 +74,6 @@ function getDateKey(date) {
     const localDate = new Date(date.getTime() - timezoneOffset);
 
     return localDate.toISOString().slice(0, 10);
-}
-
-function getStoredUser() {
-    return JSON.parse(localStorage.getItem("user") || "null");
 }
 
 function getAuthHeaders(user) {
@@ -220,6 +218,9 @@ function KitchenSidebar() {
 
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    const currentUser = user || getStoredUser();
+    const currentUserRole = currentUser?.userRole || currentUser?.role;
 
     const todayKey = getDateKey(new Date());
 
@@ -490,7 +491,7 @@ function KitchenSidebar() {
                         </div>
 
                         <div className="quick-actions-list">
-                            {QUICK_ACTIONS.map((action) => (
+                            {QUICK_ACTIONS.filter(action => !action.adminOnly || currentUserRole === "admin").map((action) => (
                                 <button
                                     key={action.label}
                                     type="button"

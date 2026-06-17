@@ -6,6 +6,7 @@ import ReviewCard from "./ReviewCard";
 
 import { getRecipeReviews } from "../services/reviewsService";
 import { getErrorMessage } from "../utils/apiUtils";
+import { getStoredUser } from "../utils/authUtils";
 
 function formatText(value) {
     if (!value) {
@@ -88,10 +89,6 @@ function getIngredientUnit(ingredient) {
         ingredient.measurementUnit ||
         ""
     );
-}
-
-function getStoredUser() {
-    return JSON.parse(localStorage.getItem("user") || "null");
 }
 
 function getAverageRating(reviews) {
