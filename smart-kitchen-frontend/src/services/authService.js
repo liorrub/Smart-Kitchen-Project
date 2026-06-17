@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/api";
+import { API_BASE_URL } from "../utils/apiConfig";
 
 export async function login(email, password) {
     const response = await axios.post(
-        `${BASE_URL}/auth/login`,
+        `${API_BASE_URL}/auth/login`,
         {
             email,
             password
@@ -16,7 +16,7 @@ export async function login(email, password) {
 
 export async function getCurrentUser(userId) {
     const response = await axios.get(
-        `${BASE_URL}/auth/me`,
+        `${API_BASE_URL}/auth/me`,
         {
             headers: {
                 "x-user-id": userId
@@ -29,7 +29,7 @@ export async function getCurrentUser(userId) {
 
 export async function register(userData) {
     const response = await axios.post(
-        `${BASE_URL}/auth/register`,
+        `${API_BASE_URL}/auth/register`,
         {
             firstName: userData.firstName,
             lastName: userData.lastName,
@@ -46,7 +46,7 @@ export async function register(userData) {
 
 export async function logout() {
     const response = await axios.post(
-        `${BASE_URL}/auth/logout`
+        `${API_BASE_URL}/auth/logout`
     );
 
     return response.data;

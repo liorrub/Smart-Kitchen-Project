@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/api";
+import { API_BASE_URL } from "../utils/apiConfig";
 
 export async function getOptions() {
-    const response = await axios.get(`${BASE_URL}/options`);
+    const response = await axios.get(`${API_BASE_URL}/options`);
 
     return response.data?.data || response.data;
 }

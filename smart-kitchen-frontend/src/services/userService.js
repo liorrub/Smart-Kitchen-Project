@@ -1,8 +1,7 @@
 import axios from "axios";
 
 import { getAuthHeaders } from "../utils/authUtils";
-
-const BASE_URL = "http://localhost:3000/api";
+import { API_BASE_URL } from "../utils/apiConfig";
 
 function getResponseData(response) {
     return response.data?.data || response.data;
@@ -10,7 +9,7 @@ function getResponseData(response) {
 
 export async function getUsers() {
     const response = await axios.get(
-        `${BASE_URL}/users`,
+        `${API_BASE_URL}/users`,
         {
             headers: getAuthHeaders()
         }
@@ -21,7 +20,7 @@ export async function getUsers() {
 
 export async function createUser(userData) {
     const response = await axios.post(
-        `${BASE_URL}/users`,
+        `${API_BASE_URL}/users`,
         userData,
         {
             headers: getAuthHeaders()
@@ -34,7 +33,7 @@ export async function createUser(userData) {
 export async function updateUser(userId, userData) {
     try {
         const response = await axios.put(
-            `${BASE_URL}/users/${userId}`,
+            `${API_BASE_URL}/users/${userId}`,
             userData,
             {
                 headers: getAuthHeaders()
@@ -54,7 +53,7 @@ export async function updateUser(userId, userData) {
 
 export async function deleteUser(userId) {
     const response = await axios.delete(
-        `${BASE_URL}/users/${userId}`,
+        `${API_BASE_URL}/users/${userId}`,
         {
             headers: getAuthHeaders()
         }

@@ -2,12 +2,11 @@ import axios from "axios";
 
 import { getResponseData } from "../utils/apiUtils";
 import { getAuthHeaders } from "../utils/authUtils";
-
-const BASE_URL = "http://localhost:3000/api";
+import { API_BASE_URL } from "../utils/apiConfig";
 
 export async function getUserFavorites(userId) {
     const response = await axios.get(
-        `${BASE_URL}/users/${userId}/favorites`,
+        `${API_BASE_URL}/users/${userId}/favorites`,
         {
             headers: getAuthHeaders(),
             params: {
@@ -21,7 +20,7 @@ export async function getUserFavorites(userId) {
 
 export async function addFavorite(userId, recipeId) {
     const response = await axios.post(
-        `${BASE_URL}/users/${userId}/favorites`,
+        `${API_BASE_URL}/users/${userId}/favorites`,
         {
             recipeId
         },
@@ -35,7 +34,7 @@ export async function addFavorite(userId, recipeId) {
 
 export async function removeFavorite(userId, recipeId) {
     const response = await axios.delete(
-        `${BASE_URL}/users/${userId}/favorites/${recipeId}`,
+        `${API_BASE_URL}/users/${userId}/favorites/${recipeId}`,
         {
             headers: getAuthHeaders()
         }

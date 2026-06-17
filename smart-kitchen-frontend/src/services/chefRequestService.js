@@ -1,8 +1,7 @@
 import axios from "axios";
 
 import { getAuthHeaders } from "../utils/authUtils";
-
-const BASE_URL = "http://localhost:3000/api";
+import { API_BASE_URL } from "../utils/apiConfig";
 
 function getResponseData(response) {
     return response.data?.data ?? null;
@@ -10,7 +9,7 @@ function getResponseData(response) {
 
 export async function submitChefRequest(reason) {
     const response = await axios.post(
-        `${BASE_URL}/chef-requests`,
+        `${API_BASE_URL}/chef-requests`,
         { reason },
         { headers: getAuthHeaders() }
     );
@@ -19,7 +18,7 @@ export async function submitChefRequest(reason) {
 
 export async function getChefRequests() {
     const response = await axios.get(
-        `${BASE_URL}/chef-requests`,
+        `${API_BASE_URL}/chef-requests`,
         { headers: getAuthHeaders() }
     );
     return getResponseData(response) || [];
@@ -27,7 +26,7 @@ export async function getChefRequests() {
 
 export async function getMyChefRequest() {
     const response = await axios.get(
-        `${BASE_URL}/chef-requests/my`,
+        `${API_BASE_URL}/chef-requests/my`,
         { headers: getAuthHeaders() }
     );
     return getResponseData(response);
@@ -35,7 +34,7 @@ export async function getMyChefRequest() {
 
 export async function approveChefRequest(requestId) {
     const response = await axios.put(
-        `${BASE_URL}/chef-requests/${requestId}/approve`,
+        `${API_BASE_URL}/chef-requests/${requestId}/approve`,
         {},
         { headers: getAuthHeaders() }
     );
@@ -44,7 +43,7 @@ export async function approveChefRequest(requestId) {
 
 export async function rejectChefRequest(requestId) {
     const response = await axios.put(
-        `${BASE_URL}/chef-requests/${requestId}/reject`,
+        `${API_BASE_URL}/chef-requests/${requestId}/reject`,
         {},
         { headers: getAuthHeaders() }
     );

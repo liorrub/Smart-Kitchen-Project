@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const BASE_URL =
-    "http://localhost:3000/api";
+import { API_BASE_URL } from "../utils/apiConfig";
 
 export async function getDashboardData() {
 
@@ -31,20 +30,20 @@ export async function getDashboardData() {
         ] = await Promise.all([
 
             axios.get(
-                `${BASE_URL}/recipes`
+                `${API_BASE_URL}/recipes`
             ),
 
             axios.get(
-                `${BASE_URL}/ingredients`
+                `${API_BASE_URL}/ingredients`
             ),
 
             axios.get(
-                `${BASE_URL}/users`,
+                `${API_BASE_URL}/users`,
                 { headers }
             ),
 
             axios.get(
-                `${BASE_URL}/stores`
+                `${API_BASE_URL}/stores`
             )
         ]);
 
@@ -89,35 +88,35 @@ export async function getDashboardData() {
     ] = await Promise.all([
 
         axios.get(
-            `${BASE_URL}/recipes`
+            `${API_BASE_URL}/recipes`
         ),
 
         axios.get(
-            `${BASE_URL}/users/${userId}/favorites`,
+            `${API_BASE_URL}/users/${userId}/favorites`,
             { headers }
         ),
 
         axios.get(
-            `${BASE_URL}/users/${userId}/pantry`,
+            `${API_BASE_URL}/users/${userId}/pantry`,
             { headers }
         ),
 
         axios.get(
-            `${BASE_URL}/users/${userId}/meal-plan`,
+            `${API_BASE_URL}/users/${userId}/meal-plan`,
             { headers }
         ),
 
         axios.get(
-            `${BASE_URL}/users/${userId}/ai/history`,
+            `${API_BASE_URL}/users/${userId}/ai/history`,
             { headers }
         ),
 
         axios.get(
-            `${BASE_URL}/ingredients`
+            `${API_BASE_URL}/ingredients`
         ),
 
         axios.get(
-            `${BASE_URL}/users/${userId}/shopping-list`,
+            `${API_BASE_URL}/users/${userId}/shopping-list`,
             { headers }
         )
     ]);

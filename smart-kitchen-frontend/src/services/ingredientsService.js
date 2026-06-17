@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/api";
+import { API_BASE_URL } from "../utils/apiConfig";
 
 function getAuthHeaders() {
     const storedUser = JSON.parse(
@@ -15,7 +15,7 @@ function getAuthHeaders() {
 
 export async function getIngredients(headers = {}) {
     const response = await axios.get(
-        `${BASE_URL}/ingredients`,
+        `${API_BASE_URL}/ingredients`,
         { headers }
     );
 
@@ -24,7 +24,7 @@ export async function getIngredients(headers = {}) {
 
 export async function createIngredient(ingredientData) {
     const response = await axios.post(
-        `${BASE_URL}/ingredients`,
+        `${API_BASE_URL}/ingredients`,
         ingredientData,
         {
             headers: getAuthHeaders()
@@ -36,7 +36,7 @@ export async function createIngredient(ingredientData) {
 
 export async function updateIngredient(ingredientId, ingredientData) {
     const response = await axios.put(
-        `${BASE_URL}/ingredients/${ingredientId}`,
+        `${API_BASE_URL}/ingredients/${ingredientId}`,
         ingredientData,
         {
             headers: getAuthHeaders()
@@ -48,7 +48,7 @@ export async function updateIngredient(ingredientId, ingredientData) {
 
 export async function deleteIngredient(ingredientId) {
     const response = await axios.delete(
-        `${BASE_URL}/ingredients/${ingredientId}`,
+        `${API_BASE_URL}/ingredients/${ingredientId}`,
         {
             headers: getAuthHeaders()
         }
