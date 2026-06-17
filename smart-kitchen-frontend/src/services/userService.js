@@ -2,10 +2,7 @@ import axios from "axios";
 
 import { getAuthHeaders } from "../utils/authUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
-
-function getResponseData(response) {
-    return response.data?.data || response.data;
-}
+import { getResponseDataOrBody } from "../utils/apiUtils";
 
 export async function getUsers() {
     const response = await axios.get(
@@ -15,7 +12,7 @@ export async function getUsers() {
         }
     );
 
-    return getResponseData(response);
+    return getResponseDataOrBody(response);
 }
 
 export async function createUser(userData) {
@@ -27,7 +24,7 @@ export async function createUser(userData) {
         }
     );
 
-    return getResponseData(response);
+    return getResponseDataOrBody(response);
 }
 
 export async function updateUser(userId, userData) {
@@ -40,7 +37,7 @@ export async function updateUser(userId, userData) {
             }
         );
 
-        return getResponseData(response);
+        return getResponseDataOrBody(response);
     } catch (error) {
         console.error(
             "Update user failed:",
@@ -59,5 +56,5 @@ export async function deleteUser(userId) {
         }
     );
 
-    return getResponseData(response);
+    return getResponseDataOrBody(response);
 }

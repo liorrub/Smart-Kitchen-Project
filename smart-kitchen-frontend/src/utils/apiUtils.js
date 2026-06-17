@@ -2,6 +2,10 @@ export function getResponseData(response) {
     return response.data?.data || response.data || [];
 }
 
+export function getResponseDataOrBody(response) {
+    return response.data?.data || response.data;
+}
+
 export function getErrorMessage(error, fallbackMessage) {
     const responseData = error.response?.data;
 

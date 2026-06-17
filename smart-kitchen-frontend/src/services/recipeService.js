@@ -1,19 +1,20 @@
 import axios from "axios";
 
 import { API_BASE_URL } from "../utils/apiConfig";
+import { getResponseData, getResponseDataOrBody } from "../utils/apiUtils";
 
 const RECIPES_API_URL = `${API_BASE_URL}/recipes`;
 
 export async function getAllRecipes() {
     const response = await axios.get(RECIPES_API_URL);
 
-    return response.data?.data || response.data || [];
+    return getResponseData(response);
 }
 
 export async function getRecipeById(recipeId) {
     const response = await axios.get(`${RECIPES_API_URL}/${recipeId}`);
 
-    return response.data?.data || response.data;
+    return getResponseDataOrBody(response);
 }
 
 export async function createRecipe(recipeData, user) {
@@ -28,7 +29,7 @@ export async function createRecipe(recipeData, user) {
         }
     );
 
-    return response.data?.data || response.data;
+    return getResponseDataOrBody(response);
 }
 
 export async function updateRecipe(recipeId, recipeData, user) {
@@ -43,7 +44,7 @@ export async function updateRecipe(recipeId, recipeData, user) {
         }
     );
 
-    return response.data?.data || response.data;
+    return getResponseDataOrBody(response);
 }
 
 export async function deleteRecipe(recipeId, user) {
@@ -57,5 +58,5 @@ export async function deleteRecipe(recipeId, user) {
         }
     );
 
-    return response.data?.data || response.data;
+    return getResponseDataOrBody(response);
 }

@@ -17,6 +17,7 @@ import {
     rejectChefRequest
 } from "../services/chefRequestService";
 import { API_BASE_URL } from "../utils/apiConfig";
+import { getResponseDataOrBody } from "../utils/apiUtils";
 
 const USERS_API_URL = `${API_BASE_URL}/users`;
 
@@ -137,10 +138,6 @@ function Dashboard() {
             "x-user-id": user?.userId,
             "x-user-role": user?.userRole || user?.role
         };
-    }
-
-    function getResponseData(response) {
-        return response.data?.data || response.data;
     }
 
     function getItemId(item, firstKey, secondKey) {
@@ -359,7 +356,7 @@ function Dashboard() {
                 }
             );
 
-            const newShoppingItem = getResponseData(response);
+            const newShoppingItem = getResponseDataOrBody(response);
 
             setDashboardData((previousData) => ({
                 ...previousData,
@@ -434,7 +431,7 @@ function Dashboard() {
                 }
             );
 
-            const updatedItem = getResponseData(response);
+            const updatedItem = getResponseDataOrBody(response);
 
             setDashboardData((previousData) => ({
                 ...previousData,
