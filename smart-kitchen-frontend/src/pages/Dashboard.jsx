@@ -18,6 +18,7 @@ import {
 } from "../services/chefRequestService";
 import { API_BASE_URL } from "../utils/apiConfig";
 import { getResponseDataOrBody } from "../utils/apiUtils";
+import { getUserRole } from "../utils/authUtils";
 
 const USERS_API_URL = `${API_BASE_URL}/users`;
 
@@ -51,7 +52,7 @@ function Dashboard() {
     const [dashboardActionError, setDashboardActionError] = useState("");
     const [actionLoadingId, setActionLoadingId] = useState("");
 
-    const role = String(user?.userRole || user?.role || "user").toLowerCase();
+    const role = String(getUserRole(user) || "user").toLowerCase();
     const isAdmin = role === "admin";
     const isChef = role === "chef";
 
@@ -80,12 +81,12 @@ function Dashboard() {
 
             setDashboardData(data);
 
-            if (String(user?.userRole || user?.role).toLowerCase() === "admin") {
+            if (String(getUserRole(user)).toLowerCase() === "admin") {
                 const requests = await getChefRequests();
                 setPendingChefRequests(requests);
             }
 
-            if (String(user?.userRole || user?.role).toLowerCase() === "chef") {
+            if (String(getUserRole(user)).toLowerCase() === "chef") {
                 await loadChefStats(data);
             }
         } catch (error) {
@@ -136,7 +137,7 @@ function Dashboard() {
     function getAuthHeaders() {
         return {
             "x-user-id": user?.userId,
-            "x-user-role": user?.userRole || user?.role
+            "x-user-role": getUserRole(user)
         };
     }
 

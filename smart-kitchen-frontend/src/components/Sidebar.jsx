@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 import { getResponseData } from "../utils/apiUtils";
-import { getStoredUser } from "../utils/authUtils";
+import { getStoredUser, getUserRole } from "../utils/authUtils";
 import { toLocalDateKey } from "../utils/dateUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
 
@@ -74,7 +74,7 @@ function getAuthHeaders(user) {
 
     return {
         "x-user-id": storedUser?.userId,
-        "x-user-role": storedUser?.userRole || storedUser?.role
+        "x-user-role": getUserRole(storedUser)
     };
 }
 
@@ -213,7 +213,7 @@ function KitchenSidebar() {
     const navigate = useNavigate();
 
     const currentUser = user || getStoredUser();
-    const currentUserRole = currentUser?.userRole || currentUser?.role;
+    const currentUserRole = getUserRole(currentUser);
 
     const todayKey = toLocalDateKey(new Date());
 
