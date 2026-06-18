@@ -2,24 +2,18 @@ import axios from "axios";
 
 import { API_BASE_URL } from "../utils/apiConfig";
 import { getNestedResponseDataOrEmptyArray } from "../utils/apiUtils";
+import { getStoredUser, getUserRole, getAuthHeadersForUser } from "../utils/authUtils";
 
 export async function getDashboardData() {
 
-    const storedUser =
-        JSON.parse(
-            localStorage.getItem("user")
-        );
+    const storedUser = getStoredUser();
 
     const userId =
         storedUser?.userId;
 
-    const userRole =
-        storedUser?.userRole;
+    const userRole = getUserRole(storedUser);
 
-    const headers = {
-        "x-user-id": userId,
-        "x-user-role": userRole
-    };
+    const headers = getAuthHeadersForUser(storedUser);
 
     if (userRole === "admin") {
 
