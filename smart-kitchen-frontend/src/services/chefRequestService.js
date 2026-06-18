@@ -3,6 +3,7 @@ import axios from "axios";
 import { getAuthHeaders } from "../utils/authUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
 
+// Uses ?? so an explicit null in data.data is returned as-is (unlike the shared version which would fall back).
 function getResponseData(response) {
     return response.data?.data ?? null;
 }

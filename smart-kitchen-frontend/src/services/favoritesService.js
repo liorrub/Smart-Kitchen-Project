@@ -9,6 +9,7 @@ export async function getUserFavorites(userId) {
         `${API_BASE_URL}/users/${userId}/favorites`,
         {
             headers: getAuthHeaders(),
+            // Cache-busting timestamp so browsers never serve a stale favorites list.
             params: {
                 _t: Date.now()
             }

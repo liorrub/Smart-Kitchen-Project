@@ -34,6 +34,7 @@ function App() {
                         element={<Register />}
                     />
 
+                    {/* Pathless Route: wraps all protected pages in ProtectedRoute + MainLayout (Navbar/Sidebar/Footer). */}
                     <Route
                         element={
                             <ProtectedRoute>

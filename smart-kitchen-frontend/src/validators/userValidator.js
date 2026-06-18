@@ -26,6 +26,7 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
+// Hebrew characters (א-ת) are allowed because some users have Hebrew names.
 function isValidName(value) {
     const nameRegex =
         /^[A-Za-zא-ת\s-]+$/;

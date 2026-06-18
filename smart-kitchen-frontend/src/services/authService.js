@@ -2,6 +2,8 @@ import axios from "axios";
 
 import { API_BASE_URL } from "../utils/apiConfig";
 
+// Returns response.data (the full body: { success, data, error }).
+// Callers access the user object via result.data, not result.data.data.
 export async function login(email, password) {
     const response = await axios.post(
         `${API_BASE_URL}/auth/login`,

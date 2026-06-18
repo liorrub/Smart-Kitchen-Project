@@ -7,6 +7,7 @@ import { API_BASE_URL } from "../utils/apiConfig";
 export async function getAIHistory() {
     const storedUser = getStoredUser();
 
+    // Guard: without a userId the request URL would be /users/undefined/ai/history.
     if (!storedUser?.userId) {
         return [];
     }

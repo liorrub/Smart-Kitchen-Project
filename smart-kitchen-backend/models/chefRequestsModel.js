@@ -10,6 +10,7 @@ async function getChefRequestById(requestId) {
     return chefRequests.find((r) => r.requestId === requestId) || null;
 }
 
+// Returns the most recent request for the user (a user may have submitted more than one).
 async function getChefRequestByUserId(userId) {
     const userRequests = chefRequests.filter((r) => r.userId === userId);
     if (userRequests.length === 0) return null;

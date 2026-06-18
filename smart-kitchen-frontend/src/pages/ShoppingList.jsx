@@ -27,6 +27,7 @@ const unitOptions = [
     { value: "pack", label: "Pack" }
 ];
 
+// Local wrapper: includes a try-catch so a corrupted localStorage value returns null instead of throwing.
 function getStoredUser() {
     try {
         return JSON.parse(localStorage.getItem("user"));

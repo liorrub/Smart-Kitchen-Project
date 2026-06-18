@@ -31,7 +31,8 @@ app.use(logger);
 // API routes
 app.use("/api/auth", authRoutes);
 
-// User-related nested resources
+// User-related nested resources — all mounted on /api/users so their routes resolve
+// to patterns like /api/users/:id/pantry, /api/users/:id/favorites, etc.
 app.use("/api/users", usersRoutes);
 app.use("/api/users", favoritesRoutes);
 app.use("/api/users", pantryRoutes);

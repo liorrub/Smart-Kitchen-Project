@@ -1,3 +1,4 @@
+// Send a successful JSON response in the standard { success, data, error } shape.
 function successResponse(res, statusCode, data) {
     return res.status(statusCode).json({
         success: true,
@@ -6,6 +7,7 @@ function successResponse(res, statusCode, data) {
     });
 }
 
+// Send an error JSON response in the standard { success, data, error } shape.
 function errorResponse(
     res,
     statusCode,

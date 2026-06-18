@@ -38,6 +38,7 @@ const QUICK_ACTIONS = [
     }
 ];
 
+// Shown in the Chat History panel when the user has no real AI history yet.
 const DEMO_CHAT_HISTORY = [
     {
         historyId: "sidebar-demo-1",
@@ -182,6 +183,8 @@ function getHistoryTone(requestType) {
     }
 }
 
+// Fetch a list endpoint and return an empty array on any error so a single
+// failing request does not break the entire sidebar panel.
 async function safeFetch(url, headers) {
     try {
         const response = await axios.get(url, {

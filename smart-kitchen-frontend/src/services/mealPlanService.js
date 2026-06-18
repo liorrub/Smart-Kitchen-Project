@@ -53,6 +53,7 @@ export async function deleteMealPlanItem(userId, mealId) {
     return getResponseData(response);
 }
 
+// Pantry items are fetched here so MealPlanner can cross-reference available ingredients.
 export async function getUserPantry(userId) {
     const response = await axios.get(
         `${API_BASE_URL}/users/${userId}/pantry`,

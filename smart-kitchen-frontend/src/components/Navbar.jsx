@@ -47,6 +47,7 @@ function Navbar() {
         } catch (error) {
             console.error(error);
         } finally {
+            // Always clear local state even if the API call fails.
             localStorage.removeItem("user");
             setUser(null);
 

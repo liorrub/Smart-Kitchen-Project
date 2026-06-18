@@ -5,6 +5,7 @@ const {
     itemTypes
 } = require("../data/enums/mealPlanEnums");
 
+// Validate meal type
 function validateMealType(req, res, next) {
     const { mealType } = req.body;
 
@@ -26,6 +27,7 @@ function validateMealType(req, res, next) {
     next();
 }
 
+// Validate item type
 function validateItemType(req, res, next) {
     const { itemType } = req.body;
 

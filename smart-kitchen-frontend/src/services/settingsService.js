@@ -52,7 +52,10 @@ export async function changePassword(userId, passwordData) {
 
     const url = `${API_BASE_URL}/users/${userId}/change-password`;
     const headers = {
+        // x-user-id comes from the function argument so it matches the URL :id,
+        // not from localStorage — both allowSelfOnly and the controller compare them.
         "x-user-id": userId,
+        // allowSelfOnly middleware requires a truthy x-user-role header; "user" is the safe default.
         "x-user-role": storedUser?.userRole || "user"
     };
 

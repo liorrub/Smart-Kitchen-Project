@@ -52,6 +52,7 @@ function Dashboard() {
     const [dashboardActionError, setDashboardActionError] = useState("");
     const [actionLoadingId, setActionLoadingId] = useState("");
 
+    // "user" fallback is only for display-level role branching — auth headers use getUserRole directly.
     const role = String(getUserRole(user) || "user").toLowerCase();
     const isAdmin = role === "admin";
     const isChef = role === "chef";

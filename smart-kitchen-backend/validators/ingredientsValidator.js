@@ -66,6 +66,7 @@ function validateIngredient(req, res, next) {
     const cleanName = name.trim();
     const cleanCategory = category.trim();
 
+    // Hebrew characters (א-ת) are allowed because ingredient names may be in Hebrew.
     const validTextPattern =
         /^[A-Za-zא-ת\s-]+$/;
 

@@ -21,6 +21,7 @@ export function validateIngredientForm(ingredientData) {
     return "";
 }
 
+// Hebrew characters (א-ת) are allowed because ingredient names may be in Hebrew.
 function isValidIngredientText(value) {
     const text = value.trim();
 

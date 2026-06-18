@@ -1,11 +1,14 @@
+// Extract the inner data array from a backend response. Falls back to [] so callers always get an array.
 export function getResponseData(response) {
     return response.data?.data || response.data || [];
 }
 
+// Like getResponseData but without the [] fallback — used for single-object responses.
 export function getResponseDataOrBody(response) {
     return response.data?.data || response.data;
 }
 
+// Access data.data directly with no fallback — use only when a successful response with data is guaranteed.
 export function getNestedResponseData(response) {
     return response.data.data;
 }
