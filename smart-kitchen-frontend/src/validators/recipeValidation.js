@@ -1,3 +1,4 @@
+// Validate the recipe create/edit form. Returns an error message string or an empty string if valid.
 export function validateRecipeForm(recipeData) {
     const title = recipeData.title.trim();
     const cuisine = recipeData.cuisine;

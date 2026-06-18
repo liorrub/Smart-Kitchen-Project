@@ -1,3 +1,4 @@
+// Convert snake_case or kebab-case values to Title Case. Returns "Unknown" for empty values.
 export function formatText(value) {
     if (!value) return "Unknown";
 

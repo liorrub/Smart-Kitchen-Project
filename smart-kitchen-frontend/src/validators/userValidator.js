@@ -49,6 +49,7 @@ function isValidAge(age) {
     );
 }
 
+// Validate the login form. Returns an error message string or null if valid.
 export function validateLogin(email, password) {
     if (isEmpty(email)) {
         return "Email is required";
@@ -69,6 +70,7 @@ export function validateLogin(email, password) {
     return null;
 }
 
+// Validate the full registration form. Returns an error message string or null if valid.
 export function validateRegisterForm(formData) {
     if (isEmpty(formData.firstName)) {
         return "First name is required";
@@ -128,6 +130,7 @@ export function validateRegisterForm(formData) {
     return null;
 }
 
+// Validate the admin user management form. Pass isNewUser=true to require a password field.
 export function validateUserManagementForm(userData, isNewUser = false) {
     if (isEmpty(userData.firstName)) {
         return "First name is required";

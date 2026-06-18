@@ -59,10 +59,12 @@ function Users() {
         localStorage.getItem("user") || "null"
     );
 
+    // Load all users from the server when the page mounts.
     useEffect(() => {
         loadUsers();
     }, []);
 
+    // Prevent page scrolling while any user modal (create, edit, or delete) is open.
     useEffect(() => {
         const isOpen = isCreateModalOpen || !!editingUser || !!userToDelete;
         if (!isOpen) return;
@@ -72,6 +74,7 @@ function Users() {
         };
     }, [isCreateModalOpen, editingUser, userToDelete]);
 
+    // Fetch all users from the server and update the table.
     async function loadUsers() {
         try {
             setLoading(true);
@@ -107,6 +110,7 @@ function Users() {
         clearMessages();
     }
 
+    // Update the create form, stripping non-digit characters from the age field.
     function handleNewUserChange(event) {
         const { name, value } = event.target;
 
@@ -118,6 +122,7 @@ function Users() {
         }));
     }
 
+    // Open the edit modal pre-populated with the selected user's current data.
     function handleEditUser(user) {
         clearMessages();
         setIsCreateModalOpen(false);
@@ -130,6 +135,7 @@ function Users() {
         });
     }
 
+    // Update a single field in the currently-edited user, stripping non-digits from age.
     function handleEditingFieldChange(fieldName, value) {
         setEditingUser((previousUser) => ({
             ...previousUser,
@@ -139,6 +145,7 @@ function Users() {
         }));
     }
 
+    // Validate and submit the create user form, then reload the table on success.
     async function handleCreateUser(event) {
         event.preventDefault();
 
@@ -187,6 +194,7 @@ function Users() {
         }
     }
 
+    // Validate and submit the edit user form. Prevents changing the role of the currently logged-in admin.
     async function handleSaveUser(event) {
         event.preventDefault();
 
@@ -245,6 +253,7 @@ function Users() {
         }
     }
 
+    // Open the delete confirmation modal for the selected user.
     function handleDeleteClick(user) {
         clearMessages();
         setEditingUser(null);
@@ -252,6 +261,7 @@ function Users() {
         setUserToDelete(user);
     }
 
+    // Delete the selected user on the server and reload the table on success.
     async function confirmDeleteUser() {
         if (!userToDelete) {
             return;

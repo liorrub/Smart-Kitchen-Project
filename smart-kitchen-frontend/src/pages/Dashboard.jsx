@@ -66,11 +66,13 @@ function Dashboard() {
     const mealPlan = dashboardData?.mealPlan || [];
     const shoppingList = dashboardData?.shoppingList || [];
 
+    // Reload all dashboard data whenever the logged-in user or their role changes.
     useEffect(() => {
         loadDashboard();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.userId, user?.userRole]);
 
+    // Load all dashboard data plus role-specific extras (chef stats or pending chef requests).
     async function loadDashboard() {
         try {
             setLoading(true);
@@ -98,6 +100,7 @@ function Dashboard() {
         }
     }
 
+    // Compute recipe count, average rating, and total reviews across the chef's own recipes.
     async function loadChefStats(data) {
         try {
             const chefRecipes = (data?.recipes || []).filter(
@@ -135,10 +138,12 @@ function Dashboard() {
         }
     }
 
+    // Resolve the item ID from either of two possible field names to handle inconsistent API shapes.
     function getItemId(item, firstKey, secondKey) {
         return item?.[firstKey] || item?.[secondKey];
     }
 
+    // Look up an ingredient's display name by its ID from the local ingredients list.
     function getIngredientName(ingredientId) {
         const ingredient = ingredients.find(
             (ingredient) =>
@@ -149,6 +154,7 @@ function Dashboard() {
         return ingredient?.name || `Ingredient #${ingredientId}`;
     }
 
+    // Find a recipe object in the local list by its ID, checking both possible ID field names.
     function getRecipeById(recipeId) {
         return recipes.find(
             (recipe) =>
@@ -156,12 +162,14 @@ function Dashboard() {
         );
     }
 
+    // Return a recipe's display title, falling back to a placeholder string.
     function getRecipeTitle(recipeId) {
         const recipe = getRecipeById(recipeId);
 
         return recipe?.title || recipe?.name || "Planned meal";
     }
 
+    // Format a raw date value as a human-readable "DD Mon YYYY" string.
     function formatDate(dateValue) {
         if (!dateValue) {
             return "No date";
@@ -180,6 +188,7 @@ function Dashboard() {
         });
     }
 
+    // Calculate the number of whole days from today until a target date.
     function getDaysUntilDate(dateValue) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -193,6 +202,7 @@ function Dashboard() {
         );
     }
 
+    // Filter pantry items that expire within the next 7 days, sorted by soonest first.
     function getExpiringItems() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -214,6 +224,7 @@ function Dashboard() {
             );
     }
 
+    // Return up to 4 upcoming meals starting from today, sorted by date.
     function getUpcomingMeals() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -236,12 +247,14 @@ function Dashboard() {
             .slice(0, 4);
     }
 
+    // Return shopping list items that have not yet been marked as completed.
     function getOpenShoppingItems() {
         return shoppingList.filter(
             (item) => !item.completed && !item.isCompleted
         );
     }
 
+    // Approve a pending chef request and remove it from the local list on success.
     async function handleApproveRequest(requestId) {
         try {
             setActionLoadingId(`approve-${requestId}`);
@@ -259,6 +272,7 @@ function Dashboard() {
         }
     }
 
+    // Reject a pending chef request and remove it from the local list on success.
     async function handleRejectRequest(requestId) {
         try {
             setActionLoadingId(`reject-${requestId}`);
@@ -276,6 +290,7 @@ function Dashboard() {
         }
     }
 
+    // Build a readable display name from available user fields, falling back through username and email.
     function getUserDisplayName(person) {
         return (
             [person?.firstName, person?.lastName].filter(Boolean).join(" ") ||
@@ -285,6 +300,7 @@ function Dashboard() {
         );
     }
 
+    // Return a display-friendly label for the current user's role.
     function getRoleLabel() {
         if (isAdmin) {
             return "Admin";
@@ -297,11 +313,13 @@ function Dashboard() {
         return "User";
     }
 
+    // Clear both the success and error message states before starting a new action.
     function clearDashboardMessages() {
         setDashboardMessage("");
         setDashboardActionError("");
     }
 
+    // Open the recipe details modal for a meal plan entry.
     function openRecipeFromMeal(meal) {
         clearDashboardMessages();
 
@@ -315,6 +333,7 @@ function Dashboard() {
         setSelectedRecipe(recipe);
     }
 
+    // Add an expiring pantry item to the shopping list, skipping it if already there.
     async function addExpiringItemToShoppingList(item) {
         const pantryItemId = getItemId(item, "pantryItemId", "id");
 
@@ -374,6 +393,7 @@ function Dashboard() {
         }
     }
 
+    // Delete a pantry item on the server and remove it from the local dashboard state.
     async function removePantryItemFromDashboard(item) {
         const pantryItemId = getItemId(item, "pantryItemId", "id");
 
@@ -409,6 +429,7 @@ function Dashboard() {
         }
     }
 
+    // Mark a shopping item as completed and update the local list with the server response.
     async function markShoppingItemAsBought(item) {
         const shoppingItemId = getItemId(item, "shoppingItemId", "id");
 

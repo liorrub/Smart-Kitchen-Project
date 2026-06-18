@@ -41,6 +41,7 @@ const AI_FEATURES = [
 ];
 
 
+// Format a raw date value as a human-readable "Mon DD, YYYY" string.
 function formatDate(value) {
     if (!value) {
         return "No date";
@@ -59,6 +60,7 @@ function formatDate(value) {
     });
 }
 
+// Summarize the user input from a history entry for display in the history list.
 function getInputSummary(inputData = {}) {
     const ingredients = inputData.ingredients || inputData.pantryItems;
 
@@ -73,6 +75,7 @@ function getInputSummary(inputData = {}) {
     return "General request";
 }
 
+// Extract a display title from the AI result of a history item, checking multiple possible result shapes.
 function getResultTitle(historyItem) {
     const result = historyItem.result || historyItem.outputData || {};
 
@@ -106,6 +109,7 @@ function getResultTitle(historyItem) {
     return "AI conversation";
 }
 
+// Extract a readable description from the AI result, checking multiple possible result shapes.
 function getResultDescription(historyItem) {
     const result = historyItem.result || historyItem.outputData || {};
 
@@ -128,6 +132,7 @@ function getResultDescription(historyItem) {
     return "This is where the assistant response from the saved conversation appears.";
 }
 
+// Map a request type string to its CSS color class for the history list item.
 function getHistoryColorClass(requestType) {
     switch (requestType) {
         case "recipe_generation":
@@ -145,6 +150,7 @@ function getHistoryColorClass(requestType) {
     }
 }
 
+// Normalize date field names across history items so the list always uses createDate.
 function normalizeHistory(history) {
     if (!Array.isArray(history)) {
         return [];
@@ -156,6 +162,7 @@ function normalizeHistory(history) {
     }));
 }
 
+// Build the chat message list for a selected history item, or return demo messages if none is selected.
 function buildConversationMessages(historyItem) {
     if (!historyItem) {
         return [
@@ -202,6 +209,7 @@ function AIAssistant() {
     const [notice, setNotice] = useState("");
     const [chatText, setChatText] = useState("");
 
+    // Load AI conversation history when the page opens.
     useEffect(() => {
         async function loadHistory() {
             try {
@@ -233,6 +241,7 @@ function AIAssistant() {
         return buildConversationMessages(activeConversation);
     }, [activeConversation]);
 
+    // Show a notice that the AI chat is not yet connected to a real backend.
     function handleChatSubmit(event) {
         event.preventDefault();
 
@@ -242,6 +251,7 @@ function AIAssistant() {
         setChatText("");
     }
 
+    // Select a past conversation and scroll the chat window into view.
     function handleHistoryClick(historyItem) {
         setActiveConversation(historyItem);
 

@@ -41,6 +41,7 @@ function Navbar() {
 
     const navigate = useNavigate();
 
+    // Clear the session and redirect to the login page, even if the server-side logout call fails.
     async function handleLogout() {
         try {
             await logout();

@@ -74,6 +74,7 @@ function getAuthHeaders(user) {
     return getAuthHeadersForUser(user || getStoredUser());
 }
 
+// Normalize a response value to an array regardless of the API shape returned.
 function normalizeArray(value) {
     if (Array.isArray(value)) {
         return value;
@@ -90,6 +91,7 @@ function normalizeArray(value) {
     return [];
 }
 
+// Return the first non-empty numeric value from the provided candidates, or 0 as a fallback.
 function getNumericValue(...values) {
     const numericValue = values.find(
         (value) =>
@@ -115,6 +117,7 @@ function formatText(value) {
         .join(" ");
 }
 
+// Summarize the user input from a history item for display in the chat history panel.
 function getInputSummary(inputData = {}) {
     const ingredients = inputData.ingredients || inputData.pantryItems;
 
@@ -129,6 +132,7 @@ function getInputSummary(inputData = {}) {
     return "General request";
 }
 
+// Extract a display title from a history item's result data, checking multiple possible field names.
 function getHistoryTitle(historyItem) {
     const result = historyItem.result || historyItem.outputData || {};
 
@@ -158,6 +162,7 @@ function getHistoryTitle(historyItem) {
     return "AI conversation";
 }
 
+// Return the user's input text for a history entry, checking the direct field first.
 function getHistoryInput(historyItem) {
     if (historyItem.input) {
         return historyItem.input;
@@ -166,6 +171,7 @@ function getHistoryInput(historyItem) {
     return getInputSummary(historyItem.inputData);
 }
 
+// Map a request type to its CSS tone class for styling the chat history item.
 function getHistoryTone(requestType) {
     switch (requestType) {
         case "recipe_generation":
@@ -215,6 +221,7 @@ function KitchenSidebar() {
 
     const todayKey = toLocalDateKey(new Date());
 
+    // Load the user's meal plan, shopping list, pantry, and AI history for the sidebar panels.
     useEffect(() => {
         async function loadPanelData() {
             const currentUser = user || getStoredUser();
@@ -257,6 +264,7 @@ function KitchenSidebar() {
         loadPanelData();
     }, [user]);
 
+    // Close the sidebar when the user presses Escape.
     useEffect(() => {
         function handleEscape(event) {
             if (event.key === "Escape") {
@@ -271,6 +279,7 @@ function KitchenSidebar() {
         };
     }, []);
 
+    // Lock page scroll while the sidebar is open and restore it when closed.
     useEffect(() => {
         const originalBodyOverflow = document.body.style.overflow;
         const originalHtmlOverflow = document.documentElement.style.overflow;
@@ -286,10 +295,12 @@ function KitchenSidebar() {
         };
     }, [isOpen]);
 
+    // Filter meal plan entries that are scheduled for today.
     const todayMeals = useMemo(() => {
         return panelData.mealPlan.filter((meal) => meal.date === todayKey);
     }, [panelData.mealPlan, todayKey]);
 
+    // Sum the calories of all today's meals, checking multiple possible calorie field names.
     const todayCalories = useMemo(() => {
         return todayMeals.reduce((sum, meal) => {
             return (
@@ -303,12 +314,14 @@ function KitchenSidebar() {
         }, 0);
     }, [todayMeals]);
 
+    // Count shopping items that have not been marked as completed.
     const shoppingItemsCount = useMemo(() => {
         return panelData.shoppingList.filter((item) => {
             return !item.isCompleted && !item.completed && item.status !== "done";
         }).length;
     }, [panelData.shoppingList]);
 
+    // Find pantry items where the current quantity is at or below the minimum threshold.
     const lowPantryItems = useMemo(() => {
         return panelData.pantry.filter((item) => {
             const quantity = getNumericValue(
@@ -329,10 +342,12 @@ function KitchenSidebar() {
         });
     }, [panelData.pantry]);
 
+    // Check whether a dinner meal is already planned for today.
     const hasDinnerToday = useMemo(() => {
         return todayMeals.some((meal) => meal.mealType === "dinner");
     }, [todayMeals]);
 
+    // Show the 3 most recent real AI history entries, or fall back to demo entries if none exist.
     const visibleChatHistory = useMemo(() => {
         if (panelData.aiHistory.length > 0) {
             return panelData.aiHistory.slice(0, 3);
@@ -341,6 +356,7 @@ function KitchenSidebar() {
         return DEMO_CHAT_HISTORY;
     }, [panelData.aiHistory]);
 
+    // Build a short list of actionable alerts based on the user's current kitchen data.
     const smartAlerts = useMemo(() => {
         const alerts = [];
 
@@ -394,11 +410,13 @@ function KitchenSidebar() {
         }
     ];
 
+    // Navigate to a page and close the sidebar at the same time.
     function handleNavigate(path) {
         navigate(path);
         setIsOpen(false);
     }
 
+    // Navigate to the AI Assistant page with the selected conversation ID as a query param.
     function handleChatHistoryClick(historyItem) {
         const url = new URL(window.location.origin + "/ai-assistant");
 

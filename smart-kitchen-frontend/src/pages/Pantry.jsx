@@ -32,6 +32,7 @@ const locationOptions = [
     { value: "freezer", label: "Freezer" }
 ];
 
+// Format a raw date value as a short localized "DD/MM/YYYY" string.
 function formatDate(value) {
     if (!value) {
         return "No expiry date";
@@ -40,6 +41,7 @@ function formatDate(value) {
     return new Date(value).toLocaleDateString("en-GB");
 }
 
+// Check whether a pantry item has passed its expiry date or is explicitly flagged as expired.
 function isItemExpired(item) {
     if (item.isExpired === true) {
         return true;
@@ -52,6 +54,7 @@ function isItemExpired(item) {
     return new Date(item.expiryDate) < new Date();
 }
 
+// Check whether a non-expired pantry item expires within the next 7 days.
 function isItemExpiringSoon(item) {
     if (!item.expiryDate || isItemExpired(item)) {
         return false;
@@ -66,6 +69,7 @@ function isItemExpiringSoon(item) {
     return expiryDate <= sevenDaysFromNow;
 }
 
+// Return the number of whole days remaining until an expiry date, or null if no date is set.
 function getDaysUntilExpiry(expiryDate) {
     if (!expiryDate) {
         return null;
@@ -81,6 +85,7 @@ function getDaysUntilExpiry(expiryDate) {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
+// Map a storage location string to its CSS class name for color-coding pantry items.
 function getLocationClass(location) {
     switch ((location || "").toLowerCase()) {
         case "fridge":
@@ -115,6 +120,7 @@ function Pantry() {
 
     const storedUser = getStoredUser();
 
+    // Load the user's pantry items and the ingredients catalog in parallel on page open.
     useEffect(() => {
         async function loadPageData() {
             const storedUser = getStoredUser();
@@ -162,6 +168,7 @@ function Pantry() {
         loadPageData();
     }, []);
 
+    // Build ingredient dropdown options with a default placeholder as the first entry.
     const ingredientOptions = useMemo(() => {
         return [
             {
@@ -175,10 +182,12 @@ function Pantry() {
         ];
     }, [ingredients]);
 
+    // Filter items expiring within 7 days for the warning banner at the top of the page.
     const expiringSoonItems = useMemo(() => {
         return pantryItems.filter((item) => isItemExpiringSoon(item));
     }, [pantryItems]);
 
+    // Apply the active filter (location, expired, expiring soon, or all) to the pantry items list.
     const visibleItems = useMemo(() => {
         if (filter === "expired") {
             return pantryItems.filter((item) => isItemExpired(item));
@@ -215,6 +224,7 @@ function Pantry() {
 
     const soonCount = expiringSoonItems.length;
 
+    // Look up an ingredient's display name by its ID from the local ingredients list.
     function getIngredientName(ingredientId) {
         const ingredient = ingredients.find(
             (item) => item.ingredientId === ingredientId
@@ -235,6 +245,7 @@ function Pantry() {
         setSuccess("");
     }
 
+    // Allow only numeric or decimal input in the quantity field; reject any other characters.
     function handleQuantityChange(event) {
         const value = event.target.value;
 
@@ -259,6 +270,7 @@ function Pantry() {
         setIsCreateProductOpen(false);
     }
 
+    // Called when a product is created or selected in the CreateProduct modal; adds it to the ingredient list and pre-selects it in the form.
     function handleProductReady(product, wasExisting) {
         setIngredients((previousIngredients) => {
             const alreadyExists = previousIngredients.some(
@@ -285,6 +297,7 @@ function Pantry() {
         );
     }
 
+    // Validate and submit the add-item form, then append the new item to the local list.
     async function handleAddPantryItem(event) {
         event.preventDefault();
 
@@ -358,6 +371,7 @@ function Pantry() {
         }
     }
 
+    // Delete a pantry item on the server and remove it from the local list.
     async function deletePantryItem(pantryItemId) {
         try {
             setError("");

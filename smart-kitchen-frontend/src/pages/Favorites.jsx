@@ -30,6 +30,7 @@ function Favorites() {
 
     const storedUser = getStoredUser();
 
+    // Load the user's favorites and the full recipe catalog in parallel on page open.
     useEffect(() => {
         async function loadFavoritesPage() {
             try {
@@ -66,6 +67,7 @@ function Favorites() {
         loadFavoritesPage();
     }, [storedUser?.userId]);
 
+    // Join favorite entries with their full recipe data from the recipes list.
     const favoriteRecipes = useMemo(() => {
         return favorites
             .map((favorite) => {
@@ -84,6 +86,7 @@ function Favorites() {
             .filter(Boolean);
     }, [favorites, recipes]);
 
+    // Calculate the average cook time in minutes across all favorite recipes.
     const averageTime = useMemo(() => {
         if (favoriteRecipes.length === 0) {
             return 0;
@@ -98,6 +101,7 @@ function Favorites() {
         return Math.round(totalMinutes / favoriteRecipes.length);
     }, [favoriteRecipes]);
 
+    // Count how many distinct cuisines are represented in the user's favorites.
     const cuisineCount = useMemo(() => {
         const cuisines = new Set(
             favoriteRecipes.map(
@@ -112,6 +116,7 @@ function Favorites() {
         (favorite) => Number(favorite.recipe.totalTime || 0) <= 30
     ).length;
 
+    // Remove a recipe from favorites and update the local list on success.
     async function handleRemoveFavorite(recipe) {
         if (!storedUser?.userId) {
             setError("User was not found. Please login again.");

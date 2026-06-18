@@ -74,10 +74,12 @@ function Ingredients() {
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
+    // Load all ingredients from the server when the page mounts.
     useEffect(() => {
         loadIngredients();
     }, []);
 
+    // Prevent page scrolling while a create/edit or delete modal is open.
     useEffect(() => {
         const isOpen = isFormModalOpen || !!ingredientToDelete;
         if (!isOpen) return;
@@ -87,16 +89,19 @@ function Ingredients() {
         };
     }, [isFormModalOpen, ingredientToDelete]);
 
+    // Count allergen ingredients for the hero stats section.
     const allergenCount = useMemo(() => {
         return ingredients.filter((ingredient) => ingredient.isAllergen).length;
     }, [ingredients]);
 
+    // Count distinct ingredient categories for the hero stats section.
     const categoriesCount = useMemo(() => {
         return new Set(
             ingredients.map((ingredient) => ingredient.category)
         ).size;
     }, [ingredients]);
 
+    // Fetch all ingredients from the server and update the table.
     async function loadIngredients() {
         try {
             setLoading(true);
@@ -136,6 +141,7 @@ function Ingredients() {
         setIsFormModalOpen(true);
     }
 
+    // Pre-populate the form with the selected ingredient's data and open the edit modal.
     function openEditModal(ingredient) {
         setEditingIngredientId(ingredient.ingredientId);
 
@@ -157,6 +163,7 @@ function Ingredients() {
         setError("");
     }
 
+    // Validate and save the ingredient (create or update), then reload the list.
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -210,6 +217,7 @@ function Ingredients() {
         setMessage("");
     }
 
+    // Delete the selected ingredient on the server and reload the list.
     async function confirmDeleteIngredient() {
         if (!ingredientToDelete) {
             return;

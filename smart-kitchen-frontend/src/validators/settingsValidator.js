@@ -1,3 +1,4 @@
+// Validate the settings profile form. Returns an error message string or null if valid.
 export function validateSettings(formData) {
 
     if (

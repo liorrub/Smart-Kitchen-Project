@@ -34,73 +34,73 @@ function App() {
                         element={<Register />}
                     />
 
-                    {/* Pathless Route: wraps all protected pages in ProtectedRoute + MainLayout (Navbar/Sidebar/Footer). */}
-                    <Route
-                        element={
-                            <ProtectedRoute>
-                                <MainLayout />
-                            </ProtectedRoute>
-                        }
-                    >
-                        <Route
-                            path="/dashboard"
-                            element={<Dashboard />}
-                        />
+                    {/* ProtectedRoute: redirects to login if not authenticated. */}
+                    <Route element={<ProtectedRoute />}>
 
-                        <Route
-                            path="/recipes"
-                            element={<Recipes />}
-                        />
+                        {/* MainLayout: renders Navbar, Sidebar, Footer, and <Outlet /> for page content. */}
+                        <Route element={<MainLayout />}>
 
-                        <Route
-                            path="/favorites"
-                            element={<Favorites />}
-                        />
+                            <Route
+                                path="/dashboard"
+                                element={<Dashboard />}
+                            />
 
-                        <Route
-                            path="/pantry"
-                            element={<Pantry />}
-                        />
+                            <Route
+                                path="/recipes"
+                                element={<Recipes />}
+                            />
 
-                        <Route
-                            path="/meal-planner"
-                            element={<MealPlanner />}
-                        />
+                            <Route
+                                path="/favorites"
+                                element={<Favorites />}
+                            />
 
-                        <Route
-                            path="/shopping-list"
-                            element={<ShoppingList />}
-                        />
+                            <Route
+                                path="/pantry"
+                                element={<Pantry />}
+                            />
 
-                        <Route
-                            path="/ai-assistant"
-                            element={<AIAssistant />}
-                        />
+                            <Route
+                                path="/meal-planner"
+                                element={<MealPlanner />}
+                            />
 
-                        <Route
-                            path="/settings"
-                            element={<Settings />}
-                        />
+                            <Route
+                                path="/shopping-list"
+                                element={<ShoppingList />}
+                            />
 
-                        <Route
-                            path="/users"
-                            element={<Users />}
-                        />
+                            <Route
+                                path="/ai-assistant"
+                                element={<AIAssistant />}
+                            />
 
-                        <Route
-                            path="/ingredients"
-                            element={<Ingredients />}
-                        />
+                            <Route
+                                path="/settings"
+                                element={<Settings />}
+                            />
 
-                        <Route
-                            path="/recipe-management"
-                            element={<RecipeManagement />}
-                        />
+                            <Route
+                                path="/users"
+                                element={<Users />}
+                            />
 
-                        <Route
-                            path="/chef/my-recipes"
-                            element={<ChefRecipes />}
-                        />
+                            <Route
+                                path="/ingredients"
+                                element={<Ingredients />}
+                            />
+
+                            <Route
+                                path="/recipe-management"
+                                element={<RecipeManagement />}
+                            />
+
+                            <Route
+                                path="/chef/my-recipes"
+                                element={<ChefRecipes />}
+                            />
+
+                        </Route>
 
                     </Route>
 

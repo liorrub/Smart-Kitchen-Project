@@ -15,6 +15,7 @@ export async function getDashboardData() {
 
     const headers = getAuthHeadersForUser(storedUser);
 
+    // Admins see system-wide data (users, stores); regular users see their own personal data.
     if (userRole === "admin") {
 
         const [

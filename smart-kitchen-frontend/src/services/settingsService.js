@@ -4,6 +4,7 @@ import { API_BASE_URL } from "../utils/apiConfig";
 
 const SETTINGS_API_URL = `${API_BASE_URL}/settings`;
 
+// Fetch the current user's profile and saved preferences.
 export async function getSettings() {
 
     const storedUser = JSON.parse(
@@ -23,6 +24,7 @@ export async function getSettings() {
     return response.data;
 }
 
+// Save the current user's updated profile and preferences.
 export async function updateSettings(
     settingsData
 ) {

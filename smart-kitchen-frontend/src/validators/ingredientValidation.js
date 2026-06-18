@@ -1,3 +1,4 @@
+// Validate the ingredient create/edit form. Returns an error message string or an empty string if valid.
 export function validateIngredientForm(ingredientData) {
     const name = ingredientData.name.trim();
     const category = ingredientData.category.trim();

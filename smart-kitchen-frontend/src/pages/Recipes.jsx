@@ -23,6 +23,7 @@ const RECIPES_API_URL = `${API_BASE_URL}/recipes`;
 
 const DEFAULT_FILTER_VALUE = "all";
 
+// Build a filter dropdown options list from a list of values, with an "all" option prepended.
 function createFilterOptions(values, allLabel) {
     const uniqueValues = [...new Set(values.filter(Boolean))];
 
@@ -55,6 +56,7 @@ function Recipes() {
 
     const storedUser = getStoredUser();
 
+    // Load all recipes and the user's favorites in parallel when the page opens.
     useEffect(() => {
         async function loadRecipesPage() {
             try {
@@ -97,12 +99,14 @@ function Recipes() {
         loadRecipesPage();
     }, [storedUser?.userId]);
 
+    // Build a fast Set of recipe IDs the user has already saved as favorites.
     const favoriteRecipeIds = useMemo(() => {
         return new Set(
             favorites.map((favorite) => favorite.recipeId)
         );
     }, [favorites]);
 
+    // Derive filter dropdown options from unique values in the current recipe list.
     const categoryOptions = useMemo(() => {
         return createFilterOptions(
             recipes.map((recipe) => recipe.category),
@@ -124,6 +128,7 @@ function Recipes() {
         );
     }, [recipes]);
 
+    // Filter the recipe list by search term, category, cuisine, and difficulty.
     const visibleRecipes = useMemo(() => {
         const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 
@@ -171,6 +176,7 @@ function Recipes() {
         (recipe) => Number(recipe.totalTime) <= 30
     ).length;
 
+    // Reset all active filters and the search term back to their default values.
     function clearFilters() {
         setSearchTerm("");
         setCategoryFilter(DEFAULT_FILTER_VALUE);
@@ -178,6 +184,7 @@ function Recipes() {
         setDifficultyFilter(DEFAULT_FILTER_VALUE);
     }
 
+    // Toggle a recipe as favorite: add it if not saved, remove it if already saved.
     async function handleFavoriteClick(recipe) {
         if (!storedUser?.userId) {
             setError("Please login before adding recipes to favorites.");

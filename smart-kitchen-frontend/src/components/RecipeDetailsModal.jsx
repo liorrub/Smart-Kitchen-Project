@@ -9,6 +9,7 @@ import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
 
+// Map a recipe category to its CSS class for the color-coded modal header.
 function getCategoryClass(category) {
     const validCategories = [
         "breakfast",
@@ -22,6 +23,7 @@ function getCategoryClass(category) {
         : "recipe-modal-default";
 }
 
+// Parse the instructions value (string or array) into a clean array of step strings.
 function getInstructionSteps(instructions) {
     if (!instructions) {
         return [];
@@ -38,6 +40,7 @@ function getInstructionSteps(instructions) {
         .filter(Boolean);
 }
 
+// Return the recipe's ingredients list, checking both field names the API may use.
 function getRecipeIngredients(recipe) {
     if (!recipe) {
         return [];
@@ -54,6 +57,7 @@ function getRecipeIngredients(recipe) {
     return [];
 }
 
+// Extract ingredient display fields, checking multiple possible field names from the API.
 function getIngredientName(ingredient) {
     return (
         ingredient.name ||
@@ -80,6 +84,7 @@ function getIngredientUnit(ingredient) {
     );
 }
 
+// Calculate the average rating from an array of reviews, rounded to one decimal place.
 function getAverageRating(reviews) {
     if (!reviews.length) {
         return 0;
@@ -93,6 +98,7 @@ function getAverageRating(reviews) {
     return (totalRating / reviews.length).toFixed(1);
 }
 
+// Build a star rating string (e.g. "★★★☆☆") from a numeric rating.
 function renderRatingStars(rating) {
     const roundedRating = Math.round(Number(rating) || 0);
 
@@ -111,6 +117,7 @@ function RecipeDetailsModal({ recipe, onClose }) {
 
     const currentUser = getStoredUser();
 
+    // Load reviews for the current recipe whenever the recipe changes.
     useEffect(() => {
         async function loadReviews() {
             if (!recipe?.recipeId) {
@@ -142,6 +149,7 @@ function RecipeDetailsModal({ recipe, onClose }) {
         loadReviews();
     }, [recipe?.recipeId]);
 
+    // Lock page scroll while the modal is open and restore it on close.
     useEffect(() => {
         if (recipe) {
             document.body.style.overflow = "hidden";
@@ -151,6 +159,7 @@ function RecipeDetailsModal({ recipe, onClose }) {
         };
     }, [recipe]);
 
+    // Filter out the current user's own review so only other users' reviews are shown.
     const otherUsersReviews = useMemo(() => {
         return reviews.filter(
             (review) => review.userId !== currentUser?.userId

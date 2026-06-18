@@ -64,6 +64,7 @@ function ShoppingList() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Load shopping list, ingredients, stores, and recommendations in parallel on page open.
     async function loadPageData() {
         try {
             setLoading(true);
@@ -129,6 +130,7 @@ function ShoppingList() {
         }
     }
 
+    // Refresh store recommendations after items are added or deleted.
     async function loadStoreRecommendations() {
         try {
             if (!storedUser?.userId) {
@@ -150,6 +152,7 @@ function ShoppingList() {
         }
     }
 
+    // Build ingredient dropdown options with a default placeholder as the first entry.
     const ingredientOptions = useMemo(() => {
         return [
             {
@@ -163,6 +166,7 @@ function ShoppingList() {
         ];
     }, [ingredients]);
 
+    // Apply the active completion filter (all / active / completed) to the shopping items list.
     const visibleItems = useMemo(() => {
         if (filter === "completed") {
             return shoppingItems.filter((item) => item.completed);
@@ -175,6 +179,7 @@ function ShoppingList() {
         return shoppingItems;
     }, [shoppingItems, filter]);
 
+    // Index stores by storeId for fast lookups when resolving recommendation details.
     const storesById = useMemo(() => {
         return stores.reduce((map, store) => {
             map[String(store.storeId)] = store;
@@ -182,6 +187,7 @@ function ShoppingList() {
         }, {});
     }, [stores]);
 
+    // Index store recommendations by ingredientId for quick per-item lookups in the list.
     const storeRecommendationsByIngredient = useMemo(() => {
         return storeRecommendations.reduce((map, recommendation) => {
             map[String(recommendation.ingredientId)] =
@@ -197,6 +203,7 @@ function ShoppingList() {
 
     const activeCount = shoppingItems.length - completedCount;
 
+    // Return store details and price info for a given ingredient from the recommendations map.
     function getStoresForIngredient(ingredientId) {
         const recommendedStores =
             storeRecommendationsByIngredient[String(ingredientId)] || [];
@@ -214,6 +221,7 @@ function ShoppingList() {
         });
     }
 
+    // Look up an ingredient's display name by its ID from the local ingredients list.
     function getIngredientName(ingredientId) {
         const ingredient = ingredients.find(
             (item) =>
@@ -235,6 +243,7 @@ function ShoppingList() {
         setSuccess("");
     }
 
+    // Allow only numeric or decimal input in the quantity field; reject any other characters.
     function handleQuantityChange(event) {
         const value = event.target.value;
 
@@ -249,6 +258,7 @@ function ShoppingList() {
         }
     }
 
+    // Called after a product is created or selected in the modal; adds it to the ingredient list and pre-selects it.
     function handleProductReady(product, alreadyExists) {
         const productData = product?.data || product;
 
@@ -284,6 +294,7 @@ function ShoppingList() {
         );
     }
 
+    // Validate and submit the add-item form, then refresh store recommendations.
     async function handleAddItem(event) {
         event.preventDefault();
 
@@ -347,6 +358,7 @@ function ShoppingList() {
         }
     }
 
+    // Toggle the completed status of a shopping item and update the local list.
     async function toggleCompleted(item) {
         try {
             setError("");
@@ -381,6 +393,7 @@ function ShoppingList() {
         }
     }
 
+    // Delete a shopping item and refresh store recommendations afterward.
     async function deleteItem(itemId) {
         try {
             setError("");
@@ -414,6 +427,7 @@ function ShoppingList() {
         }
     }
 
+    // Auto-generate shopping items from the user's expired pantry ingredients.
     async function generateShoppingList() {
         try {
             setSaving(true);

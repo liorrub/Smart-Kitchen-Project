@@ -4,6 +4,7 @@ import { getResponseData } from "../utils/apiUtils";
 import { getAuthHeaders } from "../utils/authUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
 
+// Fetch the user's full meal plan. Cache-busting param prevents stale results.
 export async function getUserMealPlan(userId) {
     const response = await axios.get(
         `${API_BASE_URL}/users/${userId}/meal-plan`,
@@ -18,6 +19,7 @@ export async function getUserMealPlan(userId) {
     return getResponseData(response);
 }
 
+// Add a new entry to the user's meal plan.
 export async function createMealPlanItem(userId, mealData) {
     const response = await axios.post(
         `${API_BASE_URL}/users/${userId}/meal-plan`,
@@ -30,6 +32,7 @@ export async function createMealPlanItem(userId, mealData) {
     return getResponseData(response);
 }
 
+// Update an existing meal plan entry.
 export async function updateMealPlanItem(userId, mealId, mealData) {
     const response = await axios.put(
         `${API_BASE_URL}/users/${userId}/meal-plan/${mealId}`,
@@ -42,6 +45,7 @@ export async function updateMealPlanItem(userId, mealId, mealData) {
     return getResponseData(response);
 }
 
+// Delete an entry from the user's meal plan.
 export async function deleteMealPlanItem(userId, mealId) {
     const response = await axios.delete(
         `${API_BASE_URL}/users/${userId}/meal-plan/${mealId}`,
@@ -65,6 +69,7 @@ export async function getUserPantry(userId) {
     return getResponseData(response);
 }
 
+// Fetch all recipes for the meal planner dropdowns. Cache-busting param prevents stale results.
 export async function getRecipes() {
     const response = await axios.get(
         `${API_BASE_URL}/recipes`,

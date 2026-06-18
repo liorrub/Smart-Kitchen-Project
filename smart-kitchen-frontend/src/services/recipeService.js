@@ -5,18 +5,21 @@ import { getResponseData, getResponseDataOrBody } from "../utils/apiUtils";
 
 const RECIPES_API_URL = `${API_BASE_URL}/recipes`;
 
+// Fetch all recipes from the catalog.
 export async function getAllRecipes() {
     const response = await axios.get(RECIPES_API_URL);
 
     return getResponseData(response);
 }
 
+// Fetch a single recipe by its ID.
 export async function getRecipeById(recipeId) {
     const response = await axios.get(`${RECIPES_API_URL}/${recipeId}`);
 
     return getResponseDataOrBody(response);
 }
 
+// Create a new recipe using the logged-in user's credentials.
 export async function createRecipe(recipeData, user) {
     const response = await axios.post(
         RECIPES_API_URL,
@@ -32,6 +35,7 @@ export async function createRecipe(recipeData, user) {
     return getResponseDataOrBody(response);
 }
 
+// Update an existing recipe using the logged-in user's credentials.
 export async function updateRecipe(recipeId, recipeData, user) {
     const response = await axios.put(
         `${RECIPES_API_URL}/${recipeId}`,
@@ -47,6 +51,7 @@ export async function updateRecipe(recipeId, recipeData, user) {
     return getResponseDataOrBody(response);
 }
 
+// Delete a recipe using the logged-in user's credentials.
 export async function deleteRecipe(recipeId, user) {
     const response = await axios.delete(
         `${RECIPES_API_URL}/${recipeId}`,

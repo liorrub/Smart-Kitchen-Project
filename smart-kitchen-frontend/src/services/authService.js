@@ -16,6 +16,7 @@ export async function login(email, password) {
     return response.data;
 }
 
+// Fetch the current user's profile by their ID.
 export async function getCurrentUser(userId) {
     const response = await axios.get(
         `${API_BASE_URL}/auth/me`,
@@ -29,6 +30,7 @@ export async function getCurrentUser(userId) {
     return response.data;
 }
 
+// Create a new user account and return the full response body.
 export async function register(userData) {
     const response = await axios.post(
         `${API_BASE_URL}/auth/register`,
@@ -46,6 +48,7 @@ export async function register(userData) {
     return response.data;
 }
 
+// End the current session on the server side.
 export async function logout() {
     const response = await axios.post(
         `${API_BASE_URL}/auth/logout`

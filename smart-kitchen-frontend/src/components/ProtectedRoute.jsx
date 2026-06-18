@@ -1,9 +1,9 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 
 // Protect pages that require authentication
-function ProtectedRoute({ children }) {
+function ProtectedRoute() {
 
     const { user } = useAuth();
 
@@ -18,7 +18,7 @@ function ProtectedRoute({ children }) {
         );
     }
 
-    return children;
+    return <Outlet />;
 }
 
 export default ProtectedRoute;

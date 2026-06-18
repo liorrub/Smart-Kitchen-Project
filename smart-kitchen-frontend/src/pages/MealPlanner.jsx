@@ -61,6 +61,7 @@ const EMPTY_MEAL_FORM = {
     notes: ""
 };
 
+// Return the Sunday that starts the week containing the given date.
 function getStartOfWeek(date) {
     const currentDate = new Date(date);
     const day = currentDate.getDay();
@@ -71,6 +72,7 @@ function getStartOfWeek(date) {
     return currentDate;
 }
 
+// Build an array of 7 day descriptor objects starting from the given Sunday.
 function getWeekDates(startDate) {
     return Array.from({ length: 7 }, (_, index) => {
         const date = new Date(startDate);
@@ -94,6 +96,7 @@ function getWeekDates(startDate) {
     });
 }
 
+// Format the week range label for the calendar header (e.g. "Jun 1–7, 2025").
 function formatWeekRange(weekDays) {
     const start = weekDays[0];
     const end = weekDays[weekDays.length - 1];
@@ -116,6 +119,7 @@ function formatWeekRange(weekDays) {
     return `${start.monthName} ${start.dayNumber}, ${startYear} – ${end.monthName} ${end.dayNumber}, ${endYear}`;
 }
 
+// Check whether two dates fall within the same Sunday-to-Saturday week.
 function isSameWeek(firstDate, secondDate) {
     return (
         toLocalDateKey(getStartOfWeek(firstDate)) ===
@@ -123,6 +127,7 @@ function isSameWeek(firstDate, secondDate) {
     );
 }
 
+// Look up the display label for a meal type value (e.g. "breakfast" → "Breakfast").
 function formatMealType(mealType) {
     const meal = MEAL_TYPES.find(
         (currentMeal) => currentMeal.value === mealType
@@ -167,10 +172,12 @@ function MealPlanner() {
         return isSameWeek(weekStartDate, new Date());
     }, [weekStartDate]);
 
+    // Build a Set of YYYY-MM-DD keys for the current week — used for fast membership checks when filtering meals.
     const weekDateKeys = useMemo(() => {
         return new Set(weekDates.map((day) => day.key));
     }, [weekDates]);
 
+    // Index recipes by recipeId for O(1) lookups when resolving meal entries to recipe details.
     const recipeMap = useMemo(() => {
         return new Map(
             recipes.map((recipe) => [
@@ -180,6 +187,7 @@ function MealPlanner() {
         );
     }, [recipes]);
 
+    // Build recipe dropdown options including calorie info for the meal form.
     const recipeOptions = useMemo(() => {
         return recipes.map((recipe) => ({
             value: recipe.recipeId,
@@ -209,6 +217,7 @@ function MealPlanner() {
         return options;
     }, [pantryItems, ingredientMap]);
 
+    // Filter and sort the meal plan entries that belong to the current week view.
     const weeklyMeals = useMemo(() => {
         return mealPlan
             .filter((meal) => weekDateKeys.has(meal.date))
@@ -224,10 +233,12 @@ function MealPlanner() {
             });
     }, [mealPlan, weekDateKeys]);
 
+    // Count the number of distinct days in the current week that have at least one meal planned.
     const plannedDaysCount = useMemo(() => {
         return new Set(weeklyMeals.map((meal) => meal.date)).size;
     }, [weeklyMeals]);
 
+    // Prevent page scrolling while any meal modal is open.
     useEffect(() => {
         const isOpen = isMealModalOpen || !!mealToDelete;
         if (!isOpen) return;
@@ -237,6 +248,7 @@ function MealPlanner() {
         };
     }, [isMealModalOpen, mealToDelete]);
 
+    // Load meal plan, recipes, pantry items, and ingredients in parallel on page open.
     useEffect(() => {
         async function loadMealPlannerData() {
             try {
@@ -288,6 +300,7 @@ function MealPlanner() {
         loadMealPlannerData();
     }, [storedUser?.userId]);
 
+    // Open the add-meal modal pre-filled with the clicked date and meal type.
     function openCreateMealModal(date, mealType = "breakfast") {
         setError("");
         setSuccess("");
@@ -303,6 +316,7 @@ function MealPlanner() {
         setIsMealModalOpen(true);
     }
 
+    // Open the edit-meal modal pre-filled with the selected meal's current values.
     function openEditMealModal(meal) {
         setError("");
         setSuccess("");
@@ -320,6 +334,7 @@ function MealPlanner() {
         setIsMealModalOpen(true);
     }
 
+    // Close the meal form modal and reset all form state.
     function closeMealModal() {
         setIsMealModalOpen(false);
         setEditingMeal(null);
@@ -338,6 +353,7 @@ function MealPlanner() {
         }));
     }
 
+    // Check that all required meal fields are filled before submitting. Returns an error string or null.
     function validateMealForm() {
         if (!mealForm.date) {
             return "Date is required.";
@@ -354,6 +370,7 @@ function MealPlanner() {
         return null;
     }
 
+    // Build the API request body from the current form state, resolving calories from the recipe map.
     function buildMealPayload() {
         const calories = mealForm.itemType === "recipe"
             ? Number(recipeMap.get(Number(mealForm.itemId))?.calories || 0)
@@ -369,6 +386,7 @@ function MealPlanner() {
         };
     }
 
+    // Create or update a meal plan entry and update the local list with the server response.
     async function handleSubmitMeal(event) {
         event.preventDefault();
 
@@ -431,6 +449,7 @@ function MealPlanner() {
         }
     }
 
+    // Open the delete confirmation modal for the selected meal.
     function openDeleteMealModal(meal) {
         setError("");
         setSuccess("");
@@ -439,6 +458,7 @@ function MealPlanner() {
         setMealToDelete(meal);
     }
 
+    // Delete the selected meal and remove it from the local list on success.
     async function confirmDeleteMeal() {
         if (!mealToDelete) {
             return;
@@ -480,6 +500,7 @@ function MealPlanner() {
         setMealToDelete(null);
     }
 
+    // Navigate the calendar one week backward.
     function goToPreviousWeek() {
         setWeekStartDate((previousDate) => {
             const newDate = new Date(previousDate);
@@ -490,6 +511,7 @@ function MealPlanner() {
         });
     }
 
+    // Navigate the calendar one week forward.
     function goToNextWeek() {
         setWeekStartDate((previousDate) => {
             const newDate = new Date(previousDate);
