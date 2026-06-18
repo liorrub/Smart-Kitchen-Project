@@ -15,7 +15,8 @@ function CustomSelect({
                           options = [],
                           placeholder = "Choose option",
                           helperText = "",
-                          disabled = false
+                          disabled = false,
+                          wrapperClassName = ""
                       }) {
     const [isOpen, setIsOpen] = useState(false);
     const selectRef = useRef(null);
@@ -78,7 +79,7 @@ function CustomSelect({
 
     return (
         <div
-            className="custom-select-field"
+            className={`custom-select-field ${wrapperClassName}`.trim()}
             ref={selectRef}
         >
             {label && (

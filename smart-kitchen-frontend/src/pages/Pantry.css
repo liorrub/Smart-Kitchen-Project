@@ -200,58 +200,59 @@
     box-shadow: 0 0 0 4px rgba(127, 159, 104, 0.18);
 }
 
-.pantry-custom-select {
-    position: relative;
+.custom-select-field.pantry-custom-select-field label {
+    font-size: 15px;
+    font-weight: 900;
+    margin-bottom: 0;
 }
 
-.pantry-custom-select-trigger {
-    width: 100%;
+.pantry-custom-select-field .custom-select-button {
     height: 54px;
     padding: 0 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    border: 1px solid #d6d2c4;
     border-radius: 16px;
-    background: #fffefa;
-    color: #1f3d2b;
     font-size: 15px;
     font-weight: 800;
     font-family: Arial, sans-serif;
-    text-align: left;
-    cursor: pointer;
     box-sizing: border-box;
     transition: 0.2s ease;
 }
 
-.pantry-custom-select-trigger:hover {
+.pantry-custom-select-field .custom-select-button:hover {
     border-color: #7f9f68;
     background: #f6fbf5;
 }
 
-.pantry-custom-select.open .pantry-custom-select-trigger {
+.pantry-custom-select-field .custom-select-button.open {
     border-color: #7f9f68;
     box-shadow: 0 0 0 4px rgba(127, 159, 104, 0.18);
 }
 
-.pantry-custom-select-arrow {
+.pantry-custom-select-field .custom-select-arrow {
+    font-size: 0;
+}
+
+.pantry-custom-select-field .custom-select-arrow::after {
+    content: "▼";
     color: #2a7545;
     font-size: 12px;
 }
 
-.pantry-custom-select-menu {
-    position: absolute;
+.pantry-custom-select-field .custom-select-button.open .custom-select-arrow {
+    transform: none;
+}
+
+.pantry-custom-select-field .custom-select-button.open .custom-select-arrow::after {
+    content: "▲";
+}
+
+.pantry-custom-select-field .custom-select-options {
     top: calc(100% + 10px);
-    left: 0;
-    right: 0;
     z-index: 3000;
     max-height: 240px;
     padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 6px;
-    overflow-y: auto;
     background: rgba(246, 251, 245, 0.98);
     border: 1px solid rgba(139, 213, 174, 0.85);
     border-radius: 18px;
@@ -259,26 +260,22 @@
     animation: pantrySelectOpen 0.18s ease;
 }
 
-.pantry-custom-select-option {
-    width: 100%;
+.pantry-custom-select-field .custom-select-option {
+    min-height: unset;
     padding: 12px 14px;
-    border: none;
     border-radius: 13px;
-    background: transparent;
-    color: #2a7545;
     font-size: 15px;
     font-weight: 800;
     font-family: Arial, sans-serif;
-    text-align: left;
-    cursor: pointer;
     transition: 0.2s ease;
 }
 
-.pantry-custom-select-option:hover {
+.pantry-custom-select-field .custom-select-option:hover {
     background: #e9fbe5;
+    color: #2a7545;
 }
 
-.pantry-custom-select-option.selected {
+.pantry-custom-select-field .custom-select-option.selected {
     background: #67d656;
     color: white;
     box-shadow: 0 8px 18px rgba(42, 117, 69, 0.18);

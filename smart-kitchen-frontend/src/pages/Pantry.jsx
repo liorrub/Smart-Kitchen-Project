@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import CreateProduct from "../components/CreateProduct";
 import CreateProductButton from "../components/CreateProductButton";
+import CustomSelect from "../components/CustomSelect";
 import { getIngredients } from "../services/ingredientsService";
 import { getResponseData, getErrorMessage, getNestedResponseData } from "../utils/apiUtils";
 import { getStoredUser, getAuthHeaders } from "../utils/authUtils";
@@ -91,78 +92,6 @@ function getLocationClass(location) {
         default:
             return "location-default";
     }
-}
-
-function CustomSelect({
-                          label,
-                          name,
-                          value,
-                          options,
-                          onChange
-                      }) {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const selectedOption = options.find(
-        (option) => String(option.value) === String(value)
-    );
-
-    function handleSelect(option) {
-        onChange({
-            target: {
-                name,
-                value: option.value
-            }
-        });
-
-        setIsOpen(false);
-    }
-
-    return (
-        <div className="pantry-field pantry-custom-select-field">
-            <label>{label}</label>
-
-            <div
-                className={
-                    isOpen
-                        ? "pantry-custom-select open"
-                        : "pantry-custom-select"
-                }
-            >
-                <button
-                    type="button"
-                    className="pantry-custom-select-trigger"
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                    <span>
-                        {selectedOption?.label || "Choose option"}
-                    </span>
-
-                    <span className="pantry-custom-select-arrow">
-                        {isOpen ? "▲" : "▼"}
-                    </span>
-                </button>
-
-                {isOpen && (
-                    <div className="pantry-custom-select-menu">
-                        {options.map((option) => (
-                            <button
-                                key={option.value}
-                                type="button"
-                                className={
-                                    String(option.value) === String(value)
-                                        ? "pantry-custom-select-option selected"
-                                        : "pantry-custom-select-option"
-                                }
-                                onClick={() => handleSelect(option)}
-                            >
-                                {option.label}
-                            </button>
-                        ))}
-                    </div>
-                )}
-            </div>
-        </div>
-    );
 }
 
 function Pantry() {
@@ -595,6 +524,7 @@ function Pantry() {
                             value={formData.ingredientId}
                             options={ingredientOptions}
                             onChange={handleChange}
+                            wrapperClassName="pantry-field pantry-custom-select-field"
                         />
 
                         <div className="pantry-field">
@@ -616,6 +546,7 @@ function Pantry() {
                             value={formData.unit}
                             options={unitOptions}
                             onChange={handleChange}
+                            wrapperClassName="pantry-field pantry-custom-select-field"
                         />
 
                         <div className="pantry-field">
@@ -635,6 +566,7 @@ function Pantry() {
                             value={formData.location}
                             options={locationOptions}
                             onChange={handleChange}
+                            wrapperClassName="pantry-field pantry-custom-select-field"
                         />
 
                         <button
