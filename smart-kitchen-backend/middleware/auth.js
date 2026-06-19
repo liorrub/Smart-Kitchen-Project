@@ -1,100 +1,122 @@
+"use strict";
+
+// SECURITY NOTE: This project identifies callers by the x-user-id header without
+// cryptographic verification. A client that knows another user's integer ID can
+// impersonate them. This is an intentional educational simplification.
+// All role decisions are resolved from MySQL (not from x-user-role), which removes
+// role forgery. Identity forgery (x-user-id spoofing) remains until JWT or
+// session tokens are introduced in a later phase.
+
 const { errorResponse } = require("../utils/responseHelper");
+const { getUserById } = require("../models/usersModel");
 
-// Middleware for role-based authorization
+// Resolves the caller's user record from MySQL by x-user-id and caches it on
+// req.authUser. Subsequent middleware on the same request reuses the cached value.
+async function resolveAuthUser(req) {
+    if (req.authUser) return true;
+
+    const userId = Number(req.headers["x-user-id"]);
+    if (!userId) return false;
+
+    const user = await getUserById(userId);
+    if (!user) return false;
+
+    req.authUser = user;
+    return true;
+}
+
+// Middleware: caller's DB role must be in allowedRoles.
 function authorize(...allowedRoles) {
-    return function (req, res, next) {
-        // Read user info from request headers
-        const userRole = req.headers["x-user-role"];
-        const userId = req.headers["x-user-id"];
+    return async function (req, res, next) {
+        try {
+            const resolved = await resolveAuthUser(req);
+            if (!resolved) {
+                return errorResponse(
+                    res,
+                    403,
+                    "FORBIDDEN",
+                    "You do not have permission to perform this action."
+                );
+            }
 
-        // Block access if no role was provided
-        if (!userRole) {
-            return errorResponse(
-                res,
-                403,
-                "FORBIDDEN",
-                "You do not have permission to perform this action."
-            );
+            if (!allowedRoles.includes(req.authUser.userRole)) {
+                return errorResponse(
+                    res,
+                    403,
+                    "FORBIDDEN",
+                    "You do not have permission to perform this action."
+                );
+            }
+
+            next();
+        } catch (error) {
+            next(error);
         }
-
-        // Check if the user's role is allowed
-        if (!allowedRoles.includes(userRole)) {
-            return errorResponse(
-                res,
-                403,
-                "FORBIDDEN",
-                "You do not have permission to perform this action."
-            );
-        }
-
-        // Save current user info for later use
-        req.currentUser = {
-            userRole: userRole,
-            userId: userId ? Number(userId) : null
-        };
-
-        next();
     };
 }
 
-// Middleware that allows only the user himself or admin
-function allowSelfOrAdmin(req, res, next) {
-    const userRole = req.headers["x-user-role"];
-    const userId = Number(req.headers["x-user-id"]);
-    const requestedUserId = Number(req.params.id);
+// Middleware: caller must be admin (by DB role) or be accessing their own /:id.
+async function allowSelfOrAdmin(req, res, next) {
+    try {
+        const resolved = await resolveAuthUser(req);
+        if (!resolved) {
+            return errorResponse(
+                res,
+                403,
+                "FORBIDDEN",
+                "You do not have permission to perform this action."
+            );
+        }
 
-    // Block access if no role was provided
-    if (!userRole) {
-        return errorResponse(
-            res,
-            403,
-            "FORBIDDEN",
-            "You do not have permission to perform this action."
-        );
+        const requestedUserId = Number(req.params.id);
+
+        if (req.authUser.userRole === "admin") {
+            return next();
+        }
+
+        if (req.authUser.userId !== requestedUserId) {
+            return errorResponse(
+                res,
+                403,
+                "FORBIDDEN",
+                "You do not have permission to perform this action."
+            );
+        }
+
+        next();
+    } catch (error) {
+        next(error);
     }
-
-    // Admin can always continue
-    if (userRole === "admin") {
-        return next();
-    }
-
-    // Regular users can only access their own data
-    if (userId !== requestedUserId) {
-        return errorResponse(
-            res,
-            403,
-            "FORBIDDEN",
-            "You do not have permission to perform this action."
-        );
-    }
-
-    next();
 }
 
-function allowSelfOnly(req, res, next) {
-    const userRole = req.headers["x-user-role"];
-    const userId = Number(req.headers["x-user-id"]);
-    const requestedUserId = Number(req.params.id);
+// Middleware: caller must be accessing their own /:id (admin bypass is not granted).
+async function allowSelfOnly(req, res, next) {
+    try {
+        const resolved = await resolveAuthUser(req);
+        if (!resolved) {
+            return errorResponse(
+                res,
+                403,
+                "FORBIDDEN",
+                "You do not have permission to perform this action."
+            );
+        }
 
-    if (!userRole) {
-        return errorResponse(
-            res,
-            403,
-            "FORBIDDEN",
-            "You do not have permission to perform this action."
-        );
+        const requestedUserId = Number(req.params.id);
+
+        if (req.authUser.userId !== requestedUserId) {
+            return errorResponse(
+                res,
+                403,
+                "FORBIDDEN",
+                "You can only access your own data."
+            );
+        }
+
+        next();
+    } catch (error) {
+        next(error);
     }
-
-    if (userId !== requestedUserId) {
-        return errorResponse(
-            res,
-            403,
-            "FORBIDDEN",
-            "You can only access your own data."
-        );
-    }
-
-    next();
 }
 
 module.exports = {

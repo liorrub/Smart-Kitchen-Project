@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 const {
     getAllUsers,
     getUserById,
@@ -5,7 +7,8 @@ const {
     createUser,
     updateUser,
     deleteUser,
-    filterUsers
+    filterUsers,
+    updateUserPassword
 } = require("../models/usersModel");
 
 const {
@@ -96,7 +99,28 @@ async function createSingleUser(req, res, next) {
             );
         }
 
-        const newUser = await createUser(req.body);
+        if (!req.body.password) {
+            return errorResponse(
+                res,
+                400,
+                "MISSING_FIELD",
+                "Password is required"
+            );
+        }
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+        const newUser = await createUser({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: hashedPassword,
+            userRole: req.body.userRole || "user",
+            city: req.body.city,
+            cookingLevel: req.body.cookingLevel,
+            age: req.body.age,
+            preferences: req.body.preferences ?? null
+        });
 
         return successResponse(
             res,
@@ -112,7 +136,7 @@ async function createSingleUser(req, res, next) {
 async function updateSingleUser(req, res, next) {
     try {
         const userId = Number(req.params.id);
-        const currentUserRole = req.headers["x-user-role"];
+        const currentUserRole = req.authUser.userRole;
 
         const currentUser = await getUserById(userId);
 
@@ -125,19 +149,30 @@ async function updateSingleUser(req, res, next) {
             );
         }
 
-        if (req.body.userRole && currentUserRole !== "admin") {
-            return errorResponse(
-                res,
-                403,
-                "FORBIDDEN",
-                "Only admin can change user role"
-            );
+        // Strip immutable and sensitive fields from the update body.
+        const {
+            password,
+            userId: ignoredUserId,
+            createDate,
+            updateDate,
+            createdAt,
+            updatedAt,
+            ...updateData
+        } = req.body;
+
+        // Non-admins cannot change their own role.
+        // Strip silently rather than rejecting, so a self-update that happens to
+        // include the current userRole (e.g. full-object re-send from the frontend)
+        // still succeeds on the other fields.
+        if (currentUserRole !== "admin") {
+            delete updateData.userRole;
         }
 
+        // Admins can change a user's role, but the system must keep at least one admin.
         if (
-            req.body.userRole &&
+            updateData.userRole &&
             currentUser.userRole === "admin" &&
-            req.body.userRole !== "admin" &&
+            updateData.userRole !== "admin" &&
             await isLastAdmin(userId)
         ) {
             return errorResponse(
@@ -148,10 +183,10 @@ async function updateSingleUser(req, res, next) {
             );
         }
 
-        // Prevent assigning an email that already belongs to another user
-        if (req.body.email) {
+        // Prevent assigning an email that already belongs to another user.
+        if (updateData.email) {
             const existingUser = await getUserByEmail(
-                req.body.email
+                updateData.email
             );
 
             if (
@@ -166,14 +201,6 @@ async function updateSingleUser(req, res, next) {
                 );
             }
         }
-
-        const {
-            password,
-            userId: ignoredUserId,
-            createDate,
-            updateDate,
-            ...updateData
-        } = req.body;
 
         const updatedUser = await updateUser(
             userId,
@@ -205,9 +232,7 @@ async function changePassword(req, res, next) {
     try {
         const userId = Number(req.params.id);
 
-        const loggedInUserId = Number(
-            req.headers["x-user-id"]
-        );
+        const loggedInUserId = req.authUser.userId;
 
         if (loggedInUserId !== userId) {
             return errorResponse(
@@ -229,9 +254,21 @@ async function changePassword(req, res, next) {
             );
         }
 
-        if (
-            user.password !== req.body.currentPassword
-        ) {
+        if (!req.body.currentPassword || !req.body.newPassword) {
+            return errorResponse(
+                res,
+                400,
+                "MISSING_FIELD",
+                "Current and new password are required"
+            );
+        }
+
+        const passwordMatch = await bcrypt.compare(
+            req.body.currentPassword,
+            user.password
+        );
+
+        if (!passwordMatch) {
             return errorResponse(
                 res,
                 400,
@@ -261,12 +298,11 @@ async function changePassword(req, res, next) {
             );
         }
 
-        await updateUser(
-            userId,
-            {
-                password: req.body.newPassword
-            }
+        const hashedPassword = await bcrypt.hash(
+            req.body.newPassword,
+            10
         );
+        await updateUserPassword(userId, hashedPassword);
 
         return successResponse(
             res,

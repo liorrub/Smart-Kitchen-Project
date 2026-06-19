@@ -84,11 +84,18 @@ async function updateSettings(req, res, next) {
             }
         }
 
-        const updatedUser =
-            await updateUser(
-                userId,
-                req.body
-            );
+        const allowedFields = [
+            "firstName", "lastName", "email",
+            "city", "cookingLevel", "age", "preferences"
+        ];
+        const safeData = {};
+        for (const field of allowedFields) {
+            if (req.body[field] !== undefined) {
+                safeData[field] = req.body[field];
+            }
+        }
+
+        const updatedUser = await updateUser(userId, safeData);
 
         if (!updatedUser) {
             return errorResponse(

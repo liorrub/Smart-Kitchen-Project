@@ -1,93 +1,82 @@
-const users = require("../data/users.json");
-const { generateId } = require("../utils/idGenerator");
-const { getCurrentDateTime } = require("../utils/dateHelper");
+"use strict";
 
-const FILE_NAME = "users.json";
+const User = require("./User");
 
-// Get all users
+// Returns a plain object so controllers can safely destructure (e.g. { password, ...safe }).
+// Strips createdAt/updatedAt — no current consumer reads date fields on user objects.
+function toPlain(instance) {
+    if (!instance) return null;
+    const { createdAt, updatedAt, ...rest } = instance.get({ plain: true });
+    return rest;
+}
+
 async function getAllUsers() {
-    return users;
+    const users = await User.findAll({ order: [["userId", "ASC"]] });
+    return users.map(toPlain);
 }
 
-// Get user by ID
 async function getUserById(userId) {
-    return users.find(user => user.userId === userId);
+    const user = await User.findByPk(userId);
+    return toPlain(user);
 }
 
-// Get user by email
 async function getUserByEmail(email) {
-    return users.find(
-        user => user.email === email
-    );
+    if (!email) return null;
+    const user = await User.findOne({
+        where: { email: email.trim().toLowerCase() }
+    });
+    return toPlain(user);
 }
 
-// Add a new user with generated ID and timestamps
 async function createUser(userData) {
-    const currentDate = getCurrentDateTime();
-
-    const newUser = {
-        userId: generateId(users, "userId"),
-        ...userData,
-        createDate: currentDate,
-        updateDate: currentDate
-    };
-
-    users.push(newUser);
-
-    return newUser;
+    const user = await User.create(userData);
+    return toPlain(user);
 }
 
-// Update user
 async function updateUser(userId, updatedData) {
-    const userIndex = users.findIndex(
-        user => user.userId === userId
-    );
+    const user = await User.findByPk(userId);
+    if (!user) return null;
 
-    if (userIndex === -1) {
-        return null;
-    }
+    // Strip fields that must not be changed through the generic update path.
+    // Password changes must use updateUserPassword.
+    // Timestamps and PK are Sequelize-managed and must not be overwritten by client data.
+    const {
+        password,
+        userId: _pk,
+        createDate,
+        updateDate,
+        createdAt,
+        updatedAt,
+        ...safeData
+    } = updatedData;
 
-    users[userIndex] = {
-        ...users[userIndex],
-        ...updatedData,
-        updateDate: getCurrentDateTime()
-    };
-
-    return users[userIndex];
+    await user.update(safeData);
+    return toPlain(user);
 }
 
-// Delete user
 async function deleteUser(userId) {
-    const userIndex = users.findIndex(
-        user => user.userId === userId
-    );
-
-    if (userIndex === -1) {
-        return false;
-    }
-
-    users.splice(userIndex, 1);
-
+    const user = await User.findByPk(userId);
+    if (!user) return false;
+    await user.destroy();
     return true;
 }
 
-// Filter users by optional role or cooking level
 async function filterUsers(filters = {}) {
-    let filteredUsers = [...users];
+    const where = {};
+    if (filters.userRole) where.userRole = filters.userRole;
+    if (filters.cookingLevel) where.cookingLevel = filters.cookingLevel;
 
-    if (filters.userRole) {
-        filteredUsers = filteredUsers.filter(
-            user => user.userRole === filters.userRole
-        );
-    }
+    const users = await User.findAll({ where, order: [["userId", "ASC"]] });
+    return users.map(toPlain);
+}
 
-    if (filters.cookingLevel) {
-        filteredUsers = filteredUsers.filter(
-            user => user.cookingLevel === filters.cookingLevel
-        );
-    }
-
-    return filteredUsers;
+// Dedicated function for password updates.
+// Caller must pass an already-hashed password — never plaintext.
+async function updateUserPassword(userId, hashedPassword) {
+    const user = await User.findByPk(userId);
+    if (!user) return null;
+    await user.update({ password: hashedPassword });
+    return toPlain(user);
 }
 
 module.exports = {
@@ -97,5 +86,6 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
-    filterUsers
+    filterUsers,
+    updateUserPassword
 };

@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 const {
     getUserByEmail,
     getUserById,
@@ -12,11 +14,21 @@ const {
 // Login user
 async function login(req, res, next) {
     try {
+        if (!req.body.email || !req.body.password) {
+            return errorResponse(
+                res,
+                400,
+                "MISSING_FIELD",
+                "Email and password are required"
+            );
+        }
+
         const user = await getUserByEmail(
             req.body.email
         );
 
-        if (!user || user.password !== req.body.password) {
+        const passwordMatch = user && await bcrypt.compare(req.body.password, user.password);
+        if (!passwordMatch) {
             return errorResponse(
                 res,
                 401,
@@ -109,11 +121,22 @@ async function register(req, res, next) {
             );
         }
 
+        if (!req.body.password) {
+            return errorResponse(
+                res,
+                400,
+                "MISSING_FIELD",
+                "Password is required"
+            );
+        }
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
         const newUser = await createUser({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
-            password: req.body.password,
+            password: hashedPassword,
             userRole: "user",
             city: req.body.city,
             preferences: {

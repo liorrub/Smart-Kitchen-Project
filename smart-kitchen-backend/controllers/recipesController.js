@@ -240,8 +240,7 @@ async function getRecipeReviews(req, res, next) {
 async function createRecipeReview(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
-        const userId = Number(req.headers["x-user-id"]);
-        const userRole = req.headers["x-user-role"];
+        const { userId, userRole } = req.authUser;
 
         const recipe = await getRecipeById(recipeId);
 
@@ -272,8 +271,7 @@ async function updateRecipeReview(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
         const reviewId = Number(req.params.reviewId);
-        const userId = Number(req.headers["x-user-id"]);
-        const userRole = req.headers["x-user-role"];
+        const { userId, userRole } = req.authUser;
 
         const review = await getReviewById(reviewId);
 
@@ -307,8 +305,7 @@ async function deleteRecipeReview(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
         const reviewId = Number(req.params.reviewId);
-        const userId = Number(req.headers["x-user-id"]);
-        const userRole = req.headers["x-user-role"];
+        const { userId, userRole } = req.authUser;
 
         const review = await getReviewById(reviewId);
 
