@@ -35,6 +35,41 @@ async function getCommentsByRecipe(req, res, next) {
     }
 }
 
+// Update the content of a comment only if the caller is the owner or an admin.
+async function updateComment(req, res, next) {
+    try {
+        const recipeId = Number(req.params.id);
+        const commentId = Number(req.params.commentId);
+        const { content } = req.body;
+
+        if (!content || !String(content).trim()) {
+            return errorResponse(res, 400, "VALIDATION_ERROR", "Content is required.");
+        }
+
+        const comment = await RecipeComment.findOne({ where: { commentId, recipeId } });
+
+        if (!comment) {
+            return errorResponse(res, 404, "NOT_FOUND", "Comment not found.");
+        }
+
+        const authUser = req.authUser;
+
+        if (authUser.userRole !== "admin" && authUser.userId !== comment.userId) {
+            return errorResponse(
+                res,
+                403,
+                "FORBIDDEN",
+                "You do not have permission to edit this comment."
+            );
+        }
+
+        await comment.update({ content: String(content).trim() });
+        return successResponse(res, 200, comment);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // Delete a comment only if the caller is the comment owner or an admin.
 async function deleteComment(req, res, next) {
     try {
@@ -67,4 +102,4 @@ async function deleteComment(req, res, next) {
     }
 }
 
-module.exports = { getCommentsByRecipe, deleteComment };
+module.exports = { getCommentsByRecipe, updateComment, deleteComment };

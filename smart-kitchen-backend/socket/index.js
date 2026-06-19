@@ -1,6 +1,7 @@
 "use strict";
 
 const { Server } = require("socket.io");
+const { registerRecipeDiscussion } = require("./recipeDiscussion");
 
 let io;
 
@@ -12,6 +13,7 @@ function initSocket(httpServer) {
         }
     });
 
+    // General connection logging
     io.on("connection", (socket) => {
         console.log(`[socket] client connected: ${socket.id}`);
 
@@ -19,6 +21,9 @@ function initSocket(httpServer) {
             console.log(`[socket] client disconnected: ${socket.id}`);
         });
     });
+
+    // Register recipe discussion events
+    registerRecipeDiscussion(io);
 
     console.log("[socket] Socket.IO server initialized");
 }
