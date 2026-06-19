@@ -18,6 +18,9 @@ const Recipe = sequelize.define(
             validate: {
                 notNull: { msg: "Title is required" },
                 notEmpty: { msg: "Title cannot be empty" }
+            },
+            set(value) {
+                this.setDataValue("title", typeof value === "string" ? value.trim() : value);
             }
         },
         instructions: {
@@ -26,6 +29,9 @@ const Recipe = sequelize.define(
             validate: {
                 notNull: { msg: "Instructions are required" },
                 notEmpty: { msg: "Instructions cannot be empty" }
+            },
+            set(value) {
+                this.setDataValue("instructions", typeof value === "string" ? value.trim() : value);
             }
         },
         difficulty: {

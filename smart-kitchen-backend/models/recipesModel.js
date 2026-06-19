@@ -1,94 +1,72 @@
-const recipes = require("../data/recipes.json");
+"use strict";
 
-const { generateId } = require("../utils/idGenerator");
+// Recipe data-access layer — all queries go through the Sequelize Recipe model.
+// Follows the architecture: Database → Sequelize Model → recipesModel → Controller → Route
+// (Lecture 6: ORM, Model → Controller → Route)
 
-// Get all recipes
+const { Recipe, User } = require("./index");
+
+// Return all recipes ordered by recipeId, as plain objects
 async function getAllRecipes() {
-    return recipes;
+    const rows = await Recipe.findAll({
+        order: [["recipeId", "ASC"]]
+    });
+    return rows.map(r => r.toJSON());
 }
 
-// Get recipe by ID
+// Fetch a single recipe with its creator joined via the belongsTo association.
+// Returns creator.firstName / lastName so the controller never needs a second lookup.
 async function getRecipeById(recipeId) {
-    return recipes.find(
-        recipe => recipe.recipeId === recipeId
-    );
+    const instance = await Recipe.findByPk(recipeId, {
+        include: [
+            {
+                model: User,
+                as: "creator",
+                attributes: ["userId", "firstName", "lastName", "userRole"]
+            }
+        ]
+    });
+    return instance ? instance.toJSON() : null;
 }
 
-// Create recipe
+// Insert a new recipe row and return it as a plain object.
+// recipeId is assigned automatically by the database (AUTO_INCREMENT).
 async function createRecipe(recipeData) {
-    const newRecipe = {
-        recipeId: generateId(recipes, "recipeId"),
-        ...recipeData
-    };
-
-    recipes.push(newRecipe);
-
-    return newRecipe;
+    const instance = await Recipe.create(recipeData);
+    return instance.toJSON();
 }
 
-// Update recipe
+// Update an existing recipe and return the updated plain object.
+// Returns null if no recipe with that ID exists.
 async function updateRecipe(recipeId, updatedData) {
-    const recipeIndex = recipes.findIndex(
-        recipe => recipe.recipeId === recipeId
-    );
-
-    if (recipeIndex === -1) {
-        return null;
-    }
-
-    recipes[recipeIndex] = {
-        ...recipes[recipeIndex],
-        ...updatedData
-    };
-
-    return recipes[recipeIndex];
+    const instance = await Recipe.findByPk(recipeId);
+    if (!instance) return null;
+    await instance.update(updatedData);
+    return instance.toJSON();
 }
 
-// Delete recipe
+// Delete a recipe by ID. Returns true on success, false if not found.
 async function deleteRecipe(recipeId) {
-    const recipeIndex = recipes.findIndex(
-        recipe => recipe.recipeId === recipeId
-    );
-
-    if (recipeIndex === -1) {
-        return false;
-    }
-
-    recipes.splice(recipeIndex, 1);
-
+    const instance = await Recipe.findByPk(recipeId);
+    if (!instance) return false;
+    await instance.destroy();
     return true;
 }
 
-// Apply optional query filters when searching recipes
+// Return recipes matching any combination of category / cuisine / difficulty / creatorId.
+// All conditions are AND-ed together; omitted filters are ignored.
 async function filterRecipes(filters = {}) {
-    let filteredRecipes = [...recipes];
+    const where = {};
+    if (filters.category)   where.category   = filters.category;
+    if (filters.cuisine)    where.cuisine     = filters.cuisine;
+    if (filters.difficulty) where.difficulty  = filters.difficulty;
+    if (filters.creatorId)  where.creatorId   = Number(filters.creatorId);
 
-    if (filters.category) {
-        filteredRecipes = filteredRecipes.filter(
-            recipe => recipe.category === filters.category
-        );
-    }
-
-    if (filters.cuisine) {
-        filteredRecipes = filteredRecipes.filter(
-            recipe => recipe.cuisine === filters.cuisine
-        );
-    }
-
-    if (filters.difficulty) {
-        filteredRecipes = filteredRecipes.filter(
-            recipe => recipe.difficulty === filters.difficulty
-        );
-    }
-
-    if (filters.creatorId) {
-        filteredRecipes = filteredRecipes.filter(
-            recipe =>
-                recipe.creatorId === Number(filters.creatorId)
-        );
-    }
-
-    return filteredRecipes;
+    const rows = await Recipe.findAll({
+        where,
+        order: [["recipeId", "ASC"]]
+    });
+    return rows.map(r => r.toJSON());
 }
 
 module.exports = {
