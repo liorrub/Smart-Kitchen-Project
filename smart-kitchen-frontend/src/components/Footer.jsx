@@ -1,6 +1,7 @@
 import "./Footer.css";
 
-function Footer() {
+// Receives year from MainLayout, which fetches it from worldtimeapi.org
+function Footer({ year }) {
     return (
         <footer className="app-footer">
             <div className="footer-content">
@@ -16,7 +17,7 @@ function Footer() {
                 </div>
 
                 <div className="footer-right">
-                    <span>© 2026</span>
+                    <span>© {year}</span>
                     <strong>Lior Rubinshtein and Ellen Levin</strong>
                 </div>
             </div>
