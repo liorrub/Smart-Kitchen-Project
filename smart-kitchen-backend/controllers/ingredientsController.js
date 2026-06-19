@@ -115,6 +115,14 @@ async function deleteSingleIngredient(req, res, next) {
             message: "Ingredient deleted successfully"
         });
     } catch (error) {
+        if (error.name === "SequelizeForeignKeyConstraintError") {
+            return errorResponse(
+                res,
+                409,
+                "INGREDIENT_IN_USE",
+                "This ingredient is used by one or more recipes and cannot be deleted"
+            );
+        }
         next(error);
     }
 }

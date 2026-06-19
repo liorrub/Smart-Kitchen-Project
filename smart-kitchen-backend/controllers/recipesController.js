@@ -34,39 +34,8 @@ const {
     getIngredientById
 } = require("../models/ingredientsModel");
 
-// Build a full recipe object for API responses.
-// The recipe itself is stored in recipes.json,
-// while its ingredients are stored in recipe_ingredients.json.
-// This helper joins the recipe with its related ingredient details.
 async function buildRecipeWithIngredients(recipe) {
-    const recipeIngredients = await getIngredientsByRecipeId(recipe.recipeId);
-
-    const ingredients = await Promise.all(
-        recipeIngredients.map(async (recipeIngredient) => {
-            const ingredient = await getIngredientById(recipeIngredient.ingredientId);
-
-            if (!ingredient) {
-                return {
-                    recipeIngredientId: recipeIngredient.recipeIngredientId,
-                    ingredientId: recipeIngredient.ingredientId,
-                    name: "Unknown ingredient",
-                    quantity: recipeIngredient.quantity,
-                    unit: recipeIngredient.unit
-                };
-            }
-
-            return {
-                recipeIngredientId: recipeIngredient.recipeIngredientId,
-                ingredientId: ingredient.ingredientId,
-                name: ingredient.name,
-                category: ingredient.category,
-                isAllergen: ingredient.isAllergen,
-                quantity: recipeIngredient.quantity,
-                unit: recipeIngredient.unit
-            };
-        })
-    );
-
+    const ingredients = await getIngredientsByRecipeId(recipe.recipeId);
     return {
         ...recipe,
         ingredients

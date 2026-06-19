@@ -1,101 +1,70 @@
-const ingredients = require("../data/ingredients.json");
+"use strict";
 
-const { generateId } = require("../utils/idGenerator");
+const { Ingredient } = require("./index");
 
-// Get all ingredients
+function toPlain(instance) {
+    const { createdAt, updatedAt, ...rest } = instance.get({ plain: true });
+    return rest;
+}
+
 async function getAllIngredients() {
-    return ingredients;
+    const rows = await Ingredient.findAll({
+        order: [["ingredientId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
-// Get ingredient by ID
 async function getIngredientById(ingredientId) {
-    return ingredients.find(
-        ingredient => ingredient.ingredientId === ingredientId
-    );
+    const ingredient = await Ingredient.findByPk(ingredientId);
+    return ingredient ? toPlain(ingredient) : null;
 }
 
-// Create ingredient
 async function createIngredient(ingredientData) {
-    const newIngredient = {
-        ingredientId: generateId(
-            ingredients,
-            "ingredientId"
-        ),
-        ...ingredientData
-    };
-
-    ingredients.push(newIngredient);
-
-    return newIngredient;
+    const ingredient = await Ingredient.create(ingredientData);
+    return toPlain(ingredient);
 }
 
-// Update ingredient
-async function updateIngredient(
-    ingredientId,
-    updatedData
-) {
-    const ingredientIndex = ingredients.findIndex(
-        ingredient =>
-            ingredient.ingredientId === ingredientId
-    );
-
-    if (ingredientIndex === -1) {
-        return null;
-    }
-
-    ingredients[ingredientIndex] = {
-        ...ingredients[ingredientIndex],
-        ...updatedData
-    };
-
-    return ingredients[ingredientIndex];
+async function updateIngredient(ingredientId, updatedData) {
+    const ingredient = await Ingredient.findByPk(ingredientId);
+    if (!ingredient) return null;
+    await ingredient.update(updatedData);
+    return toPlain(ingredient);
 }
 
-// Delete ingredient
 async function deleteIngredient(ingredientId) {
-    const ingredientIndex = ingredients.findIndex(
-        ingredient =>
-            ingredient.ingredientId === ingredientId
-    );
-
-    if (ingredientIndex === -1) {
-        return false;
-    }
-
-    ingredients.splice(ingredientIndex, 1);
-
+    const ingredient = await Ingredient.findByPk(ingredientId);
+    if (!ingredient) return false;
+    await ingredient.destroy();
     return true;
 }
 
-// Filter ingredients
 async function filterIngredients(filters = {}) {
-    let filteredIngredients = [...ingredients];
+    const where = {};
 
     if (filters.category) {
-        filteredIngredients = filteredIngredients.filter(
-            ingredient =>
-                ingredient.category === filters.category
-        );
+        where.category = filters.category;
     }
 
     if (filters.isAllergen !== undefined) {
-        filteredIngredients = filteredIngredients.filter(
-            ingredient =>
-                ingredient.isAllergen ===
-                (filters.isAllergen === "true")
-        );
+        where.isAllergen = filters.isAllergen === "true";
     }
+
+    const rows = await Ingredient.findAll({
+        where,
+        order: [["ingredientId", "ASC"]]
+    });
+
+    let ingredients = rows.map(toPlain);
 
     if (filters.search) {
-        filteredIngredients = filteredIngredients.filter(
+        const normalizedSearch = filters.search.toLowerCase();
+        ingredients = ingredients.filter(
             ingredient =>
-                ingredient.name
-                    .toLowerCase()
-                    .includes(filters.search.toLowerCase())
+                ingredient.name.toLowerCase().includes(normalizedSearch)
         );
     }
 
-    return filteredIngredients;
+    return ingredients;
 }
 
 module.exports = {
