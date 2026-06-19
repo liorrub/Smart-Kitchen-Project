@@ -47,6 +47,7 @@ function RecipeDiscussion() {
 
     // Comment pending delete confirmation — null or the full comment object
     const [confirmDeleteComment, setConfirmDeleteComment] = useState(null);
+    const [socketError, setSocketError] = useState(null);
 
     const socketRef = useRef(null);
 
@@ -123,6 +124,12 @@ function RecipeDiscussion() {
             });
         });
 
+        // Show a temporary error banner when the server rejects an edit/delete
+        socket.on("commentError", ({ message }) => {
+            setSocketError(message);
+            setTimeout(() => setSocketError(null), 4000);
+        });
+
         return () => {
             socket.emit("leaveRecipeRoom", { recipeId: Number(recipeId) });
             socket.off("newRecipeComment");
@@ -131,6 +138,7 @@ function RecipeDiscussion() {
             socket.off("roomUserCount");
             socket.off("userTyping");
             socket.off("userStoppedTyping");
+            socket.off("commentError");
             disconnectSocket();
         };
     }, [recipeId, currentUser?.userId]);
@@ -268,6 +276,11 @@ function RecipeDiscussion() {
                         )}
                     </div>
                 </div>
+
+                {/* Error banner for rejected socket actions (auto-dismisses) */}
+                {socketError && (
+                    <div className="discussion-socket-error">{socketError}</div>
+                )}
 
                 {/* Comment list: top-level comments followed by their indented replies */}
                 <div className="discussion-comments-list">
