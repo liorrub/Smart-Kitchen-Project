@@ -1,69 +1,98 @@
-const recipeIngredients = require("../data/recipe_ingredients.json");
+"use strict";
 
-const { generateId } = require("../utils/idGenerator");
+const { RecipeIngredient, Ingredient } = require("./index");
 
-// Get all recipe ingredients
+function toPlain(instance) {
+    const { createdAt, updatedAt, ...rest } = instance.get({ plain: true });
+    return rest;
+}
+
 async function getAllRecipeIngredients() {
-    return recipeIngredients;
+    const rows = await RecipeIngredient.findAll({
+        order: [["recipeIngredientId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
-// Get ingredients for recipe
 async function getIngredientsByRecipeId(recipeId) {
-    return recipeIngredients.filter(
-        item => item.recipeId === recipeId
-    );
+    const rows = await RecipeIngredient.findAll({
+        where: { recipeId },
+        attributes: [
+            "recipeIngredientId",
+            "ingredientId",
+            "quantity",
+            "unit"
+        ],
+        include: [
+            {
+                model: Ingredient,
+                as: "ingredient",
+                required: false,
+                attributes: [
+                    "ingredientId",
+                    "name",
+                    "category",
+                    "isAllergen"
+                ]
+            }
+        ],
+        order: [
+            ["recipeIngredientId", "ASC"],
+            ["ingredientId", "ASC"]
+        ]
+    });
+
+    return rows.map((row) => {
+        const plain = row.get({ plain: true });
+        const ing = plain.ingredient;
+
+        if (!ing) {
+            return {
+                recipeIngredientId: plain.recipeIngredientId,
+                ingredientId: plain.ingredientId,
+                name: "Unknown ingredient",
+                quantity: plain.quantity,
+                unit: plain.unit
+            };
+        }
+
+        return {
+            recipeIngredientId: plain.recipeIngredientId,
+            ingredientId: plain.ingredientId,
+            name: ing.name,
+            category: ing.category,
+            isAllergen: ing.isAllergen,
+            quantity: plain.quantity,
+            unit: plain.unit
+        };
+    });
 }
 
-// Get recipes for ingredient
 async function getRecipesByIngredientId(ingredientId) {
-    return recipeIngredients.filter(
-        item => item.ingredientId === ingredientId
-    );
+    const rows = await RecipeIngredient.findAll({
+        where: { ingredientId },
+        order: [["recipeIngredientId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
-// Add relation
-async function addRecipeIngredient(recipeIngredientData) {
-    const newRecipeIngredient = {
-        recipeIngredientId: generateId(
-            recipeIngredients,
-            "recipeIngredientId"
-        ),
-        ...recipeIngredientData
-    };
-
-    recipeIngredients.push(newRecipeIngredient);
-
-    return newRecipeIngredient;
+async function addRecipeIngredient(recipeIngredientData, options = {}) {
+    const row = await RecipeIngredient.create(recipeIngredientData, options);
+    return toPlain(row);
 }
 
-// Delete relation
-async function deleteRecipeIngredient(
-    recipeIngredientId
-) {
-    const itemIndex = recipeIngredients.findIndex(
-        item =>
-            item.recipeIngredientId ===
-            recipeIngredientId
-    );
-
-    if (itemIndex === -1) {
-        return false;
-    }
-
-    recipeIngredients.splice(itemIndex, 1);
-
+async function deleteRecipeIngredient(recipeIngredientId, options = {}) {
+    const row = await RecipeIngredient.findByPk(recipeIngredientId, options);
+    if (!row) return false;
+    await row.destroy(options);
     return true;
 }
 
-// Delete all ingredient relations for a specific recipe.
-// Used when updating a recipe's ingredient list.
-async function deleteIngredientsByRecipeId(recipeId) {
-    for (let i = recipeIngredients.length - 1; i >= 0; i--) {
-        if (recipeIngredients[i].recipeId === recipeId) {
-            recipeIngredients.splice(i, 1);
-        }
-    }
-
+async function deleteIngredientsByRecipeId(recipeId, options = {}) {
+    await RecipeIngredient.destroy({
+        ...options,
+        where: { recipeId }
+    });
     return true;
 }
 
