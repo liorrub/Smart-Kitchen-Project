@@ -98,7 +98,8 @@ function Login() {
 
             setUser(result.data);
 
-            localStorage.setItem(
+            // sessionStorage is tab-local — each tab can hold a different logged-in user
+            sessionStorage.setItem(
                 "user",
                 JSON.stringify(result.data)
             );

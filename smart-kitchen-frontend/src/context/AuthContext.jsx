@@ -3,10 +3,10 @@ import { createContext, useContext, useState } from "react";
 const AuthContext = createContext();
 
 // Provide the logged-in user to the whole app.
-// Initializes from localStorage so the session survives a page refresh.
+// Initializes from sessionStorage (tab-local) so each tab keeps its own identity on refresh.
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(
-        JSON.parse(localStorage.getItem("user"))
+        JSON.parse(sessionStorage.getItem("user") ?? "null")
     );
 
     return (

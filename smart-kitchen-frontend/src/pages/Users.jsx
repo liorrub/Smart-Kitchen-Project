@@ -56,7 +56,7 @@ function Users() {
     const [success, setSuccess] = useState("");
 
     const currentUser = JSON.parse(
-        localStorage.getItem("user") || "null"
+        sessionStorage.getItem("user") || "null"
     );
 
     // Load all users from the server when the page mounts.

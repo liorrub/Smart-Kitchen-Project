@@ -1,6 +1,6 @@
-// Read the logged-in user object from localStorage.
+// Read the logged-in user object from sessionStorage (tab-local — not shared between tabs).
 export function getStoredUser() {
-    return JSON.parse(localStorage.getItem("user") || "null");
+    return JSON.parse(sessionStorage.getItem("user") || "null");
 }
 
 // Read the user's role, checking both "userRole" (current field) and "role" (legacy field).

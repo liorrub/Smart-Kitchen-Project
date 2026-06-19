@@ -27,10 +27,10 @@ const unitOptions = [
     { value: "pack", label: "Pack" }
 ];
 
-// Local wrapper: includes a try-catch so a corrupted localStorage value returns null instead of throwing.
+// Local wrapper: reads from sessionStorage (tab-local) so each tab keeps its own user.
 function getStoredUser() {
     try {
-        return JSON.parse(localStorage.getItem("user"));
+        return JSON.parse(sessionStorage.getItem("user"));
     } catch {
         return null;
     }

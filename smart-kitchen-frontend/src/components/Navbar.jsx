@@ -49,7 +49,7 @@ function Navbar() {
             console.error(error);
         } finally {
             // Always clear local state even if the API call fails.
-            localStorage.removeItem("user");
+            sessionStorage.removeItem("user");
             setUser(null);
 
             navigate("/", {

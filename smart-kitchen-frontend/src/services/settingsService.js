@@ -8,7 +8,7 @@ const SETTINGS_API_URL = `${API_BASE_URL}/settings`;
 export async function getSettings() {
 
     const storedUser = JSON.parse(
-        localStorage.getItem("user")
+        sessionStorage.getItem("user")
     );
 
     const response = await axios.get(
@@ -30,7 +30,7 @@ export async function updateSettings(
 ) {
 
     const storedUser = JSON.parse(
-        localStorage.getItem("user")
+        sessionStorage.getItem("user")
     );
 
     const response = await axios.put(
@@ -49,7 +49,7 @@ export async function updateSettings(
 
 export async function changePassword(userId, passwordData) {
     const storedUser = JSON.parse(
-        localStorage.getItem("user")
+        sessionStorage.getItem("user")
     );
 
     const url = `${API_BASE_URL}/users/${userId}/change-password`;

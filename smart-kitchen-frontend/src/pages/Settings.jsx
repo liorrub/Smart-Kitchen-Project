@@ -253,7 +253,7 @@ function Settings() {
                 preferences: formData.preferences
             });
 
-            localStorage.setItem(
+            sessionStorage.setItem(
                 "user",
                 JSON.stringify(response.data)
             );
