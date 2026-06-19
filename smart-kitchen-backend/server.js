@@ -1,7 +1,9 @@
 require("dotenv").config();
+const http = require("http");
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const { initSocket } = require("./socket/index");
 
 // Import middleware
 const logger = require("./middleware/logger");
@@ -79,6 +81,9 @@ app.use((err, req, res, _next) => {
 // Start server
 const PORT = 3000;
 
-app.listen(PORT, () => {
+const httpServer = http.createServer(app);
+initSocket(httpServer);
+
+httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
