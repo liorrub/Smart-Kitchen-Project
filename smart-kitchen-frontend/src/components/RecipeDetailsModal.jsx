@@ -1,6 +1,7 @@
 import "./RecipeDetailsModal.css";
 
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import ReviewCard from "./ReviewCard";
 
@@ -115,6 +116,7 @@ function RecipeDetailsModal({ recipe, onClose }) {
     const [reviewsLoading, setReviewsLoading] = useState(false);
     const [reviewsError, setReviewsError] = useState("");
 
+    const navigate = useNavigate();
     const currentUser = getStoredUser();
 
     // Load reviews for the current recipe whenever the recipe changes.
@@ -208,6 +210,15 @@ function RecipeDetailsModal({ recipe, onClose }) {
                         {formatText(recipe.cuisine)} cuisine ·{" "}
                         {formatText(recipe.difficulty)}
                     </p>
+
+                    {/* Opens the full discussion page for this recipe */}
+                    <button
+                        type="button"
+                        className="recipe-modal-discussion-btn"
+                        onClick={() => navigate(`/recipes/${recipe.recipeId}/discussion`)}
+                    >
+                        💬 Open Discussion
+                    </button>
                 </header>
 
                 <section className="recipe-modal-stats">

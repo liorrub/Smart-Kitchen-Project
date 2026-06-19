@@ -162,6 +162,39 @@
     font-weight: 800;
 }
 
+/* "Open Discussion" button in the modal header */
+.recipe-modal-discussion-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 9px 20px;
+
+    border: none;
+    border-radius: 999px;
+    background: #e9fbe5;
+    border: 1px solid #cde8c7;
+    color: #2a7545;
+
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.recipe-modal-discussion-btn:hover {
+    background: #67d656;
+    color: white;
+    border-color: #67d656;
+    box-shadow: 0 8px 18px rgba(42, 117, 69, 0.2);
+    transform: translateY(-1px);
+}
+
 /* ==========================================================================
    Stats
    ========================================================================== */
