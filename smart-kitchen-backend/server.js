@@ -22,6 +22,7 @@ const aiRoutes = require("./routes/aiRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const optionsRoutes = require("./routes/optionsRoutes");
 const chefRequestsRoutes = require("./routes/chefRequestsRoutes");
+const recipeCommentsRoutes = require("./routes/recipeCommentsRoutes");
 
 // Parse JSON body
 app.use(express.json());
@@ -49,6 +50,7 @@ app.use("/api", aiRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/options", optionsRoutes);
 app.use("/api/chef-requests", chefRequestsRoutes);
+app.use("/api/recipes", recipeCommentsRoutes);
 
 // 404 handler
 app.use((req, res) => {
