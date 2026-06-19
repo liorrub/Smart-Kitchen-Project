@@ -69,13 +69,16 @@ app.use((req, res) => {
 app.use((err, req, res, _next) => {
     console.error(err);
 
-    return res.status(500).json({
+    const status = Number(err.status || err.statusCode) || 500;
+    const isServerError = status >= 500;
+
+    return res.status(status).json({
         success: false,
         data: null,
         error: {
-            code: "SERVER_ERROR",
-            message: "Unexpected server error",
-            details: {}
+            code:    isServerError ? "SERVER_ERROR"            : err.code    || "REQUEST_ERROR",
+            message: isServerError ? "Unexpected server error" : err.message || "Request failed",
+            details: isServerError ? {}                        : err.details || {}
         }
     });
 });
