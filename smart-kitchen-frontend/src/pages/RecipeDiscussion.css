@@ -1,0 +1,323 @@
+/* ==========================================================================
+   Recipe Discussion page
+   ========================================================================== */
+
+.discussion-page {
+    min-height: 100vh;
+    padding: 32px clamp(18px, 4vw, 56px);
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.discussion-page * {
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Recipe header card — mirrors RecipeDetailsModal's visual language
+   ========================================================================== */
+
+.discussion-recipe-header {
+    max-width: 1100px;
+    margin: 0 auto 28px;
+    padding: 28px 32px;
+
+    border-radius: 28px;
+    border: 1px solid rgba(139, 213, 174, 0.8);
+    border-top: 6px solid #67d656;
+
+    background:
+        radial-gradient(circle at top left, rgba(103, 214, 86, 0.07), transparent 34%),
+        linear-gradient(135deg, rgba(255, 254, 250, 0.98), rgba(246, 251, 245, 0.98));
+
+    box-shadow: 0 24px 65px rgba(31, 61, 43, 0.12);
+}
+
+/* Category accent colors — same classes as RecipeDetailsModal */
+.discussion-recipe-header.recipe-modal-breakfast { border-top-color: #f2c94c; }
+.discussion-recipe-header.recipe-modal-lunch     { border-top-color: #56cc83; }
+.discussion-recipe-header.recipe-modal-dinner    { border-top-color: #f2994a; }
+.discussion-recipe-header.recipe-modal-snack     { border-top-color: #eb5757; }
+.discussion-recipe-header.recipe-modal-default   { border-top-color: #67d656; }
+
+/* Back button */
+.discussion-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    padding: 8px 16px;
+
+    border: none;
+    border-radius: 999px;
+    background: #e9fbe5;
+    color: #2a7545;
+
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.discussion-back-btn:hover {
+    background: #67d656;
+    color: white;
+    transform: translateX(-2px);
+}
+
+/* Header body: centered text + stats */
+.discussion-recipe-header-body {
+    text-align: center;
+}
+
+.discussion-recipe-title {
+    margin: 8px 0 6px;
+
+    color: #1f3d2b;
+
+    font-size: clamp(26px, 3vw, 40px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+
+.discussion-recipe-subtitle {
+    margin: 0 0 4px;
+
+    color: #55705d;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.discussion-chef {
+    margin: 0 0 22px;
+
+    color: #2a7545;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+/* Stats row — same look as .recipe-modal-stat */
+.discussion-stats-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.discussion-stat {
+    min-width: 100px;
+    padding: 14px 12px;
+
+    border-radius: 18px;
+    background: rgba(255, 254, 250, 0.94);
+    border: 1px solid #d6d2c4;
+
+    text-align: center;
+    box-shadow: 0 8px 18px rgba(63, 74, 52, 0.05);
+}
+
+.discussion-stat strong {
+    display: block;
+
+    color: #2a7545;
+
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.discussion-stat span {
+    display: block;
+    margin-top: 6px;
+
+    color: #55705d;
+
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Discussion section card
+   ========================================================================== */
+
+.discussion-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 32px;
+
+    border-radius: 28px;
+    border: 1px solid rgba(205, 232, 199, 0.85);
+    background: rgba(255, 254, 250, 0.82);
+
+    box-shadow: 0 12px 30px rgba(63, 74, 52, 0.07);
+}
+
+/* Section header: title on the left, live bar on the right */
+.discussion-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(205, 232, 199, 0.7);
+}
+
+.discussion-section-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.discussion-section-title-row span {
+    font-size: 22px;
+}
+
+.discussion-section-title-row h2 {
+    margin: 0;
+
+    color: #1f3d2b;
+
+    font-size: 22px;
+    font-weight: 900;
+}
+
+/* Live bar: viewer count + typing indicator */
+.discussion-live-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.discussion-viewers {
+    padding: 6px 14px;
+
+    border-radius: 999px;
+    background: #e9fbe5;
+    border: 1px solid #cde8c7;
+    color: #2a7545;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.discussion-typing {
+    color: #55705d;
+
+    font-size: 13px;
+    font-weight: 800;
+    font-style: italic;
+
+    animation: typingPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes typingPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.45; }
+}
+
+/* ==========================================================================
+   Comments list
+   ========================================================================== */
+
+.discussion-comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.discussion-comment-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Replies are indented with a green left border */
+.discussion-replies {
+    margin-left: 44px;
+    padding-left: 18px;
+    border-left: 3px solid #cde8c7;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Empty and loading states */
+.discussion-empty {
+    padding: 36px;
+
+    text-align: center;
+    color: #55705d;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.discussion-loading,
+.discussion-error {
+    padding: 60px;
+
+    text-align: center;
+
+    font-size: 16px;
+    font-weight: 700;
+    color: #55705d;
+}
+
+.discussion-error {
+    color: #cc6089;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .discussion-page {
+        padding: 16px;
+    }
+
+    .discussion-recipe-header,
+    .discussion-section {
+        padding: 20px 18px;
+        border-radius: 22px;
+    }
+
+    .discussion-replies {
+        margin-left: 20px;
+        padding-left: 12px;
+    }
+
+    .discussion-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .discussion-stats-row {
+        gap: 8px;
+    }
+
+    .discussion-stat {
+        min-width: 80px;
+        padding: 10px 8px;
+    }
+
+    .discussion-stat strong {
+        font-size: 20px;
+    }
+}

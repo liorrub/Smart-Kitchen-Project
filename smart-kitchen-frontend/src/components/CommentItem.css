@@ -1,0 +1,173 @@
+/* ==========================================================================
+   Comment card — used for both top-level comments and replies
+   ========================================================================== */
+
+.comment-card {
+    display: flex;
+    gap: 12px;
+    padding: 16px 18px;
+
+    border-radius: 18px;
+    background: rgba(255, 254, 250, 0.9);
+    border: 1px solid rgba(205, 232, 199, 0.9);
+
+    box-shadow: 0 6px 16px rgba(63, 74, 52, 0.05);
+    transition: box-shadow 0.2s ease;
+}
+
+.comment-card:hover {
+    box-shadow: 0 10px 24px rgba(63, 74, 52, 0.1);
+}
+
+/* Replies get a slightly warmer background to distinguish from top-level */
+.comment-card-reply {
+    background: rgba(246, 251, 245, 0.92);
+}
+
+/* ==========================================================================
+   Avatar
+   ========================================================================== */
+
+.comment-avatar {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+    background: #e9fbe5;
+    color: #2a7545;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+/* ==========================================================================
+   Body
+   ========================================================================== */
+
+.comment-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.comment-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+
+.comment-author {
+    color: #1f3d2b;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.comment-date {
+    color: #6a7d70;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* "↩ In reply to @name" line shown on reply cards */
+.comment-reply-to {
+    margin: 0 0 6px;
+    color: #55705d;
+    font-size: 12px;
+    font-weight: 800;
+    font-style: italic;
+}
+
+.comment-content {
+    margin: 0 0 10px;
+
+    color: #1f3d2b;
+
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.55;
+    word-break: break-word;
+}
+
+/* ==========================================================================
+   @mention pill
+   ========================================================================== */
+
+.comment-mention {
+    display: inline-block;
+    padding: 3px 10px;
+
+    border-radius: 999px;
+    background: #e9fbe5;
+    border: 1px solid #cde8c7;
+    color: #2a7545;
+
+    font-size: 12px;
+    font-weight: 900;
+    font-style: normal;
+}
+
+.comment-mention-row {
+    margin-bottom: 8px;
+}
+
+/* Small "(edited)" label shown next to the date */
+.comment-edited {
+    color: #8a9e8e;
+    font-size: 11px;
+    font-weight: 800;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Inline edit
+   ========================================================================== */
+
+.comment-edit-area {
+    margin-bottom: 10px;
+}
+
+.comment-edit-input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+
+    border-radius: 12px;
+    border: 1.5px solid #cde8c7;
+    background: #f6fbf5;
+    color: #1f3d2b;
+
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.55;
+    resize: vertical;
+
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comment-edit-input:focus {
+    border-color: #67d656;
+    box-shadow: 0 0 0 3px rgba(103, 214, 86, 0.15);
+}
+
+.comment-edit-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* ==========================================================================
+   Actions
+   ========================================================================== */
+
+.comment-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
