@@ -7,14 +7,28 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// gemini-1.5-flash: fast, free-tier compatible
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
+const model = genAI.getGenerativeModel({ model: modelName });
 
-// Sends a text prompt to Gemini and returns the response as a plain string.
+console.log(`[gemini] API key loaded: ${process.env.GEMINI_API_KEY ? "yes" : "NO — GEMINI_API_KEY is missing"}`);
+console.log(`[gemini] Using model: ${modelName}`);
+
+// Sends a text prompt to Gemini and returns the raw response as a plain string.
 // Throws on API error so the calling controller can pass it to next(error).
 async function callGemini(prompt) {
     const result = await model.generateContent(prompt);
     return result.response.text();
 }
 
-module.exports = { callGemini };
+// Sends a prompt and parses the response as JSON.
+// Gemini sometimes wraps JSON in markdown code blocks — this strips them before parsing.
+async function callGeminiJSON(prompt) {
+    const raw = await callGemini(prompt);
+    const cleaned = raw
+        .replace(/^```(?:json)?\s*/i, "")
+        .replace(/\s*```\s*$/, "")
+        .trim();
+    return JSON.parse(cleaned);
+}
+
+module.exports = { callGemini, callGeminiJSON };

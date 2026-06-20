@@ -3,6 +3,11 @@
     border: none;
     border-radius: 18px;
 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+
     font-family: Arial, sans-serif;
     font-weight: 900;
 

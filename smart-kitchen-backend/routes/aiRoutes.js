@@ -34,15 +34,13 @@ router.post(
     aiController.getSuggestions
 );
 
-// Analyze image
+// Ingredient substitute
 router.post(
-    "/users/:id/ai/analyze-image",
+    "/users/:id/ai/substitute",
     validateIdParam(),
-    validateRequiredFields([
-        "inputData"
-    ]),
+    validateRequiredFields(["inputData"]),
     allowSelfOrAdmin,
-    aiController.analyzeImage
+    aiController.substituteIngredient
 );
 
 // User history
