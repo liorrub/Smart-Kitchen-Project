@@ -48,6 +48,7 @@ function registerRecipeDiscussion(io) {
         }
 
         socket.authUser = authUser;
+        console.log(`[socket] user authenticated: userId=${userId}, socket=${socket.id}`);
 
         // Join the recipe room and broadcast the updated viewer count
         socket.on("joinRecipeRoom", ({ recipeId }) => {
@@ -55,6 +56,7 @@ function registerRecipeDiscussion(io) {
             socket.join(room);
             const count = getRoomUniqueUserCount(io, room);
             io.to(room).emit("roomUserCount", { count });
+            console.log(`[socket] joinRecipeRoom: userId=${userId} joined recipe-${recipeId} (${count} unique viewers)`);
         });
 
         // Leave the recipe room and broadcast the updated viewer count
@@ -63,6 +65,7 @@ function registerRecipeDiscussion(io) {
             socket.leave(room);
             const count = getRoomUniqueUserCount(io, room);
             io.to(room).emit("roomUserCount", { count });
+            console.log(`[socket] leaveRecipeRoom: userId=${userId} left recipe-${recipeId} (${count} unique viewers)`);
         });
 
         // Save a new comment to the DB and broadcast it to everyone in the room
@@ -95,6 +98,7 @@ function registerRecipeDiscussion(io) {
 
                 const room = `recipe-${recipeId}`;
                 io.to(room).emit("newRecipeComment", fullComment);
+                console.log(`[socket] sendRecipeComment: userId=${userId} posted commentId=${comment.commentId} in recipe-${recipeId}`);
             } catch (err) {
                 console.error("[socket] sendRecipeComment error:", err.message);
             }
@@ -127,6 +131,7 @@ function registerRecipeDiscussion(io) {
                     content: comment.content,
                     updatedAt: comment.updatedAt
                 });
+                console.log(`[socket] editRecipeComment: userId=${userId} edited commentId=${commentId} in recipe-${recipeId}`);
             } catch (err) {
                 console.error("[socket] editRecipeComment error:", err.message);
             }
@@ -153,6 +158,7 @@ function registerRecipeDiscussion(io) {
                 await comment.destroy();
 
                 io.to(`recipe-${recipeId}`).emit("recipeCommentDeleted", { commentId });
+                console.log(`[socket] deleteRecipeComment: userId=${userId} deleted commentId=${commentId} in recipe-${recipeId}`);
             } catch (err) {
                 console.error("[socket] deleteRecipeComment error:", err.message);
             }
@@ -175,6 +181,7 @@ function registerRecipeDiscussion(io) {
 
         // On disconnect, clear the typing indicator in every room this socket was in
         socket.on("disconnect", () => {
+            console.log(`[socket] discussion disconnect: userId=${userId} (socket=${socket.id})`);
             for (const room of socket.rooms) {
                 // socket.rooms always includes the socket's own id — skip it
                 if (room !== socket.id) {
