@@ -1,84 +1,40 @@
-const aiHistory = require("../data/aiHistory.json");
+"use strict";
 
-const { generateId } = require("../utils/idGenerator");
-const { getCurrentDateTime } = require("../utils/dateHelper");
+// Data access layer for AI history.
+// Replaces the previous JSON-based implementation with Sequelize + MySQL.
+// All functions preserve the same signatures used by aiController.js.
 
-// Get all history
-async function getAllHistory() {
-    return aiHistory;
-}
+const { AiHistory } = require("./index");
 
-// Get user history
+// Returns all AI history entries for a specific user, newest first
 async function getUserHistory(userId) {
-    return aiHistory.filter(
-        item => item.userId === userId
-    );
+    return AiHistory.findAll({
+        where: { userId },
+        order: [["createdAt", "DESC"]]
+    });
 }
 
-// Get history item
+// Returns a single history entry by its primary key
 async function getHistoryById(historyId) {
-    return aiHistory.find(
-        item => item.historyId === historyId
-    );
+    return AiHistory.findByPk(historyId);
 }
 
-// Add history item
+// Creates and persists a new AI history entry
 async function addHistory(historyData) {
-    const newHistoryItem = {
-        historyId: generateId(
-            aiHistory,
-            "historyId"
-        ),
-        ...historyData,
-        createdAt: getCurrentDateTime()
-    };
-
-    aiHistory.push(newHistoryItem);
-
-    return newHistoryItem;
+    return AiHistory.create(historyData);
 }
 
-// Delete history
+// Deletes a history entry by primary key; returns true if deleted, false if not found
 async function deleteHistory(historyId) {
-    const itemIndex = aiHistory.findIndex(
-        item => item.historyId === historyId
-    );
-
-    if (itemIndex === -1) {
-        return false;
-    }
-
-    aiHistory.splice(itemIndex, 1);
-
+    const item = await AiHistory.findByPk(historyId);
+    if (!item) return false;
+    await item.destroy();
     return true;
 }
 
-// Filter history
-async function filterHistory(filters = {}) {
-    let filteredHistory = [...aiHistory];
-
-    if (filters.userId) {
-        filteredHistory = filteredHistory.filter(
-            item =>
-                item.userId === Number(filters.userId)
-        );
-    }
-
-    if (filters.requestType) {
-        filteredHistory = filteredHistory.filter(
-            item =>
-                item.requestType === filters.requestType
-        );
-    }
-
-    return filteredHistory;
-}
-
 module.exports = {
-    getAllHistory,
     getUserHistory,
     getHistoryById,
     addHistory,
-    deleteHistory,
-    filterHistory
+    deleteHistory
 };

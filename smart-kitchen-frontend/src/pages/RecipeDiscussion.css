@@ -255,6 +255,21 @@
     gap: 8px;
 }
 
+/* Temporary error banner for rejected socket actions */
+.discussion-socket-error {
+    padding: 10px 16px;
+    margin-bottom: 16px;
+
+    border-radius: 12px;
+    background: #fde8ef;
+    border: 1px solid #f7b6c8;
+    color: #c0294a;
+
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+
 /* Empty and loading states */
 .discussion-empty {
     padding: 36px;
