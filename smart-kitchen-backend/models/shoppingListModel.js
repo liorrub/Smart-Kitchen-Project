@@ -1,119 +1,61 @@
-const shoppingItems = require("../data/shoppingList.json");
+"use strict";
 
-const { generateId } = require("../utils/idGenerator");
+const { ShoppingListItem } = require("./index");
 
-const {
-    getCurrentDateTime
-} = require("../utils/dateHelper");
+// Returns all fields including createDate and updateDate — both are part of the Shopping List API contract.
+function toPlain(instance) {
+    return instance.get({ plain: true });
+}
 
-// Get shopping list for user
 async function getUserShoppingList(userId) {
-    return shoppingItems.filter(
-        item => item.userId === userId
-    );
-}
-
-// Get shopping item by ID
-async function getShoppingItemById(shoppingItemId) {
-    return shoppingItems.find(
-        item => item.shoppingItemId === shoppingItemId
-    );
-}
-
-// Add shopping item
-async function addShoppingItem(shoppingItemData) {
-    const currentDate = getCurrentDateTime();
-
-    const newShoppingItem = {
-        shoppingItemId: generateId(
-            shoppingItems,
-            "shoppingItemId"
-        ),
-        ...shoppingItemData,
-        completed: false,
-        createDate: currentDate,
-        updateDate: currentDate
-    };
-
-    shoppingItems.push(newShoppingItem);
-
-    return newShoppingItem;
-}
-
-// Update shopping item
-async function updateShoppingItem(
-    userId,
-    shoppingItemId,
-    updatedData
-) {
-    const itemIndex = shoppingItems.findIndex(
-        item =>
-            item.shoppingItemId === shoppingItemId &&
-            item.userId === userId
-    );
-
-    if (itemIndex === -1) {
-        return null;
-    }
-
-    shoppingItems[itemIndex] = {
-        ...shoppingItems[itemIndex],
-        ...updatedData,
-        updateDate: getCurrentDateTime()
-    };
-
-    return shoppingItems[itemIndex];
-}
-
-// Delete shopping item
-async function deleteShoppingItem(
-    userId,
-    shoppingItemId
-) {
-    const itemIndex = shoppingItems.findIndex(
-        item =>
-            item.shoppingItemId === shoppingItemId &&
-            item.userId === userId
-    );
-
-    if (itemIndex === -1) {
-        return false;
-    }
-
-    shoppingItems.splice(itemIndex, 1);
-
-    return true;
-}
-
-// Create shopping list items automatically from expired pantry products
-async function addGeneratedItems(userId, generatedItems) {
-    let nextId = generateId(
-        shoppingItems,
-        "shoppingItemId"
-    );
-
-    const currentDate = getCurrentDateTime();
-    const newItems = generatedItems.map(item => {
-        const newItem = {
-            shoppingItemId: nextId,
-            userId: userId,
-            ingredientId: item.ingredientId,
-            quantity: item.quantity,
-            unit: item.unit,
-            completed: false,
-            source: "expired-pantry",
-            createDate: currentDate,
-            updateDate: currentDate
-        };
-
-        nextId++;
-
-        return newItem;
+    const rows = await ShoppingListItem.findAll({
+        where: { userId },
+        order: [["shoppingItemId", "ASC"]]
     });
+    return rows.map(toPlain);
+}
 
-    shoppingItems.push(...newItems);
+async function getShoppingItemById(shoppingItemId) {
+    const instance = await ShoppingListItem.findByPk(shoppingItemId);
+    return instance ? toPlain(instance) : undefined;
+}
 
-    return newItems;
+async function addShoppingItem(shoppingItemData) {
+    const instance = await ShoppingListItem.create({
+        ...shoppingItemData,
+        completed: false
+    });
+    return toPlain(instance);
+}
+
+async function updateShoppingItem(userId, shoppingItemId, updatedData) {
+    const instance = await ShoppingListItem.findOne({
+        where: { shoppingItemId, userId }
+    });
+    if (!instance) return null;
+    await instance.update(updatedData);
+    return toPlain(instance);
+}
+
+async function deleteShoppingItem(userId, shoppingItemId) {
+    const count = await ShoppingListItem.destroy({
+        where: { shoppingItemId, userId }
+    });
+    return count > 0;
+}
+
+async function addGeneratedItems(userId, generatedItems) {
+    const instances = await ShoppingListItem.bulkCreate(
+        generatedItems.map(item => ({
+            userId,
+            ingredientId: item.ingredientId,
+            quantity:     item.quantity,
+            unit:         item.unit,
+            completed:    false,
+            source:       "expired-pantry"
+        }))
+    );
+    return instances.map(toPlain);
 }
 
 module.exports = {
