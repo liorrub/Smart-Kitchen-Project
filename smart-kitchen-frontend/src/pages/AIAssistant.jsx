@@ -1,4 +1,7 @@
 import "./AIAssistant.css";
+import "./AIResultCards.css";
+import "../components/RecipeCard.css";
+import "../components/RecipeDetailsModal.css";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -133,68 +136,220 @@ function buildConversationMessages(historyItem) {
 
 function RecipeDisplay({ recipe }) {
     if (!recipe || typeof recipe !== "object") return null;
-    return (
-        <div className="ai-result-recipe">
-            <h3 className="ai-result-title">{recipe.title}</h3>
-            {recipe.description && <p className="ai-result-desc">{recipe.description}</p>}
 
-            <div className="ai-recipe-meta">
-                {recipe.difficulty && <span className="ai-meta-badge">{formatText(recipe.difficulty)}</span>}
-                {recipe.prepTime   && <span className="ai-meta-badge">Prep {recipe.prepTime} min</span>}
-                {recipe.cookTime   && <span className="ai-meta-badge">Cook {recipe.cookTime} min</span>}
-                {recipe.servings   && <span className="ai-meta-badge">{recipe.servings} servings</span>}
+    const hasMetaInfo = recipe.difficulty || recipe.prepTime || recipe.cookTime || recipe.servings;
+
+    return (
+        <div className="ai-recipe-card">
+            <div className="ai-recipe-card-header">
+                <div className="ai-recipe-card-icon">🥘</div>
+                <div className="ai-recipe-card-title-block">
+                    {recipe.cuisine && (
+                        <span className="ai-recipe-cuisine-badge">{formatText(recipe.cuisine)} cuisine</span>
+                    )}
+                    <h3 className="ai-recipe-card-title">{recipe.title}</h3>
+                    {recipe.description && <p className="ai-recipe-card-desc">{recipe.description}</p>}
+                </div>
             </div>
 
-            {Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0 && (
-                <div className="ai-recipe-section">
-                    <h4>Ingredients</h4>
-                    <ul className="ai-recipe-list">
-                        {recipe.ingredients.map((ing, i) => (
-                            <li key={i}>{ing.quantity} {ing.unit} {ing.name}</li>
-                        ))}
-                    </ul>
+            {hasMetaInfo && (
+                <div className="ai-recipe-meta-row">
+                    {recipe.difficulty && <span className="ai-meta-badge ai-meta-badge--difficulty">{formatText(recipe.difficulty)}</span>}
+                    {recipe.prepTime   && <span className="ai-meta-badge">⏱ Prep {recipe.prepTime} min</span>}
+                    {recipe.cookTime   && <span className="ai-meta-badge">🔥 Cook {recipe.cookTime} min</span>}
+                    {recipe.servings   && <span className="ai-meta-badge">👥 {recipe.servings} serving{recipe.servings !== 1 ? "s" : ""}</span>}
                 </div>
             )}
 
-            {Array.isArray(recipe.instructions) && recipe.instructions.length > 0 && (
-                <div className="ai-recipe-section">
-                    <h4>Instructions</h4>
-                    <ol className="ai-recipe-steps">
-                        {recipe.instructions.map((step, i) => (
-                            <li key={i}>{step}</li>
-                        ))}
-                    </ol>
-                </div>
-            )}
+            <div className="ai-recipe-card-body">
+                {Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0 && (
+                    <div className="ai-recipe-section">
+                        <div className="ai-recipe-section-label">
+                            <span>🧂</span> Ingredients
+                        </div>
+                        <ul className="ai-ingredient-list">
+                            {recipe.ingredients.map((ing, i) => (
+                                <li key={i} className="ai-ingredient-item">
+                                    <span className="ai-ingredient-qty">{ing.quantity} {ing.unit}</span>
+                                    <span className="ai-ingredient-name">{ing.name}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
 
-            {recipe.tips && <div className="ai-recipe-tips">💡 {recipe.tips}</div>}
+                {Array.isArray(recipe.instructions) && recipe.instructions.length > 0 && (
+                    <div className="ai-recipe-section">
+                        <div className="ai-recipe-section-label">
+                            <span>📋</span> Instructions
+                        </div>
+                        <ol className="ai-step-list">
+                            {recipe.instructions.map((step, i) => (
+                                <li key={i} className="ai-step-item">
+                                    <span className="ai-step-number">{i + 1}</span>
+                                    <span className="ai-step-text">{step}</span>
+                                </li>
+                            ))}
+                        </ol>
+                    </div>
+                )}
+
+                {recipe.tips && (
+                    <div className="ai-recipe-tips">
+                        <span>💡</span>
+                        <span>{recipe.tips}</span>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
 
-function SuggestionsDisplay({ suggestions }) {
+function SuggestionCards({ suggestions, onSelect }) {
     if (!Array.isArray(suggestions)) return null;
     return (
-        <div className="ai-result-suggestions">
+        <div className="ai-sugg-grid">
             {suggestions.map((s, i) => (
-                <div key={i} className="ai-suggestion-card">
-                    <div className="ai-suggestion-header">
-                        <h4>{s.title}</h4>
-                        <div className="ai-suggestion-badges">
-                            {s.cuisine       && <span className="ai-meta-badge">{formatText(s.cuisine)}</span>}
-                            {s.difficulty    && <span className="ai-meta-badge">{formatText(s.difficulty)}</span>}
-                            {s.estimatedTime && <span className="ai-meta-badge">{s.estimatedTime}</span>}
+                <article key={i} className="recipe-card recipe-card-default">
+                    <div className="recipe-card-inner">
+                        <div className="recipe-card-header">
+                            <div className="recipe-card-image-wrapper">
+                                <span className="ai-sugg-emoji">✨</span>
+                            </div>
+                            <span className="recipe-card-category">#{i + 1}</span>
+                        </div>
+
+                        <div className="recipe-card-content">
+                            <h3>{s.title}</h3>
+                            <div className="recipe-card-meta">
+                                {s.estimatedTime && <span>⏱ {s.estimatedTime}</span>}
+                                {s.difficulty    && <span>{formatText(s.difficulty)}</span>}
+                            </div>
+                            {s.description && (
+                                <p className="ai-sugg-card-desc">{s.description}</p>
+                            )}
+                            {Array.isArray(s.mainIngredients) && s.mainIngredients.length > 0 && (
+                                <div className="recipe-card-tags">
+                                    {s.mainIngredients.slice(0, 3).map((ing, j) => (
+                                        <span key={j}>#{ing}</span>
+                                    ))}
+                                    {s.mainIngredients.length > 3 && (
+                                        <span>+{s.mainIngredients.length - 3} more</span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="recipe-card-footer">
+                            <span className="recipe-card-cuisine">
+                                {s.cuisine ? formatText(s.cuisine) + " cuisine" : "AI generated"}
+                            </span>
+                            <div className="recipe-card-actions">
+                                <button
+                                    type="button"
+                                    className="recipe-card-view-button"
+                                    onClick={() => onSelect(s, i)}
+                                >
+                                    View Recipe
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <p>{s.description}</p>
-                    {Array.isArray(s.mainIngredients) && s.mainIngredients.length > 0 && (
-                        <p className="ai-suggestion-ingredients">
-                            <strong>Main ingredients:</strong> {s.mainIngredients.join(", ")}
-                        </p>
-                    )}
-                    {s.whySuggested && <p className="ai-suggestion-why">✨ {s.whySuggested}</p>}
-                </div>
+                </article>
             ))}
+        </div>
+    );
+}
+
+function AISuggestionModal({ suggestion, index, onClose }) {
+    useEffect(() => {
+        document.body.style.overflow = "hidden";
+        return () => { document.body.style.overflow = ""; };
+    }, []);
+
+    return (
+        <div className="recipe-modal-overlay" onClick={onClose}>
+            <div
+                className="recipe-modal recipe-modal-default"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <button
+                    type="button"
+                    className="recipe-modal-close"
+                    onClick={onClose}
+                    aria-label="Close suggestion"
+                >
+                    ×
+                </button>
+
+                <div className="recipe-modal-body">
+                    <header className="recipe-modal-header">
+                        <p className="recipe-modal-label">AI Suggestion #{index + 1}</p>
+                        <h2>{suggestion.title}</h2>
+                        {(suggestion.cuisine || suggestion.difficulty) && (
+                            <p className="recipe-modal-subtitle">
+                                {[
+                                    suggestion.cuisine    && formatText(suggestion.cuisine) + " cuisine",
+                                    suggestion.difficulty && formatText(suggestion.difficulty)
+                                ].filter(Boolean).join(" · ")}
+                            </p>
+                        )}
+                    </header>
+
+                    <section className="recipe-modal-stats ai-sugg-stats">
+                        {suggestion.estimatedTime && (
+                            <div className="recipe-modal-stat">
+                                <strong>{suggestion.estimatedTime}</strong>
+                                <span>Est. time</span>
+                            </div>
+                        )}
+                        {suggestion.difficulty && (
+                            <div className="recipe-modal-stat">
+                                <strong>{formatText(suggestion.difficulty)}</strong>
+                                <span>Difficulty</span>
+                            </div>
+                        )}
+                        {suggestion.cuisine && (
+                            <div className="recipe-modal-stat">
+                                <strong>{formatText(suggestion.cuisine)}</strong>
+                                <span>Cuisine</span>
+                            </div>
+                        )}
+                    </section>
+
+                    {suggestion.description && (
+                        <p className="ai-sugg-modal-desc">{suggestion.description}</p>
+                    )}
+
+                    <section className="recipe-main-grid">
+                        <article className="recipe-detail-card">
+                            <div className="recipe-card-title">
+                                <span>🧂</span>
+                                <h3>Main Ingredients</h3>
+                            </div>
+                            {Array.isArray(suggestion.mainIngredients) && suggestion.mainIngredients.length > 0 ? (
+                                <ul className="ai-sugg-ing-list">
+                                    {suggestion.mainIngredients.map((ing, j) => (
+                                        <li key={j}>{ing}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="recipe-empty-text">No ingredients listed.</p>
+                            )}
+                        </article>
+
+                        {suggestion.whySuggested && (
+                            <article className="recipe-detail-card">
+                                <div className="recipe-card-title">
+                                    <span>✨</span>
+                                    <h3>Why This Recipe?</h3>
+                                </div>
+                                <p className="ai-sugg-modal-why">{suggestion.whySuggested}</p>
+                            </article>
+                        )}
+                    </section>
+                </div>
+            </div>
         </div>
     );
 }
@@ -202,14 +357,28 @@ function SuggestionsDisplay({ suggestions }) {
 function SubstituteDisplay({ substitutes }) {
     if (!Array.isArray(substitutes)) return null;
     return (
-        <div className="ai-result-substitutes">
+        <div className="ai-substitutes-list">
             {substitutes.map((s, i) => (
                 <div key={i} className="ai-substitute-card">
-                    <h4>{s.substitute}</h4>
-                    {s.preparation && <p><strong>Preparation:</strong> {s.preparation}</p>}
-                    {s.ratio       && <p><strong>Ratio:</strong> {s.ratio}</p>}
-                    {s.explanation && <p>{s.explanation}</p>}
-                    {s.bestFor     && <p className="ai-substitute-best">Best for: {s.bestFor}</p>}
+                    <div className="ai-substitute-header">
+                        <span className="ai-substitute-number">{i + 1}</span>
+                        <div className="ai-substitute-title-block">
+                            <h4 className="ai-substitute-name">{s.substitute}</h4>
+                            {s.ratio && <span className="ai-substitute-ratio">{s.ratio}</span>}
+                        </div>
+                    </div>
+                    {s.preparation && (
+                        <div className="ai-substitute-prep">
+                            <strong>Preparation:</strong> {s.preparation}
+                        </div>
+                    )}
+                    {s.explanation && <p className="ai-substitute-explanation">{s.explanation}</p>}
+                    {s.bestFor && (
+                        <div className="ai-substitute-best">
+                            <span>✅</span>
+                            <span>Best for: {s.bestFor}</span>
+                        </div>
+                    )}
                 </div>
             ))}
         </div>
@@ -237,6 +406,8 @@ function AIAssistant() {
     const [result, setResult]     = useState(null);
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError]   = useState("");
+    const [selectedSuggestion, setSelectedSuggestion]       = useState(null);
+    const [selectedSuggestionIdx, setSelectedSuggestionIdx] = useState(0);
 
     // Load history and ingredient catalog on mount
     useEffect(() => {
@@ -285,6 +456,7 @@ function AIAssistant() {
         setActiveFeature(null);
         setResult(null);
         setAiError("");
+        setSelectedSuggestion(null);
     }
 
     // Ingredient chip picker
@@ -628,7 +800,12 @@ function AIAssistant() {
                                 {result.fromHistory ? "📂 From history" : "✅ AI response"}
                             </div>
                             {result.type === "recipe_generation"     && <RecipeDisplay     recipe={result.data} />}
-                            {result.type === "suggestions"           && <SuggestionsDisplay suggestions={result.data} />}
+                            {result.type === "suggestions" && (
+                                <SuggestionCards
+                                    suggestions={result.data}
+                                    onSelect={(s, i) => { setSelectedSuggestion(s); setSelectedSuggestionIdx(i); }}
+                                />
+                            )}
                             {result.type === "ingredient_substitute" && <SubstituteDisplay  substitutes={result.data} />}
                         </div>
                     )}
@@ -760,6 +937,14 @@ function AIAssistant() {
                     </div>
                 )}
             </FormCard>
+
+            {selectedSuggestion && (
+                <AISuggestionModal
+                    suggestion={selectedSuggestion}
+                    index={selectedSuggestionIdx}
+                    onClose={() => setSelectedSuggestion(null)}
+                />
+            )}
         </div>
     );
 }
