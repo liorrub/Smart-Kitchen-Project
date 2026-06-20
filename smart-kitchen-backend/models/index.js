@@ -6,6 +6,7 @@ const Recipe = require("./Recipe");
 const Ingredient = require("./Ingredient");
 const RecipeIngredient = require("./RecipeIngredient");
 const RecipeComment = require("./RecipeComment");
+const Favorite = require("./Favorite");
 
 // User → Recipe (one-to-many via creatorId)
 User.hasMany(Recipe, { foreignKey: "creatorId", as: "recipes" });
@@ -34,11 +35,20 @@ RecipeComment.belongsTo(User, { foreignKey: "mentionedUserId", as: "mentionedUse
 RecipeComment.belongsTo(RecipeComment, { foreignKey: "parentCommentId", as: "parent" });
 RecipeComment.hasMany(RecipeComment, { foreignKey: "parentCommentId", as: "replies" });
 
+// User → Favorite (one-to-many)
+User.hasMany(Favorite, { foreignKey: "userId", as: "favorites" });
+Favorite.belongsTo(User, { foreignKey: "userId" });
+
+// Recipe → Favorite (one-to-many)
+Recipe.hasMany(Favorite, { foreignKey: "recipeId", as: "favoritedBy" });
+Favorite.belongsTo(Recipe, { foreignKey: "recipeId" });
+
 module.exports = {
     sequelize,
     User,
     Recipe,
     Ingredient,
     RecipeIngredient,
-    RecipeComment
+    RecipeComment,
+    Favorite
 };
