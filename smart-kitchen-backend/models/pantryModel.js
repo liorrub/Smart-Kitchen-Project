@@ -1,95 +1,77 @@
-const pantryItems = require("../data/pantry.json");
+"use strict";
 
-const { generateId } = require("../utils/idGenerator");
+const { Op } = require("sequelize");
+const { PantryItem } = require("./index");
 const { isExpired } = require("../utils/dateHelper");
 
-// Get pantry for user
+// Strips Sequelize timestamps — original Pantry API never exposed createdAt or updatedAt.
+function toPlain(instance) {
+    const { createdAt, updatedAt, ...rest } = instance.get({ plain: true });
+    return rest;
+}
+
+// Get all pantry items for a user
 async function getUserPantry(userId) {
-    return pantryItems.filter(
-        item => item.userId === userId
-    );
+    const rows = await PantryItem.findAll({
+        where: { userId },
+        order: [["pantryItemId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
 // Get pantry item by ID
 async function getPantryItemById(pantryItemId) {
-    return pantryItems.find(
-        item => item.pantryItemId === pantryItemId
-    );
+    const instance = await PantryItem.findByPk(pantryItemId);
+    return instance ? toPlain(instance) : null;
 }
 
-// Automatically calculate expiration status when adding a pantry item
+// Add pantry item; isExpired is computed from expiryDate at creation time.
 async function addPantryItem(pantryItemData) {
-    const newPantryItem = {
-        pantryItemId: generateId(
-            pantryItems,
-            "pantryItemId"
-        ),
+    const instance = await PantryItem.create({
         ...pantryItemData,
-        isExpired: isExpired(
-            pantryItemData.expiryDate
-        )
-    };
-
-    pantryItems.push(newPantryItem);
-
-    return newPantryItem;
+        isExpired: isExpired(pantryItemData.expiryDate)
+    });
+    return toPlain(instance);
 }
 
-// Recalculate expiration status if the expiry date changes
-async function updatePantryItem(
-    userId,
-    pantryItemId,
-    updatedData
-) {
-    const itemIndex = pantryItems.findIndex(
-        item =>
-            item.pantryItemId === pantryItemId &&
-            item.userId === userId
-    );
+// Update pantry item by userId + pantryItemId; recomputes isExpired when expiryDate changes.
+async function updatePantryItem(userId, pantryItemId, updatedData) {
+    const instance = await PantryItem.findOne({
+        where: { pantryItemId, userId }
+    });
 
-    if (itemIndex === -1) {
+    if (!instance) {
         return null;
     }
 
-    pantryItems[itemIndex] = {
-        ...pantryItems[itemIndex],
+    const finalExpiryDate = updatedData.expiryDate || instance.expiryDate;
+
+    await instance.update({
         ...updatedData,
-        isExpired: isExpired(
-            updatedData.expiryDate ||
-            pantryItems[itemIndex].expiryDate
-        )
-    };
+        isExpired: isExpired(finalExpiryDate)
+    });
 
-    return pantryItems[itemIndex];
+    return toPlain(instance);
 }
 
-// Delete pantry item
-async function deletePantryItem(
-    userId,
-    pantryItemId
-) {
-    const itemIndex = pantryItems.findIndex(
-        item =>
-            item.pantryItemId === pantryItemId &&
-            item.userId === userId
-    );
-
-    if (itemIndex === -1) {
-        return false;
-    }
-
-    pantryItems.splice(itemIndex, 1);
-
-    return true;
+// Delete pantry item by userId + pantryItemId
+async function deletePantryItem(userId, pantryItemId) {
+    const count = await PantryItem.destroy({
+        where: { pantryItemId, userId }
+    });
+    return count > 0;
 }
 
-// Return only expired pantry items for shopping list generation
+// Return only expired pantry items for shopping list generation; computed from expiryDate.
 async function getExpiredItems(userId) {
-    return pantryItems.filter(
-        item =>
-            item.userId === userId &&
-            isExpired(item.expiryDate)
-    );
+    const rows = await PantryItem.findAll({
+        where: {
+            userId,
+            expiryDate: { [Op.lt]: new Date() }
+        },
+        order: [["pantryItemId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
 module.exports = {

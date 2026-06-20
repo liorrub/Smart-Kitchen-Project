@@ -99,6 +99,14 @@ function getLocationClass(location) {
     }
 }
 
+// Convert an ISO date string to the YYYY-MM-DD format required by HTML date inputs.
+function toDateInputValue(isoString) {
+    if (!isoString) {
+        return "";
+    }
+    return new Date(isoString).toISOString().split("T")[0];
+}
+
 function Pantry() {
     const [pantryItems, setPantryItems] = useState([]);
     const [ingredients, setIngredients] = useState([]);
@@ -117,6 +125,17 @@ function Pantry() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
+
+    // Edit modal state
+    const [editingItem, setEditingItem] = useState(null);
+    const [editFormData, setEditFormData] = useState({
+        quantity: "",
+        unit: "piece",
+        expiryDate: "",
+        location: "pantry"
+    });
+    const [editSaving, setEditSaving] = useState(false);
+    const [editError, setEditError] = useState("");
 
     const storedUser = getStoredUser();
 
@@ -167,6 +186,18 @@ function Pantry() {
 
         loadPageData();
     }, []);
+
+    // Lock page scroll while the edit modal is open.
+    useEffect(() => {
+        if (editingItem) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [editingItem]);
 
     // Build ingredient dropdown options with a default placeholder as the first entry.
     const ingredientOptions = useMemo(() => {
@@ -404,6 +435,102 @@ function Pantry() {
         }
     }
 
+    // Open the edit modal pre-filled with the item's current values.
+    function handleEditClick(item) {
+        setEditingItem(item);
+        setEditFormData({
+            quantity: String(item.quantity),
+            unit: item.unit,
+            expiryDate: toDateInputValue(item.expiryDate),
+            location: item.location
+        });
+        setEditError("");
+    }
+
+    // Close the edit modal without saving.
+    function handleEditClose() {
+        setEditingItem(null);
+        setEditError("");
+    }
+
+    // Handle text/date field changes in the edit form.
+    function handleEditChange(event) {
+        const { name, value } = event.target;
+        setEditFormData((previous) => ({ ...previous, [name]: value }));
+        setEditError("");
+    }
+
+    // Allow only numeric or decimal input in the edit quantity field.
+    function handleEditQuantityChange(event) {
+        const value = event.target.value;
+        if (/^\d*\.?\d*$/.test(value)) {
+            setEditFormData((previous) => ({ ...previous, quantity: value }));
+            setEditError("");
+        }
+    }
+
+    // Submit the edit form: validate, call PUT, and replace the item in the list.
+    async function handleEditSubmit(event) {
+        event.preventDefault();
+
+        if (!editFormData.quantity || !editFormData.expiryDate) {
+            setEditError("Please fill all required fields.");
+            return;
+        }
+
+        const quantityNumber = Number(editFormData.quantity);
+
+        if (!Number.isFinite(quantityNumber) || quantityNumber <= 0) {
+            setEditError("Quantity must be greater than 0.");
+            return;
+        }
+
+        try {
+            setEditSaving(true);
+            setEditError("");
+
+            const response = await axios.put(
+                `${USERS_API_URL}/${storedUser.userId}/pantry/${editingItem.pantryItemId}`,
+                {
+                    quantity: quantityNumber,
+                    unit: editFormData.unit,
+                    expiryDate: new Date(
+                        `${editFormData.expiryDate}T23:59:59`
+                    ).toISOString(),
+                    location: editFormData.location
+                },
+                {
+                    headers: getAuthHeaders()
+                }
+            );
+
+            const updatedItem = getNestedResponseData(response);
+
+            setPantryItems((previousItems) =>
+                previousItems.map((item) =>
+                    item.pantryItemId === updatedItem.pantryItemId
+                        ? updatedItem
+                        : item
+                )
+            );
+
+            setEditingItem(null);
+            setSuccess("Pantry item updated successfully.");
+        } catch (err) {
+            console.error("Update pantry item error:", err);
+            console.error("Server response:", err.response?.data);
+
+            setEditError(
+                getErrorMessage(
+                    err,
+                    "Failed to update pantry item."
+                )
+            );
+        } finally {
+            setEditSaving(false);
+        }
+    }
+
     if (loading) {
         return (
             <div className="pantry-page">
@@ -436,6 +563,105 @@ function Pantry() {
                 existingIngredients={ingredients}
                 headers={getAuthHeaders()}
             />
+
+            {editingItem && (
+                <div
+                    className="pantry-edit-modal-overlay"
+                    onClick={handleEditClose}
+                >
+                    <div
+                        className="pantry-edit-modal"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            type="button"
+                            className="pantry-edit-modal-close"
+                            onClick={handleEditClose}
+                            aria-label="Close edit form"
+                        >
+                            ×
+                        </button>
+
+                        <div className="pantry-edit-modal-header">
+                            <p className="pantry-edit-modal-label">Editing</p>
+                            <h2>{getIngredientName(editingItem.ingredientId)}</h2>
+                        </div>
+
+                        <form
+                            className="pantry-edit-form"
+                            onSubmit={handleEditSubmit}
+                            noValidate
+                        >
+                            <div className="pantry-edit-form-grid">
+                                <div className="pantry-field">
+                                    <label>Quantity</label>
+                                    <input
+                                        type="text"
+                                        name="quantity"
+                                        inputMode="decimal"
+                                        value={editFormData.quantity}
+                                        onChange={handleEditQuantityChange}
+                                        placeholder="Amount"
+                                    />
+                                </div>
+
+                                <CustomSelect
+                                    label="Unit"
+                                    name="unit"
+                                    value={editFormData.unit}
+                                    options={unitOptions}
+                                    onChange={handleEditChange}
+                                    wrapperClassName="pantry-field pantry-custom-select-field"
+                                />
+
+                                <div className="pantry-field">
+                                    <label>Expiry Date</label>
+                                    <input
+                                        type="date"
+                                        name="expiryDate"
+                                        value={editFormData.expiryDate}
+                                        onChange={handleEditChange}
+                                    />
+                                </div>
+
+                                <CustomSelect
+                                    label="Location"
+                                    name="location"
+                                    value={editFormData.location}
+                                    options={locationOptions}
+                                    onChange={handleEditChange}
+                                    wrapperClassName="pantry-field pantry-custom-select-field"
+                                />
+                            </div>
+
+                            {editError && (
+                                <p className="pantry-edit-error">
+                                    {editError}
+                                </p>
+                            )}
+
+                            <div className="pantry-edit-modal-actions">
+                                <button
+                                    type="button"
+                                    className="pantry-edit-cancel-button"
+                                    onClick={handleEditClose}
+                                    disabled={editSaving}
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    className="pantry-edit-save-button"
+                                    disabled={editSaving}
+                                >
+                                    {editSaving ? "Saving..." : "Save Changes"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             <PageHero
                 label="Pantry"
@@ -723,6 +949,14 @@ function Pantry() {
                                                 ? "Soon"
                                                 : "Fresh"}
                                     </span>
+
+                                    <button
+                                        type="button"
+                                        className="edit-pantry-button"
+                                        onClick={() => handleEditClick(item)}
+                                    >
+                                        Edit
+                                    </button>
 
                                     <button
                                         type="button"

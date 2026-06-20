@@ -371,7 +371,7 @@
     overflow: hidden;
     padding: 20px 22px 20px 30px;
     display: grid;
-    grid-template-columns: 1.4fr 0.55fr auto auto;
+    grid-template-columns: 1.4fr 0.55fr auto auto auto;
     gap: 20px;
     align-items: center;
     border: 1px solid #cde8c7;
@@ -516,6 +516,24 @@
     background: #cc6089;
 }
 
+.edit-pantry-button {
+    padding: 12px 18px;
+    border: 1px solid #cde8c7;
+    border-radius: 16px;
+    background: #e9fbe5;
+    color: #2a7545;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.edit-pantry-button:hover {
+    background: #46ae6b;
+    border-color: #46ae6b;
+    color: white;
+}
+
 .delete-pantry-button {
     padding: 12px 18px;
     border: none;
@@ -531,6 +549,154 @@
 .delete-pantry-button:hover {
     background: #cc6089;
     color: white;
+}
+
+/* Edit pantry item modal */
+
+.pantry-edit-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(31, 61, 43, 0.38);
+    backdrop-filter: blur(5px);
+}
+
+.pantry-edit-modal {
+    position: relative;
+    width: min(560px, calc(100vw - 48px));
+    padding: 36px;
+    border-radius: 30px;
+    border: 1px solid rgba(139, 213, 174, 0.75);
+    background:
+        radial-gradient(circle at top left, rgba(103, 214, 86, 0.08), transparent 36%),
+        linear-gradient(135deg, rgba(255, 254, 250, 0.99), rgba(246, 251, 245, 0.99));
+    box-shadow:
+        0 28px 72px rgba(31, 61, 43, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    animation: pantryEditModalOpen 0.22s ease;
+}
+
+@keyframes pantryEditModalOpen {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.pantry-edit-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    border: none;
+    background: transparent;
+    color: #799081;
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.pantry-edit-modal-close:hover {
+    color: #1f3d2b;
+}
+
+.pantry-edit-modal-header {
+    margin-bottom: 28px;
+}
+
+.pantry-edit-modal-label {
+    margin: 0 0 6px;
+    color: #46ae6b;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.pantry-edit-modal-header h2 {
+    margin: 0;
+    color: #1f3d2b;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.pantry-edit-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.pantry-edit-error {
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: #f8e9ee;
+    border: 1px solid #f0cdd8;
+    color: #cc6089;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.pantry-edit-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.pantry-edit-cancel-button {
+    padding: 13px 24px;
+    border: 1px solid #cde8c7;
+    border-radius: 16px;
+    background: transparent;
+    color: #526859;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.pantry-edit-cancel-button:hover {
+    background: #e9fbe5;
+    border-color: #8bd5ae;
+    color: #1f3d2b;
+}
+
+.pantry-edit-cancel-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pantry-edit-save-button {
+    padding: 13px 28px;
+    border: none;
+    border-radius: 16px;
+    background: #67d656;
+    color: white;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.pantry-edit-save-button:hover {
+    background: #46ae6b;
+    transform: translateY(-1px);
+}
+
+.pantry-edit-save-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .pantry-toast {
@@ -604,6 +770,10 @@
 
     .pantry-soon-list {
         justify-content: flex-start;
+    }
+
+    .pantry-edit-form-grid {
+        grid-template-columns: 1fr;
     }
 }
 
