@@ -7,6 +7,8 @@ const { initSocket } = require("./socket/index");
 
 // Import middleware
 const logger = require("./middleware/logger");
+const notFoundHandler = require("./middleware/notFoundHandler");
+const errorHandler = require("./middleware/errorHandler");
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
@@ -52,36 +54,14 @@ app.use("/api/options", optionsRoutes);
 app.use("/api/chef-requests", chefRequestsRoutes);
 app.use("/api/recipes", recipeCommentsRoutes);
 
-// 404 handler
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        data: null,
-        error: {
-            code: "NOT_FOUND",
-            message: "Route not found",
-            details: {}
-        }
-    });
-});
+// 404 handler — must come after all routes
+app.use(notFoundHandler);
 
-// Global error handler
-app.use((err, req, res, _next) => {
-    console.error(err);
-
-    return res.status(500).json({
-        success: false,
-        data: null,
-        error: {
-            code: "SERVER_ERROR",
-            message: "Unexpected server error",
-            details: {}
-        }
-    });
-});
+// Global error handler — must come last
+app.use(errorHandler);
 
 // Start server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const httpServer = http.createServer(app);
 initSocket(httpServer);
