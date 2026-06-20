@@ -31,25 +31,25 @@ async function getRecipeById(recipeId) {
 
 // Insert a new recipe row and return it as a plain object.
 // recipeId is assigned automatically by the database (AUTO_INCREMENT).
-async function createRecipe(recipeData) {
-    const instance = await Recipe.create(recipeData);
+async function createRecipe(recipeData, options = {}) {
+    const instance = await Recipe.create(recipeData, options);
     return instance.toJSON();
 }
 
 // Update an existing recipe and return the updated plain object.
 // Returns null if no recipe with that ID exists.
-async function updateRecipe(recipeId, updatedData) {
-    const instance = await Recipe.findByPk(recipeId);
+async function updateRecipe(recipeId, updatedData, options = {}) {
+    const instance = await Recipe.findByPk(recipeId, options);
     if (!instance) return null;
-    await instance.update(updatedData);
+    await instance.update(updatedData, options);
     return instance.toJSON();
 }
 
 // Delete a recipe by ID. Returns true on success, false if not found.
-async function deleteRecipe(recipeId) {
-    const instance = await Recipe.findByPk(recipeId);
+async function deleteRecipe(recipeId, options = {}) {
+    const instance = await Recipe.findByPk(recipeId, options);
     if (!instance) return false;
-    await instance.destroy();
+    await instance.destroy(options);
     return true;
 }
 

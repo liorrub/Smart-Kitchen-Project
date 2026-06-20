@@ -1,8 +1,11 @@
 require("dotenv").config();
+
 const http = require("http");
 const express = require("express");
-const app = express();
 const cors = require("cors");
+
+const app = express();
+
 const { initSocket } = require("./socket/index");
 
 // Import middleware
@@ -26,25 +29,26 @@ const optionsRoutes = require("./routes/optionsRoutes");
 const chefRequestsRoutes = require("./routes/chefRequestsRoutes");
 const recipeCommentsRoutes = require("./routes/recipeCommentsRoutes");
 
-// Parse JSON body
+// Parse JSON request bodies
 app.use(express.json());
 
+// Enable CORS
 app.use(cors());
 
 // Request logger
 app.use(logger);
 
-// API routes
+// Authentication routes
 app.use("/api/auth", authRoutes);
 
-// User-related nested resources — all mounted on /api/users so their routes resolve
-// to patterns like /api/users/:id/pantry, /api/users/:id/favorites, etc.
+// User-related nested resources
 app.use("/api/users", usersRoutes);
 app.use("/api/users", favoritesRoutes);
 app.use("/api/users", pantryRoutes);
 app.use("/api/users", shoppingListRoutes);
 app.use("/api/users", mealPlanRoutes);
 
+// Other API routes
 app.use("/api/recipes", recipesRoutes);
 app.use("/api/ingredients", ingredientsRoutes);
 app.use("/api/stores", storesRoutes);
@@ -54,16 +58,17 @@ app.use("/api/options", optionsRoutes);
 app.use("/api/chef-requests", chefRequestsRoutes);
 app.use("/api/recipes", recipeCommentsRoutes);
 
-// 404 handler — must come after all routes
+// Must come after every valid route
 app.use(notFoundHandler);
 
-// Global error handler — must come last
+// Must be the last middleware
 app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 3000;
 
 const httpServer = http.createServer(app);
+
 initSocket(httpServer);
 
 httpServer.listen(PORT, () => {

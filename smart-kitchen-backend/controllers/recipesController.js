@@ -34,6 +34,8 @@ const {
     getIngredientById
 } = require("../models/ingredientsModel");
 
+const { sequelize } = require("../models");
+
 async function buildRecipeWithIngredients(recipe) {
     const ingredients = await getIngredientsByRecipeId(recipe.recipeId);
     return {
@@ -43,42 +45,40 @@ async function buildRecipeWithIngredients(recipe) {
 }
 
 // Add ingredient relations for a recipe.
-// This does not save ingredients inside the recipe object.
-// Instead, it creates rows in the recipe_ingredients relation data.
-async function addIngredientsToRecipe(recipeId, ingredients) {
-    await Promise.all(
-        ingredients.map(async (ingredient) => {
-            const existingIngredient = await getIngredientById(
-                Number(ingredient.ingredientId)
+// Runs sequentially so a single invalid ingredientId aborts cleanly
+// without leaving partial inserts behind (important when called inside a transaction).
+async function addIngredientsToRecipe(recipeId, ingredients, options = {}) {
+    for (const ingredient of ingredients) {
+        const existingIngredient = await getIngredientById(
+            Number(ingredient.ingredientId)
+        );
+
+        if (!existingIngredient) {
+            const error = new Error(
+                `Ingredient with id ${ingredient.ingredientId} was not found`
             );
 
-            if (!existingIngredient) {
-                const error = new Error(
-                    `Ingredient with id ${ingredient.ingredientId} was not found`
-                );
+            error.status = 404;
+            error.code = "INGREDIENT_NOT_FOUND";
 
-                error.status = 404;
-                error.code = "INGREDIENT_NOT_FOUND";
+            throw error;
+        }
 
-                throw error;
-            }
-
-            await addRecipeIngredient({
-                recipeId,
-                ingredientId: Number(ingredient.ingredientId),
-                quantity: Number(ingredient.quantity),
-                unit: ingredient.unit
-            });
-        })
-    );
+        await addRecipeIngredient({
+            recipeId,
+            ingredientId: Number(ingredient.ingredientId),
+            quantity: Number(ingredient.quantity),
+            unit: ingredient.unit
+        }, options);
+    }
 }
 
 // Replace the full ingredient list of a recipe.
 // Used when a chef/admin updates the ingredients of an existing recipe.
 // First deletes the old relations, then creates the new relations.
-async function replaceRecipeIngredients(recipeId, ingredients) {
-    await deleteIngredientsByRecipeId(recipeId);
-    await addIngredientsToRecipe(recipeId, ingredients);
+async function replaceRecipeIngredients(recipeId, ingredients, options = {}) {
+    await deleteIngredientsByRecipeId(recipeId, options);
+    await addIngredientsToRecipe(recipeId, ingredients, options);
 }
 
 // Get all recipes
@@ -118,7 +118,7 @@ async function getSingleRecipe(req, res, next) {
 // Create recipe
 async function createSingleRecipe(req, res, next) {
     try {
-        // Make sure the recipe creator exists before creating the recipe
+        // Make sure the recipe creator exists before opening a transaction.
         const creator = await getUserById(req.body.creatorId);
 
         if (!creator) {
@@ -126,14 +126,17 @@ async function createSingleRecipe(req, res, next) {
         }
 
         // Keep ingredients separate from recipeData.
-        // Recipe fields are saved in recipes.json,
-        // while ingredients are saved in recipe_ingredients.json.
+        // Both are written inside one transaction so a failed ingredient insert
+        // rolls back the recipe row as well — no orphan Recipe can remain.
         const { ingredients, ...recipeData } = req.body;
 
-        const recipe = await createRecipe(recipeData);
-        await addIngredientsToRecipe(recipe.recipeId, ingredients);
-        const recipeWithIngredients = await buildRecipeWithIngredients(recipe);
+        const recipe = await sequelize.transaction(async (t) => {
+            const created = await createRecipe(recipeData, { transaction: t });
+            await addIngredientsToRecipe(created.recipeId, ingredients, { transaction: t });
+            return created;
+        });
 
+        const recipeWithIngredients = await buildRecipeWithIngredients(recipe);
         return successResponse(res, 201, recipeWithIngredients);
     } catch (error) {
         next(error);
@@ -146,9 +149,23 @@ async function updateSingleRecipe(req, res, next) {
         const recipeId = Number(req.params.id);
 
         // Keep ingredients separate from recipeData.
-        // If ingredients are provided, they will update the recipe_ingredients relation data.
+        // When ingredients are provided, the recipe field update and the full
+        // ingredient replacement run inside one transaction so a failure rolls
+        // back both the field changes and the ingredient deletion/re-insertion.
         const { ingredients, ...recipeData } = req.body;
-        const updatedRecipe = await updateRecipe(recipeId, recipeData);
+
+        let updatedRecipe;
+
+        if (ingredients !== undefined) {
+            updatedRecipe = await sequelize.transaction(async (t) => {
+                const r = await updateRecipe(recipeId, recipeData, { transaction: t });
+                if (!r) return null;
+                await replaceRecipeIngredients(recipeId, ingredients, { transaction: t });
+                return r;
+            });
+        } else {
+            updatedRecipe = await updateRecipe(recipeId, recipeData);
+        }
 
         if (!updatedRecipe) {
             return errorResponse(
@@ -157,10 +174,6 @@ async function updateSingleRecipe(req, res, next) {
                 "RECIPE_NOT_FOUND",
                 "Recipe not found"
             );
-        }
-
-        if (ingredients !== undefined) {
-            await replaceRecipeIngredients(recipeId, ingredients);
         }
 
         const recipeWithIngredients = await buildRecipeWithIngredients(updatedRecipe);
