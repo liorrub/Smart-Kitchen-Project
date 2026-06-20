@@ -458,6 +458,7 @@
 
 .ai-history-row {
     width: 100%;
+    box-sizing: border-box;
     padding: 14px 16px;
 
     display: grid;
@@ -881,6 +882,12 @@
 }
 
 /* ── Substitute form ── */
+
+.ai-sub-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
 .ai-sub-fields {
     display: flex;

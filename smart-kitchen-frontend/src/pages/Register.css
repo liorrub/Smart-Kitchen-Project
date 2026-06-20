@@ -2,7 +2,7 @@
    Register page adjustments
    ========================================================================== */
 
-/* Register page is taller than Login, so it can scroll */
+/* Register page is taller than Login — allow scrolling */
 .register-page {
     min-height: 100vh;
     height: auto;
@@ -13,7 +13,57 @@
     overflow-y: auto;
 }
 
-/* Register card can be taller than the login card */
+/* Wider card to accommodate two-column field layout */
 .register-card {
+    width: 540px;
+    max-width: calc(100vw - 32px);
     max-height: none;
+}
+
+/* ==========================================================================
+   Section dividers
+   ========================================================================== */
+
+.reg-section-label {
+    margin: 6px 0 0;
+    padding-bottom: 6px;
+
+    color: #46ae6b;
+
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+
+    border-bottom: 1px solid rgba(139, 213, 174, 0.5);
+}
+
+/* ==========================================================================
+   Two-column row
+   ========================================================================== */
+
+.reg-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 560px) {
+    .register-card {
+        width: min(390px, calc(100vw - 28px));
+    }
+
+    .reg-form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-height: 760px) {
+    .reg-section-label {
+        margin-top: 2px;
+    }
 }

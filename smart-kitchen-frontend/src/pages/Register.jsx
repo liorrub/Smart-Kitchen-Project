@@ -221,23 +221,53 @@ function Register() {
                     noValidate
                     className="login-form"
                 >
-                    <FormField
-                        label="First Name"
-                        type="text"
-                        name="firstName"
-                        placeholder="Enter your first name"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                    />
+                    {/* ── Personal ── */}
+                    <p className="reg-section-label">Personal</p>
 
-                    <FormField
-                        label="Last Name"
-                        type="text"
-                        name="lastName"
-                        placeholder="Enter your last name"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                    />
+                    <div className="reg-form-row">
+                        <FormField
+                            label="First Name"
+                            type="text"
+                            name="firstName"
+                            placeholder="First name"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                        />
+                        <FormField
+                            label="Last Name"
+                            type="text"
+                            name="lastName"
+                            placeholder="Last name"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="reg-form-row">
+                        <FormField
+                            label="City"
+                            type="text"
+                            name="city"
+                            placeholder="Your city"
+                            value={formData.city}
+                            onChange={handleChange}
+                        />
+                        <FormField
+                            label="Age"
+                            type="text"
+                            name="age"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            maxLength="3"
+                            placeholder="Your age"
+                            value={formData.age}
+                            onKeyDown={preventInvalidAgeKeys}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    {/* ── Account ── */}
+                    <p className="reg-section-label">Account</p>
 
                     <FormField
                         label="Email"
@@ -245,15 +275,6 @@ function Register() {
                         name="email"
                         placeholder="Enter your email"
                         value={formData.email}
-                        onChange={handleChange}
-                    />
-
-                    <FormField
-                        label="City"
-                        type="text"
-                        name="city"
-                        placeholder="Enter your city"
-                        value={formData.city}
                         onChange={handleChange}
                     />
 
@@ -265,18 +286,8 @@ function Register() {
                         onChange={handleChange}
                     />
 
-                    <FormField
-                        label="Age"
-                        type="text"
-                        name="age"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        maxLength="3"
-                        placeholder="Enter your age"
-                        value={formData.age}
-                        onKeyDown={preventInvalidAgeKeys}
-                        onChange={handleChange}
-                    />
+                    {/* ── Preferences ── */}
+                    <p className="reg-section-label">Preferences</p>
 
                     <CustomSelect
                         label="Cooking Level"
