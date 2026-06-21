@@ -14,6 +14,7 @@ const MealPlanItem = require("./MealPlanItem");
 const Store = require("./Store");
 const IngredientStore = require("./IngredientStore");
 const Review = require("./Review");
+const ChefRequest = require("./ChefRequest");
 
 // User → Recipe (one-to-many via creatorId)
 User.hasMany(Recipe, { foreignKey: "creatorId", as: "recipes" });
@@ -184,6 +185,16 @@ Review.belongsTo(Recipe, {
     as: "recipe"
 });
 
+// User → ChefRequest (one-to-many; a user may have multiple requests over time)
+User.hasMany(ChefRequest, {
+    foreignKey: "userId",
+    as: "chefRequests"
+});
+ChefRequest.belongsTo(User, {
+    foreignKey: "userId",
+    as: "requester"
+});
+
 module.exports = {
     sequelize,
     User,
@@ -198,5 +209,6 @@ module.exports = {
     MealPlanItem,
     Store,
     IngredientStore,
-    Review
+    Review,
+    ChefRequest
 };

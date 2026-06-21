@@ -12,11 +12,13 @@ const {
 const { authorize } = require("../middleware/auth");
 const { validateIdParam } = require("../validators/commonValidator");
 
-// Submit a new chef request (any logged-in user)
-router.post("/", submitChefRequest);
+// Any authenticated user may submit a chef request or view their own.
+// authorize() verifies the user exists in the DB and sets req.authUser.
+// The controller then enforces business rules (chef/admin cannot submit).
+router.post("/", authorize("user", "chef", "influencer", "admin"), submitChefRequest);
 
-// Get own request status — must be declared before /:requestId
-router.get("/my", getMyChefRequest);
+// Must be declared before /:requestId to avoid param shadowing.
+router.get("/my", authorize("user", "chef", "influencer", "admin"), getMyChefRequest);
 
 // Get all pending requests (admin only)
 router.get("/", authorize("admin"), getChefRequests);
