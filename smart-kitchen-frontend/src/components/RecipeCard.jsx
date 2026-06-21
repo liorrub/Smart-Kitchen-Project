@@ -34,7 +34,7 @@ function getCategoryClass(category) {
 
 /*
     Reusable recipe preview card.
-    Can be used in Recipes and Favorites pages.
+    Can be used in Recipes, Favorites, and Feed pages.
 */
 function RecipeCard({
                         recipe,
@@ -45,6 +45,11 @@ function RecipeCard({
                         favoriteLoading = false,
                         favoriteButtonText = "",
                         favoriteLoadingText = "Saving...",
+                        showLikeButton = false,
+                        isLiked = false,
+                        likeCount = 0,
+                        onLikeClick,
+                        likeLoading = false,
                         actions
                     }) {
     const categoryImage = getCategoryImage(recipe.category);
@@ -59,6 +64,12 @@ function RecipeCard({
     function handleFavoriteClick() {
         if (onFavoriteClick) {
             onFavoriteClick(recipe);
+        }
+    }
+
+    function handleLikeClick() {
+        if (onLikeClick) {
+            onLikeClick(recipe);
         }
     }
 
@@ -109,6 +120,22 @@ function RecipeCard({
                     </span>
 
                     <div className="recipe-card-actions">
+                        {showLikeButton && (
+                            <button
+                                type="button"
+                                className={
+                                    isLiked
+                                        ? "recipe-card-like-button active"
+                                        : "recipe-card-like-button"
+                                }
+                                disabled={likeLoading}
+                                onClick={handleLikeClick}
+                                title={isLiked ? "Unlike" : "Like"}
+                            >
+                                {isLiked ? "❤️" : "🤍"} {likeCount}
+                            </button>
+                        )}
+
                         {showFavoriteButton && (
                             <button
                                 type="button"

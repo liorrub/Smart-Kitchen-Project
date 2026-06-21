@@ -15,6 +15,11 @@ import {
     getUserFavorites,
     removeFavorite
 } from "../services/favoritesService";
+import {
+    getUserLikedRecipeIds,
+    likeRecipe,
+    unlikeRecipe
+} from "../services/likeService";
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
@@ -42,6 +47,7 @@ function createFilterOptions(values, allLabel) {
 function Recipes() {
     const [recipes, setRecipes] = useState([]);
     const [favorites, setFavorites] = useState([]);
+    const [likedRecipeIds, setLikedRecipeIds] = useState(new Set());
     const [selectedRecipe, setSelectedRecipe] = useState(null);
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -51,6 +57,7 @@ function Recipes() {
 
     const [loading, setLoading] = useState(true);
     const [favoriteLoadingRecipeId, setFavoriteLoadingRecipeId] = useState(null);
+    const [likeLoadingRecipeId, setLikeLoadingRecipeId] = useState(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
@@ -75,13 +82,15 @@ function Recipes() {
                     return;
                 }
 
-                const [recipesResponse, favoritesData] = await Promise.all([
+                const [recipesResponse, favoritesData, likedIds] = await Promise.all([
                     recipesRequest,
-                    getUserFavorites(storedUser.userId)
+                    getUserFavorites(storedUser.userId),
+                    getUserLikedRecipeIds(storedUser.userId)
                 ]);
 
                 setRecipes(getResponseData(recipesResponse));
                 setFavorites(Array.isArray(favoritesData) ? favoritesData : []);
+                setLikedRecipeIds(new Set(Array.isArray(likedIds) ? likedIds : []));
             } catch (err) {
                 console.error("Recipes page loading error:", err);
 
@@ -238,6 +247,65 @@ function Recipes() {
         }
     }
 
+    // Toggle like on a recipe: optimistic update, revert on error.
+    async function handleLikeClick(recipe) {
+        if (!storedUser?.userId) {
+            setError("Please login to like recipes.");
+            return;
+        }
+
+        const isAlreadyLiked = likedRecipeIds.has(recipe.recipeId);
+
+        // Optimistic update
+        setLikeLoadingRecipeId(recipe.recipeId);
+        setError("");
+        setSuccess("");
+
+        const delta = isAlreadyLiked ? -1 : 1;
+
+        setRecipes(prev => prev.map(r =>
+            r.recipeId === recipe.recipeId
+                ? { ...r, likeCount: Math.max(0, (r.likeCount || 0) + delta) }
+                : r
+        ));
+
+        setLikedRecipeIds(prev => {
+            const next = new Set(prev);
+            isAlreadyLiked ? next.delete(recipe.recipeId) : next.add(recipe.recipeId);
+            return next;
+        });
+
+        // Sync selectedRecipe if the modal is open for the same recipe
+        setSelectedRecipe(prev =>
+            prev?.recipeId === recipe.recipeId
+                ? { ...prev, likeCount: Math.max(0, (prev.likeCount || 0) + delta) }
+                : prev
+        );
+
+        try {
+            if (isAlreadyLiked) {
+                await unlikeRecipe(recipe.recipeId);
+            } else {
+                await likeRecipe(recipe.recipeId);
+            }
+        } catch (err) {
+            // Revert optimistic update on error
+            setRecipes(prev => prev.map(r =>
+                r.recipeId === recipe.recipeId
+                    ? { ...r, likeCount: Math.max(0, (r.likeCount || 0) - delta) }
+                    : r
+            ));
+            setLikedRecipeIds(prev => {
+                const next = new Set(prev);
+                isAlreadyLiked ? next.add(recipe.recipeId) : next.delete(recipe.recipeId);
+                return next;
+            });
+            setError(getErrorMessage(err, "Failed to update like."));
+        } finally {
+            setLikeLoadingRecipeId(null);
+        }
+    }
+
     if (loading) {
         return (
             <div className="recipes-page">
@@ -271,6 +339,8 @@ function Recipes() {
             <RecipeDetailsModal
                 recipe={selectedRecipe}
                 onClose={() => setSelectedRecipe(null)}
+                isLiked={selectedRecipe ? likedRecipeIds.has(selectedRecipe.recipeId) : false}
+                onLikeClick={handleLikeClick}
             />
 
             <PageHero
@@ -375,8 +445,8 @@ function Recipes() {
             ) : (
                 <section className="recipes-grid">
                     {visibleRecipes.map((recipe) => {
-                        const isFavorite =
-                            favoriteRecipeIds.has(recipe.recipeId);
+                        const isFavorite = favoriteRecipeIds.has(recipe.recipeId);
+                        const isLiked = likedRecipeIds.has(recipe.recipeId);
 
                         return (
                             <RecipeCard
@@ -386,12 +456,13 @@ function Recipes() {
                                 showFavoriteButton
                                 isFavorite={isFavorite}
                                 onFavoriteClick={handleFavoriteClick}
-                                favoriteLoading={
-                                    favoriteLoadingRecipeId === recipe.recipeId
-                                }
-                                favoriteLoadingText={
-                                    isFavorite ? "Removing..." : "Saving..."
-                                }
+                                favoriteLoading={favoriteLoadingRecipeId === recipe.recipeId}
+                                favoriteLoadingText={isFavorite ? "Removing..." : "Saving..."}
+                                showLikeButton
+                                isLiked={isLiked}
+                                likeCount={recipe.likeCount || 0}
+                                onLikeClick={handleLikeClick}
+                                likeLoading={likeLoadingRecipeId === recipe.recipeId}
                             />
                         );
                     })}

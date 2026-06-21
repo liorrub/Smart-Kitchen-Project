@@ -258,6 +258,45 @@
     flex-wrap: wrap;
 }
 
+.recipe-card-like-button {
+    height: 38px;
+    padding: 0 12px;
+
+    border: 1px solid #f0cdd8;
+    border-radius: 13px;
+    background: #fffefa;
+
+    color: #cc6089;
+
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    white-space: nowrap;
+    min-width: 58px;
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+.recipe-card-like-button.active {
+    background: #f8e9ee;
+    border-color: #e8afc5;
+}
+
+.recipe-card-like-button:hover:not(:disabled) {
+    background: #cc6089;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(204, 96, 137, 0.25);
+}
+
+.recipe-card-like-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .recipe-card-view-button,
 .recipe-card-favorite-button {
     height: 38px;
