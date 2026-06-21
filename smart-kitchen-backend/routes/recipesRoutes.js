@@ -20,6 +20,10 @@ const {
     validateRecipeIngredientsOptional
 } = require("../validators/recipeValidator");
 
+const {
+    validateReviewInput
+} = require("../validators/reviewValidator");
+
 // Get all recipes
 router.get(
     "/",
@@ -89,6 +93,7 @@ router.post(
         "title",
         "comment"
     ]),
+    validateReviewInput,
     authorize(
         "user",
         "chef",
@@ -109,6 +114,7 @@ router.put(
         "influencer",
         "admin"
     ),
+    validateReviewInput,
     recipesController.updateRecipeReview
 );
 

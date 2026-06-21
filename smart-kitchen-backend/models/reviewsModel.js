@@ -1,81 +1,46 @@
-const reviews = require("../data/reviews.json");
+"use strict";
 
-const { generateId } = require("../utils/idGenerator");
-const { getCurrentDateTime } = require("../utils/dateHelper");
+const { Review } = require("./index");
+
+// Strips updatedAt — the original Reviews API never exposed it.
+function toPlain(instance) {
+    const { updatedAt, ...rest } = instance.get({ plain: true });
+    return rest;
+}
 
 // Get reviews for recipe
 async function getReviewsByRecipeId(recipeId) {
-    return reviews.filter(
-        review => review.recipeId === recipeId
-    );
+    const rows = await Review.findAll({
+        where: { recipeId },
+        order: [["reviewId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
 // Get review by ID
 async function getReviewById(reviewId) {
-    return reviews.find(
-        review => review.reviewId === reviewId
-    );
+    const instance = await Review.findByPk(reviewId);
+    return instance ? toPlain(instance) : undefined;
 }
 
-// Create a new review with default helpful votes count
+// Create a new review. helpfulVotes is always 0 on creation.
 async function addReview(reviewData) {
-    const newReview = {
-        reviewId: generateId(
-            reviews,
-            "reviewId"
-        ),
-        ...reviewData,
-        helpfulVotes: 0,
-        createdAt: getCurrentDateTime()
-    };
-
-    reviews.push(newReview);
-
-    return newReview;
+    const instance = await Review.create({ ...reviewData, helpfulVotes: 0 });
+    return toPlain(instance);
 }
 
-// Update review
-async function updateReview(
-    recipeId,
-    reviewId,
-    updatedData
-) {
-    const reviewIndex = reviews.findIndex(
-        review =>
-            review.reviewId === reviewId &&
-            review.recipeId === recipeId
-    );
-
-    if (reviewIndex === -1) {
-        return null;
-    }
-
-    reviews[reviewIndex] = {
-        ...reviews[reviewIndex],
-        ...updatedData
-    };
-
-    return reviews[reviewIndex];
+// Update review — matches by both reviewId and recipeId to prevent cross-recipe edits.
+async function updateReview(recipeId, reviewId, updatedData) {
+    const instance = await Review.findOne({ where: { reviewId, recipeId } });
+    if (!instance) return null;
+    await instance.update(updatedData);
+    return toPlain(instance);
 }
 
-// Delete review
-async function deleteReview(
-    recipeId,
-    reviewId
-) {
-    const reviewIndex = reviews.findIndex(
-        review =>
-            review.reviewId === reviewId &&
-            review.recipeId === recipeId
-    );
-
-    if (reviewIndex === -1) {
-        return false;
-    }
-
-    reviews.splice(reviewIndex, 1);
-
-    return true;
+// Delete review — matches by both reviewId and recipeId.
+async function deleteReview(recipeId, reviewId) {
+    const count = await Review.destroy({ where: { reviewId, recipeId } });
+    return count > 0;
 }
 
 module.exports = {

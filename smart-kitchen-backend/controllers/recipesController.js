@@ -235,8 +235,12 @@ async function createRecipeReview(req, res, next) {
             );
         }
 
+        // Whitelist only user-supplied fields; all other fields are set server-side.
+        const { rating, title, comment } = req.body;
         const review = await addReview({
-            ...req.body,
+            rating,
+            title,
+            comment,
             recipeId,
             userId,
             isInfluencer: userRole === "influencer"
@@ -274,7 +278,14 @@ async function updateRecipeReview(req, res, next) {
             return errorResponse(res, 403, "FORBIDDEN", "You can only edit your own review");
         }
 
-        const updatedReview = await updateReview(recipeId, reviewId, req.body);
+        // Whitelist: only rating, title, comment may be changed by the client.
+        const { rating, title, comment } = req.body;
+        const updatePayload = {};
+        if (rating !== undefined) updatePayload.rating = rating;
+        if (title !== undefined) updatePayload.title = title;
+        if (comment !== undefined) updatePayload.comment = comment;
+
+        const updatedReview = await updateReview(recipeId, reviewId, updatePayload);
         return successResponse(res, 200, updatedReview);
 
     } catch (error) {
