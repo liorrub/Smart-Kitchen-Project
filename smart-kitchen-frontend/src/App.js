@@ -18,6 +18,8 @@ import Ingredients from "./pages/Ingredients";
 import RecipeManagement from "./pages/RecipeManagement";
 import ChefRecipes from "./pages/ChefRecipes";
 import RecipeDiscussion from "./pages/RecipeDiscussion";
+import Profile from "./pages/Profile";
+import Discover from "./pages/Discover";
 
 function App() {
     return (
@@ -104,6 +106,16 @@ function App() {
                             <Route
                                 path="/recipes/:id/discussion"
                                 element={<RecipeDiscussion />}
+                            />
+
+                            <Route
+                                path="/profile/:id"
+                                element={<Profile />}
+                            />
+
+                            <Route
+                                path="/discover"
+                                element={<Discover />}
                             />
 
                         </Route>
