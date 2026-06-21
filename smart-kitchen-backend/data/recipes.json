@@ -1,66 +1,537 @@
 [
   {
-    "recipeId": 101,
-    "title": "Simple Pasta",
-    "instructions": "Boil water, cook pasta, add sauce.",
-    "difficulty": "easy",
-    "cuisine": "italian",
-    "category": "dinner",
-    "creatorId": 1,
-    "prepTime": 30,
-    "cookTime": 20,
-    "totalTime": 50,
-    "servings": 2,
-    "calories": 400,
-    "tags": ["quick", "easy", "vegetarian"],
-    "allergens": ["gluten"]
+    "recipeId": 101, "title": "Simple Pasta", "instructions": "Boil water, cook pasta, add sauce.",
+    "difficulty": "easy", "cuisine": "italian", "category": "dinner", "creatorId": 1,
+    "prepTime": 30, "cookTime": 20, "totalTime": 50, "servings": 2, "calories": 400,
+    "tags": ["quick", "easy"], "allergens": ["gluten"]
   },
   {
-    "recipeId": 102,
-    "title": "Tofu Stir-fry",
-    "instructions": "Pan-fry tofu, add veggies and sauce.",
-    "difficulty": "medium",
-    "cuisine": "asian",
-    "category": "dinner",
-    "creatorId": 2,
-    "prepTime": 15,
-    "cookTime": 15,
-    "totalTime": 30,
-    "servings": 2,
-    "calories": 350,
-    "tags": ["healthy", "vegan"],
-    "allergens": ["soy"]
+    "recipeId": 102, "title": "Tofu Stir-fry", "instructions": "Pan-fry tofu, add veggies and sauce.",
+    "difficulty": "medium", "cuisine": "asian", "category": "dinner", "creatorId": 2,
+    "prepTime": 15, "cookTime": 15, "totalTime": 30, "servings": 2, "calories": 350,
+    "tags": ["healthy", "vegan"], "allergens": ["soy"]
   },
   {
-    "recipeId": 103,
-    "title": "Israeli Breakfast Bowl",
-    "instructions": "Chop vegetables, add cheese and serve.",
-    "difficulty": "easy",
-    "cuisine": "israeli",
-    "category": "breakfast",
-    "creatorId": 1,
-    "prepTime": 10,
-    "cookTime": 0,
-    "totalTime": 10,
-    "servings": 2,
-    "calories": 280,
-    "tags": ["healthy", "easy"],
-    "allergens": ["dairy"]
+    "recipeId": 103, "title": "Israeli Breakfast Bowl", "instructions": "Chop vegetables, add cheese and serve.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "breakfast", "creatorId": 1,
+    "prepTime": 10, "cookTime": 0, "totalTime": 10, "servings": 2, "calories": 280,
+    "tags": ["healthy", "easy"], "allergens": ["dairy"]
   },
   {
-    "recipeId": 104,
-    "title": "Protein Yogurt Snack",
-    "instructions": "Mix yogurt and toppings and serve cold.",
-    "difficulty": "easy",
-    "cuisine": "american",
-    "category": "snack",
-    "creatorId": 1,
-    "prepTime": 5,
-    "cookTime": 0,
-    "totalTime": 5,
-    "servings": 1,
-    "calories": 220,
-    "tags": ["healthy", "high-protein"],
-    "allergens": ["dairy"]
+    "recipeId": 104, "title": "Protein Yogurt Snack", "instructions": "Mix yogurt and toppings and serve cold.",
+    "difficulty": "easy", "cuisine": "american", "category": "snack", "creatorId": 1,
+    "prepTime": 5, "cookTime": 0, "totalTime": 5, "servings": 1, "calories": 220,
+    "tags": ["healthy", "high-protein"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 105, "title": "Spaghetti Carbonara",
+    "instructions": "Cook spaghetti al dente. Fry pancetta until crisp. Whisk eggs with parmesan. Toss hot pasta with pancetta, remove from heat, add egg mixture, toss quickly. Season with black pepper.",
+    "difficulty": "medium", "cuisine": "italian", "category": "dinner", "creatorId": 1,
+    "prepTime": 15, "cookTime": 20, "totalTime": 35, "servings": 4, "calories": 620,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 106, "title": "Margherita Pizza",
+    "instructions": "Prepare pizza dough, let rise 1 hour. Spread tomato sauce, top with mozzarella and fresh basil. Bake at 250C for 12 minutes until golden.",
+    "difficulty": "medium", "cuisine": "italian", "category": "dinner", "creatorId": 1,
+    "prepTime": 80, "cookTime": 12, "totalTime": 92, "servings": 4, "calories": 480,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 107, "title": "Tiramisu",
+    "instructions": "Whip egg yolks with sugar. Fold in mascarpone. Dip ladyfinger biscuits in espresso, layer with cream mixture, dust with cocoa powder. Refrigerate 4 hours.",
+    "difficulty": "hard", "cuisine": "italian", "category": "dessert", "creatorId": 1,
+    "prepTime": 30, "cookTime": 0, "totalTime": 30, "servings": 8, "calories": 380,
+    "tags": ["comfort-food"], "allergens": ["dairy", "eggs", "gluten"]
+  },
+  {
+    "recipeId": 108, "title": "Risotto Milanese",
+    "instructions": "Sauté onion in butter. Toast arborio rice 2 min. Add white wine, then hot broth ladle by ladle, stirring constantly. Finish with saffron, parmesan and butter.",
+    "difficulty": "hard", "cuisine": "italian", "category": "dinner", "creatorId": 1,
+    "prepTime": 10, "cookTime": 35, "totalTime": 45, "servings": 4, "calories": 520,
+    "tags": ["comfort-food"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 109, "title": "Bruschetta al Pomodoro",
+    "instructions": "Toast bread slices. Rub with garlic. Top with diced tomatoes, olive oil, fresh basil, salt and pepper.",
+    "difficulty": "easy", "cuisine": "italian", "category": "snack", "creatorId": 1,
+    "prepTime": 10, "cookTime": 5, "totalTime": 15, "servings": 4, "calories": 180,
+    "tags": ["quick", "easy", "healthy"], "allergens": ["gluten"]
+  },
+  {
+    "recipeId": 110, "title": "Penne Arrabbiata",
+    "instructions": "Sauté garlic and chili flakes in olive oil. Add crushed tomatoes, simmer 15 min. Cook penne, toss with sauce. Garnish with parsley.",
+    "difficulty": "easy", "cuisine": "italian", "category": "dinner", "creatorId": 1,
+    "prepTime": 10, "cookTime": 20, "totalTime": 30, "servings": 4, "calories": 400,
+    "tags": ["quick", "spicy", "vegan"], "allergens": ["gluten"]
+  },
+  {
+    "recipeId": 111, "title": "Minestrone Soup",
+    "instructions": "Sauté onion, celery, carrot and garlic. Add diced tomatoes, vegetable broth, zucchini, green beans and cannellini beans. Simmer 25 min. Add pasta last 10 min.",
+    "difficulty": "easy", "cuisine": "italian", "category": "dinner", "creatorId": 5,
+    "prepTime": 15, "cookTime": 35, "totalTime": 50, "servings": 6, "calories": 280,
+    "tags": ["healthy", "vegan", "comfort-food"], "allergens": ["gluten"]
+  },
+  {
+    "recipeId": 112, "title": "Focaccia Bread",
+    "instructions": "Combine flour, yeast, salt and olive oil, knead 10 min. Let rise 1 hour. Press into oiled pan, dimple surface, drizzle with olive oil and rosemary. Bake 220C 20 min.",
+    "difficulty": "medium", "cuisine": "italian", "category": "snack", "creatorId": 5,
+    "prepTime": 20, "cookTime": 20, "totalTime": 40, "servings": 8, "calories": 240,
+    "tags": ["comfort-food"], "allergens": ["gluten"]
+  },
+  {
+    "recipeId": 113, "title": "Chicken Teriyaki",
+    "instructions": "Marinate chicken in soy sauce, honey, garlic and ginger 30 min. Sear in pan 5 min each side. Glaze with remaining marinade until caramelized. Serve over rice.",
+    "difficulty": "medium", "cuisine": "asian", "category": "dinner", "creatorId": 5,
+    "prepTime": 35, "cookTime": 15, "totalTime": 50, "servings": 4, "calories": 480,
+    "tags": ["high-protein"], "allergens": ["soy"]
+  },
+  {
+    "recipeId": 114, "title": "Miso Soup",
+    "instructions": "Bring dashi broth to gentle simmer. Dissolve miso paste into broth — never boil after adding miso. Add silken tofu cubes and wakame seaweed. Serve immediately.",
+    "difficulty": "easy", "cuisine": "asian", "category": "breakfast", "creatorId": 5,
+    "prepTime": 5, "cookTime": 10, "totalTime": 15, "servings": 4, "calories": 90,
+    "tags": ["quick", "healthy", "low-carb"], "allergens": ["soy"]
+  },
+  {
+    "recipeId": 115, "title": "Korean Bibimbap",
+    "instructions": "Cook rice. Sauté vegetables separately with sesame oil. Fry egg sunny-side up. Arrange rice in bowl with vegetables and egg. Top with gochujang sauce and sesame seeds.",
+    "difficulty": "medium", "cuisine": "asian", "category": "dinner", "creatorId": 5,
+    "prepTime": 20, "cookTime": 25, "totalTime": 45, "servings": 2, "calories": 560,
+    "tags": ["healthy", "comfort-food"], "allergens": ["soy", "eggs"]
+  },
+  {
+    "recipeId": 116, "title": "Green Curry",
+    "instructions": "Fry green curry paste in coconut milk 2 min. Add vegetables and protein of choice. Pour in remaining coconut milk and fish sauce. Simmer 15 min. Serve with jasmine rice.",
+    "difficulty": "medium", "cuisine": "asian", "category": "dinner", "creatorId": 9,
+    "prepTime": 15, "cookTime": 20, "totalTime": 35, "servings": 4, "calories": 430,
+    "tags": ["spicy", "comfort-food"], "allergens": []
+  },
+  {
+    "recipeId": 117, "title": "Ramen",
+    "instructions": "Simmer chicken broth with soy sauce, ginger and garlic 20 min. Cook ramen noodles. Boil eggs 7 min, peel and halve. Assemble bowl: broth, noodles, chashu pork, egg, nori and green onion.",
+    "difficulty": "hard", "cuisine": "asian", "category": "dinner", "creatorId": 9,
+    "prepTime": 30, "cookTime": 45, "totalTime": 75, "servings": 4, "calories": 620,
+    "tags": ["comfort-food", "spicy"], "allergens": ["soy", "eggs", "gluten"]
+  },
+  {
+    "recipeId": 118, "title": "Classic Guacamole",
+    "instructions": "Mash ripe avocados. Mix in finely chopped onion, tomato, jalapeño, fresh cilantro and lime juice. Season with salt. Serve immediately with tortilla chips.",
+    "difficulty": "easy", "cuisine": "mexican", "category": "snack", "creatorId": 7,
+    "prepTime": 10, "cookTime": 0, "totalTime": 10, "servings": 4, "calories": 160,
+    "tags": ["quick", "easy", "healthy", "vegan", "low-carb"], "allergens": []
+  },
+  {
+    "recipeId": 119, "title": "Chicken Tacos",
+    "instructions": "Season chicken with cumin, paprika and garlic powder. Grill or pan-fry 6 min per side. Slice and fill warm tortillas with chicken, salsa, avocado and sour cream.",
+    "difficulty": "easy", "cuisine": "mexican", "category": "dinner", "creatorId": 7,
+    "prepTime": 15, "cookTime": 15, "totalTime": 30, "servings": 4, "calories": 450,
+    "tags": ["quick", "high-protein"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 120, "title": "Beef Enchiladas",
+    "instructions": "Brown ground beef with onion, garlic, cumin and chili. Fill tortillas with beef mixture and cheese. Roll, place in baking dish, cover with enchilada sauce and more cheese. Bake 180C 25 min.",
+    "difficulty": "medium", "cuisine": "mexican", "category": "dinner", "creatorId": 7,
+    "prepTime": 20, "cookTime": 30, "totalTime": 50, "servings": 6, "calories": 540,
+    "tags": ["comfort-food", "spicy"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 121, "title": "Black Bean Burritos",
+    "instructions": "Warm black beans with cumin and garlic. Heat tortillas. Fill each with beans, rice, cheese, salsa and sour cream. Fold and roll tightly.",
+    "difficulty": "easy", "cuisine": "mexican", "category": "lunch", "creatorId": 7,
+    "prepTime": 10, "cookTime": 10, "totalTime": 20, "servings": 4, "calories": 480,
+    "tags": ["quick", "easy", "healthy"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 122, "title": "Classic Burger",
+    "instructions": "Mix ground beef with salt and pepper. Form into patties. Grill 4 min per side. Toast buns. Assemble with lettuce, tomato, onion, cheese and condiments.",
+    "difficulty": "medium", "cuisine": "american", "category": "dinner", "creatorId": 8,
+    "prepTime": 15, "cookTime": 10, "totalTime": 25, "servings": 4, "calories": 650,
+    "tags": ["comfort-food", "high-protein"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 123, "title": "BBQ Ribs",
+    "instructions": "Rub ribs with spice mix: paprika, brown sugar, cumin, garlic powder. Wrap in foil, bake 150C 3 hours. Unwrap, brush with BBQ sauce, grill 10 min each side until caramelized.",
+    "difficulty": "hard", "cuisine": "american", "category": "dinner", "creatorId": 8,
+    "prepTime": 20, "cookTime": 200, "totalTime": 220, "servings": 4, "calories": 820,
+    "tags": ["comfort-food", "spicy"], "allergens": []
+  },
+  {
+    "recipeId": 124, "title": "Mac and Cheese",
+    "instructions": "Cook macaroni. Melt butter, whisk in flour, then milk to make béchamel. Add cheddar and gruyère, stir until melted. Toss with pasta. Top with breadcrumbs, bake until golden.",
+    "difficulty": "easy", "cuisine": "american", "category": "dinner", "creatorId": 9,
+    "prepTime": 10, "cookTime": 25, "totalTime": 35, "servings": 6, "calories": 580,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 125, "title": "Pancakes",
+    "instructions": "Mix flour, baking powder, sugar, salt, egg, milk and butter until smooth. Heat buttered skillet. Pour 1/4 cup batter per pancake, cook until bubbles form, flip. Serve with maple syrup.",
+    "difficulty": "easy", "cuisine": "american", "category": "breakfast", "creatorId": 9,
+    "prepTime": 10, "cookTime": 20, "totalTime": 30, "servings": 4, "calories": 320,
+    "tags": ["quick", "easy", "comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 126, "title": "Caesar Salad",
+    "instructions": "Make dressing: blend anchovies, garlic, lemon juice, dijon, egg yolk and parmesan. Toss romaine lettuce with dressing and croutons. Top with extra parmesan.",
+    "difficulty": "easy", "cuisine": "american", "category": "lunch", "creatorId": 9,
+    "prepTime": 15, "cookTime": 5, "totalTime": 20, "servings": 4, "calories": 290,
+    "tags": ["quick", "healthy"], "allergens": ["dairy", "eggs", "gluten"]
+  },
+  {
+    "recipeId": 127, "title": "Chicken Wings",
+    "instructions": "Pat dry chicken wings. Toss with oil, salt, pepper and garlic powder. Bake 200C 40 min flipping halfway. Toss hot wings in butter and hot sauce mixture. Serve with celery and blue cheese dip.",
+    "difficulty": "easy", "cuisine": "american", "category": "snack", "creatorId": 9,
+    "prepTime": 10, "cookTime": 40, "totalTime": 50, "servings": 4, "calories": 480,
+    "tags": ["spicy", "high-protein", "comfort-food"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 128, "title": "Beef Meatballs",
+    "instructions": "Combine ground beef, breadcrumbs, egg, garlic, parsley, parmesan and seasoning. Roll into balls. Bake 200C 20 min or brown in pan. Simmer in tomato sauce 10 min.",
+    "difficulty": "medium", "cuisine": "american", "category": "dinner", "creatorId": 10,
+    "prepTime": 20, "cookTime": 30, "totalTime": 50, "servings": 6, "calories": 420,
+    "tags": ["comfort-food", "high-protein"], "allergens": ["gluten", "eggs", "dairy"]
+  },
+  {
+    "recipeId": 129, "title": "Blueberry Muffins",
+    "instructions": "Mix flour, sugar, baking powder and salt. Whisk egg, milk and melted butter separately. Fold wet into dry ingredients, do not overmix. Fold in blueberries. Bake 190C 20-25 min.",
+    "difficulty": "easy", "cuisine": "american", "category": "snack", "creatorId": 10,
+    "prepTime": 15, "cookTime": 22, "totalTime": 37, "servings": 12, "calories": 195,
+    "tags": ["easy", "comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 130, "title": "Hummus",
+    "instructions": "Drain and rinse canned chickpeas, reserve liquid. Blend chickpeas with tahini, lemon juice, garlic and ice water until ultra-smooth. Season with salt. Drizzle with olive oil and sprinkle paprika.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "snack", "creatorId": 10,
+    "prepTime": 10, "cookTime": 0, "totalTime": 10, "servings": 6, "calories": 180,
+    "tags": ["quick", "easy", "healthy", "vegan"], "allergens": ["nuts"]
+  },
+  {
+    "recipeId": 131, "title": "Shakshuka",
+    "instructions": "Sauté onion and bell pepper in olive oil. Add garlic, cumin, paprika and chili flakes. Pour in crushed tomatoes, simmer 10 min. Make wells, crack eggs into wells. Cover and cook until whites are set.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "breakfast", "creatorId": 10,
+    "prepTime": 10, "cookTime": 20, "totalTime": 30, "servings": 4, "calories": 220,
+    "tags": ["quick", "healthy", "spicy"], "allergens": ["eggs"]
+  },
+  {
+    "recipeId": 132, "title": "Falafel",
+    "instructions": "Soak dried chickpeas overnight. Blend with onion, garlic, fresh parsley and cilantro, cumin, coriander and baking powder. Form into balls, deep-fry 375F until golden. Serve in pita with tahini.",
+    "difficulty": "medium", "cuisine": "israeli", "category": "snack", "creatorId": 11,
+    "prepTime": 30, "cookTime": 15, "totalTime": 45, "servings": 6, "calories": 310,
+    "tags": ["vegan", "high-protein"], "allergens": ["gluten", "nuts"]
+  },
+  {
+    "recipeId": 133, "title": "Israeli Salad",
+    "instructions": "Finely dice cucumber, tomato, red onion and bell pepper. Toss with lemon juice, olive oil, fresh parsley and mint. Season with salt and pepper.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "lunch", "creatorId": 11,
+    "prepTime": 15, "cookTime": 0, "totalTime": 15, "servings": 4, "calories": 90,
+    "tags": ["quick", "easy", "healthy", "vegan", "low-carb"], "allergens": []
+  },
+  {
+    "recipeId": 134, "title": "Sabich Sandwich",
+    "instructions": "Fry eggplant slices until golden. Stuff pita with fried eggplant, hard-boiled egg, Israeli salad, hummus, amba mango sauce and tahini.",
+    "difficulty": "medium", "cuisine": "israeli", "category": "lunch", "creatorId": 11,
+    "prepTime": 20, "cookTime": 15, "totalTime": 35, "servings": 2, "calories": 480,
+    "tags": ["comfort-food", "high-protein"], "allergens": ["gluten", "eggs", "nuts"]
+  },
+  {
+    "recipeId": 135, "title": "Baba Ganoush",
+    "instructions": "Char eggplants directly over flame until collapsed. Scoop flesh, drain excess moisture. Blend with tahini, lemon juice, garlic and olive oil. Season and garnish with pomegranate seeds.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "snack", "creatorId": 11,
+    "prepTime": 10, "cookTime": 20, "totalTime": 30, "servings": 6, "calories": 120,
+    "tags": ["healthy", "vegan", "low-carb"], "allergens": ["nuts"]
+  },
+  {
+    "recipeId": 136, "title": "Schnitzel",
+    "instructions": "Pound chicken breasts thin. Dredge in flour, dip in beaten egg, coat with breadcrumbs. Fry in oil 3-4 min per side until golden. Drain on paper towels. Serve with lemon wedge.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "dinner", "creatorId": 11,
+    "prepTime": 20, "cookTime": 10, "totalTime": 30, "servings": 4, "calories": 420,
+    "tags": ["easy", "high-protein", "comfort-food"], "allergens": ["gluten", "eggs"]
+  },
+  {
+    "recipeId": 137, "title": "Jachnun",
+    "instructions": "Roll dough thin with butter or margarine, fold and layer repeatedly. Wrap in parchment. Bake overnight 90C 10 hours. Serve with grated tomato, hard-boiled egg and schug.",
+    "difficulty": "hard", "cuisine": "israeli", "category": "breakfast", "creatorId": 12,
+    "prepTime": 60, "cookTime": 600, "totalTime": 660, "servings": 8, "calories": 380,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 138, "title": "Malabi",
+    "instructions": "Heat milk with sugar and rose water. Mix cornstarch with cold milk until smooth. Add to heated milk, stir until thick. Pour into cups, cool then refrigerate. Top with raspberry syrup and coconut.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "dessert", "creatorId": 12,
+    "prepTime": 10, "cookTime": 15, "totalTime": 25, "servings": 6, "calories": 210,
+    "tags": ["easy"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 139, "title": "Israeli Couscous Salad",
+    "instructions": "Cook pearl couscous. Toss warm with olive oil, sun-dried tomatoes, olives, cucumber, feta, fresh herbs and lemon juice.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "lunch", "creatorId": 12,
+    "prepTime": 10, "cookTime": 12, "totalTime": 22, "servings": 4, "calories": 340,
+    "tags": ["quick", "healthy"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 140, "title": "Salmon with Lemon Butter",
+    "instructions": "Season salmon fillets with salt, pepper and garlic. Sear skin-side down in hot pan 4 min, flip 3 min. Add butter, lemon juice and fresh dill to pan, baste salmon. Serve immediately.",
+    "difficulty": "medium", "cuisine": "american", "category": "dinner", "creatorId": 12,
+    "prepTime": 10, "cookTime": 10, "totalTime": 20, "servings": 4, "calories": 380,
+    "tags": ["quick", "healthy", "high-protein", "low-carb"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 141, "title": "Lentil Soup",
+    "instructions": "Sauté onion, carrot and celery in olive oil. Add garlic and cumin. Stir in red lentils and vegetable broth. Simmer 25 min until lentils dissolve. Season with lemon juice and fresh cilantro.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "dinner", "creatorId": 13,
+    "prepTime": 10, "cookTime": 30, "totalTime": 40, "servings": 6, "calories": 260,
+    "tags": ["healthy", "vegan", "high-protein"], "allergens": []
+  },
+  {
+    "recipeId": 142, "title": "Spinach and Feta Pie",
+    "instructions": "Sauté spinach and onion, drain. Mix with feta, eggs and dill. Layer phyllo sheets with melted butter in pan, add filling, top with more phyllo, brush with egg. Bake 180C 40 min.",
+    "difficulty": "medium", "cuisine": "israeli", "category": "dinner", "creatorId": 13,
+    "prepTime": 30, "cookTime": 40, "totalTime": 70, "servings": 8, "calories": 340,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 143, "title": "Chocolate Brownies",
+    "instructions": "Melt dark chocolate and butter together. Whisk eggs with sugar until pale. Fold chocolate into egg mixture. Add flour and cocoa powder. Pour into lined pan, bake 180C 22 min. Cool completely.",
+    "difficulty": "medium", "cuisine": "american", "category": "dessert", "creatorId": 13,
+    "prepTime": 20, "cookTime": 22, "totalTime": 42, "servings": 16, "calories": 240,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 144, "title": "Avocado Toast",
+    "instructions": "Toast sourdough bread. Mash avocado with lemon juice, salt and chili flakes. Spread on toast. Top with cherry tomatoes, microgreens and a drizzle of olive oil.",
+    "difficulty": "easy", "cuisine": "american", "category": "breakfast", "creatorId": 13,
+    "prepTime": 5, "cookTime": 5, "totalTime": 10, "servings": 2, "calories": 280,
+    "tags": ["quick", "easy", "healthy", "vegan"], "allergens": ["gluten"]
+  },
+  {
+    "recipeId": 145, "title": "Greek Salad",
+    "instructions": "Cube cucumber, tomato and red onion. Add kalamata olives and green pepper. Top with a block of feta cheese. Dress with olive oil, dried oregano and red wine vinegar.",
+    "difficulty": "easy", "cuisine": "italian", "category": "lunch", "creatorId": 2,
+    "prepTime": 15, "cookTime": 0, "totalTime": 15, "servings": 4, "calories": 210,
+    "tags": ["quick", "easy", "healthy", "low-carb"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 146, "title": "Mushroom Risotto",
+    "instructions": "Sauté mixed mushrooms until golden, set aside. Sauté onion and garlic. Add arborio rice, toast 2 min. Add white wine. Add hot vegetable broth ladle by ladle, stirring. Finish with butter, parmesan and mushrooms.",
+    "difficulty": "medium", "cuisine": "italian", "category": "dinner", "creatorId": 2,
+    "prepTime": 10, "cookTime": 35, "totalTime": 45, "servings": 4, "calories": 490,
+    "tags": ["comfort-food", "healthy"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 147, "title": "Eggplant Parmesan",
+    "instructions": "Slice eggplant, salt and press 30 min. Dredge in flour, egg and breadcrumbs. Fry until golden. Layer in baking dish with marinara, mozzarella and parmesan. Bake 180C 30 min.",
+    "difficulty": "medium", "cuisine": "italian", "category": "dinner", "creatorId": 2,
+    "prepTime": 45, "cookTime": 40, "totalTime": 85, "servings": 6, "calories": 420,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 148, "title": "Chickpea Curry",
+    "instructions": "Sauté onion, garlic and ginger. Add curry powder, cumin, turmeric and paprika, toast 1 min. Add canned tomatoes and chickpeas. Pour in coconut milk. Simmer 20 min. Serve with rice.",
+    "difficulty": "easy", "cuisine": "asian", "category": "dinner", "creatorId": 2,
+    "prepTime": 10, "cookTime": 25, "totalTime": 35, "servings": 4, "calories": 380,
+    "tags": ["healthy", "vegan", "spicy", "high-protein"], "allergens": []
+  },
+  {
+    "recipeId": 149, "title": "Banana Bread",
+    "instructions": "Mash overripe bananas. Mix with melted butter, sugar, beaten egg and vanilla. Fold in flour and baking soda. Pour into loaf pan, bake 175C 55 min. Cool 15 min before slicing.",
+    "difficulty": "medium", "cuisine": "american", "category": "snack", "creatorId": 3,
+    "prepTime": 15, "cookTime": 55, "totalTime": 70, "servings": 10, "calories": 210,
+    "tags": ["easy", "comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 150, "title": "Quinoa Buddha Bowl",
+    "instructions": "Cook quinoa. Roast sweet potato and broccoli with olive oil 25 min. Prepare tahini dressing with lemon and garlic. Assemble bowl with quinoa, roasted vegetables, chickpeas, avocado and dressing.",
+    "difficulty": "easy", "cuisine": "american", "category": "lunch", "creatorId": 3,
+    "prepTime": 15, "cookTime": 25, "totalTime": 40, "servings": 4, "calories": 420,
+    "tags": ["healthy", "vegan", "high-protein"], "allergens": ["nuts"]
+  },
+  {
+    "recipeId": 151, "title": "Tuna Poke Bowl",
+    "instructions": "Cube sushi-grade tuna. Marinate with soy sauce, sesame oil, ginger and green onion 15 min. Serve over seasoned sushi rice with cucumber, avocado, edamame and sesame seeds.",
+    "difficulty": "medium", "cuisine": "asian", "category": "lunch", "creatorId": 3,
+    "prepTime": 20, "cookTime": 20, "totalTime": 40, "servings": 2, "calories": 490,
+    "tags": ["healthy", "high-protein", "low-carb"], "allergens": ["soy", "nuts"]
+  },
+  {
+    "recipeId": 152, "title": "Lamb Chops with Rosemary",
+    "instructions": "Marinate lamb chops with rosemary, garlic, olive oil, salt and pepper 1 hour. Sear in very hot cast iron 3 min per side for medium-rare. Rest 5 min before serving.",
+    "difficulty": "medium", "cuisine": "italian", "category": "dinner", "creatorId": 3,
+    "prepTime": 65, "cookTime": 10, "totalTime": 75, "servings": 4, "calories": 520,
+    "tags": ["high-protein", "low-carb"], "allergens": []
+  },
+  {
+    "recipeId": 153, "title": "Carrot Ginger Soup",
+    "instructions": "Sauté onion and garlic. Add carrots, fresh ginger and vegetable broth. Simmer 25 min until carrots are tender. Blend until smooth. Stir in coconut milk. Season with salt and lime juice.",
+    "difficulty": "easy", "cuisine": "asian", "category": "dinner", "creatorId": 3,
+    "prepTime": 15, "cookTime": 30, "totalTime": 45, "servings": 4, "calories": 190,
+    "tags": ["healthy", "vegan", "low-carb"], "allergens": []
+  },
+  {
+    "recipeId": 154, "title": "Pumpkin Soup",
+    "instructions": "Roast butternut squash halves 40 min at 200C. Scoop flesh, blend with sautéed onion, garlic, vegetable broth, coconut milk and nutmeg until smooth. Adjust seasoning, serve warm.",
+    "difficulty": "easy", "cuisine": "american", "category": "dinner", "creatorId": 32,
+    "prepTime": 10, "cookTime": 50, "totalTime": 60, "servings": 4, "calories": 220,
+    "tags": ["healthy", "vegan", "comfort-food"], "allergens": []
+  },
+  {
+    "recipeId": 155, "title": "Overnight Oats",
+    "instructions": "Combine oats, chia seeds, milk and honey in a jar. Stir well. Cover and refrigerate overnight. In the morning top with fresh berries, sliced banana and almond butter.",
+    "difficulty": "easy", "cuisine": "american", "category": "breakfast", "creatorId": 32,
+    "prepTime": 5, "cookTime": 0, "totalTime": 5, "servings": 1, "calories": 380,
+    "tags": ["easy", "healthy", "high-protein"], "allergens": ["nuts"]
+  },
+  {
+    "recipeId": 156, "title": "Waffles",
+    "instructions": "Whisk flour, baking powder, sugar and salt. Beat egg yolks with milk and butter, fold into dry. Fold in stiffly beaten egg whites. Cook in preheated waffle iron 4-5 min. Serve with maple syrup and berries.",
+    "difficulty": "easy", "cuisine": "american", "category": "breakfast", "creatorId": 32,
+    "prepTime": 15, "cookTime": 20, "totalTime": 35, "servings": 4, "calories": 360,
+    "tags": ["easy", "comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 157, "title": "Potato Gnocchi",
+    "instructions": "Boil potatoes, peel and rice while hot. Cool. Mix with flour, egg and salt until just combined. Roll into ropes, cut into pillows. Boil in salted water until they float. Toss with browned butter and sage.",
+    "difficulty": "hard", "cuisine": "italian", "category": "dinner", "creatorId": 32,
+    "prepTime": 45, "cookTime": 20, "totalTime": 65, "servings": 4, "calories": 440,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 158, "title": "Stuffed Bell Peppers",
+    "instructions": "Cut tops off bell peppers, remove seeds. Brown ground beef with onion, garlic, rice and tomato sauce. Fill peppers with beef mixture. Replace tops, bake 180C 45 min. Top with cheese last 10 min.",
+    "difficulty": "medium", "cuisine": "american", "category": "dinner", "creatorId": 1,
+    "prepTime": 20, "cookTime": 50, "totalTime": 70, "servings": 4, "calories": 460,
+    "tags": ["comfort-food", "high-protein"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 159, "title": "French Onion Soup",
+    "instructions": "Caramelize sliced onions in butter 45 min over low heat. Add thyme, bay leaves and beef broth. Simmer 20 min. Pour into oven-safe bowls, top with toasted baguette and gruyère. Broil until bubbly.",
+    "difficulty": "medium", "cuisine": "american", "category": "dinner", "creatorId": 1,
+    "prepTime": 15, "cookTime": 70, "totalTime": 85, "servings": 6, "calories": 340,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 160, "title": "Spicy Tuna Roll",
+    "instructions": "Cook and season sushi rice with rice vinegar, sugar and salt. Spread on nori sheet. Layer with tuna mixed with sriracha and mayo. Roll tightly using bamboo mat. Slice with wet knife. Serve with soy sauce.",
+    "difficulty": "medium", "cuisine": "asian", "category": "lunch", "creatorId": 5,
+    "prepTime": 40, "cookTime": 20, "totalTime": 60, "servings": 4, "calories": 320,
+    "tags": ["spicy", "high-protein"], "allergens": ["soy"]
+  },
+  {
+    "recipeId": 161, "title": "Mango Lassi",
+    "instructions": "Blend ripe mango pulp with yogurt, milk, sugar and a pinch of cardamom until smooth. Adjust sweetness. Serve cold over ice with a sprinkle of cardamom.",
+    "difficulty": "easy", "cuisine": "asian", "category": "snack", "creatorId": 5,
+    "prepTime": 5, "cookTime": 0, "totalTime": 5, "servings": 2, "calories": 230,
+    "tags": ["quick", "easy", "healthy"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 162, "title": "Turkey Meatballs in Marinara",
+    "instructions": "Mix ground turkey with breadcrumbs, egg, garlic, parsley and parmesan. Roll into balls. Brown in pan 2 min per side. Simmer in tomato sauce 20 min. Serve over pasta or with crusty bread.",
+    "difficulty": "medium", "cuisine": "american", "category": "dinner", "creatorId": 7,
+    "prepTime": 20, "cookTime": 30, "totalTime": 50, "servings": 6, "calories": 380,
+    "tags": ["high-protein", "comfort-food"], "allergens": ["gluten", "eggs", "dairy"]
+  },
+  {
+    "recipeId": 163, "title": "Pesto Pasta",
+    "instructions": "Blend fresh basil, pine nuts, garlic, parmesan and olive oil until smooth pesto. Cook pasta al dente, reserve 1 cup pasta water. Toss hot pasta with pesto, adding pasta water to loosen.",
+    "difficulty": "easy", "cuisine": "italian", "category": "dinner", "creatorId": 8,
+    "prepTime": 15, "cookTime": 12, "totalTime": 27, "servings": 4, "calories": 520,
+    "tags": ["quick", "easy", "comfort-food"], "allergens": ["gluten", "dairy", "nuts"]
+  },
+  {
+    "recipeId": 164, "title": "Beet Salad with Feta",
+    "instructions": "Roast beets wrapped in foil 60 min at 200C. Peel and slice. Arrange on plate with mixed greens, crumbled feta, candied walnuts and orange segments. Dress with balsamic vinaigrette.",
+    "difficulty": "easy", "cuisine": "american", "category": "lunch", "creatorId": 9,
+    "prepTime": 10, "cookTime": 60, "totalTime": 70, "servings": 4, "calories": 260,
+    "tags": ["healthy", "low-carb"], "allergens": ["dairy", "nuts"]
+  },
+  {
+    "recipeId": 165, "title": "Pad Thai",
+    "instructions": "Soak rice noodles 30 min. Fry garlic and shallots in wok. Add shrimp or tofu, push aside, scramble eggs. Add drained noodles, pad thai sauce, bean sprouts and green onions. Toss until coated. Top with peanuts and lime.",
+    "difficulty": "medium", "cuisine": "asian", "category": "dinner", "creatorId": 9,
+    "prepTime": 35, "cookTime": 15, "totalTime": 50, "servings": 4, "calories": 550,
+    "tags": ["comfort-food", "spicy"], "allergens": ["soy", "eggs", "nuts"]
+  },
+  {
+    "recipeId": 166, "title": "Matcha Latte Cake",
+    "instructions": "Cream butter and sugar. Beat in eggs one at a time. Fold in flour, baking powder, matcha powder and milk. Pour into cake tin, bake 175C 30 min. Frost with matcha buttercream made from butter, powdered sugar and matcha.",
+    "difficulty": "hard", "cuisine": "asian", "category": "dessert", "creatorId": 32,
+    "prepTime": 25, "cookTime": 30, "totalTime": 55, "servings": 10, "calories": 340,
+    "tags": ["comfort-food"], "allergens": ["gluten", "dairy", "eggs"]
+  },
+  {
+    "recipeId": 167, "title": "Shakshuka with Feta",
+    "instructions": "Sauté onion and bell pepper. Add garlic, cumin, paprika and smoked paprika. Pour in crushed tomatoes, simmer 10 min. Crumble feta over sauce. Make wells, crack in eggs, cover and cook 8 min.",
+    "difficulty": "easy", "cuisine": "israeli", "category": "breakfast", "creatorId": 1,
+    "prepTime": 10, "cookTime": 20, "totalTime": 30, "servings": 4, "calories": 240,
+    "tags": ["quick", "healthy", "spicy"], "allergens": ["eggs", "dairy"]
+  },
+  {
+    "recipeId": 168, "title": "Beef Stew",
+    "instructions": "Brown beef chunks. Sauté onion, carrot and celery. Add garlic, tomato paste, red wine and beef broth. Return beef, add potatoes and thyme. Braise 2 hours at 160C until tender.",
+    "difficulty": "hard", "cuisine": "american", "category": "dinner", "creatorId": 1,
+    "prepTime": 25, "cookTime": 120, "totalTime": 145, "servings": 6, "calories": 560,
+    "tags": ["comfort-food", "high-protein"], "allergens": []
+  },
+  {
+    "recipeId": 169, "title": "Dim Sum Shrimp Dumplings",
+    "instructions": "Make dough with wheat starch and boiling water. Rest 20 min. Make filling: minced shrimp with bamboo shoots, sesame oil, soy sauce and cornstarch. Wrap in small circles of dough. Steam 8 min.",
+    "difficulty": "hard", "cuisine": "asian", "category": "snack", "creatorId": 7,
+    "prepTime": 60, "cookTime": 10, "totalTime": 70, "servings": 6, "calories": 280,
+    "tags": ["high-protein"], "allergens": ["gluten", "soy"]
+  },
+  {
+    "recipeId": 170, "title": "Kung Pao Chicken",
+    "instructions": "Marinate chicken with soy sauce and cornstarch. Stir-fry with dried chilies and Sichuan peppercorns. Add garlic and ginger. Add sauce: soy sauce, vinegar, sugar and cornstarch. Toss with peanuts and green onion.",
+    "difficulty": "medium", "cuisine": "asian", "category": "dinner", "creatorId": 7,
+    "prepTime": 20, "cookTime": 15, "totalTime": 35, "servings": 4, "calories": 480,
+    "tags": ["spicy", "high-protein"], "allergens": ["soy", "nuts"]
+  },
+  {
+    "recipeId": 171, "title": "Salsa Verde",
+    "instructions": "Char tomatillos and jalapeños under broiler 5 min. Blend with garlic, onion, fresh cilantro and lime juice. Season with salt. Serve as dip or sauce.",
+    "difficulty": "easy", "cuisine": "mexican", "category": "snack", "creatorId": 8,
+    "prepTime": 10, "cookTime": 5, "totalTime": 15, "servings": 8, "calories": 35,
+    "tags": ["quick", "easy", "healthy", "vegan", "low-carb", "spicy"], "allergens": []
+  },
+  {
+    "recipeId": 172, "title": "Chili Con Carne",
+    "instructions": "Brown ground beef. Sauté onion, bell peppers and garlic. Add chili powder, cumin and smoked paprika. Stir in crushed tomatoes, kidney beans and beef broth. Simmer 40 min. Serve with sour cream and cheese.",
+    "difficulty": "medium", "cuisine": "mexican", "category": "dinner", "creatorId": 8,
+    "prepTime": 15, "cookTime": 50, "totalTime": 65, "servings": 6, "calories": 490,
+    "tags": ["spicy", "comfort-food", "high-protein"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 173, "title": "Osso Buco",
+    "instructions": "Flour veal shanks, brown in olive oil. Sauté onion, carrot and celery. Deglaze with white wine. Add crushed tomatoes and beef broth. Braise 2.5 hours at 160C. Top with gremolata of lemon zest, garlic and parsley.",
+    "difficulty": "hard", "cuisine": "italian", "category": "dinner", "creatorId": 7,
+    "prepTime": 20, "cookTime": 150, "totalTime": 170, "servings": 4, "calories": 640,
+    "tags": ["comfort-food", "high-protein"], "allergens": ["gluten"]
+  },
+  {
+    "recipeId": 174, "title": "Panna Cotta",
+    "instructions": "Bloom gelatin in cold water. Warm heavy cream with sugar and vanilla until sugar dissolves. Stir in gelatin until dissolved. Pour into molds, refrigerate 4 hours. Unmold, serve with berry coulis.",
+    "difficulty": "medium", "cuisine": "italian", "category": "dessert", "creatorId": 8,
+    "prepTime": 15, "cookTime": 10, "totalTime": 25, "servings": 6, "calories": 310,
+    "tags": ["easy"], "allergens": ["dairy"]
+  },
+  {
+    "recipeId": 175, "title": "Clam Chowder",
+    "instructions": "Cook bacon until crisp. Sauté onion and celery. Add potatoes, clam juice and broth. Simmer 15 min until potatoes are tender. Add clams and heavy cream. Do not boil after adding cream. Serve with oyster crackers.",
+    "difficulty": "medium", "cuisine": "american", "category": "dinner", "creatorId": 10,
+    "prepTime": 15, "cookTime": 30, "totalTime": 45, "servings": 6, "calories": 420,
+    "tags": ["comfort-food"], "allergens": ["dairy", "gluten"]
+  },
+  {
+    "recipeId": 176, "title": "Grilled Cheese Sandwich",
+    "instructions": "Butter outside of bread slices generously. Layer cheddar and gruyère between slices. Cook in pan over medium-low heat 3-4 min per side until golden and cheese is melted.",
+    "difficulty": "easy", "cuisine": "american", "category": "snack", "creatorId": 10,
+    "prepTime": 5, "cookTime": 8, "totalTime": 13, "servings": 1, "calories": 440,
+    "tags": ["quick", "easy", "comfort-food"], "allergens": ["gluten", "dairy"]
+  },
+  {
+    "recipeId": 177, "title": "Vegetable Fried Rice",
+    "instructions": "Use day-old rice. Scramble eggs in wok, set aside. Stir-fry garlic, frozen peas, corn and carrots. Add rice, stir-fry 3 min. Add soy sauce and sesame oil. Return eggs, toss everything together with green onions.",
+    "difficulty": "easy", "cuisine": "asian", "category": "dinner", "creatorId": 11,
+    "prepTime": 10, "cookTime": 15, "totalTime": 25, "servings": 4, "calories": 390,
+    "tags": ["quick", "easy", "healthy"], "allergens": ["soy", "eggs"]
   }
 ]

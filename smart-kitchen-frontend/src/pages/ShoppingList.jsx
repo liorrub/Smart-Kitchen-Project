@@ -6,6 +6,7 @@ import axios from "axios";
 import CreateProductModal from "../components/CreateProduct";
 import CreateProductButton from "../components/CreateProductButton";
 import CustomSelect from "../components/CustomSelect";
+import IngredientPicker from "../components/IngredientPicker";
 import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
@@ -151,20 +152,6 @@ function ShoppingList() {
             setStoreRecommendations([]);
         }
     }
-
-    // Build ingredient dropdown options with a default placeholder as the first entry.
-    const ingredientOptions = useMemo(() => {
-        return [
-            {
-                value: "",
-                label: "Choose ingredient"
-            },
-            ...ingredients.map((ingredient) => ({
-                value: String(ingredient.ingredientId),
-                label: ingredient.name
-            }))
-        ];
-    }, [ingredients]);
 
     // Apply the active completion filter (all / active / completed) to the shopping items list.
     const visibleItems = useMemo(() => {
@@ -547,12 +534,13 @@ function ShoppingList() {
                     noValidate
                 >
                     <div className="shopping-form-grid">
-                        <CustomSelect
+                        <IngredientPicker
                             label="Ingredient"
                             name="ingredientId"
                             value={formData.ingredientId}
-                            options={ingredientOptions}
                             onChange={handleChange}
+                            ingredients={ingredients}
+                            placeholder="Search ingredient..."
                         />
 
                         <FormField

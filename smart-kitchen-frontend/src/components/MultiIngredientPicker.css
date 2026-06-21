@@ -1,0 +1,267 @@
+/* ==========================================================================
+   Multi-Ingredient Picker — collapsible multi-select dropdown
+   Matches the AI Assistant green palette.
+   ========================================================================== */
+
+.multi-picker {
+    position: relative;
+    width: 100%;
+}
+
+/* ── Trigger / search input ── */
+
+.multi-picker-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.multi-picker-input {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 40px 0 16px;
+    box-sizing: border-box;
+
+    border: 1px solid #d9ead4;
+    border-radius: 12px;
+
+    background: #fffefa;
+    color: #1f3d2b;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    outline: none;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow   0.18s ease;
+}
+
+.multi-picker-input:focus,
+.multi-picker-input--open {
+    border-color: #46ae6b;
+    box-shadow: 0 0 0 3px rgba(70, 174, 107, 0.15);
+}
+
+.multi-picker-input::placeholder {
+    color: #9ab0a1;
+    font-weight: 500;
+}
+
+/* ── Small arrow indicator ── */
+
+.multi-picker-arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    color: #46ae6b;
+
+    font-size: 12px;
+    line-height: 1;
+
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ── Dropdown ── */
+
+.multi-picker-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 100000;
+
+    max-height: 240px;
+    padding: 8px;
+    overflow-y: auto;
+
+    border: 1px solid #8bd5ae;
+    border-radius: 14px;
+
+    background: rgba(246, 251, 245, 0.98);
+
+    box-shadow: 0 16px 36px rgba(31, 61, 43, 0.18);
+}
+
+/* ── Dropdown option ── */
+
+.multi-picker-option {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: transparent;
+    color: #2a7545;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color      0.15s ease;
+}
+
+.multi-picker-option:hover,
+.multi-picker-option--highlighted {
+    background: #d9fdda;
+    color: #1f7a3c;
+}
+
+.multi-picker-option--selected {
+    color: #46ae6b;
+}
+
+.multi-picker-option--selected:hover,
+.multi-picker-option--selected.multi-picker-option--highlighted {
+    background: #d9fdda;
+    color: #2a7545;
+}
+
+/* ── Checkmark cell ── */
+
+.multi-picker-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+    flex-shrink: 0;
+
+    font-size: 14px;
+    font-weight: 900;
+    color: #46ae6b;
+}
+
+/* ── No-results message ── */
+
+.multi-picker-empty {
+    padding: 14px 16px;
+
+    color: #9ab0a1;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* ── Selected chips row ── */
+
+.multi-picker-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+.multi-picker-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 4px 10px 4px 12px;
+
+    border: 1px solid #8bd5ae;
+    border-radius: 999px;
+
+    background: #e8faf0;
+    color: #2a7545;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.multi-picker-chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+    height: 18px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #2a7545;
+
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color      0.15s ease;
+}
+
+.multi-picker-chip-remove:hover {
+    background: #ffd7d7;
+    color: #c44;
+}
+
+/* ── Clear all button ── */
+
+.multi-picker-clear-all {
+    padding: 4px 12px;
+
+    border: 1px solid #d6d2c4;
+    border-radius: 999px;
+
+    background: transparent;
+    color: #9ab0a1;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.15s ease,
+        color        0.15s ease;
+}
+
+.multi-picker-clear-all:hover {
+    border-color: #c44;
+    color: #c44;
+}
+
+/* ── Scrollbar (matches app-wide green scrollbar) ── */
+
+.multi-picker-dropdown::-webkit-scrollbar {
+    width: 7px;
+}
+
+.multi-picker-dropdown::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: #e9fbe5;
+}
+
+.multi-picker-dropdown::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #9edb91;
+}
+
+.multi-picker-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #67d656;
+}
