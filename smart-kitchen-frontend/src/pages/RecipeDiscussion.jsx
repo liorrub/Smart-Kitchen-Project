@@ -1,8 +1,8 @@
 import "./RecipeDiscussion.css";
 import "../components/MessageModal.css";
 
-import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 
 import CommentItem from "../components/CommentItem";
 import CommentInput from "../components/CommentInput";
@@ -10,7 +10,7 @@ import AppButton from "../components/AppButton";
 
 import { getRecipeById } from "../services/recipeService";
 import { getComments } from "../services/recipeCommentsService";
-import { connectSocket, disconnectSocket } from "../services/socketService";
+import { connectSocket } from "../services/socketService";
 import { useAuth } from "../context/AuthContext";
 import { formatText } from "../utils/formatUtils";
 
@@ -31,6 +31,10 @@ function getCategoryClass(category) {
 function RecipeDiscussion() {
     const { id: recipeId } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const targetCommentId = searchParams.get("commentId")
+        ? Number(searchParams.get("commentId"))
+        : null;
 
     // Read from AuthContext (React state) — not from localStorage.
     // AuthContext is initialized once per tab, so switching users in another tab
@@ -48,6 +52,7 @@ function RecipeDiscussion() {
     // Comment pending delete confirmation — null or the full comment object
     const [confirmDeleteComment, setConfirmDeleteComment] = useState(null);
     const [socketError, setSocketError] = useState(null);
+    const [commentNotFound, setCommentNotFound] = useState(false);
 
     const socketRef = useRef(null);
 
@@ -62,14 +67,40 @@ function RecipeDiscussion() {
                 ]);
                 setRecipe(recipeData);
                 setComments(Array.isArray(commentsData) ? commentsData : []);
-            } catch {
-                setError("Failed to load recipe discussion.");
+            } catch (err) {
+                const status = err?.response?.status;
+                if (status === 404) {
+                    setError("This recipe discussion is no longer available.");
+                } else {
+                    setError("Failed to load recipe discussion.");
+                }
             } finally {
                 setLoading(false);
             }
         }
         loadData();
     }, [recipeId]);
+
+    // After comments load, scroll to and highlight the target comment (from ?commentId=).
+    // Uses useCallback so the effect dep array is stable across renders.
+    const scrollToComment = useCallback(() => {
+        if (!targetCommentId || loading) return;
+        const el = document.getElementById(`comment-${targetCommentId}`);
+        if (!el) {
+            // Comment was deleted or doesn't exist — show a friendly banner
+            setCommentNotFound(true);
+            return;
+        }
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("comment-highlight");
+        const timer = setTimeout(() => el.classList.remove("comment-highlight"), 3000);
+        return () => clearTimeout(timer);
+    }, [targetCommentId, loading]);
+
+    useEffect(() => {
+        const cleanup = scrollToComment();
+        return cleanup;
+    }, [scrollToComment]);
 
     // Connect to Socket.IO, join the recipe room, and listen for real-time events.
     // Cleanup leaves the room and disconnects on unmount.
@@ -139,7 +170,7 @@ function RecipeDiscussion() {
             socket.off("userTyping");
             socket.off("userStoppedTyping");
             socket.off("commentError");
-            disconnectSocket();
+            // Socket lifecycle is managed by NotificationContext; do not disconnect here
         };
     }, [recipeId, currentUser?.userId]);
 
@@ -198,7 +229,16 @@ function RecipeDiscussion() {
     if (error || !recipe) {
         return (
             <div className="discussion-page">
-                <p className="discussion-error">{error || "Recipe not found."}</p>
+                <div className="discussion-unavailable">
+                    <p className="discussion-error">{error || "Recipe not found."}</p>
+                    <button
+                        type="button"
+                        className="discussion-back-btn"
+                        onClick={() => navigate(-1)}
+                    >
+                        ← Go Back
+                    </button>
+                </div>
             </div>
         );
     }
@@ -280,6 +320,13 @@ function RecipeDiscussion() {
                 {/* Error banner for rejected socket actions (auto-dismisses) */}
                 {socketError && (
                     <div className="discussion-socket-error">{socketError}</div>
+                )}
+
+                {/* Friendly notice when the linked comment was deleted */}
+                {commentNotFound && (
+                    <div className="discussion-comment-missing">
+                        This comment is no longer available.
+                    </div>
                 )}
 
                 {/* Comment list: top-level comments followed by their indented replies */}

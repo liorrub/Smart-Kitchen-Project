@@ -1,12 +1,13 @@
 import "./Navbar.css";
 
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import logo from "../assets/logo.png";
 import { logout } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 import { getStoredUser } from "../utils/authUtils";
+import NotificationBell from "./NotificationBell";
 
 const menuLinks = [
     {
@@ -32,14 +33,6 @@ const menuLinks = [
     {
         to: "/ai-assistant",
         label: "AI Assistant"
-    },
-    {
-        to: "/discover",
-        label: "Discover"
-    },
-    {
-        to: "/feed",
-        label: "My Feed"
     }
 ];
 
@@ -70,11 +63,13 @@ function Navbar() {
     return (
         <header className="navbar">
             <div className="navbar-brand">
-                <img
-                    src={logo}
-                    alt="Smart Kitchen"
-                    className="navbar-logo-image"
-                />
+                <Link to="/feed" aria-label="Go to Feed">
+                    <img
+                        src={logo}
+                        alt="Smart Kitchen"
+                        className="navbar-logo-image"
+                    />
+                </Link>
             </div>
 
             <nav className="navbar-links">
@@ -85,6 +80,15 @@ function Navbar() {
                     }
                 >
                     Dashboard
+                </NavLink>
+
+                <NavLink
+                    to="/feed"
+                    className={({ isActive }) =>
+                        isActive ? "navbar-link active" : "navbar-link"
+                    }
+                >
+                    Feed
                 </NavLink>
 
                 <div className="navbar-menu-wrapper">
@@ -142,6 +146,8 @@ function Navbar() {
                     <span>Welcome</span>
                     <strong>{user?.firstName || "User"}</strong>
                 </NavLink>
+
+                <NotificationBell />
 
                 <button
                     type="button"

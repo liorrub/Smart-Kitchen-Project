@@ -3,10 +3,14 @@ import "@testing-library/jest-dom";
 
 import * as followService from "../services/followService";
 import * as likeService from "../services/likeService";
+import * as discoverService from "../services/discoverService";
+import * as favoritesService from "../services/favoritesService";
 import * as AuthContext from "../context/AuthContext";
 
 jest.mock("../services/followService");
 jest.mock("../services/likeService");
+jest.mock("../services/discoverService");
+jest.mock("../services/favoritesService");
 jest.mock("../context/AuthContext");
 
 const mockNavigate = jest.fn();
@@ -26,15 +30,13 @@ beforeAll(async () => {
 
 const MOCK_USER = { userId: 3, firstName: "Daniel", lastName: "Cohen", userRole: "user" };
 
-function renderFeed() {
-    const { render: rtlRender } = require("@testing-library/react");
-    return rtlRender(<Feed />);
-}
-
 describe("Feed page", () => {
     beforeEach(() => {
         AuthContext.useAuth.mockReturnValue({ user: MOCK_USER });
         likeService.getUserLikedRecipeIds.mockResolvedValue([]);
+        followService.getFollowing.mockResolvedValue([]);
+        discoverService.getDiscoverCreators.mockResolvedValue([]);
+        favoritesService.getUserFavorites.mockResolvedValue([]);
         mockNavigate.mockClear();
     });
 
@@ -54,7 +56,7 @@ describe("Feed page", () => {
         await waitFor(() =>
             expect(screen.getByText(/your feed is empty/i)).toBeInTheDocument()
         );
-        expect(screen.getByRole("link", { name: /browse recipes/i })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /discover creators/i })).toBeInTheDocument();
     });
 
     it("shows error state when feed request fails", async () => {

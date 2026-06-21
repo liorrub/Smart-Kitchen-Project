@@ -2,6 +2,7 @@
 
 const { successResponse, errorResponse } = require("../utils/responseHelper");
 const { getUserById } = require("../models/usersModel");
+const { notify } = require("../services/notificationService");
 const {
     followUser,
     unfollowUser,
@@ -63,6 +64,17 @@ async function follow(req, res, next) {
             getFollowerCount(followeeId),
             getFollowingCount(followeeId)
         ]);
+
+        // Notify followee (fire-and-forget; follow action succeeds regardless)
+        const follower = req.authUser;
+        notify({
+            userId: followeeId,
+            type: "follow",
+            message: `${follower.firstName} ${follower.lastName} started following you.`,
+            sourceUserId: followerId,
+            entityId: followerId,
+            entityType: "user"
+        }).catch(err => console.error("[notification] follow trigger failed:", err.message));
 
         return successResponse(res, 201, {
             followeeId,

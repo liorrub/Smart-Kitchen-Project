@@ -31,22 +31,17 @@
     border-color: #3a9a5c;
 }
 
-/* Already following */
+/* Already following — neutral outlined state */
 .follow-btn--following {
     background: transparent;
     color: #46ae6b;
 }
 
-.follow-btn--following:hover {
+/* Hover / focus while following — switches to red warning via React state */
+.follow-btn--unfollow {
     background: #fff4f4;
     border-color: #c44;
     color: #c44;
-}
-
-.follow-btn--following:hover::before {
-    content: "Unfollow";
-    /* override the button text via CSS isn't possible —
-       the text swap is handled in JSX on hover via CSS class change */
 }
 
 /* Loading state */

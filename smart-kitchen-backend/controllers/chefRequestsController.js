@@ -10,6 +10,7 @@ const {
 
 const { sequelize, User, ChefRequest } = require("../models/index");
 const { successResponse, errorResponse } = require("../utils/responseHelper");
+const { notify } = require("../services/notificationService");
 
 // req.authUser is guaranteed by authorize() on this route.
 // Only reason is accepted from the client; userId comes from the authenticated session.
@@ -108,6 +109,17 @@ async function approveChefRequest(req, res, next) {
             return errorResponse(res, 400, "INVALID_STATUS", statusError);
         }
         const updatedRequest = await getChefRequestById(requestId);
+
+        // Notify the requesting user after the transaction has committed
+        notify({
+            userId: updatedRequest.userId,
+            type: "chef_approved",
+            message: "Your chef request has been approved! You are now a chef.",
+            sourceUserId: adminId,
+            entityId: requestId,
+            entityType: "chef_request"
+        }).catch(err => console.error("[notification] chef_approved trigger failed:", err.message));
+
         return successResponse(res, 200, updatedRequest);
     } catch (error) {
         next(error);
@@ -148,6 +160,17 @@ async function rejectChefRequest(req, res, next) {
             return errorResponse(res, 400, "INVALID_STATUS", statusError);
         }
         const updatedRequest = await getChefRequestById(requestId);
+
+        // Notify the requesting user after the transaction has committed
+        notify({
+            userId: updatedRequest.userId,
+            type: "chef_rejected",
+            message: "Your chef request has been reviewed and was not approved at this time.",
+            sourceUserId: adminId,
+            entityId: requestId,
+            entityType: "chef_request"
+        }).catch(err => console.error("[notification] chef_rejected trigger failed:", err.message));
+
         return successResponse(res, 200, updatedRequest);
     } catch (error) {
         next(error);

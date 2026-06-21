@@ -5,7 +5,8 @@
 // joining/leaving rooms, sending comments, and typing indicators.
 
 const { getUserById } = require("../models/usersModel");
-const { RecipeComment, User } = require("../models");
+const { RecipeComment, Recipe, User } = require("../models");
+const { notify } = require("../services/notificationService");
 
 // Count unique users in a room by collecting distinct userIds across all sockets.
 // A user with multiple tabs open is counted only once.
@@ -99,6 +100,69 @@ function registerRecipeDiscussion(io) {
                 const room = `recipe-${recipeId}`;
                 io.to(room).emit("newRecipeComment", fullComment);
                 console.log(`[socket] sendRecipeComment: userId=${userId} posted commentId=${comment.commentId} in recipe-${recipeId}`);
+
+                // Fire notification triggers after broadcast; tracked to avoid duplicates
+                const authorName = `${socket.authUser.firstName} ${socket.authUser.lastName}`;
+                const notifiedUserIds = new Set();
+
+                // Top-level comment only: notify the recipe creator
+                if (!parentCommentId) {
+                    try {
+                        const recipe = await Recipe.findByPk(recipeId, { attributes: ["creatorId"] });
+                        if (recipe && recipe.creatorId !== socket.authUser.userId) {
+                            await notify({
+                                userId: recipe.creatorId,
+                                type: "recipe_comment",
+                                message: `${authorName} commented on your recipe.`,
+                                sourceUserId: socket.authUser.userId,
+                                entityId: recipeId,
+                                entityType: "recipe",
+                                commentId: comment.commentId
+                            });
+                            notifiedUserIds.add(recipe.creatorId);
+                        }
+                    } catch (err) {
+                        console.error("[notification] recipe_comment trigger failed:", err.message);
+                    }
+                }
+
+                if (parentCommentId) {
+                    try {
+                        const parent = await RecipeComment.findByPk(parentCommentId, {
+                            attributes: ["userId"]
+                        });
+                        if (parent && parent.userId !== socket.authUser.userId) {
+                            await notify({
+                                userId: parent.userId,
+                                type: "comment_reply",
+                                message: `${authorName} replied to your comment.`,
+                                sourceUserId: socket.authUser.userId,
+                                entityId: recipeId,
+                                entityType: "recipe",
+                                commentId: comment.commentId
+                            });
+                            notifiedUserIds.add(parent.userId);
+                        }
+                    } catch (err) {
+                        console.error("[notification] comment_reply trigger failed:", err.message);
+                    }
+                }
+
+                if (mentionedUserId && mentionedUserId !== socket.authUser.userId && !notifiedUserIds.has(mentionedUserId)) {
+                    try {
+                        await notify({
+                            userId: mentionedUserId,
+                            type: "mention",
+                            message: `${authorName} mentioned you in a comment.`,
+                            sourceUserId: socket.authUser.userId,
+                            entityId: recipeId,
+                            entityType: "recipe",
+                            commentId: comment.commentId
+                        });
+                    } catch (err) {
+                        console.error("[notification] mention trigger failed:", err.message);
+                    }
+                }
             } catch (err) {
                 console.error("[socket] sendRecipeComment error:", err.message);
             }

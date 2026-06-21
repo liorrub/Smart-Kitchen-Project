@@ -1,0 +1,85 @@
+/* Toast container — fixed bottom-right stack */
+.notif-toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    z-index: 20000;
+    pointer-events: none;
+}
+
+/* Individual toast */
+.notif-toast {
+    width: 300px;
+    padding: 12px 14px;
+    background: rgba(255, 254, 250, 0.98);
+    border: 1px solid rgba(139, 213, 174, 0.75);
+    border-left: 4px solid #2a7545;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(63, 74, 52, 0.18);
+    backdrop-filter: blur(10px);
+    pointer-events: all;
+    animation: notif-slide-in 0.28s ease;
+}
+
+@keyframes notif-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.notif-toast-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.notif-toast-type {
+    font-size: 11px;
+    font-weight: 900;
+    color: #2a7545;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.notif-toast-close {
+    border: none;
+    background: none;
+    color: #8ba99a;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 2px;
+    transition: color 0.15s ease;
+}
+
+.notif-toast-close:hover {
+    color: #1f3d2b;
+}
+
+.notif-toast-message {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1f3d2b;
+    line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+    .notif-toast-container {
+        right: 12px;
+        bottom: 12px;
+    }
+
+    .notif-toast {
+        width: calc(100vw - 48px);
+    }
+}

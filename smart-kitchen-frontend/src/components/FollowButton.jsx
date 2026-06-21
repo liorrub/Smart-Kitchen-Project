@@ -15,6 +15,9 @@ import { followUser, unfollowUser } from "../services/followService";
 function FollowButton({ targetUserId, initialIsFollowing, onFollowChange }) {
     const [isFollowing, setIsFollowing] = useState(Boolean(initialIsFollowing));
     const [loading, setLoading]         = useState(false);
+    const [isHovered, setIsHovered]     = useState(false);
+
+    const showUnfollowState = isFollowing && !loading && isHovered;
 
     async function handleClick() {
         if (loading) return;
@@ -30,28 +33,35 @@ function FollowButton({ targetUserId, initialIsFollowing, onFollowChange }) {
                 if (onFollowChange) onFollowChange(+1);
             }
         } catch (err) {
-            // Silently revert — the current state is still valid
             console.error("Follow action failed:", err);
         } finally {
             setLoading(false);
+            setIsHovered(false);
         }
     }
+
+    let buttonClass = "follow-btn ";
+    if (loading)               buttonClass += "follow-btn--loading";
+    else if (showUnfollowState) buttonClass += "follow-btn--unfollow";
+    else if (isFollowing)       buttonClass += "follow-btn--following";
+    else                        buttonClass += "follow-btn--unfollowed";
+
+    const buttonText = loading ? "Updating..." : showUnfollowState ? "Unfollow" : isFollowing ? "Following" : "Follow";
+    const ariaLabel  = isFollowing ? "Unfollow" : "Follow";
 
     return (
         <button
             type="button"
-            className={
-                loading
-                    ? "follow-btn follow-btn--loading"
-                    : isFollowing
-                        ? "follow-btn follow-btn--following"
-                        : "follow-btn follow-btn--unfollowed"
-            }
+            className={buttonClass}
             onClick={handleClick}
             disabled={loading}
-            aria-pressed={isFollowing}
+            aria-label={ariaLabel}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onFocus={() => setIsHovered(true)}
+            onBlur={() => setIsHovered(false)}
         >
-            {loading ? "..." : isFollowing ? "Following" : "Follow"}
+            {buttonText}
         </button>
     );
 }

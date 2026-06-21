@@ -296,6 +296,37 @@
     color: #cc6089;
 }
 
+.discussion-unavailable {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Friendly banner shown when the linked comment no longer exists */
+.discussion-comment-missing {
+    margin: 0 0 16px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #fff8e1;
+    border: 1px solid #f0c040;
+    color: #7a5c00;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Highlight animation triggered on scroll-to-comment */
+@keyframes comment-highlight-pulse {
+    0%   { background: rgba(70, 174, 107, 0.22); box-shadow: 0 0 0 3px rgba(70, 174, 107, 0.35); }
+    70%  { background: rgba(70, 174, 107, 0.10); box-shadow: 0 0 0 6px rgba(70, 174, 107, 0.10); }
+    100% { background: transparent; box-shadow: none; }
+}
+
+.comment-highlight {
+    animation: comment-highlight-pulse 3s ease forwards;
+    border-radius: 16px;
+}
+
 /* ==========================================================================
    Responsive
    ========================================================================== */

@@ -17,6 +17,7 @@ const Review = require("./Review");
 const ChefRequest = require("./ChefRequest");
 const RecipeLike = require("./RecipeLike");
 const UserFollow = require("./UserFollow");
+const Notification = require("./Notification");
 
 // User → Recipe (one-to-many via creatorId)
 User.hasMany(Recipe, { foreignKey: "creatorId", as: "recipes" });
@@ -239,6 +240,26 @@ UserFollow.belongsTo(User, {
     as: "followee"
 });
 
+// User → Notification (recipient — notifications sent to this user)
+User.hasMany(Notification, {
+    foreignKey: "userId",
+    as: "notifications"
+});
+Notification.belongsTo(User, {
+    foreignKey: "userId",
+    as: "recipient"
+});
+
+// User → Notification (source — notifications this user triggered)
+User.hasMany(Notification, {
+    foreignKey: "sourceUserId",
+    as: "sentNotifications"
+});
+Notification.belongsTo(User, {
+    foreignKey: "sourceUserId",
+    as: "sourceUser"
+});
+
 module.exports = {
     sequelize,
     User,
@@ -256,5 +277,6 @@ module.exports = {
     Review,
     ChefRequest,
     RecipeLike,
-    UserFollow
+    UserFollow,
+    Notification
 };

@@ -2,6 +2,7 @@
 
 const { Server } = require("socket.io");
 const { registerRecipeDiscussion } = require("./recipeDiscussion");
+const { registerNotifications } = require("./notifications");
 
 let io;
 
@@ -24,6 +25,9 @@ function initSocket(httpServer) {
 
     // Register recipe discussion events
     registerRecipeDiscussion(io);
+
+    // Register personal notification rooms
+    registerNotifications(io);
 
     console.log("[socket] Socket.IO server initialized");
 }

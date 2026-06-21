@@ -1,6 +1,7 @@
 import "./CommentItem.css";
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import AppButton from "./AppButton";
 
@@ -59,12 +60,34 @@ function CommentItem({ comment, currentUser, onReply, onEdit, onDeleteRequest, i
     }
 
     return (
-        <article className={`comment-card${isReply ? " comment-card-reply" : ""}`}>
-            <div className="comment-avatar">{initials}</div>
+        <article
+            id={`comment-${comment.commentId}`}
+            className={`comment-card${isReply ? " comment-card-reply" : ""}`}
+        >
+            {author.userId ? (
+                <Link
+                    to={`/profile/${author.userId}`}
+                    className="comment-avatar-link"
+                    aria-label={`View ${authorName}'s profile`}
+                >
+                    <div className="comment-avatar">{initials}</div>
+                </Link>
+            ) : (
+                <div className="comment-avatar">{initials}</div>
+            )}
 
             <div className="comment-body">
                 <div className="comment-header">
-                    <strong className="comment-author">{authorName}</strong>
+                    {author.userId ? (
+                        <Link
+                            to={`/profile/${author.userId}`}
+                            className="comment-author-link"
+                        >
+                            <strong className="comment-author">{authorName}</strong>
+                        </Link>
+                    ) : (
+                        <strong className="comment-author">{authorName}</strong>
+                    )}
                     <span className="comment-date">{formatDate(comment.updatedAt || comment.createdAt)}</span>
                     {comment.updatedAt && comment.updatedAt !== comment.createdAt && (
                         <span className="comment-edited">(edited)</span>

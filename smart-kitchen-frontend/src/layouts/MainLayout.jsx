@@ -6,6 +6,7 @@ import { Outlet } from "react-router-dom";
 import Footer from "../components/Footer";
 import KitchenSidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import NotificationToastContainer from "../components/NotificationToast";
 
 // Fetches the current year from worldtimeapi.org and passes it down to Footer
 function MainLayout() {
@@ -34,6 +35,7 @@ function MainLayout() {
             </main>
 
             <Footer year={year} />
+            <NotificationToastContainer />
         </div>
     );
 }
