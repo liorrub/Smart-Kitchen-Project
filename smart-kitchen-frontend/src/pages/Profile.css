@@ -162,6 +162,10 @@
 
 .profile-action-area {
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
 }
 
 .profile-edit-btn,
@@ -253,6 +257,80 @@
     text-align: center;
 }
 
+/* Clickable stat buttons (Followers / Following) */
+.profile-stat--clickable {
+    cursor: pointer;
+    transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    font-family: inherit;
+}
+
+.profile-stat--clickable:hover,
+.profile-stat--clickable.active {
+    background: #e8faf0;
+    border-color: #9edbbb;
+    box-shadow: 0 4px 12px rgba(42, 117, 69, 0.1);
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Social section (followers / following lists)
+   ========================================================================== */
+
+.profile-social-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: rgba(246, 251, 245, 0.96);
+    border: 1px solid #d8ead0;
+    border-radius: 24px;
+    padding: 24px 28px;
+}
+
+.profile-user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-user-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 1px solid #e4eddf;
+    border-radius: 14px;
+    background: #fffefa;
+    text-decoration: none;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.profile-user-row:hover {
+    background: #f2fbf4;
+    box-shadow: 0 2px 10px rgba(42, 117, 69, 0.08);
+}
+
+.profile-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #67d656, #2a7545);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.profile-user-name {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f3d2b;
+}
+
 /* ==========================================================================
    Recent recipes
    ========================================================================== */
@@ -321,6 +399,7 @@
 
     .profile-action-area {
         width: 100%;
+        align-items: flex-start;
     }
 
     .profile-edit-btn,

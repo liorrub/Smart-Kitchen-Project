@@ -16,6 +16,7 @@ const IngredientStore = require("./IngredientStore");
 const Review = require("./Review");
 const ChefRequest = require("./ChefRequest");
 const RecipeLike = require("./RecipeLike");
+const UserFollow = require("./UserFollow");
 
 // User → Recipe (one-to-many via creatorId)
 User.hasMany(Recipe, { foreignKey: "creatorId", as: "recipes" });
@@ -214,6 +215,30 @@ RecipeLike.belongsTo(Recipe, {
     foreignKey: "recipeId"
 });
 
+// User → UserFollow (as follower — rows where this user is following others)
+User.hasMany(UserFollow, {
+    foreignKey: "followerId",
+    as: "followingRelations"
+});
+
+// User → UserFollow (as followee — rows where others are following this user)
+User.hasMany(UserFollow, {
+    foreignKey: "followeeId",
+    as: "followerRelations"
+});
+
+// UserFollow → User (the person who follows)
+UserFollow.belongsTo(User, {
+    foreignKey: "followerId",
+    as: "follower"
+});
+
+// UserFollow → User (the person being followed)
+UserFollow.belongsTo(User, {
+    foreignKey: "followeeId",
+    as: "followee"
+});
+
 module.exports = {
     sequelize,
     User,
@@ -230,5 +255,6 @@ module.exports = {
     IngredientStore,
     Review,
     ChefRequest,
-    RecipeLike
+    RecipeLike,
+    UserFollow
 };

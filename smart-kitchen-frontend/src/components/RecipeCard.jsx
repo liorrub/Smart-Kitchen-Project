@@ -1,5 +1,6 @@
 import "./RecipeCard.css";
 
+import { Link } from "react-router-dom";
 import breakfastImg from "../assets/breakfast.png";
 import defaultImg from "../assets/default.png";
 import dinnerImg from "../assets/dinner.png";
@@ -50,6 +51,7 @@ function RecipeCard({
                         likeCount = 0,
                         onLikeClick,
                         likeLoading = false,
+                        showCreator = false,
                         actions
                     }) {
     const categoryImage = getCategoryImage(recipe.category);
@@ -96,6 +98,16 @@ function RecipeCard({
 
                 <div className="recipe-card-content">
                     <h3>{recipe.title}</h3>
+
+                    {showCreator && recipe.creator && (
+                        <Link
+                            to={`/profile/${recipe.creator.userId}`}
+                            className="recipe-card-creator-link"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            by {recipe.creator.firstName} {recipe.creator.lastName}
+                        </Link>
+                    )}
 
                     <div className="recipe-card-meta">
                         <span>⏱ {recipe.totalTime || 0} min</span>

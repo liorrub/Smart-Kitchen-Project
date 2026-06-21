@@ -355,11 +355,13 @@ async function deleteSingleUser(req, res, next) {
     }
 }
 
-// Public profile — no auth required, strips sensitive fields
+// Public profile — no auth required, but x-user-id header is read if present to compute isFollowedByMe.
 async function getPublicProfile(req, res, next) {
     try {
         const userId = Number(req.params.id);
-        const profile = await getUserPublicProfile(userId);
+        const viewerId = Number(req.headers["x-user-id"]) || null;
+
+        const profile = await getUserPublicProfile(userId, viewerId);
 
         if (!profile) {
             return errorResponse(res, 404, "USER_NOT_FOUND", "User not found");

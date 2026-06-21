@@ -390,3 +390,18 @@
         align-items: stretch;
     }
 }
+
+/* ── Creator attribution link ── */
+.recipe-card-creator-link {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #46ae6b;
+    text-decoration: none;
+    margin-top: -2px;
+    margin-bottom: 4px;
+}
+
+.recipe-card-creator-link:hover {
+    text-decoration: underline;
+}

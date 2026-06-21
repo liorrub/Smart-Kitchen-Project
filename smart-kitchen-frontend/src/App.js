@@ -20,6 +20,7 @@ import ChefRecipes from "./pages/ChefRecipes";
 import RecipeDiscussion from "./pages/RecipeDiscussion";
 import Profile from "./pages/Profile";
 import Discover from "./pages/Discover";
+import Feed from "./pages/Feed";
 
 function App() {
     return (
@@ -116,6 +117,11 @@ function App() {
                             <Route
                                 path="/discover"
                                 element={<Discover />}
+                            />
+
+                            <Route
+                                path="/feed"
+                                element={<Feed />}
                             />
 
                         </Route>

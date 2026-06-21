@@ -1,13 +1,15 @@
 import "./Profile.css";
 
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 import PageHero from "../components/PageHero";
 import RecipeCard from "../components/RecipeCard";
 import RecipeDetailsModal from "../components/RecipeDetailsModal";
+import FollowButton from "../components/FollowButton";
 
 import { getUserProfile } from "../services/profileService";
+import { getFollowers, getFollowing } from "../services/followService";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
@@ -32,6 +34,12 @@ const LEVEL_ICONS = {
     advanced: "⭐"
 };
 
+// Roles whose profiles show a Follow button to eligible viewers
+const FOLLOWABLE_ROLES = ["chef", "influencer"];
+
+// Roles that are allowed to follow others
+const ALLOWED_FOLLOWER_ROLES = ["user", "chef", "influencer"];
+
 function getRoleLabel(role) {
     return ROLE_LABELS[role] || role;
 }
@@ -48,13 +56,25 @@ function Profile() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [profile, setProfile] = useState(null);
+    const [profile, setProfile]         = useState(null);
     const [selectedRecipe, setSelectedRecipe] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [loading, setLoading]         = useState(true);
+    const [error, setError]             = useState("");
+    const [followerCount, setFollowerCount] = useState(0);
+    const [socialTab, setSocialTab]     = useState(null);
+    const [followers, setFollowers]     = useState([]);
+    const [following, setFollowing]     = useState([]);
 
     const currentUser = getStoredUser();
-    const isOwnProfile = currentUser?.userId === Number(id);
+    const profileUserId = Number(id);
+    const isOwnProfile = currentUser?.userId === profileUserId;
+
+    const canShowFollowButton =
+        !isOwnProfile &&
+        profile &&
+        FOLLOWABLE_ROLES.includes(profile.userRole) &&
+        currentUser &&
+        ALLOWED_FOLLOWER_ROLES.includes(currentUser.userRole);
 
     useEffect(() => {
         async function loadProfile() {
@@ -63,6 +83,7 @@ function Profile() {
                 setError("");
                 const data = await getUserProfile(id);
                 setProfile(data);
+                setFollowerCount(data.followerCount || 0);
             } catch (err) {
                 setError(getErrorMessage(err, "Failed to load profile."));
             } finally {
@@ -72,6 +93,26 @@ function Profile() {
 
         loadProfile();
     }, [id]);
+
+    useEffect(() => {
+        if (!socialTab) return;
+
+        async function loadList() {
+            try {
+                if (socialTab === "followers") {
+                    const data = await getFollowers(profileUserId);
+                    setFollowers(Array.isArray(data) ? data : []);
+                } else {
+                    const data = await getFollowing(profileUserId);
+                    setFollowing(Array.isArray(data) ? data : []);
+                }
+            } catch {
+                // non-critical
+            }
+        }
+
+        loadList();
+    }, [socialTab, profileUserId]);
 
     if (loading) {
         return (
@@ -107,7 +148,7 @@ function Profile() {
 
     const heroStats = [
         { value: profile.recipeCount, label: "Recipes" },
-        { value: profile.followerCount, label: "Followers" },
+        { value: followerCount, label: "Followers" },
         ...(isChef
             ? [{ value: profile.avgRating ?? "–", label: "Avg rating" }]
             : []),
@@ -155,7 +196,16 @@ function Profile() {
                     </div>
 
                     <div className="profile-action-area">
-                        {/* Follow button will be added in Feature 3 */}
+                        {canShowFollowButton && (
+                            <FollowButton
+                                targetUserId={profileUserId}
+                                initialIsFollowing={profile.isFollowedByMe}
+                                onFollowChange={(delta) =>
+                                    setFollowerCount(prev => prev + delta)
+                                }
+                            />
+                        )}
+
                         {isOwnProfile && (
                             <button
                                 type="button"
@@ -175,10 +225,23 @@ function Profile() {
                         <span>Recipes</span>
                     </div>
 
-                    <div className="profile-stat">
-                        <strong>{profile.followerCount}</strong>
+                    <button
+                        type="button"
+                        className={socialTab === "followers" ? "profile-stat profile-stat--clickable active" : "profile-stat profile-stat--clickable"}
+                        onClick={() => setSocialTab(prev => prev === "followers" ? null : "followers")}
+                    >
+                        <strong>{followerCount}</strong>
                         <span>Followers</span>
-                    </div>
+                    </button>
+
+                    <button
+                        type="button"
+                        className={socialTab === "following" ? "profile-stat profile-stat--clickable active" : "profile-stat profile-stat--clickable"}
+                        onClick={() => setSocialTab(prev => prev === "following" ? null : "following")}
+                    >
+                        <strong>{profile.followingCount || 0}</strong>
+                        <span>Following</span>
+                    </button>
 
                     {isChef && (
                         <>
@@ -209,6 +272,70 @@ function Profile() {
                     )}
                 </div>
             </section>
+
+            {/* Followers / Following panel — shown when a stat is clicked */}
+            {socialTab && (
+                <section className="profile-social-section">
+                    <div className="profile-section-header">
+                        <h3>{socialTab === "followers" ? "Followers" : "Following"}</h3>
+                        <button
+                            type="button"
+                            className="profile-back-btn"
+                            onClick={() => setSocialTab(null)}
+                        >
+                            Close
+                        </button>
+                    </div>
+
+                    <div className="profile-user-list">
+                        {socialTab === "followers" ? (
+                            followers.length === 0 ? (
+                                <p className="profile-empty-section">No followers yet.</p>
+                            ) : (
+                                followers.map(f => (
+                                    <Link
+                                        key={f.followId}
+                                        to={`/profile/${f.followerId}`}
+                                        className="profile-user-row"
+                                    >
+                                        <span className="profile-user-avatar">
+                                            {f.follower?.firstName?.[0]}{f.follower?.lastName?.[0]}
+                                        </span>
+                                        <span className="profile-user-name">
+                                            {f.follower?.firstName} {f.follower?.lastName}
+                                        </span>
+                                        <span className={`profile-badge ${getRoleBadgeClass(f.follower?.userRole)}`}>
+                                            {getRoleLabel(f.follower?.userRole)}
+                                        </span>
+                                    </Link>
+                                ))
+                            )
+                        ) : (
+                            following.length === 0 ? (
+                                <p className="profile-empty-section">Not following anyone yet.</p>
+                            ) : (
+                                following.map(f => (
+                                    <Link
+                                        key={f.followId}
+                                        to={`/profile/${f.followeeId}`}
+                                        className="profile-user-row"
+                                    >
+                                        <span className="profile-user-avatar">
+                                            {f.followee?.firstName?.[0]}{f.followee?.lastName?.[0]}
+                                        </span>
+                                        <span className="profile-user-name">
+                                            {f.followee?.firstName} {f.followee?.lastName}
+                                        </span>
+                                        <span className={`profile-badge ${getRoleBadgeClass(f.followee?.userRole)}`}>
+                                            {getRoleLabel(f.followee?.userRole)}
+                                        </span>
+                                    </Link>
+                                ))
+                            )
+                        )}
+                    </div>
+                </section>
+            )}
 
             {/* Recent recipes (chefs only) */}
             {showRecipes && (

@@ -1,11 +1,12 @@
 "use strict";
 
 const { Op } = require("sequelize");
-const { User, Recipe, Review, sequelize } = require("./index");
+const { User, Recipe, Review, UserFollow, sequelize } = require("./index");
 
 // Public profile aggregation — returns all stats needed for a user's profile page.
+// Pass viewerId (the logged-in user's ID) to compute isFollowedByMe; omit for unauthenticated callers.
 // No sensitive fields (email, password) are included.
-async function getUserPublicProfile(userId) {
+async function getUserPublicProfile(userId, viewerId) {
     const user = await User.findByPk(userId, {
         attributes: [
             "userId", "firstName", "lastName",
@@ -22,7 +23,9 @@ async function getUserPublicProfile(userId) {
         reviewCount,
         helpfulVotesTotal,
         avgRatingRows,
-        recentRecipes
+        recentRecipes,
+        followerCount,
+        followingCount
     ] = await Promise.all([
         Recipe.count({ where: { creatorId: userId } }),
         Review.count({ where: { userId } }),
@@ -43,10 +46,17 @@ async function getUserPublicProfile(userId) {
             ],
             order: [["recipeId", "DESC"]],
             limit: 4
-        })
+        }),
+        UserFollow.count({ where: { followeeId: userId } }),
+        UserFollow.count({ where: { followerId: userId } })
     ]);
 
     const avgRow = avgRatingRows[0] || {};
+
+    const isFollowedByMe =
+        viewerId && viewerId !== userId
+            ? (await UserFollow.findOne({ where: { followerId: viewerId, followeeId: userId } })) !== null
+            : false;
 
     return {
         ...plain,
@@ -57,7 +67,9 @@ async function getUserPublicProfile(userId) {
             ? Number(Number(avgRow.avgRating).toFixed(1))
             : null,
         totalRatings: Number(avgRow.totalRatings || 0),
-        followerCount: 0,
+        followerCount,
+        followingCount,
+        isFollowedByMe,
         recentRecipes: recentRecipes.map(r => r.toJSON())
     };
 }

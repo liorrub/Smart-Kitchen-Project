@@ -119,8 +119,28 @@ async function allowSelfOnly(req, res, next) {
     }
 }
 
+// Middleware: any authenticated caller (any role is accepted).
+// Use for endpoints that only need identity, not a specific role.
+async function requireAuth(req, res, next) {
+    try {
+        const resolved = await resolveAuthUser(req);
+        if (!resolved) {
+            return errorResponse(
+                res,
+                401,
+                "UNAUTHORIZED",
+                "Authentication is required."
+            );
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     authorize,
     allowSelfOrAdmin,
-    allowSelfOnly
+    allowSelfOnly,
+    requireAuth
 };

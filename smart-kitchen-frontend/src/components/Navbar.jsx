@@ -36,6 +36,10 @@ const menuLinks = [
     {
         to: "/discover",
         label: "Discover"
+    },
+    {
+        to: "/feed",
+        label: "My Feed"
     }
 ];
 

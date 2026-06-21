@@ -1,0 +1,58 @@
+.follow-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 96px;
+    padding: 8px 20px;
+
+    border: 2px solid #46ae6b;
+    border-radius: 999px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition:
+        background  0.18s ease,
+        color       0.18s ease,
+        border-color 0.18s ease;
+}
+
+/* Not yet following */
+.follow-btn--unfollowed {
+    background: #46ae6b;
+    color: #fff;
+}
+
+.follow-btn--unfollowed:hover {
+    background: #3a9a5c;
+    border-color: #3a9a5c;
+}
+
+/* Already following */
+.follow-btn--following {
+    background: transparent;
+    color: #46ae6b;
+}
+
+.follow-btn--following:hover {
+    background: #fff4f4;
+    border-color: #c44;
+    color: #c44;
+}
+
+.follow-btn--following:hover::before {
+    content: "Unfollow";
+    /* override the button text via CSS isn't possible —
+       the text swap is handled in JSX on hover via CSS class change */
+}
+
+/* Loading state */
+.follow-btn--loading {
+    background: #d4edd9;
+    border-color: #d4edd9;
+    color: #6ab980;
+    cursor: not-allowed;
+}
