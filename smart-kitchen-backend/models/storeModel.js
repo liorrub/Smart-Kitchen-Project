@@ -1,36 +1,46 @@
-const stores = require("../data/stores.json");
+"use strict";
 
-// Get all stores
+const { Op } = require("sequelize");
+const { Store } = require("./index");
+
+// Strips Sequelize timestamps — original Stores API never exposed createdAt or updatedAt.
+function toPlain(instance) {
+    const { createdAt, updatedAt, ...rest } = instance.get({ plain: true });
+    return rest;
+}
+
 async function getAllStores() {
-    return stores;
+    const rows = await Store.findAll({ order: [["storeId", "ASC"]] });
+    return rows.map(toPlain);
 }
 
-// Get store by ID
 async function getStoreById(storeId) {
-    return stores.find(
-        store => store.storeId === storeId
-    );
+    const instance = await Store.findByPk(storeId);
+    return instance ? toPlain(instance) : undefined;
 }
 
-// Filter stores by optional search criteria such as minimum rating
+// Filter stores by optional criteria. Currently supports minRating.
 async function getFilteredStores(filters = {}) {
-    let filteredStores = [...stores];
+    const where = {};
 
     if (filters.minRating) {
-        filteredStores = filteredStores.filter(
-            store =>
-                store.rating >= Number(filters.minRating)
-        );
+        where.rating = { [Op.gte]: Number(filters.minRating) };
     }
 
-    return filteredStores;
+    const rows = await Store.findAll({
+        where,
+        order: [["storeId", "ASC"]]
+    });
+
+    return rows.map(toPlain);
 }
 
-// Get stores by city
 async function getNearbyStoresByCity(city) {
-    return stores.filter(
-        store => store.city === city
-    );
+    const rows = await Store.findAll({
+        where: { city },
+        order: [["storeId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
 module.exports = {

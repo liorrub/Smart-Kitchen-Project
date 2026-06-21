@@ -11,6 +11,7 @@ const AiHistory = require("./AiHistory");
 const PantryItem = require("./PantryItem");
 const ShoppingListItem = require("./ShoppingListItem");
 const MealPlanItem = require("./MealPlanItem");
+const Store = require("./Store");
 
 // User → Recipe (one-to-many via creatorId)
 User.hasMany(Recipe, { foreignKey: "creatorId", as: "recipes" });
@@ -152,5 +153,6 @@ module.exports = {
     AiHistory,
     PantryItem,
     ShoppingListItem,
-    MealPlanItem
+    MealPlanItem,
+    Store
 };
