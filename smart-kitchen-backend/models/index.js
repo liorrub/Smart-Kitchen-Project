@@ -10,6 +10,7 @@ const Favorite = require("./Favorite");
 const AiHistory = require("./AiHistory");
 const PantryItem = require("./PantryItem");
 const ShoppingListItem = require("./ShoppingListItem");
+const MealPlanItem = require("./MealPlanItem");
 
 // User → Recipe (one-to-many via creatorId)
 User.hasMany(Recipe, { foreignKey: "creatorId", as: "recipes" });
@@ -131,6 +132,15 @@ ShoppingListItem.belongsTo(Ingredient, {
     as: "ingredient"
 });
 
+// User → MealPlanItem (one-to-many)
+User.hasMany(MealPlanItem, {
+    foreignKey: "userId",
+    as: "mealPlan"
+});
+MealPlanItem.belongsTo(User, {
+    foreignKey: "userId"
+});
+
 module.exports = {
     sequelize,
     User,
@@ -141,5 +151,6 @@ module.exports = {
     Favorite,
     AiHistory,
     PantryItem,
-    ShoppingListItem
+    ShoppingListItem,
+    MealPlanItem
 };

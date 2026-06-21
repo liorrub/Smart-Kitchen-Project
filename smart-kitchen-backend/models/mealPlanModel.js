@@ -1,98 +1,71 @@
-const meals = require("../data/mealPlanItem.json");
+"use strict";
 
-const { generateId } = require("../utils/idGenerator");
+const { Op, Sequelize } = require("sequelize");
+const { MealPlanItem } = require("./index");
 
-// Get meal plan for user
+// Strips Sequelize timestamps — original Meal Plan API never exposed createdAt or updatedAt.
+function toPlain(instance) {
+    const { createdAt, updatedAt, ...rest } = instance.get({ plain: true });
+    return rest;
+}
+
 async function getUserMealPlan(userId) {
-    return meals.filter(
-        meal => meal.userId === userId
-    );
+    const rows = await MealPlanItem.findAll({
+        where: { userId },
+        order: [["mealId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
-// Get meal by ID
 async function getMealById(mealId) {
-    return meals.find(
-        meal => meal.mealId === mealId
-    );
+    const instance = await MealPlanItem.findByPk(mealId);
+    return instance ? toPlain(instance) : undefined;
 }
 
-// Add meal
 async function addMeal(mealData) {
-    const newMeal = {
-        mealId: generateId(
-            meals,
-            "mealId"
-        ),
-        ...mealData
-    };
-
-    meals.push(newMeal);
-
-    return newMeal;
+    const instance = await MealPlanItem.create(mealData);
+    return toPlain(instance);
 }
 
-// Update meal
-async function updateMeal(
-    userId,
-    mealId,
-    updatedData
-) {
-    const mealIndex = meals.findIndex(
-        meal =>
-            meal.mealId === mealId &&
-            meal.userId === userId
-    );
-
-    if (mealIndex === -1) {
-        return null;
-    }
-
-    meals[mealIndex] = {
-        ...meals[mealIndex],
-        ...updatedData
-    };
-
-    return meals[mealIndex];
+async function updateMeal(userId, mealId, updatedData) {
+    const instance = await MealPlanItem.findOne({
+        where: { mealId, userId }
+    });
+    if (!instance) return null;
+    await instance.update(updatedData);
+    return toPlain(instance);
 }
 
-// Delete meal
-async function deleteMeal(
-    userId,
-    mealId
-) {
-    const mealIndex = meals.findIndex(
-        meal =>
-            meal.mealId === mealId &&
-            meal.userId === userId
-    );
-
-    if (mealIndex === -1) {
-        return false;
-    }
-
-    meals.splice(mealIndex, 1);
-
-    return true;
+async function deleteMeal(userId, mealId) {
+    const count = await MealPlanItem.destroy({
+        where: { mealId, userId }
+    });
+    return count > 0;
 }
 
-// Filter meal plan by meal type or specific date
+// Filter by mealType and/or date prefix. Unknown query params (e.g. _t) are ignored.
 async function filterMealPlan(userId, filters = {}) {
-    let filteredMeals = await getUserMealPlan(userId);
+    const where = { userId };
 
     if (filters.mealType) {
-        filteredMeals = filteredMeals.filter(
-            meal => meal.mealType === filters.mealType
-        );
+        where.mealType = filters.mealType;
     }
 
     if (filters.date) {
-        filteredMeals = filteredMeals.filter(
-            meal =>
-                meal.date.startsWith(filters.date)
+        // DATEONLY cannot use Op.like directly — Sequelize parses the value as a date.
+        // Cast the column to CHAR so MySQL performs string-prefix matching instead.
+        where[Op.and] = Sequelize.where(
+            Sequelize.cast(Sequelize.col("date"), "char"),
+            { [Op.like]: filters.date + "%" }
         );
     }
 
-    return filteredMeals;
+    const rows = await MealPlanItem.findAll({
+        where,
+        order: [["mealId", "ASC"]]
+    });
+
+    return rows.map(toPlain);
 }
 
 module.exports = {
