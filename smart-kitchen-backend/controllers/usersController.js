@@ -12,6 +12,11 @@ const {
 } = require("../models/usersModel");
 
 const {
+    getUserPublicProfile,
+    searchPublicUsers
+} = require("../models/userProfileModel");
+
+const {
     successResponse,
     errorResponse
 } = require("../utils/responseHelper");
@@ -350,11 +355,40 @@ async function deleteSingleUser(req, res, next) {
     }
 }
 
+// Public profile — no auth required, strips sensitive fields
+async function getPublicProfile(req, res, next) {
+    try {
+        const userId = Number(req.params.id);
+        const profile = await getUserPublicProfile(userId);
+
+        if (!profile) {
+            return errorResponse(res, 404, "USER_NOT_FOUND", "User not found");
+        }
+
+        return successResponse(res, 200, profile);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Search users by name / city / role — no auth required
+async function searchUsers(req, res, next) {
+    try {
+        const { q = "", role = "all" } = req.query;
+        const users = await searchPublicUsers(q.trim(), role);
+        return successResponse(res, 200, users);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     getUsers,
     getSingleUser,
     createSingleUser,
     updateSingleUser,
     changePassword,
-    deleteSingleUser
+    deleteSingleUser,
+    getPublicProfile,
+    searchUsers
 };

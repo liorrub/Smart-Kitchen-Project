@@ -28,6 +28,12 @@ router.get(
     usersController.getUsers
 );
 
+// Public user search — must be declared BEFORE /:id to avoid route conflict
+router.get(
+    "/search",
+    usersController.searchUsers
+);
+
 // Create user
 router.post(
     "/",
@@ -83,6 +89,13 @@ router.delete(
     validateIdParam(),
     authorize("admin"),
     usersController.deleteSingleUser
+);
+
+// Public profile page — no auth required
+router.get(
+    "/:id/profile",
+    validateIdParam(),
+    usersController.getPublicProfile
 );
 
 module.exports = router;

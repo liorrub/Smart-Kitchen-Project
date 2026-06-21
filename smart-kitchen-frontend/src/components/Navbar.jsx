@@ -6,6 +6,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { logout } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
+import { getStoredUser } from "../utils/authUtils";
 
 const menuLinks = [
     {
@@ -31,6 +32,10 @@ const menuLinks = [
     {
         to: "/ai-assistant",
         label: "AI Assistant"
+    },
+    {
+        to: "/discover",
+        label: "Discover"
     }
 ];
 
@@ -125,10 +130,14 @@ function Navbar() {
             </nav>
 
             <div className="navbar-user">
-                <div className="user-pill">
+                <NavLink
+                    to={`/profile/${user?.userId || getStoredUser()?.userId}`}
+                    className="user-pill user-pill-link"
+                    title="View my profile"
+                >
                     <span>Welcome</span>
                     <strong>{user?.firstName || "User"}</strong>
-                </div>
+                </NavLink>
 
                 <button
                     type="button"
