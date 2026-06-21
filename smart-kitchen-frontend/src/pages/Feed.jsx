@@ -13,10 +13,7 @@ import { getDiscoverCreators } from "../services/discoverService";
 import { getUserLikedRecipeIds, likeRecipe, unlikeRecipe } from "../services/likeService";
 import { getUserFavorites, addFavorite, removeFavorite } from "../services/favoritesService";
 
-const ROLE_LABELS = {
-    chef: "Chef",
-    influencer: "Influencer"
-};
+import { ROLE_LABELS } from "../utils/roleLabels";
 
 const ROLE_BADGE_CLASSES = {
     chef: "profile-badge-chef",
@@ -263,7 +260,7 @@ function Feed() {
                         <p className="feed-empty-icon">🍽️</p>
                         <p className="feed-empty-title">Your feed is empty</p>
                         <p className="feed-empty-sub">
-                            Follow chefs and influencers to start building your Feed.
+                            Follow chefs and Foodies to start building your Feed.
                         </p>
                         <Link to="/discover" className="feed-browse-link">
                             Discover Creators

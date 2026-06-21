@@ -48,7 +48,7 @@ async function follow(req, res, next) {
                 res,
                 400,
                 "NOT_FOLLOWABLE",
-                "You can only follow chefs and influencers."
+                "You can only follow chefs and Foodies."
             );
         }
 

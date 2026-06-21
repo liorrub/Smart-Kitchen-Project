@@ -13,13 +13,8 @@ import { getFollowers, getFollowing } from "../services/followService";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
+import { ROLE_LABELS, getRoleLabel } from "../utils/roleLabels";
 
-const ROLE_LABELS = {
-    chef: "Chef",
-    influencer: "Influencer",
-    admin: "Admin",
-    user: "Member"
-};
 
 const ROLE_COLORS = {
     chef: "profile-badge-chef",
@@ -39,10 +34,6 @@ const FOLLOWABLE_ROLES = ["chef", "influencer"];
 
 // Roles that are allowed to follow others
 const ALLOWED_FOLLOWER_ROLES = ["user", "chef", "influencer"];
-
-function getRoleLabel(role) {
-    return ROLE_LABELS[role] || role;
-}
 
 function getRoleBadgeClass(role) {
     return ROLE_COLORS[role] || "profile-badge-user";

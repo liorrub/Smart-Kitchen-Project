@@ -7,11 +7,8 @@ import PageHero from "../components/PageHero";
 
 import { getDiscoverCreators } from "../services/discoverService";
 import { getErrorMessage } from "../utils/apiUtils";
+import { ROLE_LABELS } from "../utils/roleLabels";
 
-const ROLE_LABELS = {
-    chef: "Chef",
-    influencer: "Influencer"
-};
 
 const ROLE_BADGE_CLASSES = {
     chef: "profile-badge-chef",
@@ -21,7 +18,7 @@ const ROLE_BADGE_CLASSES = {
 const FILTER_OPTIONS = [
     { value: "all", label: "All Creators" },
     { value: "chef", label: "Chefs" },
-    { value: "influencer", label: "Influencers" }
+    { value: "influencer", label: "Foodies" }
 ];
 
 function getInitials(firstName, lastName) {
@@ -134,11 +131,11 @@ function Discover() {
             <PageHero
                 label="Social"
                 title="Discover Creators"
-                description="Find chefs and influencers in the Smart Kitchen community"
+                description="Find chefs and Foodies in the Smart Kitchen community"
                 stats={[
                     { value: creators.length, label: "Creators" },
                     { value: totalChefs, label: "Chefs" },
-                    { value: totalInfluencers, label: "Influencers" }
+                    { value: totalInfluencers, label: "Foodies" }
                 ]}
             />
 

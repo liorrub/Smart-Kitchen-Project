@@ -24,7 +24,7 @@ import { COOKING_LEVEL_OPTIONS } from "../constants/options";
 const ROLE_OPTIONS = [
     { value: "user", label: "User" },
     { value: "chef", label: "Chef" },
-    { value: "influencer", label: "Influencer" },
+    { value: "influencer", label: "Foodie" },
     { value: "admin", label: "Admin" }
 ];
 

@@ -45,7 +45,7 @@ function ReviewCard({ review }) {
 
                 {review.isInfluencer && (
                     <span className="review-card-influencer">
-                        Influencer
+                        Foodie
                     </span>
                 )}
             </div>

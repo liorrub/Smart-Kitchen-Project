@@ -384,7 +384,7 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
 
                             <small>
                                 {otherUsersReviews.length} reviews ·{" "}
-                                {influencerReviewsCount} influencer
+                                {influencerReviewsCount} Foodie
                             </small>
                         </div>
                     </div>
