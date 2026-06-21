@@ -4,20 +4,34 @@
 // Follows the architecture: Database → Sequelize Model → recipesModel → Controller → Route
 // (Lecture 6: ORM, Model → Controller → Route)
 
-const { Recipe, User } = require("./index");
+const { Recipe, User, sequelize } = require("./index");
 
-// Return all recipes ordered by recipeId, as plain objects
+// Subquery that counts public likes for each recipe row
+const LIKE_COUNT_SUBQUERY = sequelize.literal(
+    `(SELECT COUNT(*) FROM RecipeLikes AS rl WHERE rl.recipeId = Recipe.recipeId)`
+);
+
+// Return all recipes ordered by recipeId, as plain objects (includes public like count)
 async function getAllRecipes() {
     const rows = await Recipe.findAll({
+        attributes: {
+            include: [[LIKE_COUNT_SUBQUERY, "likeCount"]]
+        },
         order: [["recipeId", "ASC"]]
     });
-    return rows.map(r => r.toJSON());
+    return rows.map(r => {
+        const obj = r.toJSON();
+        obj.likeCount = Number(obj.likeCount || 0);
+        return obj;
+    });
 }
 
-// Fetch a single recipe with its creator joined via the belongsTo association.
-// Returns creator.firstName / lastName so the controller never needs a second lookup.
+// Fetch a single recipe with its creator joined, plus public like count.
 async function getRecipeById(recipeId) {
     const instance = await Recipe.findByPk(recipeId, {
+        attributes: {
+            include: [[LIKE_COUNT_SUBQUERY, "likeCount"]]
+        },
         include: [
             {
                 model: User,
@@ -26,7 +40,10 @@ async function getRecipeById(recipeId) {
             }
         ]
     });
-    return instance ? instance.toJSON() : null;
+    if (!instance) return null;
+    const obj = instance.toJSON();
+    obj.likeCount = Number(obj.likeCount || 0);
+    return obj;
 }
 
 // Insert a new recipe row and return it as a plain object.
@@ -63,10 +80,17 @@ async function filterRecipes(filters = {}) {
     if (filters.creatorId)  where.creatorId   = Number(filters.creatorId);
 
     const rows = await Recipe.findAll({
+        attributes: {
+            include: [[LIKE_COUNT_SUBQUERY, "likeCount"]]
+        },
         where,
         order: [["recipeId", "ASC"]]
     });
-    return rows.map(r => r.toJSON());
+    return rows.map(r => {
+        const obj = r.toJSON();
+        obj.likeCount = Number(obj.likeCount || 0);
+        return obj;
+    });
 }
 
 module.exports = {

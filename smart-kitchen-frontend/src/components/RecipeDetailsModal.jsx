@@ -111,7 +111,7 @@ function renderRatingStars(rating) {
     Keeps the title style aligned with the rest of Smart Kitchen,
     while using a cleaner recipe-page layout for ingredients and instructions.
 */
-function RecipeDetailsModal({ recipe, onClose }) {
+function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(false);
     const [reviewsError, setReviewsError] = useState("");
@@ -211,14 +211,27 @@ function RecipeDetailsModal({ recipe, onClose }) {
                         {formatText(recipe.difficulty)}
                     </p>
 
-                    {/* Opens the full discussion page for this recipe */}
-                    <button
-                        type="button"
-                        className="recipe-modal-discussion-btn"
-                        onClick={() => navigate(`/recipes/${recipe.recipeId}/discussion`)}
-                    >
-                        💬 Open Discussion
-                    </button>
+                    <div className="recipe-modal-header-actions">
+                        {onLikeClick && (
+                            <button
+                                type="button"
+                                className={isLiked ? "recipe-modal-like-btn active" : "recipe-modal-like-btn"}
+                                onClick={() => onLikeClick(recipe)}
+                                title={isLiked ? "Unlike" : "Like this recipe"}
+                            >
+                                {isLiked ? "❤️" : "🤍"} {recipe.likeCount || 0}
+                            </button>
+                        )}
+
+                        {/* Opens the full discussion page for this recipe */}
+                        <button
+                            type="button"
+                            className="recipe-modal-discussion-btn"
+                            onClick={() => navigate(`/recipes/${recipe.recipeId}/discussion`)}
+                        >
+                            💬 Open Discussion
+                        </button>
+                    </div>
                 </header>
 
                 <section className="recipe-modal-stats">

@@ -162,12 +162,56 @@
     font-weight: 800;
 }
 
+/* Row that holds the like + discussion buttons */
+.recipe-modal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+/* Like button in the modal header */
+.recipe-modal-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 18px;
+
+    border: 1px solid #f0cdd8;
+    border-radius: 999px;
+    background: #fffefa;
+    color: #cc6089;
+
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.recipe-modal-like-btn.active {
+    background: #f8e9ee;
+    border-color: #e8afc5;
+}
+
+.recipe-modal-like-btn:hover {
+    background: #cc6089;
+    color: white;
+    border-color: #cc6089;
+    box-shadow: 0 8px 18px rgba(204, 96, 137, 0.2);
+    transform: translateY(-1px);
+}
+
 /* "Open Discussion" button in the modal header */
 .recipe-modal-discussion-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 14px;
     padding: 9px 20px;
 
     border: none;
