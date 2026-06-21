@@ -20,6 +20,8 @@ module.exports = {
                     u.preferences == null
                         ? null
                         : JSON.stringify(u.preferences),
+                username: u.username,
+                avatarKey: u.avatarKey || "masculine",
                 createdAt: new Date(u.createDate),
                 updatedAt: new Date(u.updateDate)
             }))

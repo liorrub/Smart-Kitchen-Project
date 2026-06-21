@@ -14,15 +14,12 @@ import { getUserLikedRecipeIds, likeRecipe, unlikeRecipe } from "../services/lik
 import { getUserFavorites, addFavorite, removeFavorite } from "../services/favoritesService";
 
 import { ROLE_LABELS } from "../utils/roleLabels";
+import AvatarImage from "../components/AvatarImage";
 
 const ROLE_BADGE_CLASSES = {
     chef: "profile-badge-chef",
     influencer: "profile-badge-influencer"
 };
-
-function getInitials(firstName, lastName) {
-    return `${(firstName || "?")[0]}${(lastName || "?")[0]}`.toUpperCase();
-}
 
 function relativeTime(dateStr) {
     if (!dateStr) return "";
@@ -211,12 +208,19 @@ function Feed() {
                                         className="feed-creator-card-top"
                                         aria-label={`View ${creator.firstName} ${creator.lastName}'s profile`}
                                     >
-                                        <div className="feed-creator-card-avatar">
-                                            {getInitials(creator.firstName, creator.lastName)}
-                                        </div>
+                                        <AvatarImage
+                                            avatarKey={creator.avatarKey}
+                                            firstName={creator.firstName}
+                                            lastName={creator.lastName}
+                                            size="lg"
+                                            className="feed-creator-card-avatar"
+                                        />
                                         <p className="feed-creator-card-name">
                                             {creator.firstName} {creator.lastName}
                                         </p>
+                                        {creator.username && (
+                                            <p className="feed-creator-card-username">@{creator.username}</p>
+                                        )}
                                         <span className={`feed-role-badge ${ROLE_BADGE_CLASSES[creator.userRole] || ""}`}>
                                             {ROLE_LABELS[creator.userRole] || creator.userRole}
                                         </span>

@@ -195,6 +195,14 @@
     line-height: 1.3;
 }
 
+.feed-creator-card-username {
+    margin: 2px 0 0;
+    font-size: 0.72rem;
+    color: #6366f1;
+    font-weight: 500;
+    text-align: center;
+}
+
 .feed-creator-card-top:hover .feed-creator-card-name {
     color: #2a7545;
     text-decoration: underline;

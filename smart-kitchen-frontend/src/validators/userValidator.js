@@ -49,6 +49,17 @@ function isValidAge(age) {
     );
 }
 
+function isValidUsername(username) {
+    if (!username || typeof username !== "string") return false;
+    const u = username.trim().toLowerCase();
+    if (u.length < 3 || u.length > 30) return false;
+    if (!/^[a-z]/.test(u)) return false;
+    if (/[_.]$/.test(u)) return false;
+    if (!/^[a-z0-9_.]+$/.test(u)) return false;
+    if (/[_.]{2}/.test(u)) return false;
+    return true;
+}
+
 // Validate the login form. Returns an error message string or null if valid.
 export function validateLogin(email, password) {
     if (isEmpty(email)) {
@@ -125,6 +136,14 @@ export function validateRegisterForm(formData) {
         !cookingLevels.includes(formData.cookingLevel)
     ) {
         return "Invalid cooking level";
+    }
+
+    if (isEmpty(formData.username)) {
+        return "Username is required";
+    }
+
+    if (!isValidUsername(formData.username)) {
+        return "Username must be 3–30 characters, start with a letter, and contain only letters, numbers, underscores, or periods";
     }
 
     return null;

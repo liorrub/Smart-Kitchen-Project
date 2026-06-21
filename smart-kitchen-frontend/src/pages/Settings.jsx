@@ -11,6 +11,9 @@ import CheckboxGroup, { formatCheckboxLabel } from "../components/CheckboxGroup"
 
 import { useAuth } from "../context/AuthContext";
 import { validateSettings } from "../validators/settingsValidator";
+import AvatarImage from "../components/AvatarImage";
+import AvatarPicker from "../components/AvatarPicker";
+import { AVATAR_DEFAULT } from "../utils/avatarCatalog";
 import {
     changePassword,
     getSettings,
@@ -51,7 +54,9 @@ function Settings() {
         preferences: {
             dietary: [],
             cuisine: []
-        }
+        },
+        username: "",
+        avatarKey: AVATAR_DEFAULT
     });
 
     // Password form state
@@ -79,10 +84,6 @@ function Settings() {
     const [passwordError, setPasswordError] = useState("");
 
     // Derived values
-    const userInitials =
-        `${formData.firstName.charAt(0)}${formData.lastName.charAt(0)}`
-            .toUpperCase();
-
     const preferenceCount =
         formData.preferences.dietary.length +
         formData.preferences.cuisine.length;
@@ -109,7 +110,9 @@ function Settings() {
                     preferences: {
                         dietary: data.preferences?.dietary || [],
                         cuisine: data.preferences?.cuisine || []
-                    }
+                    },
+                    username: data.username || "",
+                    avatarKey: data.avatarKey || AVATAR_DEFAULT
                 });
 
                 if (["user", "influencer"].includes(data.userRole)) {
@@ -250,7 +253,9 @@ function Settings() {
                 email: formData.email.trim(),
                 age: Number(formData.age),
                 cookingLevel: formData.cookingLevel,
-                preferences: formData.preferences
+                preferences: formData.preferences,
+                username: formData.username.trim().toLowerCase(),
+                avatarKey: formData.avatarKey
             });
 
             sessionStorage.setItem(
@@ -378,9 +383,13 @@ function Settings() {
             >
                 <div className="settings-summary-card">
                     <div className="summary-top">
-                        <div className="summary-avatar">
-                            {userInitials || "SK"}
-                        </div>
+                        <AvatarImage
+                            avatarKey={formData.avatarKey}
+                            firstName={formData.firstName}
+                            lastName={formData.lastName}
+                            size="lg"
+                            className="summary-avatar"
+                        />
 
                         <div>
                             <span>Current Profile</span>
@@ -388,6 +397,10 @@ function Settings() {
                             <strong>
                                 {formData.firstName} {formData.lastName}
                             </strong>
+
+                            {formData.username && (
+                                <p className="settings-username-display">@{formData.username}</p>
+                            )}
 
                             <p>{formData.email}</p>
                         </div>
@@ -469,7 +482,25 @@ function Settings() {
                             options={COOKING_LEVEL_OPTIONS}
                             onChange={handleChange}
                         />
+
+                        <FormField
+                            label="Username"
+                            type="text"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            placeholder="e.g. lior_99"
+                        />
                     </div>
+
+                    <AvatarPicker
+                        value={formData.avatarKey}
+                        onChange={(key) =>
+                            setFormData(prev => ({ ...prev, avatarKey: key }))
+                        }
+                        firstName={formData.firstName}
+                        lastName={formData.lastName}
+                    />
 
                     <CheckboxGroup
                         label="Dietary Preferences"

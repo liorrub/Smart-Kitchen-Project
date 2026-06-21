@@ -1,0 +1,46 @@
+.avatar-picker {
+    margin: 12px 0;
+}
+
+.avatar-picker-label {
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+/* Single flat grid — no family headings, no text labels */
+.avatar-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+    gap: 10px;
+}
+
+.avatar-picker-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.avatar-picker-option:hover {
+    border-color: #6366f1;
+    background: #f5f3ff;
+}
+
+.avatar-picker-option.selected {
+    border-color: #4f46e5;
+    background: #eef2ff;
+}
+
+@media (max-width: 480px) {
+    .avatar-picker-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 8px;
+    }
+}

@@ -10,7 +10,8 @@ async function getUserPublicProfile(userId, viewerId) {
     const user = await User.findByPk(userId, {
         attributes: [
             "userId", "firstName", "lastName",
-            "city", "cookingLevel", "userRole"
+            "city", "cookingLevel", "userRole",
+            "username", "avatarKey"
         ]
     });
 
@@ -74,7 +75,7 @@ async function getUserPublicProfile(userId, viewerId) {
     };
 }
 
-// Search users by name, city, or role — returns only public fields.
+// Search users by username, name, or city — username-prefix matches rank first.
 async function searchPublicUsers(query, role) {
     const where = {};
 
@@ -84,7 +85,9 @@ async function searchPublicUsers(query, role) {
 
     if (query) {
         const pattern = `%${query}%`;
+        const usernamePattern = `${query.toLowerCase()}%`;
         where[Op.or] = [
+            { username: { [Op.like]: usernamePattern } },
             { firstName: { [Op.like]: pattern } },
             { lastName: { [Op.like]: pattern } },
             { city: { [Op.like]: pattern } }
@@ -96,21 +99,39 @@ async function searchPublicUsers(query, role) {
         attributes: [
             "userId", "firstName", "lastName",
             "city", "cookingLevel", "userRole",
+            "username", "avatarKey",
             [
                 sequelize.literal(
                     "(SELECT COUNT(*) FROM Recipes AS r WHERE r.creatorId = User.userId)"
                 ),
                 "recipeCount"
+            ],
+            [
+                sequelize.literal(
+                    "(SELECT COUNT(*) FROM UserFollows AS uf WHERE uf.followeeId = User.userId)"
+                ),
+                "followerCount"
             ]
         ],
-        order: [["userId", "ASC"]],
+        order: query
+            ? [
+                // Username prefix matches rank first: LIKE 'query%' returns 1, else 0
+                [
+                    sequelize.literal(
+                        `CASE WHEN username LIKE ${sequelize.escape(query.toLowerCase() + "%")} THEN 0 ELSE 1 END`
+                    ),
+                    "ASC"
+                ],
+                ["userId", "ASC"]
+            ]
+            : [["userId", "ASC"]],
         limit: 50
     });
 
     return users.map(u => {
         const obj = u.toJSON();
         obj.recipeCount = Number(obj.recipeCount || 0);
-        obj.followerCount = 0;
+        obj.followerCount = Number(obj.followerCount || 0);
         return obj;
     });
 }
@@ -122,6 +143,7 @@ async function getDiscoverUsers() {
         attributes: [
             "userId", "firstName", "lastName",
             "city", "cookingLevel", "userRole",
+            "username", "avatarKey",
             [
                 sequelize.literal(
                     "(SELECT COUNT(*) FROM Recipes AS r WHERE r.creatorId = User.userId)"
@@ -141,6 +163,12 @@ async function getDiscoverUsers() {
                     "(SELECT COUNT(*) FROM Reviews AS rev WHERE rev.userId = User.userId)"
                 ),
                 "reviewCount"
+            ],
+            [
+                sequelize.literal(
+                    "(SELECT COUNT(*) FROM UserFollows AS uf WHERE uf.followeeId = User.userId)"
+                ),
+                "followerCount"
             ]
         ],
         order: [
@@ -156,7 +184,7 @@ async function getDiscoverUsers() {
             ? Number(Number(obj.avgRating).toFixed(1))
             : null;
         obj.reviewCount = Number(obj.reviewCount || 0);
-        obj.followerCount = 0;
+        obj.followerCount = Number(obj.followerCount || 0);
         return obj;
     });
 }

@@ -4,11 +4,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import AppButton from "./AppButton";
-
-// Build initials from a user's first and last name.
-function getInitials(firstName, lastName) {
-    return `${(firstName || "?")[0]}${(lastName || "")[0] || ""}`.toUpperCase();
-}
+import AvatarImage from "./AvatarImage";
 
 function formatDate(value) {
     if (!value) return "";
@@ -38,7 +34,6 @@ function CommentItem({ comment, currentUser, onReply, onEdit, onDeleteRequest, i
     const mentionedUser = comment.mentionedUser;
 
     const authorName = `${author.firstName || "Unknown"} ${author.lastName || ""}`.trim();
-    const initials = getInitials(author.firstName, author.lastName);
 
     const isOwner = currentUser?.userId === comment.userId;
     const isAdmin = currentUser?.userRole === "admin";
@@ -70,10 +65,22 @@ function CommentItem({ comment, currentUser, onReply, onEdit, onDeleteRequest, i
                     className="comment-avatar-link"
                     aria-label={`View ${authorName}'s profile`}
                 >
-                    <div className="comment-avatar">{initials}</div>
+                    <AvatarImage
+                        avatarKey={author.avatarKey}
+                        firstName={author.firstName}
+                        lastName={author.lastName}
+                        size="sm"
+                        className="comment-avatar"
+                    />
                 </Link>
             ) : (
-                <div className="comment-avatar">{initials}</div>
+                <AvatarImage
+                    avatarKey={author.avatarKey}
+                    firstName={author.firstName}
+                    lastName={author.lastName}
+                    size="sm"
+                    className="comment-avatar"
+                />
             )}
 
             <div className="comment-body">

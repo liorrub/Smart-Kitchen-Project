@@ -12,6 +12,8 @@ const {
     validatePassword,
     validateCookingLevel
 } = require("../validators/userValidator");
+const { validateUsernameMiddleware } = require("../validators/usernameValidator");
+const { validateAvatarKeyMiddleware } = require("../data/avatarCatalog");
 
 // Register
 router.post(
@@ -23,11 +25,14 @@ router.post(
         "password",
         "city",
         "cookingLevel",
-        "age"
+        "age",
+        "username"
     ]),
     validateEmail,
     validatePassword,
     validateCookingLevel,
+    validateUsernameMiddleware,
+    validateAvatarKeyMiddleware,
     authController.register
 );
 

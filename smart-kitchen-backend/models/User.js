@@ -103,6 +103,30 @@ const User = sequelize.define(
             type: DataTypes.JSON,
             allowNull: true,
             defaultValue: null
+        },
+        username: {
+            type: DataTypes.STRING(30),
+            allowNull: false,
+            unique: true,
+            validate: {
+                notNull: { msg: "Username is required" },
+                notEmpty: { msg: "Username cannot be empty" }
+            },
+            set(value) {
+                this.setDataValue(
+                    "username",
+                    typeof value === "string" ? value.trim().toLowerCase() : value
+                );
+            }
+        },
+        avatarKey: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            defaultValue: "home_cook_neutral_01",
+            validate: {
+                notNull: { msg: "Avatar key is required" },
+                notEmpty: { msg: "Avatar key cannot be empty" }
+            }
         }
     },
     {

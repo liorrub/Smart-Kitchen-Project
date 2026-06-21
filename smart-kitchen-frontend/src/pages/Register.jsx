@@ -14,6 +14,8 @@ import MessageModal from "../components/MessageModal";
 import PasswordField from "../components/PasswordField";
 import { validateRegisterForm } from "../validators/userValidator";
 import { COOKING_LEVEL_OPTIONS } from "../constants/options";
+import AvatarPicker from "../components/AvatarPicker";
+import { AVATAR_DEFAULT } from "../utils/avatarCatalog";
 
 import logo from "../assets/logo.png";
 
@@ -67,7 +69,9 @@ function Register() {
         password: "",
         city: "",
         age: "",
-        cookingLevel: "beginner"
+        cookingLevel: "beginner",
+        username: "",
+        avatarKey: AVATAR_DEFAULT
     });
 
     const [error, setError] = useState("");
@@ -148,7 +152,9 @@ function Register() {
                 password: formData.password,
                 city: formData.city.trim(),
                 age: Number(formData.age),
-                cookingLevel: formData.cookingLevel
+                cookingLevel: formData.cookingLevel,
+                username: formData.username.trim().toLowerCase(),
+                avatarKey: formData.avatarKey
             });
 
             setSuccess("Your account was created successfully.");
@@ -163,7 +169,9 @@ function Register() {
                 errorMessage = error.response.data.message;
             }
 
-            if (
+            if (errorMessage.includes("USERNAME_TAKEN") || errorMessage.toLowerCase().includes("username is already taken")) {
+                errorMessage = "Username is already taken. Please choose another.";
+            } else if (
                 error.response?.status === 409 ||
                 errorMessage.includes("EMAIL_ALREADY_EXISTS") ||
                 errorMessage.includes("already exists")
@@ -270,6 +278,15 @@ function Register() {
                     <p className="reg-section-label">Account</p>
 
                     <FormField
+                        label="Username"
+                        type="text"
+                        name="username"
+                        placeholder="e.g. lior_99 (letters, numbers, underscore)"
+                        value={formData.username}
+                        onChange={handleChange}
+                    />
+
+                    <FormField
                         label="Email"
                         type="email"
                         name="email"
@@ -295,6 +312,18 @@ function Register() {
                         value={formData.cookingLevel}
                         onChange={handleChange}
                         options={COOKING_LEVEL_OPTIONS}
+                    />
+
+                    {/* ── Avatar ── */}
+                    <p className="reg-section-label">Avatar</p>
+
+                    <AvatarPicker
+                        value={formData.avatarKey}
+                        onChange={(key) =>
+                            setFormData(prev => ({ ...prev, avatarKey: key }))
+                        }
+                        firstName={formData.firstName}
+                        lastName={formData.lastName}
                     />
 
                     <AppButton

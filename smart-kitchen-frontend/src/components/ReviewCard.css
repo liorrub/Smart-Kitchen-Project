@@ -123,6 +123,14 @@
     border-top: 1px solid #d9ead4;
 }
 
+.review-card-username {
+    font-size: 0.75rem;
+    color: #6366f1;
+    font-weight: 500;
+    display: block;
+    margin: 1px 0 2px;
+}
+
 .review-card-footer span {
     color: #46ae6b;
 

@@ -8,6 +8,7 @@ import { logout } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 import { getStoredUser } from "../utils/authUtils";
 import NotificationBell from "./NotificationBell";
+import UserSearch from "./UserSearch";
 
 const menuLinks = [
     {
@@ -38,8 +39,11 @@ const menuLinks = [
 
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     const { user, setUser } = useAuth();
+    const storedUser = getStoredUser();
+    const activeUser = user || storedUser;
 
     const navigate = useNavigate();
 
@@ -137,14 +141,32 @@ function Navbar() {
                 </NavLink>
             </nav>
 
+            <div className="navbar-search-area">
+                <button
+                    type="button"
+                    className="navbar-search-btn"
+                    aria-label="Search users"
+                    onMouseDown={e => e.stopPropagation()}
+                    onClick={() => setIsSearchOpen(v => !v)}
+                >
+                    🔍
+                </button>
+
+                {isSearchOpen && (
+                    <div className="navbar-search-popover">
+                        <UserSearch onClose={() => setIsSearchOpen(false)} />
+                    </div>
+                )}
+            </div>
+
             <div className="navbar-user">
                 <NavLink
-                    to={`/profile/${user?.userId || getStoredUser()?.userId}`}
+                    to={`/profile/${activeUser?.userId}`}
                     className="user-pill user-pill-link"
                     title="View my profile"
                 >
                     <span>Welcome</span>
-                    <strong>{user?.firstName || "User"}</strong>
+                    <strong>{activeUser?.firstName || "User"}</strong>
                 </NavLink>
 
                 <NotificationBell />

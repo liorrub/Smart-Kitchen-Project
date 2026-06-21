@@ -1,0 +1,29 @@
+.avatar-img,
+.avatar-initials {
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    object-fit: cover;
+    user-select: none;
+    font-weight: 600;
+    color: white;
+}
+
+/* Sizes */
+.avatar-xs  { width: 24px;  height: 24px;  font-size: 10px; }
+.avatar-sm  { width: 32px;  height: 32px;  font-size: 12px; }
+.avatar-md  { width: 40px;  height: 40px;  font-size: 15px; }
+.avatar-lg  { width: 56px;  height: 56px;  font-size: 20px; }
+.avatar-xl  { width: 80px;  height: 80px;  font-size: 28px; }
+
+/* Initials fallback — gradient background */
+.avatar-initials {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+}
+
+.avatar-img {
+    background: transparent;
+    border: 2px solid #e5e7eb;
+}

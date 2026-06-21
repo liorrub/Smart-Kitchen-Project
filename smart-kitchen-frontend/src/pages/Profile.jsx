@@ -7,13 +7,14 @@ import PageHero from "../components/PageHero";
 import RecipeCard from "../components/RecipeCard";
 import RecipeDetailsModal from "../components/RecipeDetailsModal";
 import FollowButton from "../components/FollowButton";
+import AvatarImage from "../components/AvatarImage";
 
 import { getUserProfile } from "../services/profileService";
 import { getFollowers, getFollowing } from "../services/followService";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
-import { ROLE_LABELS, getRoleLabel } from "../utils/roleLabels";
+import { getRoleLabel } from "../utils/roleLabels";
 
 
 const ROLE_COLORS = {
@@ -37,10 +38,6 @@ const ALLOWED_FOLLOWER_ROLES = ["user", "chef", "influencer"];
 
 function getRoleBadgeClass(role) {
     return ROLE_COLORS[role] || "profile-badge-user";
-}
-
-function getInitials(firstName, lastName) {
-    return `${(firstName || "?")[0]}${(lastName || "?")[0]}`.toUpperCase();
 }
 
 function Profile() {
@@ -166,12 +163,21 @@ function Profile() {
             {/* Profile identity card */}
             <section className="profile-card">
                 <div className="profile-identity">
-                    <div className="profile-avatar">
-                        {getInitials(profile.firstName, profile.lastName)}
-                    </div>
+                    <AvatarImage
+                        avatarKey={profile.avatarKey}
+                        firstName={profile.firstName}
+                        lastName={profile.lastName}
+                        size="xl"
+                        className="profile-avatar"
+                    />
 
                     <div className="profile-identity-info">
-                        <h2>{profile.firstName} {profile.lastName}</h2>
+                        <div className="profile-name-row">
+                            <h2>{profile.firstName} {profile.lastName}</h2>
+                            {profile.username && (
+                                <span className="profile-username">@{profile.username}</span>
+                            )}
+                        </div>
 
                         <div className="profile-badges">
                             <span className={`profile-badge ${getRoleBadgeClass(profile.userRole)}`}>
@@ -289,11 +295,18 @@ function Profile() {
                                         to={`/profile/${f.followerId}`}
                                         className="profile-user-row"
                                     >
-                                        <span className="profile-user-avatar">
-                                            {f.follower?.firstName?.[0]}{f.follower?.lastName?.[0]}
-                                        </span>
+                                        <AvatarImage
+                                            avatarKey={f.follower?.avatarKey}
+                                            firstName={f.follower?.firstName}
+                                            lastName={f.follower?.lastName}
+                                            size="sm"
+                                            className="profile-user-avatar"
+                                        />
                                         <span className="profile-user-name">
                                             {f.follower?.firstName} {f.follower?.lastName}
+                                            {f.follower?.username && (
+                                                <small className="profile-username-inline"> @{f.follower.username}</small>
+                                            )}
                                         </span>
                                         <span className={`profile-badge ${getRoleBadgeClass(f.follower?.userRole)}`}>
                                             {getRoleLabel(f.follower?.userRole)}
@@ -311,11 +324,18 @@ function Profile() {
                                         to={`/profile/${f.followeeId}`}
                                         className="profile-user-row"
                                     >
-                                        <span className="profile-user-avatar">
-                                            {f.followee?.firstName?.[0]}{f.followee?.lastName?.[0]}
-                                        </span>
+                                        <AvatarImage
+                                            avatarKey={f.followee?.avatarKey}
+                                            firstName={f.followee?.firstName}
+                                            lastName={f.followee?.lastName}
+                                            size="sm"
+                                            className="profile-user-avatar"
+                                        />
                                         <span className="profile-user-name">
                                             {f.followee?.firstName} {f.followee?.lastName}
+                                            {f.followee?.username && (
+                                                <small className="profile-username-inline"> @{f.followee.username}</small>
+                                            )}
                                         </span>
                                         <span className={`profile-badge ${getRoleBadgeClass(f.followee?.userRole)}`}>
                                             {getRoleLabel(f.followee?.userRole)}

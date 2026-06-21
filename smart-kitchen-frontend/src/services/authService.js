@@ -41,7 +41,9 @@ export async function register(userData) {
             password: userData.password,
             city: userData.city,
             age: userData.age,
-            cookingLevel: userData.cookingLevel
+            cookingLevel: userData.cookingLevel,
+            username: userData.username,
+            avatarKey: userData.avatarKey
         }
     );
 

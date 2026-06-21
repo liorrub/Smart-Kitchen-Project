@@ -94,8 +94,16 @@
     min-width: 0;
 }
 
+.profile-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
 .profile-identity-info h2 {
-    margin: 0 0 10px;
+    margin: 0;
     color: #1f3d2b;
     font-size: 26px;
     font-weight: 900;
@@ -307,6 +315,25 @@
 .profile-user-row:hover {
     background: #f2fbf4;
     box-shadow: 0 2px 10px rgba(42, 117, 69, 0.08);
+}
+
+.profile-username {
+    font-size: 1rem;
+    color: #6366f1;
+    font-weight: 600;
+}
+
+.profile-username-inline {
+    font-size: 0.78rem;
+    color: #6366f1;
+    font-weight: 500;
+}
+
+.settings-username-display {
+    font-size: 0.85rem;
+    color: #6366f1;
+    font-weight: 600;
+    margin: 2px 0;
 }
 
 .profile-user-avatar {

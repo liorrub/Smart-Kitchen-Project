@@ -28,6 +28,14 @@ async function getUserByEmail(email) {
     return toPlain(user);
 }
 
+async function getUserByUsername(username) {
+    if (!username) return null;
+    const user = await User.findOne({
+        where: { username: username.trim().toLowerCase() }
+    });
+    return toPlain(user);
+}
+
 async function createUser(userData) {
     const user = await User.create(userData);
     return toPlain(user);
@@ -83,6 +91,7 @@ module.exports = {
     getAllUsers,
     getUserById,
     getUserByEmail,
+    getUserByUsername,
     createUser,
     updateUser,
     deleteUser,

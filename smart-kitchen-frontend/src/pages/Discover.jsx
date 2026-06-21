@@ -8,6 +8,7 @@ import PageHero from "../components/PageHero";
 import { getDiscoverCreators } from "../services/discoverService";
 import { getErrorMessage } from "../utils/apiUtils";
 import { ROLE_LABELS } from "../utils/roleLabels";
+import AvatarImage from "../components/AvatarImage";
 
 
 const ROLE_BADGE_CLASSES = {
@@ -21,24 +22,27 @@ const FILTER_OPTIONS = [
     { value: "influencer", label: "Foodies" }
 ];
 
-function getInitials(firstName, lastName) {
-    return `${(firstName || "?")[0]}${(lastName || "?")[0]}`.toUpperCase();
-}
-
 function DiscoverCard({ creator }) {
     const isChef = creator.userRole === "chef";
     const isInfluencer = creator.userRole === "influencer";
 
     return (
         <div className="discover-card">
-            <div className="discover-card-avatar">
-                {getInitials(creator.firstName, creator.lastName)}
-            </div>
+            <AvatarImage
+                avatarKey={creator.avatarKey}
+                firstName={creator.firstName}
+                lastName={creator.lastName}
+                size="lg"
+                className="discover-card-avatar"
+            />
 
             <div className="discover-card-body">
                 <h3 className="discover-card-name">
                     {creator.firstName} {creator.lastName}
                 </h3>
+                {creator.username && (
+                    <p className="discover-card-username">@{creator.username}</p>
+                )}
 
                 <div className="discover-card-badges">
                     <span className={`profile-badge ${ROLE_BADGE_CLASSES[creator.userRole] || ""}`}>

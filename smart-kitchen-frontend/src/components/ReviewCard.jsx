@@ -1,5 +1,7 @@
 import "./ReviewCard.css";
 
+import AvatarImage from "./AvatarImage";
+
 function formatDate(value) {
     if (!value) {
         return "Unknown date";
@@ -26,17 +28,28 @@ function renderStars(rating) {
     Receives a review object and displays review details.
 */
 function ReviewCard({ review }) {
+    const author = review.author || {};
+    const displayName = author.firstName
+        ? `${author.firstName} ${author.lastName || ""}`.trim()
+        : `User #${review.userId}`;
+
     return (
         <article className="review-card">
             <div className="review-card-header">
                 <div className="review-card-user-row">
-                    <span className="review-card-avatar">
-                        U
-                    </span>
+                    <AvatarImage
+                        avatarKey={author.avatarKey}
+                        firstName={author.firstName}
+                        lastName={author.lastName}
+                        size="sm"
+                        className="review-card-avatar"
+                    />
 
                     <div>
-                        <h4>User #{review.userId}</h4>
-
+                        <h4>{displayName}</h4>
+                        {author.username && (
+                            <span className="review-card-username">@{author.username}</span>
+                        )}
                         <p>
                             {formatDate(review.createdAt)}
                         </p>

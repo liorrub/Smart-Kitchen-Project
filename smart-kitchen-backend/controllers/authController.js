@@ -3,8 +3,11 @@ const bcrypt = require("bcryptjs");
 const {
     getUserByEmail,
     getUserById,
+    getUserByUsername,
     createUser
 } = require("../models/usersModel");
+const { AVATAR_DEFAULT } = require("../data/avatarCatalog");
+const { validateUsername, normalizeUsername } = require("../validators/usernameValidator");
 
 const {
     successResponse,
@@ -42,6 +45,9 @@ async function login(req, res, next) {
         return successResponse(res, 200, {
             userId: user.userId,
             firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username,
+            avatarKey: user.avatarKey,
             userRole: user.userRole,
             token: mockToken
         });
@@ -106,28 +112,29 @@ async function logout(req, res, next) {
 
 async function register(req, res, next) {
     try {
-
-        const existingUser =
-            await getUserByEmail(
-                req.body.email
-            );
-
+        const existingUser = await getUserByEmail(req.body.email);
         if (existingUser) {
-            return errorResponse(
-                res,
-                409,
-                "EMAIL_ALREADY_EXISTS",
-                "Email already exists"
-            );
+            return errorResponse(res, 409, "EMAIL_ALREADY_EXISTS", "Email already exists");
         }
 
         if (!req.body.password) {
-            return errorResponse(
-                res,
-                400,
-                "MISSING_FIELD",
-                "Password is required"
-            );
+            return errorResponse(res, 400, "MISSING_FIELD", "Password is required");
+        }
+
+        // Validate and normalize username
+        const rawUsername = req.body.username;
+        if (!rawUsername) {
+            return errorResponse(res, 400, "MISSING_FIELD", "Username is required");
+        }
+        const usernameError = validateUsername(rawUsername);
+        if (usernameError) {
+            return errorResponse(res, 400, "INVALID_USERNAME", usernameError, { field: "username" });
+        }
+        const username = normalizeUsername(rawUsername);
+
+        const existingByUsername = await getUserByUsername(username);
+        if (existingByUsername) {
+            return errorResponse(res, 409, "USERNAME_TAKEN", "Username is already taken");
         }
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -139,23 +146,16 @@ async function register(req, res, next) {
             password: hashedPassword,
             userRole: "user",
             city: req.body.city,
-            preferences: {
-                dietary: [],
-                cuisine: []
-            },
+            preferences: { dietary: [], cuisine: [] },
             cookingLevel: req.body.cookingLevel,
-            age: req.body.age
+            age: req.body.age,
+            username,
+            avatarKey: req.body.avatarKey || AVATAR_DEFAULT
         });
 
-        const { password, ...safeUser } =
-            newUser;
+        const { password, ...safeUser } = newUser;
 
-        return successResponse(
-            res,
-            201,
-            safeUser
-        );
-
+        return successResponse(res, 201, safeUser);
     } catch (error) {
         next(error);
     }
