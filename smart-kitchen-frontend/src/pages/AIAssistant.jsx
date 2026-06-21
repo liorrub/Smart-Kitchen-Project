@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import AppButton from "../components/AppButton";
 import FormCard from "../components/FormCard";
 import MessageModal from "../components/MessageModal";
+import MultiIngredientPicker from "../components/MultiIngredientPicker";
 import PageHero from "../components/PageHero";
 
 import {
@@ -399,8 +400,7 @@ function AIAssistant() {
     // ── New state ──
     const [allIngredients, setAllIngredients] = useState([]);
     const [activeFeature, setActiveFeature]   = useState(null);
-    const [ingredientSearch, setIngredientSearch]       = useState("");
-    const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [selectedIngredientIds, setSelectedIngredientIds] = useState([]);
     const [constraints, setConstraints] = useState({ difficulty: "", prepTime: "", cookTime: "", servings: "" });
     const [subForm, setSubForm] = useState({ ingredient: "", context: "", reason: "" });
     const [result, setResult]     = useState(null);
@@ -443,8 +443,7 @@ function AIAssistant() {
         setActiveFeature(featureId);
         setResult(null);
         setAiError("");
-        setSelectedIngredients([]);
-        setIngredientSearch("");
+        setSelectedIngredientIds([]);
         setConstraints({ difficulty: "", prepTime: "", cookTime: "", servings: "" });
         setSubForm({ ingredient: "", context: "", reason: "" });
         window.requestAnimationFrame(() => {
@@ -459,32 +458,24 @@ function AIAssistant() {
         setSelectedSuggestion(null);
     }
 
-    // Ingredient chip picker
-    const filteredIngredients = allIngredients.filter((ing) => {
-        const name = ing.name || "";
-        return (
-            name.toLowerCase().includes(ingredientSearch.toLowerCase()) &&
-            !selectedIngredients.includes(name)
+    function toggleIngredient(ingredient) {
+        const id = ingredient.ingredientId;
+        setSelectedIngredientIds((prev) =>
+            prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
         );
-    });
-
-    function addIngredient(name) {
-        if (!selectedIngredients.includes(name)) setSelectedIngredients((p) => [...p, name]);
-        setIngredientSearch("");
-    }
-
-    function removeIngredient(name) {
-        setSelectedIngredients((p) => p.filter((n) => n !== name));
     }
 
     // ── AI call handlers ──
     async function handleGenerateRecipe() {
-        if (!selectedIngredients.length) return;
+        if (!selectedIngredientIds.length) return;
         setAiLoading(true);
         setAiError("");
         setResult(null);
         try {
-            const data = await generateRecipeFromPantry(selectedIngredients, constraints);
+            const ingredientNames = selectedIngredientIds
+                .map((id) => allIngredients.find((i) => i.ingredientId === id)?.name)
+                .filter(Boolean);
+            const data = await generateRecipeFromPantry(ingredientNames, constraints);
             setResult({ type: "recipe_generation", data: data.generatedRecipe });
             await refreshHistory();
         } catch {
@@ -648,48 +639,13 @@ function AIAssistant() {
                         <div className="ai-panel-body">
                             <p className="ai-panel-hint">Search and select the ingredients you have available, then optionally set recipe constraints.</p>
 
-                            {selectedIngredients.length > 0 && (
-                                <div className="ai-selected-chips">
-                                    {selectedIngredients.map((name) => (
-                                        <span key={name} className="ai-chip">
-                                            {name}
-                                            <button
-                                                type="button"
-                                                className="ai-chip-remove"
-                                                onClick={() => removeIngredient(name)}
-                                                aria-label={`Remove ${name}`}
-                                            >×</button>
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
-
-                            <div className="ai-picker">
-                                <input
-                                    type="text"
-                                    className="ai-picker-search"
-                                    placeholder="Search ingredients..."
-                                    value={ingredientSearch}
-                                    onChange={(e) => setIngredientSearch(e.target.value)}
-                                />
-                                <div className="ai-picker-list">
-                                    {filteredIngredients.length === 0 && (
-                                        <p className="ai-picker-empty">
-                                            {ingredientSearch ? "No matching ingredients." : "All ingredients already selected."}
-                                        </p>
-                                    )}
-                                    {filteredIngredients.map((ing) => (
-                                        <button
-                                            key={ing.ingredientId}
-                                            type="button"
-                                            className="ai-picker-option"
-                                            onClick={() => addIngredient(ing.name)}
-                                        >
-                                            + {ing.name}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                            <MultiIngredientPicker
+                                ingredients={allIngredients}
+                                selectedIds={selectedIngredientIds}
+                                onToggle={toggleIngredient}
+                                onClearAll={() => setSelectedIngredientIds([])}
+                                placeholder="Search and select ingredients..."
+                            />
 
                             <div className="ai-constraints">
                                 <div className="ai-constraint-field">
@@ -724,12 +680,12 @@ function AIAssistant() {
                             <div className="ai-panel-actions">
                                 <AppButton
                                     type="button"
-                                    disabled={!selectedIngredients.length || aiLoading}
+                                    disabled={!selectedIngredientIds.length || aiLoading}
                                     onClick={handleGenerateRecipe}
                                 >
                                     {aiLoading
                                         ? "Generating..."
-                                        : `Generate Recipe (${selectedIngredients.length} ingredient${selectedIngredients.length !== 1 ? "s" : ""})`}
+                                        : `Generate Recipe (${selectedIngredientIds.length} ingredient${selectedIngredientIds.length !== 1 ? "s" : ""})`}
                                 </AppButton>
                             </div>
                         </div>

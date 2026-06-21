@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Ingredient Picker — searchable autocomplete
+   Mirrors CustomSelect visual language (same palette, radii, typography).
+   ========================================================================== */
+
+.ingredient-picker-field {
+    position: relative;
+    width: 100%;
+}
+
+.ingredient-picker-field label {
+    display: block;
+    margin-bottom: 9px;
+
+    color: #46ae6b;
+
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.ingredient-picker-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* ── Search input (when nothing is selected) ── */
+
+.ingredient-picker-input {
+    width: 100%;
+    min-height: 54px;
+    padding: 0 18px;
+    box-sizing: border-box;
+
+    border: 1px solid #d6d2c4;
+    border-radius: 18px;
+
+    background: #fffefa;
+    color: #1f3d2b;
+
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 900;
+
+    cursor: text;
+    outline: none;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.ingredient-picker-input:focus {
+    border-color: #46ae6b;
+    box-shadow: 0 0 0 3px rgba(70, 174, 107, 0.15);
+}
+
+.ingredient-picker-input::placeholder {
+    color: #9ab0a1;
+    font-weight: 600;
+}
+
+/* ── Selected state (when an ingredient is chosen) ── */
+
+.ingredient-picker-selected {
+    width: 100%;
+    min-height: 54px;
+    padding: 0 12px 0 18px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    border: 1px solid #46ae6b;
+    border-radius: 18px;
+
+    background: #fffefa;
+}
+
+.ingredient-picker-selected-name {
+    flex: 1;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    color: #1f3d2b;
+
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.ingredient-picker-clear {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #2a7545;
+
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.ingredient-picker-clear:hover {
+    background: #fff0f0;
+    color: #c44;
+}
+
+/* ── Suggestions dropdown ── */
+
+/*
+   Absolute positioning keeps the dropdown from pushing siblings down
+   (important inside modals and fixed-height grids).
+*/
+.ingredient-picker-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 100000;
+
+    max-height: 220px;
+    padding: 10px;
+
+    overflow-y: auto;
+
+    border: 1px solid #8bd5ae;
+    border-radius: 18px;
+
+    background: rgba(246, 251, 245, 0.98);
+
+    box-shadow: 0 18px 38px rgba(31, 61, 43, 0.18);
+}
+
+.ingredient-picker-option {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+
+    border: none;
+    border-radius: 13px;
+
+    background: transparent;
+    color: #2a7545;
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 900;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.ingredient-picker-option:hover,
+.ingredient-picker-option.highlighted {
+    background: #d9fdda;
+    color: #3ab867;
+}
+
+.ingredient-picker-empty {
+    padding: 16px;
+
+    color: #9ab0a1;
+
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* ── Scrollbar (matches CustomSelect) ── */
+
+.ingredient-picker-dropdown::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ingredient-picker-dropdown::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: #e9fbe5;
+}
+
+.ingredient-picker-dropdown::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #9edb91;
+}
+
+.ingredient-picker-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #67d656;
+}

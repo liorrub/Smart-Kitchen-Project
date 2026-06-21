@@ -10,6 +10,7 @@ import AppButton from "../components/AppButton";
 import FormCard from "../components/FormCard";
 import FormField from "../components/FormField";
 import CustomSelect from "../components/CustomSelect";
+import IngredientPicker from "../components/IngredientPicker";
 import CheckboxGroup from "../components/CheckboxGroup";
 
 import {
@@ -158,12 +159,6 @@ function ChefRecipes() {
             return String(recipe.creatorId) === String(storedUser?.userId);
         });
     }, [recipes, storedUser?.userId]);
-
-    // Build ingredient options for the ingredient selector dropdown
-    const ingredientOptions = ingredients.map((ingredient) => ({
-        value: ingredient.ingredientId,
-        label: ingredient.name
-    }));
 
     // -----------------------------------------------------------------------
     // Form field handlers
@@ -661,15 +656,13 @@ function ChefRecipes() {
                                             </label>
 
                                             <div className="recipe-ingredient-add-row">
-                                                <CustomSelect
+                                                <IngredientPicker
                                                     label="Ingredient"
                                                     name="selectedIngredientId"
                                                     value={recipeFormData.selectedIngredientId}
                                                     onChange={handleRecipeFormChange}
-                                                    options={[
-                                                        { value: "", label: "Choose ingredient" },
-                                                        ...ingredientOptions
-                                                    ]}
+                                                    ingredients={ingredients}
+                                                    placeholder="Search ingredient..."
                                                 />
 
                                                 <FormField

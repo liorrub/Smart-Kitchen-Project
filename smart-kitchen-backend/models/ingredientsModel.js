@@ -9,7 +9,7 @@ function toPlain(instance) {
 
 async function getAllIngredients() {
     const rows = await Ingredient.findAll({
-        order: [["ingredientId", "ASC"]]
+        order: [["name", "ASC"], ["ingredientId", "ASC"]]
     });
     return rows.map(toPlain);
 }
@@ -51,7 +51,7 @@ async function filterIngredients(filters = {}) {
 
     const rows = await Ingredient.findAll({
         where,
-        order: [["ingredientId", "ASC"]]
+        order: [["name", "ASC"], ["ingredientId", "ASC"]]
     });
 
     let ingredients = rows.map(toPlain);

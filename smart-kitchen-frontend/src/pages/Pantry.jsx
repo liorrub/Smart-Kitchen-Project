@@ -7,6 +7,7 @@ import axios from "axios";
 import CreateProduct from "../components/CreateProduct";
 import CreateProductButton from "../components/CreateProductButton";
 import CustomSelect from "../components/CustomSelect";
+import IngredientPicker from "../components/IngredientPicker";
 import { getIngredients } from "../services/ingredientsService";
 import { getResponseData, getErrorMessage, getNestedResponseData } from "../utils/apiUtils";
 import { getStoredUser, getAuthHeaders } from "../utils/authUtils";
@@ -198,20 +199,6 @@ function Pantry() {
             document.body.style.overflow = "";
         };
     }, [editingItem]);
-
-    // Build ingredient dropdown options with a default placeholder as the first entry.
-    const ingredientOptions = useMemo(() => {
-        return [
-            {
-                value: "",
-                label: "Choose product"
-            },
-            ...ingredients.map((ingredient) => ({
-                value: String(ingredient.ingredientId),
-                label: ingredient.name
-            }))
-        ];
-    }, [ingredients]);
 
     // Filter items expiring within 7 days for the warning banner at the top of the page.
     const expiringSoonItems = useMemo(() => {
@@ -758,12 +745,13 @@ function Pantry() {
                     noValidate
                 >
                     <div className="pantry-form-grid">
-                        <CustomSelect
+                        <IngredientPicker
                             label="Product"
                             name="ingredientId"
                             value={formData.ingredientId}
-                            options={ingredientOptions}
                             onChange={handleChange}
+                            ingredients={ingredients}
+                            placeholder="Search product..."
                             wrapperClassName="pantry-field pantry-custom-select-field"
                         />
 
