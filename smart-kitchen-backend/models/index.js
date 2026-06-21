@@ -12,6 +12,7 @@ const PantryItem = require("./PantryItem");
 const ShoppingListItem = require("./ShoppingListItem");
 const MealPlanItem = require("./MealPlanItem");
 const Store = require("./Store");
+const IngredientStore = require("./IngredientStore");
 
 // User → Recipe (one-to-many via creatorId)
 User.hasMany(Recipe, { foreignKey: "creatorId", as: "recipes" });
@@ -142,6 +143,26 @@ MealPlanItem.belongsTo(User, {
     foreignKey: "userId"
 });
 
+// Ingredient → IngredientStore (one-to-many)
+Ingredient.hasMany(IngredientStore, {
+    foreignKey: "ingredientId",
+    as: "ingredientStores"
+});
+IngredientStore.belongsTo(Ingredient, {
+    foreignKey: "ingredientId",
+    as: "ingredient"
+});
+
+// Store → IngredientStore (one-to-many)
+Store.hasMany(IngredientStore, {
+    foreignKey: "storeId",
+    as: "ingredientStores"
+});
+IngredientStore.belongsTo(Store, {
+    foreignKey: "storeId",
+    as: "store"
+});
+
 module.exports = {
     sequelize,
     User,
@@ -154,5 +175,6 @@ module.exports = {
     PantryItem,
     ShoppingListItem,
     MealPlanItem,
-    Store
+    Store,
+    IngredientStore
 };

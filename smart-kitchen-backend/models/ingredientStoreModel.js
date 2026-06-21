@@ -1,74 +1,52 @@
-const ingredientStores = require("../data/ingredient_store.json");
+"use strict";
 
-const { generateId } = require("../utils/idGenerator");
-const { getCurrentDateTime } = require("../utils/dateHelper");
+const { IngredientStore } = require("./index");
 
-// Get all ingredient-store relations
+// lastUpdated (updatedAt alias) is preserved — it was exposed in the original API.
+// createdAt: false in the model means it never appears in the plain object.
+function toPlain(instance) {
+    return instance.get({ plain: true });
+}
+
 async function getAllIngredientStores() {
-    return ingredientStores;
+    const rows = await IngredientStore.findAll({
+        order: [["ingredientStoreId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
-// Get stores for ingredient
 async function getStoresByIngredientId(ingredientId) {
-    return ingredientStores.filter(
-        item => item.ingredientId === ingredientId
-    );
+    const rows = await IngredientStore.findAll({
+        where: { ingredientId },
+        order: [["ingredientStoreId", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
-// Get relation by ID
 async function getIngredientStoreById(ingredientStoreId) {
-    return ingredientStores.find(
-        item => item.ingredientStoreId === ingredientStoreId
-    );
+    const instance = await IngredientStore.findByPk(ingredientStoreId);
+    return instance ? toPlain(instance) : undefined;
 }
 
-// Add relation
 async function addIngredientStore(ingredientStoreData) {
-    const newEntry = {
-        ingredientStoreId: generateId(
-            ingredientStores,
-            "ingredientStoreId"
-        ),
-        ...ingredientStoreData,
-        lastUpdated: getCurrentDateTime()
-    };
-
-    ingredientStores.push(newEntry);
-
-    return newEntry;
+    const instance = await IngredientStore.create(ingredientStoreData);
+    return toPlain(instance);
 }
 
-// Update relation
-async function updateIngredientStore(
-    ingredientStoreId,
-    updatedData
-) {
-    const itemIndex = ingredientStores.findIndex(
-        item => item.ingredientStoreId === ingredientStoreId
-    );
-
-    if (itemIndex === -1) {
-        return null;
-    }
-
-    ingredientStores[itemIndex] = {
-        ...ingredientStores[itemIndex],
-        ...updatedData,
-        lastUpdated: getCurrentDateTime()
-    };
-
-    return ingredientStores[itemIndex];
+async function updateIngredientStore(ingredientStoreId, updatedData) {
+    const instance = await IngredientStore.findByPk(ingredientStoreId);
+    if (!instance) return null;
+    await instance.update(updatedData);
+    return toPlain(instance);
 }
 
-// Return stores sorted from cheapest to most expensive
+// Returns stores for the ingredient sorted by price ascending.
 async function comparePrices(ingredientId) {
-    const stores = await getStoresByIngredientId(
-        ingredientId
-    );
-
-    return stores.sort(
-        (a, b) => a.price - b.price
-    );
+    const rows = await IngredientStore.findAll({
+        where: { ingredientId },
+        order: [["price", "ASC"]]
+    });
+    return rows.map(toPlain);
 }
 
 module.exports = {
