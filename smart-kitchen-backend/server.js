@@ -28,7 +28,9 @@ const settingsRoutes = require("./routes/settingsRoutes");
 const optionsRoutes = require("./routes/optionsRoutes");
 const chefRequestsRoutes = require("./routes/chefRequestsRoutes");
 const recipeCommentsRoutes = require("./routes/recipeCommentsRoutes");
-const recipeLikesRoutes = require("./routes/recipeLikesRoutes");
+const recipeLikesRoutes   = require("./routes/recipeLikesRoutes");
+const userFollowsRoutes   = require("./routes/userFollowsRoutes");
+const feedRoutes          = require("./routes/feedRoutes");
 
 // Parse JSON request bodies
 app.use(express.json());
@@ -59,6 +61,8 @@ app.use("/api/options", optionsRoutes);
 app.use("/api/chef-requests", chefRequestsRoutes);
 app.use("/api/recipes", recipeCommentsRoutes);
 app.use("/api", recipeLikesRoutes);
+app.use("/api/users", userFollowsRoutes);
+app.use("/api", feedRoutes);
 
 // Must come after every valid route
 app.use(notFoundHandler);

@@ -12,6 +12,13 @@ export async function getAllRecipes() {
     return getResponseData(response);
 }
 
+// Fetch recipes filtered by optional query params (e.g. { creatorId, category, cuisine }).
+export async function filterRecipes(params = {}) {
+    const response = await axios.get(RECIPES_API_URL, { params });
+
+    return getResponseData(response);
+}
+
 // Fetch a single recipe by its ID.
 export async function getRecipeById(recipeId) {
     const response = await axios.get(`${RECIPES_API_URL}/${recipeId}`);

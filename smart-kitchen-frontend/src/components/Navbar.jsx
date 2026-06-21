@@ -31,6 +31,10 @@ const menuLinks = [
     {
         to: "/ai-assistant",
         label: "AI Assistant"
+    },
+    {
+        to: "/feed",
+        label: "My Feed"
     }
 ];
 

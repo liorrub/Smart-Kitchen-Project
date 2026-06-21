@@ -1,0 +1,120 @@
+/* ── Page wrapper ── */
+.feed-page {
+    min-height: 100vh;
+}
+
+.feed-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+}
+
+/* ── Status messages (loading / error) ── */
+.feed-status {
+    padding: 60px 24px;
+    text-align: center;
+    color: #6a8070;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.feed-status--error {
+    color: #c44;
+}
+
+/* ── Empty state ── */
+.feed-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 72px 24px;
+    text-align: center;
+}
+
+.feed-empty-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: #1f3d2b;
+    margin: 0;
+}
+
+.feed-empty-sub {
+    font-size: 15px;
+    color: #6a8070;
+    margin: 0;
+    max-width: 340px;
+}
+
+.feed-browse-link {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 10px 28px;
+    background: #46ae6b;
+    color: #fff;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: background 0.18s ease;
+}
+
+.feed-browse-link:hover {
+    background: #3a9a5c;
+}
+
+/* ── Recipe grid ── */
+.feed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 28px;
+}
+
+/* ── Individual card wrapper ── */
+.feed-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ── Creator attribution line above each card ── */
+.feed-creator-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 0;
+    text-decoration: none;
+    width: fit-content;
+}
+
+.feed-creator-link:hover .feed-creator-name {
+    text-decoration: underline;
+}
+
+.feed-creator-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #46ae6b, #74d99f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.feed-creator-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2a7545;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .feed-grid {
+        grid-template-columns: 1fr;
+    }
+}
