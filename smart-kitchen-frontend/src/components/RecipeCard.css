@@ -33,9 +33,10 @@
 .recipe-card-image-wrapper {
     position: relative;
     width: 100%;
-    height: 200px;
+    height: 155px;
     flex-shrink: 0;
     overflow: hidden;
+    border-radius: 24px 24px 0 0;
 }
 
 .recipe-card-image {
@@ -157,13 +158,13 @@
 
 .recipe-card-inner {
     flex: 1;
-    padding: 16px;
+    padding: 12px;
 
     box-sizing: border-box;
 
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 /* ==========================================================================
@@ -182,7 +183,7 @@
 
     color: #1f3d2b;
 
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 900;
     line-height: 1.2;
 }
@@ -228,11 +229,11 @@
    ========================================================================== */
 
 .recipe-card-footer {
-    padding-top: 12px;
+    padding-top: 8px;
 
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
 
     border-top: 1px solid #d9ead4;
 }
@@ -268,8 +269,8 @@
    ========================================================================== */
 
 .recipe-card-like-button {
-    height: 36px;
-    padding: 0 12px;
+    height: 34px;
+    padding: 0 9px;
 
     border: 1px solid #f0cdd8;
     border-radius: 12px;
@@ -277,11 +278,11 @@
 
     color: #cc6089;
 
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 900;
     cursor: pointer;
     white-space: nowrap;
-    min-width: 58px;
+    min-width: 44px;
 
     transition:
         transform 0.18s ease,
@@ -308,13 +309,13 @@
 
 .recipe-card-view-button,
 .recipe-card-favorite-button {
-    height: 36px;
-    padding: 0 14px;
+    height: 34px;
+    padding: 0 10px;
 
     border: none;
     border-radius: 12px;
 
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 900;
     cursor: pointer;
     white-space: nowrap;
@@ -329,12 +330,12 @@
 
 .recipe-card-view-button {
     flex: 1;
-    min-width: 90px;
+    min-width: 70px;
     box-shadow: 0 6px 14px rgba(63, 74, 52, 0.14);
 }
 
 .recipe-card-favorite-button {
-    min-width: 72px;
+    min-width: 0;
     background: #fffefa;
     color: #cc6089;
     border: 1px solid #f0cdd8;

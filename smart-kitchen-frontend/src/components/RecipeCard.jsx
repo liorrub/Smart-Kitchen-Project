@@ -68,7 +68,7 @@ function RecipeCard({
         if (onLikeClick) onLikeClick(recipe);
     }
 
-    const defaultFavoriteText = isFavorite ? "♥ Saved" : "♡ Save";
+    const defaultFavoriteText = isFavorite ? "Saved" : "Save";
 
     return (
         <article className={`recipe-card ${categoryClass}`}>

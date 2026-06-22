@@ -46,7 +46,7 @@
 .recipe-modal-body {
     flex: 1;
     overflow-y: auto;
-    padding: 28px;
+    padding: 14px;
 }
 
 /* ==========================================================================
@@ -119,14 +119,14 @@
 
 .recipe-modal-image-wrapper {
     width: 100%;
-    max-height: 280px;
+    max-height: 185px;
     overflow: hidden;
     flex-shrink: 0;
 }
 
 .recipe-modal-image {
     width: 100%;
-    height: 280px;
+    height: 185px;
     object-fit: cover;
     display: block;
 }
@@ -137,8 +137,8 @@
 
 .recipe-modal-header {
     max-width: 700px;
-    margin: 0 auto 22px;
-    padding: 0 44px;
+    margin: 0 auto 14px;
+    padding: 0 36px;
 
     text-align: center;
 }
@@ -165,7 +165,7 @@
 
     color: #1f3d2b;
 
-    font-size: clamp(30px, 3.5vw, 42px);
+    font-size: clamp(22px, 2.8vw, 32px);
     font-weight: 900;
     line-height: 1.08;
     letter-spacing: -0.8px;

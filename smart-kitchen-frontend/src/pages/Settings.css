@@ -21,7 +21,7 @@
    ========================================================================== */
 
 .settings-summary-card {
-    padding: 24px;
+    padding: 16px;
 
     background:
             radial-gradient(circle at top right, rgba(103, 214, 86, 0.16), transparent 38%),
@@ -39,8 +39,8 @@
 }
 
 .summary-avatar {
-    width: 68px;
-    height: 68px;
+    width: 54px;
+    height: 54px;
 
     display: flex;
     align-items: center;
@@ -48,12 +48,12 @@
     flex-shrink: 0;
 
     background: linear-gradient(135deg, #67d656, #2a7545);
-    border-radius: 22px;
-    box-shadow: 0 12px 28px rgba(42, 117, 69, 0.22);
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(42, 117, 69, 0.22);
 
     color: white;
 
-    font-size: 24px;
+    font-size: 19px;
     font-weight: 900;
     letter-spacing: 1px;
 }
@@ -69,11 +69,11 @@
 
 .summary-top strong {
     display: block;
-    margin-top: 6px;
+    margin-top: 4px;
 
     color: #1f3d2b;
 
-    font-size: 24px;
+    font-size: 19px;
     font-weight: 900;
 }
 

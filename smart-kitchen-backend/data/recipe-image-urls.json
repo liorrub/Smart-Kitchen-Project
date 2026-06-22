@@ -1,0 +1,362 @@
+{
+  "Simple Pasta": {
+    "imageUrl": "https://www.budgetbytes.com/wp-content/uploads/2016/07/Fork-lift-Pasta-Butter-Tomato-Sauce-Upscaled.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Tofu Stir-fry": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Making_Stir-Fry_%283286445383%29.jpg/960px-Making_Stir-Fry_%283286445383%29.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Israeli Breakfast Bowl": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/The_7_Breakfasts_-_Caf%C3%A9_Caf%C3%A9.jpg/960px-The_7_Breakfasts_-_Caf%C3%A9_Caf%C3%A9.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Protein Yogurt Snack": {
+    "imageUrl": "https://ohsnapmacros.com/wp-content/uploads/2023/12/highproteinyogurtbowls.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 11
+  },
+  "Spaghetti Carbonara": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Spaghetti_alla_Carbonara.jpg/960px-Spaghetti_alla_Carbonara.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Margherita Pizza": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Pizza_Margherita_stu_spivack.jpg/960px-Pizza_Margherita_stu_spivack.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Tiramisu": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Tiramisu_-_Raffaele_Diomede.jpg/960px-Tiramisu_-_Raffaele_Diomede.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Risotto Milanese": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Risotto_with_speck_and_goat_cheese_%286101067436%29.jpg/960px-Risotto_with_speck_and_goat_cheese_%286101067436%29.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Bruschetta al Pomodoro": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/2014_Bruschetta_The_Larder_Chiang_Mai.jpg/960px-2014_Bruschetta_The_Larder_Chiang_Mai.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Penne Arrabbiata": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Penne_Arrabbiata.jpg/960px-Penne_Arrabbiata.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Minestrone Soup": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Minestrone_soup_%285%29.jpg/960px-Minestrone_soup_%285%29.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Focaccia Bread": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_CDTGiBarLd9OXiz_wNQAJx3VSKEtqSu_r4RZDtHoX72MhHeQrXA5qHc6&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Chicken Teriyaki": {
+    "imageUrl": "https://www.onceuponachef.com/images/2024/01/chicken-teriyaki.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Miso Soup": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS493Ev68_mcQQxYznxL8mBpqAfmSrQFTpdSR5_wkkscQ&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Korean Bibimbap": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Dolsot-bibimbap.jpg/960px-Dolsot-bibimbap.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Green Curry": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Thai_green_chicken_curry_and_roti.jpg/960px-Thai_green_chicken_curry_and_roti.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Ramen": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Shoyu_Ramen%EF%BC%88Tokyo_Ramen%EF%BC%89_-_01.jpg/960px-Shoyu_Ramen%EF%BC%88Tokyo_Ramen%EF%BC%89_-_01.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Classic Guacamole": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Guacamole_IMGP1271.jpg/960px-Guacamole_IMGP1271.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Chicken Tacos": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/001_Tacos_de_carnitas%2C_carne_asada_y_al_pastor.jpg/960px-001_Tacos_de_carnitas%2C_carne_asada_y_al_pastor.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Beef Enchiladas": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Enchilada_Rice_Beans.jpg/960px-Enchilada_Rice_Beans.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Black Bean Burritos": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Burrito.JPG/960px-Burrito.JPG",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Classic Burger": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/RedDot_Burger.jpg/960px-RedDot_Burger.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "BBQ Ribs": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT89ZKoiMxu67HPMiH9EBlj0-ndjtY9dAfK57Bq5AIYlQ&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Mac and Cheese": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Original_Mac_n_Cheese_.jpg/960px-Original_Mac_n_Cheese_.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Pancakes": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTM-xTDn4FW5mCNp4O_lnJmz7dNZwzpX1-vnU5QHoUbaA&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Caesar Salad": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Caesar_salad_%282%29.jpg/960px-Caesar_salad_%282%29.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Chicken Wings": {
+    "imageUrl": "https://easychickenrecipes.com/wp-content/uploads/2023/08/featured-buffalo-wings-recipe.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Beef Meatballs": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYkQ6im9r9SJiwkSlsz7iWunPJQtdpXoCofaPlkWHlsQ&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Blueberry Muffins": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVls5p7ND9A9J7Tw6PXPbbF4ZPxiwBADz0d6uKh77H0w&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Hummus": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Lebanese_style_hummus.jpg/960px-Lebanese_style_hummus.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Shakshuka": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Shakshuka_by_Calliopejen1.jpg/960px-Shakshuka_by_Calliopejen1.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Falafel": {
+    "imageUrl": "https://www.lemonblossoms.com/wp-content/uploads/2025/01/Falafel-S2.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Israeli Salad": {
+    "imageUrl": "https://www.pookspantry.com/wp-content/uploads/2026/06/Israeli-salad-with-peppers.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Sabich Sandwich": {
+    "imageUrl": "https://www.seriouseats.com/thmb/6CWQF8jU2Wdf8ayXnPN5BURTPKo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/20160317-sabich-sandwich-vicky-wasik-reedit21-14e71a78db284615983447dfc3533eb7.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Baba Ganoush": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Baba_Ganoush_05of05_%288735238183%29.jpg/960px-Baba_Ganoush_05of05_%288735238183%29.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Schnitzel": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Breitenlesau_Krug_Br%C3%A4u_Schnitzel.JPG/960px-Breitenlesau_Krug_Br%C3%A4u_Schnitzel.JPG",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Jachnun": {
+    "imageUrl": "https://www.sugat.com/wp-content/uploads/2021/03/RO1_1315-720x480.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 73
+  },
+  "Malabi": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfkgU5fDYtgHBJBSXUDI8JfBCjv0uLsOj5nWr4PgYQqA&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 65
+  },
+  "Israeli Couscous Salad": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKrKZtIJwLaPps6uxg_VrIeN620uawXZ4xh_B7lxrIkGAdgZuSjd-IZsk&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Salmon with Lemon Butter": {
+    "imageUrl": "https://natashaskitchen.com/wp-content/uploads/2018/05/Pan-Seared-Salmon-with-Lemon-Butter-Sauce-5.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Lentil Soup": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNMJLvqzNqrwAZOlfYAdDj-Nb3wx85jusekfaMnJbEv7lXbXidpSim0kQ&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Spinach and Feta Pie": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLePqZkPB_JCC1Ea_nDt2j1zSVdG3CRhkARl5OkDW6DA&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Chocolate Brownies": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Chocolatebrownie.JPG/960px-Chocolatebrownie.JPG",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Avocado Toast": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Avocado_toast_at_Voyager_Espresso_%2833134505776%29.jpg/960px-Avocado_toast_at_Voyager_Espresso_%2833134505776%29.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Greek Salad": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMacV0kg5LEIIG4jEm1Wuh7artAwdDNzN-r4XHJMh9BA&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Mushroom Risotto": {
+    "imageUrl": "https://static01.nyt.com/images/2024/01/10/multimedia/10Risotto-gcmz/10Risotto-gcmz-mediumSquareAt3X.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Eggplant Parmesan": {
+    "imageUrl": "https://asimplepalate.com/wp-content/uploads/2021/03/eggplant-parmesan-1.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Chickpea Curry": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXUrcNlQZVcLPS6VUKcghz8CdeEuqPtronYU1AEIcR4A&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Banana Bread": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd4lV1naKzXgL3T-v6BBcYV257GaPOX07B33swTfwc9A&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Quinoa Buddha Bowl": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa66uiDjvcwKLN2nOTGxH8yi5dIbrCCXc-YEwq1gXpfA&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Tuna Poke Bowl": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUp7DeSngKZhJ5LfgyiMluQllFWwtM-9C5n4j8WpmZPA&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Lamb Chops with Rosemary": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6thqcxxq45wdtvnQHrzDVnVsE_ScAndJTjH0Ll_Z6BA&s=10",
+    "imagePositionX": 49,
+    "imagePositionY": 59
+  },
+  "Carrot Ginger Soup": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7ggRrkEdty3-AqSbBVRluT1Y8iJLswcG4VGvwBCflBQ&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Stuffed Bell Peppers": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Quinoa_stuffed_peppers.jpg/960px-Quinoa_stuffed_peppers.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "French Onion Soup": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Soupe_%C3%A0_l%27oignon.jpg/960px-Soupe_%C3%A0_l%27oignon.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Spicy Tuna Roll": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/79/Crunchy_Spicy_Tuna%2C_big_eye_tuna%2C_shiso_panko%2C_togarashi_%28%2421%29_%2832807112472%29.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Mango Lassi": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrV3FkDaKqVS3Ttsdf5rijQTs4nefVES8ixG-k2l3JYJM08zG3AmI6jKg&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Turkey Meatballs in Marinara": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNdA_eXapialZi0K5PpKZJbE8xGFFiaSL_cXEPC6SUoQ&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Pesto Pasta": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbcwV5gjKyzFKfLcV2XNRMTOnoB-LbP9t0DKl11VQNGw&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Beet Salad with Feta": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQV2CIKlT_7vUjavJPA6BQ0bt8viWh6VbTuYvsmcXwBRg&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Pad Thai": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTps6Gep_63lxQhQoTfjwWnL1Vc1A6d5bZSfvWet67jfA&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Shakshuka with Feta": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Shakshuka_by_Calliopejen1.jpg/960px-Shakshuka_by_Calliopejen1.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Beef Stew": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5D-gn2GikNPI9Cw2gv08G342TcPyhMoyMWbcm7jd0z07CW651AumLtv43&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Dim Sum Shrimp Dumplings": {
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Steamed_prawn_dumplings.jpg/960px-Steamed_prawn_dumplings.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Kung Pao Chicken": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIquuM-BtzbsvJ4EyPDnJc55i-r881M7M6HnoVJlx7zGgnG6xhjl4XHMyS&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Salsa Verde": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmR7-8zrqzxW3FyorTeneapOGTpYmsqcIXJlmnFxQo2Q&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Chili Con Carne": {
+    "imageUrl": "https://www.recipetineats.com/tachyon/2016/06/Chili-Con-Carne_8.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Osso Buco": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnv25O9dviH_3CzWycrOqClqoG0jpnLNH3sHp5gIsS_w&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Panna Cotta": {
+    "imageUrl": "https://ichef.bbc.co.uk/ace/standard/1600/food/recipes/vanillapannacotta_87907_16x9.jpg.webp",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Clam Chowder": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_EowSz_0-HXxGZhOEoKbr8ux_W0yOP-gRx7Mf-C7b5Q&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Grilled Cheese Sandwich": {
+    "imageUrl": "https://www.allrecipes.com/thmb/pnEUcAXDg5GUJ77fUDzZp41NWkE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/AR-238891-Grilled-Cheese-Sandwich-beauty-4x3-362f705972e64a948b7ec547f7b2a831.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 70
+  },
+  "Vegetable Fried Rice": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyiN9WS5TzcOToNu6ceCbWwVDnJJkIzN6eaKvo-7Elbg&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  }
+}
