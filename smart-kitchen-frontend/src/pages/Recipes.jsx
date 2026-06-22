@@ -28,6 +28,7 @@ import { applySort } from "../utils/recipeSortUtils";
 const RECIPES_API_URL = `${API_BASE_URL}/recipes`;
 
 const DEFAULT_FILTER_VALUE = "all";
+const PAGE_SIZE = 8;
 
 const SORT_OPTIONS = [
     { value: "default",         label: "Recommended" },
@@ -75,6 +76,7 @@ function Recipes() {
     const [likeLoadingRecipeId, setLikeLoadingRecipeId] = useState(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
 
     const storedUser = getStoredUser();
 
@@ -122,6 +124,11 @@ function Recipes() {
 
         loadRecipesPage();
     }, [storedUser?.userId]);
+
+    // Reset to page 1 when any filter or sort option changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, categoryFilter, cuisineFilter, difficultyFilter, sortBy]);
 
     // Build a fast Set of recipe IDs the user has already saved as favorites.
     const favoriteRecipeIds = useMemo(() => {
@@ -203,6 +210,12 @@ function Recipes() {
     const quickRecipesCount = recipes.filter(
         (recipe) => Number(recipe.totalTime) <= 30
     ).length;
+
+    const totalPages = Math.max(1, Math.ceil(visibleRecipes.length / PAGE_SIZE));
+    const paginatedRecipes = useMemo(
+        () => visibleRecipes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+        [visibleRecipes, currentPage]
+    );
 
     // Reset all active filters, the search term, and the sort back to their default values.
     function clearFilters() {
@@ -475,7 +488,7 @@ function Recipes() {
                 </section>
             ) : (
                 <section className="recipes-grid">
-                    {visibleRecipes.map((recipe) => {
+                    {paginatedRecipes.map((recipe) => {
                         const isFavorite = favoriteRecipeIds.has(recipe.recipeId);
                         const isLiked = likedRecipeIds.has(recipe.recipeId);
 
@@ -498,6 +511,28 @@ function Recipes() {
                         );
                     })}
                 </section>
+            )}
+
+            {totalPages > 1 && (
+                <div className="recipes-pagination">
+                    <button
+                        type="button"
+                        className="recipes-pagination-btn"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(p => p - 1)}
+                    >
+                        ← Previous
+                    </button>
+                    <span className="recipes-pagination-info">Page {currentPage} of {totalPages}</span>
+                    <button
+                        type="button"
+                        className="recipes-pagination-btn"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(p => p + 1)}
+                    >
+                        Next →
+                    </button>
+                </div>
             )}
         </div>
     );

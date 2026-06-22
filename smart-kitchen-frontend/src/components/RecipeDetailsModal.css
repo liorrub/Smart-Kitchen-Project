@@ -119,14 +119,14 @@
 
 .recipe-modal-image-wrapper {
     width: 100%;
-    max-height: 185px;
+    max-height: 140px;
     overflow: hidden;
     flex-shrink: 0;
 }
 
 .recipe-modal-image {
     width: 100%;
-    height: 185px;
+    height: 140px;
     object-fit: cover;
     display: block;
 }
@@ -137,7 +137,7 @@
 
 .recipe-modal-header {
     max-width: 700px;
-    margin: 0 auto 14px;
+    margin: 0 auto 8px;
     padding: 0 36px;
 
     text-align: center;
@@ -266,11 +266,11 @@
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 10px;
 
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
 .recipe-modal-stat {
-    padding: 14px 8px;
+    padding: 10px 8px;
 
     border-radius: 18px;
     background: rgba(255, 254, 250, 0.94);
@@ -286,7 +286,7 @@
 
     color: #2a7545;
 
-    font-size: 24px;
+    font-size: 19px;
     font-weight: 900;
     line-height: 1;
 }
@@ -310,14 +310,14 @@
 .recipe-main-grid {
     display: grid;
     grid-template-columns: minmax(280px, 0.9fr) minmax(380px, 1.55fr);
-    gap: 24px;
+    gap: 16px;
     align-items: stretch;
 
     margin-top: 8px;
 }
 
 .recipe-detail-card {
-    padding: 28px 32px;
+    padding: 18px 22px;
 
     border-radius: 22px;
     background: rgba(255, 254, 250, 0.82);
@@ -327,7 +327,7 @@
 }
 
 .recipe-card-title {
-    margin-bottom: 22px;
+    margin-bottom: 14px;
 
     display: flex;
     align-items: center;
@@ -353,7 +353,7 @@
 
     color: #1f3d2b;
 
-    font-size: 24px;
+    font-size: 18px;
     font-weight: 900;
 }
 
@@ -376,7 +376,7 @@
 
     display: flex;
     flex-direction: column;
-    gap: 17px;
+    gap: 12px;
 
     list-style: none;
 }
@@ -397,7 +397,7 @@
 
     color: #1f3d2b;
 
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 900;
     line-height: 1.2;
 }
@@ -407,7 +407,7 @@
 
     color: #55705d;
 
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 850;
     white-space: nowrap;
 }
@@ -436,7 +436,7 @@
 .recipe-simple-instructions span {
     color: #2a7545;
 
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 900;
     line-height: 1.5;
 }
@@ -446,7 +446,7 @@
 
     color: #1f3d2b;
 
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 750;
     line-height: 1.5;
 }
@@ -465,8 +465,8 @@
    ========================================================================== */
 
 .recipe-extra-row {
-    margin-top: 24px;
-    padding: 22px 24px;
+    margin-top: 14px;
+    padding: 14px 18px;
 
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -516,7 +516,7 @@
    ========================================================================== */
 
 .recipe-reviews-card {
-    margin-top: 24px;
+    margin-top: 14px;
 }
 
 .recipe-reviews-header {

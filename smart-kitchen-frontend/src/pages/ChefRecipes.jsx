@@ -60,6 +60,8 @@ function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+const PAGE_SIZE = 8;
+
 function ChefRecipes() {
     // -----------------------------------------------------------------------
     // State
@@ -81,6 +83,7 @@ function ChefRecipes() {
     const [averageRating, setAverageRating] = useState(null);
     const [editingRecipe, setEditingRecipe] = useState(null);
     const [confirmDeleteRecipe, setConfirmDeleteRecipe] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
 
     // Options are fetched from the backend so they stay in sync with the enums
     const [options, setOptions] = useState({
@@ -169,6 +172,12 @@ function ChefRecipes() {
             return String(recipe.creatorId) === String(storedUser?.userId);
         });
     }, [recipes, storedUser?.userId]);
+
+    const totalPages = Math.max(1, Math.ceil(chefRecipes.length / PAGE_SIZE));
+    const paginatedRecipes = useMemo(
+        () => chefRecipes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+        [chefRecipes, currentPage]
+    );
 
     // -----------------------------------------------------------------------
     // Form field handlers
@@ -387,6 +396,7 @@ function ChefRecipes() {
             );
 
             setSuccess("Recipe deleted successfully.");
+            setCurrentPage(1);
         } catch (err) {
             console.error("Delete recipe error:", err);
 
@@ -1023,7 +1033,7 @@ function ChefRecipes() {
                 </section>
             ) : (
                 <section className="recipes-grid chef-recipes-grid">
-                    {chefRecipes.map((recipe) => {
+                    {paginatedRecipes.map((recipe) => {
                         return (
                             <div
                                 key={recipe.recipeId}
@@ -1059,6 +1069,28 @@ function ChefRecipes() {
                         );
                     })}
                 </section>
+            )}
+
+            {totalPages > 1 && (
+                <div className="recipes-pagination">
+                    <button
+                        type="button"
+                        className="recipes-pagination-btn"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(p => p - 1)}
+                    >
+                        ← Previous
+                    </button>
+                    <span className="recipes-pagination-info">Page {currentPage} of {totalPages}</span>
+                    <button
+                        type="button"
+                        className="recipes-pagination-btn"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(p => p + 1)}
+                    >
+                        Next →
+                    </button>
+                </div>
             )}
         </div>
     );
