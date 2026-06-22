@@ -3,8 +3,6 @@
    ========================================================================== */
 
 .recipe-card {
-    min-height: 315px;
-
     display: flex;
     flex-direction: column;
 
@@ -24,8 +22,138 @@
 
 .recipe-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 18px 38px rgba(63, 74, 52, 0.14);
+    box-shadow: 0 20px 42px rgba(63, 74, 52, 0.15);
+    border-color: #b8d8ad;
 }
+
+/* ==========================================================================
+   Image banner — full card width, sits above the padded body
+   ========================================================================== */
+
+.recipe-card-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.recipe-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+    transition: transform 0.3s ease;
+}
+
+.recipe-card:hover .recipe-card-image {
+    transform: scale(1.04);
+}
+
+/* Category badge — absolute over the image, bottom-left */
+.recipe-card-category {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+
+    padding: 5px 12px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    /* subtle backdrop so badge is readable over any image */
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* ==========================================================================
+   Category color themes
+   ========================================================================== */
+
+.recipe-card-breakfast {
+    border-top: 4px solid #f2c94c;
+}
+
+.recipe-card-breakfast .recipe-card-category {
+    background: rgba(255, 244, 199, 0.92);
+    color: #9a6a00;
+    border: 1px solid #f2d77f;
+}
+
+.recipe-card-breakfast .recipe-card-view-button {
+    background: #f2c94c;
+    color: #1f3d2b;
+}
+
+.recipe-card-lunch {
+    border-top: 4px solid #56cc83;
+}
+
+.recipe-card-lunch .recipe-card-category {
+    background: rgba(230, 249, 238, 0.92);
+    color: #247148;
+    border: 1px solid #bfe8cf;
+}
+
+.recipe-card-lunch .recipe-card-view-button {
+    background: #56cc83;
+    color: white;
+}
+
+.recipe-card-dinner {
+    border-top: 4px solid #f2994a;
+}
+
+.recipe-card-dinner .recipe-card-category {
+    background: rgba(255, 240, 226, 0.92);
+    color: #b76518;
+    border: 1px solid #f4c59d;
+}
+
+.recipe-card-dinner .recipe-card-view-button {
+    background: #f2994a;
+    color: white;
+}
+
+.recipe-card-snack {
+    border-top: 4px solid #eb5757;
+}
+
+.recipe-card-snack .recipe-card-category {
+    background: rgba(255, 232, 232, 0.92);
+    color: #b63d3d;
+    border: 1px solid #f5b7b7;
+}
+
+.recipe-card-snack .recipe-card-view-button {
+    background: #eb5757;
+    color: white;
+}
+
+.recipe-card-default {
+    border-top: 4px solid #67d656;
+}
+
+.recipe-card-default .recipe-card-category {
+    background: rgba(233, 251, 229, 0.92);
+    color: #2a7545;
+    border: 1px solid #cde8c7;
+}
+
+.recipe-card-default .recipe-card-view-button {
+    background: #67d656;
+    color: white;
+}
+
+/* ==========================================================================
+   Card body (padded area below the image)
+   ========================================================================== */
 
 .recipe-card-inner {
     flex: 1;
@@ -39,162 +167,38 @@
 }
 
 /* ==========================================================================
-   Category color themes
-   ========================================================================== */
-
-.recipe-card-breakfast {
-    border-top: 5px solid #f2c94c;
-}
-
-.recipe-card-breakfast .recipe-card-category {
-    background: #fff4c7;
-    color: #9a6a00;
-    border: 1px solid #f2d77f;
-}
-
-.recipe-card-breakfast .recipe-card-view-button {
-    background: #f2c94c;
-    color: #1f3d2b;
-}
-
-.recipe-card-lunch {
-    border-top: 5px solid #56cc83;
-}
-
-.recipe-card-lunch .recipe-card-category {
-    background: #e6f9ee;
-    color: #247148;
-    border: 1px solid #bfe8cf;
-}
-
-.recipe-card-lunch .recipe-card-view-button {
-    background: #56cc83;
-    color: white;
-}
-
-.recipe-card-dinner {
-    border-top: 5px solid #f2994a;
-}
-
-.recipe-card-dinner .recipe-card-category {
-    background: #fff0e2;
-    color: #b76518;
-    border: 1px solid #f4c59d;
-}
-
-.recipe-card-dinner .recipe-card-view-button {
-    background: #f2994a;
-    color: white;
-}
-
-.recipe-card-snack {
-    border-top: 5px solid #eb5757;
-}
-
-.recipe-card-snack .recipe-card-category {
-    background: #ffe8e8;
-    color: #b63d3d;
-    border: 1px solid #f5b7b7;
-}
-
-.recipe-card-snack .recipe-card-view-button {
-    background: #eb5757;
-    color: white;
-}
-
-.recipe-card-default {
-    border-top: 5px solid #67d656;
-}
-
-.recipe-card-default .recipe-card-category {
-    background: #e9fbe5;
-    color: #2a7545;
-    border: 1px solid #cde8c7;
-}
-
-.recipe-card-default .recipe-card-view-button {
-    background: #67d656;
-    color: white;
-}
-
-/* ==========================================================================
-   Card header
-   ========================================================================== */
-
-.recipe-card-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.recipe-card-image-wrapper {
-    width: 68px;
-    height: 68px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    overflow: hidden;
-
-    border-radius: 18px;
-    border: 1px solid #d9ead4;
-    background: linear-gradient(135deg, #ffffff, #f4faf1);
-}
-
-.recipe-card-image {
-    width: 100%;
-    height: 100%;
-    padding: 5px;
-
-    object-fit: contain;
-    box-sizing: border-box;
-}
-
-.recipe-card-category {
-    padding: 8px 12px;
-
-    border-radius: 999px;
-
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-/* ==========================================================================
    Card content
    ========================================================================== */
 
 .recipe-card-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 .recipe-card-content h3 {
-    margin: 0;
+    margin: 0 0 4px;
 
     color: #1f3d2b;
 
-    font-size: 21px;
+    font-size: 20px;
     font-weight: 900;
     line-height: 1.2;
 }
 
 .recipe-card-meta {
-    margin-top: 12px;
+    margin-top: 10px;
 
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
+    gap: 6px;
 }
 
 .recipe-card-meta span {
-    padding: 7px 10px;
+    padding: 5px 10px;
 
-    border-radius: 13px;
+    border-radius: 12px;
     background: #fffefa;
     border: 1px solid #ddd4c7;
 
@@ -205,11 +209,11 @@
 }
 
 .recipe-card-tags {
-    margin-top: 11px;
+    margin-top: 10px;
 
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
+    gap: 6px;
 }
 
 .recipe-card-tags span {
@@ -228,7 +232,7 @@
 
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 
     border-top: 1px solid #d9ead4;
 }
@@ -247,23 +251,28 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .recipe-card-extra-actions {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
 .recipe-card-like-button {
-    height: 38px;
+    height: 36px;
     padding: 0 12px;
 
     border: 1px solid #f0cdd8;
-    border-radius: 13px;
+    border-radius: 12px;
     background: #fffefa;
 
     color: #cc6089;
@@ -299,16 +308,15 @@
 
 .recipe-card-view-button,
 .recipe-card-favorite-button {
-    height: 38px;
+    height: 36px;
     padding: 0 14px;
 
     border: none;
-    border-radius: 13px;
+    border-radius: 12px;
 
     font-size: 13px;
     font-weight: 900;
     cursor: pointer;
-
     white-space: nowrap;
 
     transition:
@@ -320,12 +328,13 @@
 }
 
 .recipe-card-view-button {
-    min-width: 100px;
-    box-shadow: 0 7px 15px rgba(63, 74, 52, 0.14);
+    flex: 1;
+    min-width: 90px;
+    box-shadow: 0 6px 14px rgba(63, 74, 52, 0.14);
 }
 
 .recipe-card-favorite-button {
-    min-width: 75px;
+    min-width: 72px;
     background: #fffefa;
     color: #cc6089;
     border: 1px solid #f0cdd8;
@@ -340,12 +349,13 @@
 .recipe-card-favorite-button:hover:not(:disabled) {
     background: #cc6089;
     color: white;
+    border-color: #cc6089;
 }
 
 .recipe-card-view-button:hover:not(:disabled),
 .recipe-card-favorite-button:hover:not(:disabled) {
     transform: translateY(-2px);
-    filter: brightness(1.03);
+    filter: brightness(1.04);
     box-shadow: 0 10px 20px rgba(63, 74, 52, 0.18);
 }
 
@@ -356,52 +366,43 @@
 }
 
 /* ==========================================================================
-   Responsive
+   Creator link
    ========================================================================== */
 
-@media (max-width: 760px) {
-    .recipe-card,
-    .recipe-card-inner {
-        min-height: auto;
-    }
-
-    .recipe-card-inner {
-        padding: 16px;
-    }
-
-    .recipe-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .recipe-card-actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .recipe-card-view-button,
-    .recipe-card-favorite-button {
-        width: 100%;
-    }
-
-    .recipe-card-extra-actions {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-    }
-}
-
-/* ── Creator attribution link ── */
 .recipe-card-creator-link {
     display: block;
+
+    color: #46ae6b;
+
     font-size: 12px;
     font-weight: 700;
-    color: #46ae6b;
     text-decoration: none;
-    margin-top: -2px;
-    margin-bottom: 4px;
 }
 
 .recipe-card-creator-link:hover {
     text-decoration: underline;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 760px) {
+    .recipe-card-image-wrapper {
+        height: 160px;
+    }
+
+    .recipe-card-actions {
+        flex-wrap: wrap;
+    }
+
+    .recipe-card-view-button {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .recipe-card-extra-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
 }

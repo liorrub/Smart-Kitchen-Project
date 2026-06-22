@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const http = require("http");
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 
@@ -40,6 +41,9 @@ app.use(express.json());
 
 // Enable CORS
 app.use(cors());
+
+// Serve uploaded recipe images statically
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Request logger
 app.use(logger);

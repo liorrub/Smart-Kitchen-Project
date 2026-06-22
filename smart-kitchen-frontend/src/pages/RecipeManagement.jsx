@@ -1,6 +1,6 @@
 import "./Recipes.css";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
@@ -16,8 +16,12 @@ import {
     getAllRecipes,
     createRecipe,
     updateRecipe,
-    deleteRecipe
+    deleteRecipe,
+    uploadRecipeImage,
+    deleteRecipeImage
 } from "../services/recipeService";
+
+import { resolveImageUrl } from "../utils/apiConfig";
 
 import { getIngredients } from "../services/ingredientsService";
 import { getOptions } from "../services/optionsService";
@@ -43,7 +47,13 @@ const EMPTY_RECIPE_FORM_DATA = {
     ingredientUnit: "",
     // Instructions are stored as an array of step strings in the form.
     // Before sending to the backend they are joined into one string.
-    instructionSteps: [""]
+    instructionSteps: [""],
+    // Image: either a File object (upload) or a URL string, never both.
+    imageMode: "none",   // "none" | "upload" | "url"
+    imageFile: null,
+    imageUrl: "",
+    imagePositionX: 50,
+    imagePositionY: 50
 };
 
 // Capitalize the first letter of a string (used for dropdown labels)
@@ -66,6 +76,8 @@ function RecipeManagement() {
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [recipeFormData, setRecipeFormData] = useState(EMPTY_RECIPE_FORM_DATA);
+    const [imagePreview, setImagePreview] = useState(null);
+    const fileInputRef = useRef(null);
     const [savingRecipe, setSavingRecipe] = useState(false);
     const [averageRating, setAverageRating] = useState(null);
     const [editingRecipe, setEditingRecipe] = useState(null);
@@ -271,6 +283,25 @@ function RecipeManagement() {
         });
     }
 
+    // Switch image input mode and clear the other mode's data
+    function handleImageModeChange(mode) {
+        setImagePreview(null);
+        setRecipeFormData(prev => ({
+            ...prev,
+            imageMode: mode,
+            imageFile: null,
+            imageUrl: ""
+        }));
+    }
+
+    // Handle file selection: store the File object and create a local preview URL
+    function handleImageFileChange(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        setRecipeFormData(prev => ({ ...prev, imageFile: file }));
+        setImagePreview(URL.createObjectURL(file));
+    }
+
     // -----------------------------------------------------------------------
     // Modal open / close
     // -----------------------------------------------------------------------
@@ -279,12 +310,14 @@ function RecipeManagement() {
         setError("");
         setSuccess("");
         setRecipeFormData(EMPTY_RECIPE_FORM_DATA);
+        setImagePreview(null);
         setIsCreateModalOpen(true);
     }
 
     function closeCreateRecipeModal() {
         setIsCreateModalOpen(false);
         setRecipeFormData(EMPTY_RECIPE_FORM_DATA);
+        setImagePreview(null);
         setEditingRecipe(null);
         setError("");
     }
@@ -314,8 +347,14 @@ function RecipeManagement() {
             selectedIngredientId: "",
             ingredientQuantity: "",
             ingredientUnit: "",
-            instructionSteps: instructionSteps.length > 0 ? instructionSteps : [""]
+            instructionSteps: instructionSteps.length > 0 ? instructionSteps : [""],
+            imageMode: recipe.imageUrl ? "url" : "none",
+            imageFile: null,
+            imageUrl: recipe.imageUrl || "",
+            imagePositionX: recipe.imagePositionX ?? 50,
+            imagePositionY: recipe.imagePositionY ?? 50
         });
+        setImagePreview(recipe.imageUrl ? resolveImageUrl(recipe.imageUrl) : null);
         setEditingRecipe(recipe);
         setIsCreateModalOpen(true);
     }
@@ -398,13 +437,32 @@ function RecipeManagement() {
             ingredients: recipeFormData.ingredients
         };
 
+        // Include imageUrl in the JSON payload for URL mode; clear it when switching to "none"
+        if (recipeFormData.imageMode === "url" && recipeFormData.imageUrl.trim()) {
+            newRecipe.imageUrl = recipeFormData.imageUrl.trim();
+        } else if (recipeFormData.imageMode === "none" && editingRecipe?.imageUrl) {
+            newRecipe.imageUrl = null;
+        }
+
+        // Always persist the focal-point values so the card/modal uses the right crop
+        newRecipe.imagePositionX = recipeFormData.imagePositionX;
+        newRecipe.imagePositionY = recipeFormData.imagePositionY;
+
         try {
             setSavingRecipe(true);
 
+            let savedRecipeId;
             if (editingRecipe) {
                 await updateRecipe(editingRecipe.recipeId, newRecipe, storedUser);
+                savedRecipeId = editingRecipe.recipeId;
             } else {
-                await createRecipe(newRecipe, storedUser);
+                const saved = await createRecipe(newRecipe, storedUser);
+                savedRecipeId = saved.recipeId;
+            }
+
+            // Upload image file after recipe is saved (separate multipart endpoint)
+            if (recipeFormData.imageMode === "upload" && recipeFormData.imageFile && savedRecipeId) {
+                await uploadRecipeImage(savedRecipeId, recipeFormData.imageFile, storedUser);
             }
 
             // Reload the full list so changes appear
@@ -760,6 +818,142 @@ function RecipeManagement() {
                                             >
                                                 + Add step
                                             </AppButton>
+                                        </div>
+
+                                        {/* Image — optional, supports file upload or external URL */}
+                                        <div className="recipe-image-section recipe-form-full-row">
+                                            <label className="recipe-image-label">Recipe Image (optional)</label>
+
+                                            <div className="recipe-image-mode-tabs">
+                                                <button
+                                                    type="button"
+                                                    className={recipeFormData.imageMode === "none" ? "recipe-image-tab active" : "recipe-image-tab"}
+                                                    onClick={() => handleImageModeChange("none")}
+                                                >
+                                                    No Image
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className={recipeFormData.imageMode === "upload" ? "recipe-image-tab active" : "recipe-image-tab"}
+                                                    onClick={() => handleImageModeChange("upload")}
+                                                >
+                                                    Upload File
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className={recipeFormData.imageMode === "url" ? "recipe-image-tab active" : "recipe-image-tab"}
+                                                    onClick={() => handleImageModeChange("url")}
+                                                >
+                                                    Image URL
+                                                </button>
+                                            </div>
+
+                                            {recipeFormData.imageMode === "upload" && (
+                                                <div className="recipe-image-upload-area">
+                                                    <AppButton
+                                                        type="button"
+                                                        variant="secondary"
+                                                        onClick={() => fileInputRef.current?.click()}
+                                                    >
+                                                        Choose Image
+                                                    </AppButton>
+
+                                                    <input
+                                                        type="file"
+                                                        ref={fileInputRef}
+                                                        accept="image/jpeg,image/png,image/gif,image/webp"
+                                                        className="recipe-image-file-hidden"
+                                                        onChange={handleImageFileChange}
+                                                    />
+
+                                                    <span className="recipe-image-filename">
+                                                        {recipeFormData.imageFile
+                                                            ? `Selected: ${recipeFormData.imageFile.name}`
+                                                            : "No file selected"}
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {recipeFormData.imageMode === "url" && (
+                                                <FormField
+                                                    label="Image URL"
+                                                    type="text"
+                                                    name="imageUrl"
+                                                    value={recipeFormData.imageUrl}
+                                                    onChange={handleRecipeFormChange}
+                                                    placeholder="https://example.com/image.jpg"
+                                                />
+                                            )}
+
+                                            {(imagePreview || (recipeFormData.imageMode === "url" && recipeFormData.imageUrl)) && (
+                                                <>
+                                                    <div className="recipe-image-preview-wrapper">
+                                                        <img
+                                                            src={imagePreview || recipeFormData.imageUrl}
+                                                            alt="Recipe preview"
+                                                            className="recipe-image-preview"
+                                                            style={{
+                                                                objectPosition: `${recipeFormData.imagePositionX}% ${recipeFormData.imagePositionY}%`
+                                                            }}
+                                                            onError={(e) => { e.currentTarget.style.display = "none"; }}
+                                                        />
+                                                    </div>
+
+                                                    <div className="recipe-image-position-controls">
+                                                        <div className="recipe-image-slider-row">
+                                                            <label className="recipe-image-slider-label">
+                                                                ↔ Horizontal Focus
+                                                                <span className="recipe-image-slider-value">{recipeFormData.imagePositionX}%</span>
+                                                            </label>
+                                                            <input
+                                                                type="range"
+                                                                min="0"
+                                                                max="100"
+                                                                step="1"
+                                                                value={recipeFormData.imagePositionX}
+                                                                className="recipe-image-slider"
+                                                                onChange={(e) => setRecipeFormData(prev => ({
+                                                                    ...prev,
+                                                                    imagePositionX: Number(e.target.value)
+                                                                }))}
+                                                            />
+                                                        </div>
+
+                                                        <div className="recipe-image-slider-row">
+                                                            <label className="recipe-image-slider-label">
+                                                                ↕ Vertical Focus
+                                                                <span className="recipe-image-slider-value">{recipeFormData.imagePositionY}%</span>
+                                                            </label>
+                                                            <input
+                                                                type="range"
+                                                                min="0"
+                                                                max="100"
+                                                                step="1"
+                                                                value={recipeFormData.imagePositionY}
+                                                                className="recipe-image-slider"
+                                                                onChange={(e) => setRecipeFormData(prev => ({
+                                                                    ...prev,
+                                                                    imagePositionY: Number(e.target.value)
+                                                                }))}
+                                                            />
+                                                        </div>
+
+                                                        <AppButton
+                                                            type="button"
+                                                            variant="secondary"
+                                                            onClick={() => setRecipeFormData(prev => ({
+                                                                ...prev,
+                                                                imagePositionX: 50,
+                                                                imagePositionY: 50
+                                                            }))}
+                                                        >
+                                                            Reset to center
+                                                        </AppButton>
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </form>

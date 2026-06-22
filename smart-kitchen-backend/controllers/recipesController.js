@@ -37,9 +37,12 @@ const {
 } = require("../models/ingredientsModel");
 
 const { sequelize } = require("../models");
+const fs = require("fs");
+const path = require("path");
 
 const { createNotification } = require("../models/notificationsModel");
 const { resolveAuthUser } = require("../middleware/auth");
+const { UPLOAD_DIR } = require("../middleware/upload");
 
 async function buildRecipeWithIngredients(recipe) {
     const ingredients = await getIngredientsByRecipeId(recipe.recipeId);
@@ -486,6 +489,65 @@ async function deleteRecipeReview(req, res, next) {
     }
 }
 
+// Upload an image file for a recipe and store its path in imageUrl.
+// If the recipe already had a locally-uploaded image, the old file is deleted.
+async function uploadRecipeImage(req, res, next) {
+    try {
+        const recipeId = Number(req.params.id);
+        const recipe = await getRecipeById(recipeId);
+        if (!recipe) {
+            return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+        }
+
+        const { userId, userRole } = req.authUser;
+        if (userRole !== "admin" && recipe.creatorId !== userId) {
+            return errorResponse(res, 403, "FORBIDDEN", "You can only edit images for your own recipes");
+        }
+
+        if (!req.file) {
+            return errorResponse(res, 400, "NO_FILE", "No image file was provided");
+        }
+
+        // Delete the previous locally-uploaded file if it exists
+        if (recipe.imageUrl && recipe.imageUrl.startsWith("/uploads/")) {
+            const oldPath = path.join(__dirname, "..", recipe.imageUrl);
+            fs.unlink(oldPath, () => {}); // ignore error if already gone
+        }
+
+        const imageUrl = `/uploads/recipes/${req.file.filename}`;
+        const updated = await updateRecipe(recipeId, { imageUrl });
+        return successResponse(res, 200, updated);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Remove the image from a recipe (locally-uploaded files are deleted from disk).
+async function deleteRecipeImage(req, res, next) {
+    try {
+        const recipeId = Number(req.params.id);
+        const recipe = await getRecipeById(recipeId);
+        if (!recipe) {
+            return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+        }
+
+        const { userId, userRole } = req.authUser;
+        if (userRole !== "admin" && recipe.creatorId !== userId) {
+            return errorResponse(res, 403, "FORBIDDEN", "You can only edit images for your own recipes");
+        }
+
+        if (recipe.imageUrl && recipe.imageUrl.startsWith("/uploads/")) {
+            const filePath = path.join(__dirname, "..", recipe.imageUrl);
+            fs.unlink(filePath, () => {}); // ignore if already gone
+        }
+
+        const updated = await updateRecipe(recipeId, { imageUrl: null });
+        return successResponse(res, 200, updated);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     getRecipes,
     getSingleRecipe,
@@ -499,5 +561,7 @@ module.exports = {
     getRecipeReviews,
     createRecipeReview,
     updateRecipeReview,
-    deleteRecipeReview
+    deleteRecipeReview,
+    uploadRecipeImage,
+    deleteRecipeImage
 };

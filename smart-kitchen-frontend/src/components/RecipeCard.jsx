@@ -7,28 +7,23 @@ import dinnerImg from "../assets/dinner.png";
 import lunchImg from "../assets/lunch.png";
 import snackImg from "../assets/snack.png";
 
+import { resolveImageUrl } from "../utils/apiConfig";
 import { formatText } from "../utils/formatUtils";
 import ShareRecipeButton from "./ShareRecipeButton";
 
-function getCategoryImage(category) {
-    const images = {
+// Returns a fallback image based on category when no imageUrl is set.
+function getFallbackImage(recipe) {
+    const byCategory = {
         breakfast: breakfastImg,
         lunch: lunchImg,
         dinner: dinnerImg,
         snack: snackImg
     };
-
-    return images[category] || defaultImg;
+    return byCategory[recipe?.category] || defaultImg;
 }
 
 function getCategoryClass(category) {
-    const validCategories = [
-        "breakfast",
-        "lunch",
-        "dinner",
-        "snack"
-    ];
-
+    const validCategories = ["breakfast", "lunch", "dinner", "snack"];
     return validCategories.includes(category)
         ? `recipe-card-${category}`
         : "recipe-card-default";
@@ -36,68 +31,64 @@ function getCategoryClass(category) {
 
 /*
     Reusable recipe preview card.
-    Can be used in Recipes, Favorites, and Feed pages.
+    Image banner spans full card width; content sits below in a padded area.
 */
 function RecipeCard({
-                        recipe,
-                        onClick,
-                        showFavoriteButton = false,
-                        isFavorite = false,
-                        onFavoriteClick,
-                        favoriteLoading = false,
-                        favoriteButtonText = "",
-                        favoriteLoadingText = "Saving...",
-                        showLikeButton = false,
-                        isLiked = false,
-                        likeCount = 0,
-                        onLikeClick,
-                        likeLoading = false,
-                        showCreator = false,
-                        showShareButton = false,
-                        actions
-                    }) {
-    const categoryImage = getCategoryImage(recipe.category);
+    recipe,
+    onClick,
+    showFavoriteButton = false,
+    isFavorite = false,
+    onFavoriteClick,
+    favoriteLoading = false,
+    favoriteButtonText = "",
+    favoriteLoadingText = "Saving...",
+    showLikeButton = false,
+    isLiked = false,
+    likeCount = 0,
+    onLikeClick,
+    likeLoading = false,
+    showCreator = false,
+    showShareButton = false,
+    actions
+}) {
+    const recipeImage = resolveImageUrl(recipe.imageUrl) || getFallbackImage(recipe);
+    const imagePositionX = recipe.imageUrl ? (recipe.imagePositionX ?? 50) : 50;
+    const imagePositionY = recipe.imageUrl ? (recipe.imagePositionY ?? 50) : 50;
     const categoryClass = getCategoryClass(recipe.category);
 
     function handleViewClick() {
-        if (onClick) {
-            onClick(recipe);
-        }
+        if (onClick) onClick(recipe);
     }
 
     function handleFavoriteClick() {
-        if (onFavoriteClick) {
-            onFavoriteClick(recipe);
-        }
+        if (onFavoriteClick) onFavoriteClick(recipe);
     }
 
     function handleLikeClick() {
-        if (onLikeClick) {
-            onLikeClick(recipe);
-        }
+        if (onLikeClick) onLikeClick(recipe);
     }
 
-    const defaultFavoriteText = isFavorite
-        ? "♥ Saved"
-        : "♡ Save";
+    const defaultFavoriteText = isFavorite ? "♥ Saved" : "♡ Save";
 
     return (
         <article className={`recipe-card ${categoryClass}`}>
+
+            {/* Full-width image banner — outside padded area so it reaches card edges */}
+            <div className="recipe-card-image-wrapper">
+                <img
+                    src={recipeImage}
+                    alt={recipe.title}
+                    className="recipe-card-image"
+                    style={{ objectPosition: `${imagePositionX}% ${imagePositionY}%` }}
+                    onError={(e) => { e.currentTarget.src = defaultImg; }}
+                />
+                <span className="recipe-card-category">
+                    {formatText(recipe.category)}
+                </span>
+            </div>
+
+            {/* Card body */}
             <div className="recipe-card-inner">
-                <div className="recipe-card-header">
-                    <div className="recipe-card-image-wrapper">
-                        <img
-                            src={categoryImage}
-                            alt={recipe.title}
-                            className="recipe-card-image"
-                        />
-                    </div>
-
-                    <span className="recipe-card-category">
-                        {formatText(recipe.category)}
-                    </span>
-                </div>
-
                 <div className="recipe-card-content">
                     <h3>{recipe.title}</h3>
 
@@ -120,9 +111,7 @@ function RecipeCard({
                     {(recipe.tags || []).length > 0 && (
                         <div className="recipe-card-tags">
                             {(recipe.tags || []).slice(0, 2).map((tag) => (
-                                <span key={tag}>
-                                    #{formatText(tag)}
-                                </span>
+                                <span key={tag}>#{formatText(tag)}</span>
                             ))}
                         </div>
                     )}
@@ -137,11 +126,7 @@ function RecipeCard({
                         {showLikeButton && (
                             <button
                                 type="button"
-                                className={
-                                    isLiked
-                                        ? "recipe-card-like-button active"
-                                        : "recipe-card-like-button"
-                                }
+                                className={isLiked ? "recipe-card-like-button active" : "recipe-card-like-button"}
                                 disabled={likeLoading}
                                 onClick={handleLikeClick}
                                 title={isLiked ? "Unlike" : "Like"}
@@ -153,17 +138,11 @@ function RecipeCard({
                         {showFavoriteButton && (
                             <button
                                 type="button"
-                                className={
-                                    isFavorite
-                                        ? "recipe-card-favorite-button active"
-                                        : "recipe-card-favorite-button"
-                                }
+                                className={isFavorite ? "recipe-card-favorite-button active" : "recipe-card-favorite-button"}
                                 disabled={favoriteLoading}
                                 onClick={handleFavoriteClick}
                             >
-                                {favoriteLoading
-                                    ? favoriteLoadingText
-                                    : favoriteButtonText || defaultFavoriteText}
+                                {favoriteLoading ? favoriteLoadingText : favoriteButtonText || defaultFavoriteText}
                             </button>
                         )}
 
@@ -189,7 +168,6 @@ function RecipeCard({
                             {actions}
                         </div>
                     )}
-
                 </div>
             </div>
         </article>

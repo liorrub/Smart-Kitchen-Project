@@ -134,3 +134,38 @@ export async function rejectRecipe(recipeId, reason, user) {
 
     return getResponseDataOrBody(response);
 }
+
+// Upload an image file for a recipe (multipart/form-data).
+export async function uploadRecipeImage(recipeId, file, user) {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await axios.post(
+        `${RECIPES_API_URL}/${recipeId}/image`,
+        formData,
+        {
+            headers: {
+                "x-user-id": user.userId,
+                "x-user-role": user.userRole
+                // Content-Type is set automatically by axios when FormData is used
+            }
+        }
+    );
+
+    return getResponseDataOrBody(response);
+}
+
+// Remove the image from a recipe.
+export async function deleteRecipeImage(recipeId, user) {
+    const response = await axios.delete(
+        `${RECIPES_API_URL}/${recipeId}/image`,
+        {
+            headers: {
+                "x-user-id": user.userId,
+                "x-user-role": user.userRole
+            }
+        }
+    );
+
+    return getResponseDataOrBody(response);
+}

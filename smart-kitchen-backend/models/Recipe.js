@@ -131,6 +131,21 @@ const Recipe = sequelize.define(
             allowNull: false,
             defaultValue: []
         },
+        imageUrl: {
+            type: DataTypes.STRING(500),
+            allowNull: true,
+            defaultValue: null
+        },
+        imagePositionX: {
+            type: DataTypes.TINYINT.UNSIGNED,
+            allowNull: false,
+            defaultValue: 50
+        },
+        imagePositionY: {
+            type: DataTypes.TINYINT.UNSIGNED,
+            allowNull: false,
+            defaultValue: 50
+        },
         approvalStatus: {
             type: DataTypes.ENUM("pending", "approved", "rejected"),
             allowNull: false,

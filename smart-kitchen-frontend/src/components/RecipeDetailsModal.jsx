@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 import ReviewCard from "./ReviewCard";
 import ShareRecipeButton from "./ShareRecipeButton";
+import defaultImg from "../assets/default.png";
 
+import { resolveImageUrl } from "../utils/apiConfig";
 import { getRecipeReviews } from "../services/reviewsService";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
@@ -200,6 +202,20 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
                 </button>
 
                 <div className="recipe-modal-body">
+                {recipe.imageUrl && (
+                    <div className="recipe-modal-image-wrapper">
+                        <img
+                            src={resolveImageUrl(recipe.imageUrl)}
+                            alt={recipe.title}
+                            className="recipe-modal-image"
+                            style={{
+                                objectPosition: `${recipe.imagePositionX ?? 50}% ${recipe.imagePositionY ?? 50}%`
+                            }}
+                            onError={(e) => { e.currentTarget.src = defaultImg; }}
+                        />
+                    </div>
+                )}
+
                 <header className="recipe-modal-header">
                     <p className="recipe-modal-label">
                         {formatText(recipe.category)}
