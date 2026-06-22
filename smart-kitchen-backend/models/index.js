@@ -18,6 +18,7 @@ const ChefRequest = require("./ChefRequest");
 const RecipeLike = require("./RecipeLike");
 const UserFollow = require("./UserFollow");
 const Notification = require("./Notification");
+const CommentLike = require("./CommentLike");
 
 // User → Recipe (one-to-many via creatorId)
 User.hasMany(Recipe, { foreignKey: "creatorId", as: "recipes" });
@@ -240,6 +241,24 @@ UserFollow.belongsTo(User, {
     as: "followee"
 });
 
+// User → CommentLike (one-to-many)
+User.hasMany(CommentLike, {
+    foreignKey: "userId",
+    as: "commentLikes"
+});
+CommentLike.belongsTo(User, {
+    foreignKey: "userId"
+});
+
+// RecipeComment → CommentLike (one-to-many)
+RecipeComment.hasMany(CommentLike, {
+    foreignKey: "commentId",
+    as: "commentLikes"
+});
+CommentLike.belongsTo(RecipeComment, {
+    foreignKey: "commentId"
+});
+
 // User → Notification (recipient — notifications sent to this user)
 User.hasMany(Notification, {
     foreignKey: "userId",
@@ -278,5 +297,6 @@ module.exports = {
     ChefRequest,
     RecipeLike,
     UserFollow,
-    Notification
+    Notification,
+    CommentLike
 };

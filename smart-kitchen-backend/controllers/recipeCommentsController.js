@@ -1,16 +1,22 @@
 "use strict";
 
 // Recipe comments controller
-// Handles fetching and deleting comments on a recipe's discussion.
+// Handles fetching and managing comments on a recipe's discussion.
 
-const { RecipeComment, User } = require("../models");
+const { Op } = require("sequelize");
+const { RecipeComment, User, CommentLike, sequelize } = require("../models");
 const { successResponse, errorResponse } = require("../utils/responseHelper");
+const { resolveAuthUser } = require("../middleware/auth");
 
 // Get all comments for a recipe, ordered oldest-first.
-// Includes the author's name and the mentioned user's name (if any).
+// Enriches each comment with likeCount and isLikedByMe.
+// Authentication is optional — unauthenticated callers receive isLikedByMe: false.
 async function getCommentsByRecipe(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
+
+        // Optional auth: best-effort — never rejects unauthenticated requests
+        await resolveAuthUser(req).catch(() => {});
 
         const comments = await RecipeComment.findAll({
             where: { recipeId },
@@ -18,7 +24,7 @@ async function getCommentsByRecipe(req, res, next) {
                 {
                     model: User,
                     as: "author",
-                    attributes: ["userId", "firstName", "lastName"]
+                    attributes: ["userId", "firstName", "lastName", "avatarKey"]
                 },
                 {
                     model: User,
@@ -29,7 +35,45 @@ async function getCommentsByRecipe(req, res, next) {
             order: [["createdAt", "ASC"]]
         });
 
-        return successResponse(res, 200, comments);
+        if (comments.length === 0) {
+            return successResponse(res, 200, []);
+        }
+
+        const commentIds = comments.map((c) => c.commentId);
+
+        // Batch: count likes per comment (one query, no N+1)
+        const likeCounts = await CommentLike.findAll({
+            where: { commentId: { [Op.in]: commentIds } },
+            attributes: [
+                "commentId",
+                [sequelize.fn("COUNT", sequelize.col("commentLikeId")), "likeCount"]
+            ],
+            group: ["commentId"],
+            raw: true
+        });
+        const likeCountMap = {};
+        likeCounts.forEach((row) => {
+            likeCountMap[row.commentId] = Number(row.likeCount);
+        });
+
+        // Batch: which comments the current user has already liked
+        let likedSet = new Set();
+        if (req.authUser) {
+            const userLikes = await CommentLike.findAll({
+                where: { userId: req.authUser.userId, commentId: { [Op.in]: commentIds } },
+                attributes: ["commentId"],
+                raw: true
+            });
+            likedSet = new Set(userLikes.map((l) => l.commentId));
+        }
+
+        const enriched = comments.map((c) => ({
+            ...c.toJSON(),
+            likeCount: likeCountMap[c.commentId] || 0,
+            isLikedByMe: likedSet.has(c.commentId)
+        }));
+
+        return successResponse(res, 200, enriched);
     } catch (error) {
         next(error);
     }

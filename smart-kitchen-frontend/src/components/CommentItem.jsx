@@ -19,9 +19,20 @@ function formatDate(value) {
 
 // Single comment card — shows author, timestamp, content, optional @mention, and action buttons.
 // Used for both top-level comments and indented replies (isReply=true).
-// onEdit(commentId, newContent) — called when the user saves an inline edit (socket emission handled by parent).
-// onDeleteRequest(comment)     — called when the user clicks Delete; parent shows a confirmation modal.
-function CommentItem({ comment, currentUser, onReply, onEdit, onDeleteRequest, isReply = false }) {
+// onEdit(commentId, newContent)  — called when the user saves an inline edit.
+// onDeleteRequest(comment)       — called when the user clicks Delete.
+// onLikeClick(commentId)         — called when the user clicks the like button.
+// isLiking                       — true while the like/unlike API call is pending.
+function CommentItem({
+    comment,
+    currentUser,
+    onReply,
+    onEdit,
+    onDeleteRequest,
+    isReply = false,
+    onLikeClick,
+    isLiking = false
+}) {
     const [isEditing, setIsEditing] = useState(false);
     const [editContent, setEditContent] = useState(comment.content);
 
@@ -39,6 +50,11 @@ function CommentItem({ comment, currentUser, onReply, onEdit, onDeleteRequest, i
     const isAdmin = currentUser?.userRole === "admin";
     const canEditOrDelete = isOwner || isAdmin;
 
+    // Like state derived from the comment object (managed by parent)
+    const likeCount = comment.likeCount ?? 0;
+    const isLikedByMe = comment.isLikedByMe ?? false;
+    const isSelf = currentUser?.userId === comment.userId;
+
     function handleSave() {
         const trimmed = editContent.trim();
         if (!trimmed || trimmed === comment.content) {
@@ -53,6 +69,9 @@ function CommentItem({ comment, currentUser, onReply, onEdit, onDeleteRequest, i
         setEditContent(comment.content);
         setIsEditing(false);
     }
+
+    const likeLabel = isLikedByMe ? "Unlike comment" : "Like comment";
+    const likeDisabled = isSelf || isLiking;
 
     return (
         <article
@@ -144,6 +163,24 @@ function CommentItem({ comment, currentUser, onReply, onEdit, onDeleteRequest, i
                 )}
 
                 <div className="comment-actions">
+                    {/* Like button — always visible, disabled for own comments */}
+                    {!isEditing && (
+                        <button
+                            type="button"
+                            className={`comment-like-btn${isLikedByMe ? " liked" : ""}${isSelf ? " self" : ""}`}
+                            onClick={() => onLikeClick?.(comment.commentId)}
+                            disabled={likeDisabled}
+                            aria-pressed={isLikedByMe}
+                            aria-label={isSelf ? "Cannot like your own comment" : likeLabel}
+                            title={isSelf ? "You cannot like your own comment" : likeLabel}
+                        >
+                            <span className="comment-like-icon" aria-hidden="true">
+                                {isLikedByMe ? "♥" : "♡"}
+                            </span>
+                            <span className="comment-like-count">{likeCount}</span>
+                        </button>
+                    )}
+
                     {!isEditing && (
                         <AppButton variant="ghost" size="small" onClick={onReply}>
                             ↩ Reply

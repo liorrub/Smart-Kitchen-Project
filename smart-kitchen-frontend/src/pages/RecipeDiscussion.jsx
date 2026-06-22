@@ -10,6 +10,7 @@ import AppButton from "../components/AppButton";
 
 import { getRecipeById } from "../services/recipeService";
 import { getComments } from "../services/recipeCommentsService";
+import { likeComment, unlikeComment } from "../services/commentLikeService";
 import { connectSocket } from "../services/socketService";
 import { useAuth } from "../context/AuthContext";
 import { formatText } from "../utils/formatUtils";
@@ -53,6 +54,9 @@ function RecipeDiscussion() {
     const [confirmDeleteComment, setConfirmDeleteComment] = useState(null);
     const [socketError, setSocketError] = useState(null);
     const [commentNotFound, setCommentNotFound] = useState(false);
+
+    // Set of commentIds currently pending a like/unlike API call (prevents duplicate clicks)
+    const [likingCommentIds, setLikingCommentIds] = useState(new Set());
 
     const socketRef = useRef(null);
 
@@ -161,6 +165,15 @@ function RecipeDiscussion() {
             setTimeout(() => setSocketError(null), 4000);
         });
 
+        // Update like count for a specific comment (broadcast from any user's like/unlike)
+        socket.on("commentLikeUpdated", ({ commentId, likeCount }) => {
+            setComments((prev) =>
+                prev.map((c) =>
+                    c.commentId === commentId ? { ...c, likeCount } : c
+                )
+            );
+        });
+
         return () => {
             socket.emit("leaveRecipeRoom", { recipeId: Number(recipeId) });
             socket.off("newRecipeComment");
@@ -170,9 +183,66 @@ function RecipeDiscussion() {
             socket.off("userTyping");
             socket.off("userStoppedTyping");
             socket.off("commentError");
+            socket.off("commentLikeUpdated");
             // Socket lifecycle is managed by NotificationContext; do not disconnect here
         };
     }, [recipeId, currentUser?.userId]);
+
+    // Toggle like/unlike for a comment with optimistic UI.
+    // Reverts optimistic state on API failure.
+    async function handleLikeComment(commentId) {
+        if (likingCommentIds.has(commentId)) return;
+
+        const comment = comments.find((c) => c.commentId === commentId);
+        if (!comment) return;
+
+        const wasLiked = comment.isLikedByMe ?? false;
+        const prevCount = comment.likeCount ?? 0;
+
+        // Optimistic update
+        setLikingCommentIds((prev) => new Set(prev).add(commentId));
+        setComments((prev) =>
+            prev.map((c) =>
+                c.commentId === commentId
+                    ? {
+                          ...c,
+                          isLikedByMe: !wasLiked,
+                          likeCount: wasLiked ? Math.max(0, prevCount - 1) : prevCount + 1
+                      }
+                    : c
+            )
+        );
+
+        try {
+            const result = wasLiked
+                ? await unlikeComment(commentId)
+                : await likeComment(commentId);
+
+            // Sync with authoritative server values
+            setComments((prev) =>
+                prev.map((c) =>
+                    c.commentId === commentId
+                        ? { ...c, likeCount: result.likeCount, isLikedByMe: result.isLikedByMe }
+                        : c
+                )
+            );
+        } catch {
+            // Revert optimistic update on failure
+            setComments((prev) =>
+                prev.map((c) =>
+                    c.commentId === commentId
+                        ? { ...c, isLikedByMe: wasLiked, likeCount: prevCount }
+                        : c
+                )
+            );
+        } finally {
+            setLikingCommentIds((prev) => {
+                const next = new Set(prev);
+                next.delete(commentId);
+                return next;
+            });
+        }
+    }
 
     // Emit an edit event via Socket.IO — the server validates ownership and broadcasts back
     function handleEditComment(commentId, newContent) {
@@ -350,6 +420,8 @@ function RecipeDiscussion() {
                                     onReply={() => setReplyTo(comment)}
                                     onEdit={handleEditComment}
                                     onDeleteRequest={handleDeleteRequest}
+                                    onLikeClick={handleLikeComment}
+                                    isLiking={likingCommentIds.has(comment.commentId)}
                                 />
 
                                 {replies.length > 0 && (
@@ -363,6 +435,8 @@ function RecipeDiscussion() {
                                                 onReply={() => setReplyTo(comment)}
                                                 onEdit={handleEditComment}
                                                 onDeleteRequest={handleDeleteRequest}
+                                                onLikeClick={handleLikeComment}
+                                                isLiking={likingCommentIds.has(reply.commentId)}
                                             />
                                         ))}
                                     </div>

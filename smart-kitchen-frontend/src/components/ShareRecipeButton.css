@@ -1,0 +1,54 @@
+.share-recipe-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+
+    border-radius: 18px;
+    border: 1.5px solid #cde8c7;
+    background: #f6fbf5;
+    color: #2a7545;
+
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    position: relative;
+}
+
+.share-recipe-btn:hover {
+    background: #e9fbe5;
+    border-color: #93d656;
+    color: #1f3d2b;
+}
+
+.share-recipe-btn:focus-visible {
+    outline: 2px solid #67d656;
+    outline-offset: 2px;
+}
+
+/* Compact variant — used in RecipeCard footer */
+.share-recipe-btn-compact {
+    padding: 5px 11px;
+    font-size: 13px;
+    border-radius: 14px;
+}
+
+/* Success / error message that appears inline after click */
+.share-status-msg {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2a7545;
+    animation: share-fade-in 0.15s ease;
+}
+
+.share-status-error {
+    color: #c0392b;
+}
+
+@keyframes share-fade-in {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

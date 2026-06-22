@@ -81,13 +81,13 @@ function registerRecipeDiscussion(io) {
                     mentionedUserId: mentionedUserId ?? null
                 });
 
-                // Re-fetch with author and mentionedUser so the client gets full names
+                // Re-fetch with author and mentionedUser so the client gets full names + avatarKey
                 const fullComment = await RecipeComment.findByPk(comment.commentId, {
                     include: [
                         {
                             model: User,
                             as: "author",
-                            attributes: ["userId", "firstName", "lastName"]
+                            attributes: ["userId", "firstName", "lastName", "avatarKey"]
                         },
                         {
                             model: User,
@@ -98,7 +98,12 @@ function registerRecipeDiscussion(io) {
                 });
 
                 const room = `recipe-${recipeId}`;
-                io.to(room).emit("newRecipeComment", fullComment);
+                // New comments have no likes yet; include fields so CommentItem renders consistently
+                io.to(room).emit("newRecipeComment", {
+                    ...fullComment.toJSON(),
+                    likeCount: 0,
+                    isLikedByMe: false
+                });
                 console.log(`[socket] sendRecipeComment: userId=${userId} posted commentId=${comment.commentId} in recipe-${recipeId}`);
 
                 // Fire notification triggers after broadcast; tracked to avoid duplicates

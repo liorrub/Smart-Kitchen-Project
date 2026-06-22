@@ -142,5 +142,6 @@ module.exports = {
     authorize,
     allowSelfOrAdmin,
     allowSelfOnly,
-    requireAuth
+    requireAuth,
+    resolveAuthUser
 };

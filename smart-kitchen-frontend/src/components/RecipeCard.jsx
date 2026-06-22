@@ -8,6 +8,7 @@ import lunchImg from "../assets/lunch.png";
 import snackImg from "../assets/snack.png";
 
 import { formatText } from "../utils/formatUtils";
+import ShareRecipeButton from "./ShareRecipeButton";
 
 function getCategoryImage(category) {
     const images = {
@@ -52,6 +53,7 @@ function RecipeCard({
                         onLikeClick,
                         likeLoading = false,
                         showCreator = false,
+                        showShareButton = false,
                         actions
                     }) {
     const categoryImage = getCategoryImage(recipe.category);
@@ -163,6 +165,14 @@ function RecipeCard({
                                     ? favoriteLoadingText
                                     : favoriteButtonText || defaultFavoriteText}
                             </button>
+                        )}
+
+                        {showShareButton && (
+                            <ShareRecipeButton
+                                recipe={recipe}
+                                compact
+                                onClick={(e) => e.stopPropagation()}
+                            />
                         )}
 
                         <button

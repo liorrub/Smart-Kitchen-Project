@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import ReviewCard from "./ReviewCard";
+import ShareRecipeButton from "./ShareRecipeButton";
 
 import { getRecipeReviews } from "../services/reviewsService";
 import { getErrorMessage } from "../utils/apiUtils";
@@ -222,6 +223,8 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
                                 {isLiked ? "❤️" : "🤍"} {recipe.likeCount || 0}
                             </button>
                         )}
+
+                        <ShareRecipeButton recipe={recipe} />
 
                         {/* Opens the full discussion page for this recipe */}
                         <button

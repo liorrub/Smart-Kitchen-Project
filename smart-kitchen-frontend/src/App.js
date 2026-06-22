@@ -19,6 +19,7 @@ import Ingredients from "./pages/Ingredients";
 import RecipeManagement from "./pages/RecipeManagement";
 import ChefRecipes from "./pages/ChefRecipes";
 import RecipeDiscussion from "./pages/RecipeDiscussion";
+import RecipePage from "./pages/RecipePage";
 import Profile from "./pages/Profile";
 import Discover from "./pages/Discover";
 import Feed from "./pages/Feed";
@@ -104,6 +105,11 @@ function App() {
                             <Route
                                 path="/chef/my-recipes"
                                 element={<ChefRecipes />}
+                            />
+
+                            <Route
+                                path="/recipes/:id"
+                                element={<RecipePage />}
                             />
 
                             <Route

@@ -33,6 +33,7 @@ const discoverRoutes = require("./routes/discoverRoutes");
 const userFollowsRoutes = require("./routes/userFollowsRoutes");
 const feedRoutes = require("./routes/feedRoutes");
 const notificationsRoutes = require("./routes/notificationsRoutes");
+const commentLikesRoutes = require("./routes/commentLikesRoutes");
 
 // Parse JSON request bodies
 app.use(express.json());
@@ -67,6 +68,7 @@ app.use("/api", discoverRoutes);
 app.use("/api/users", userFollowsRoutes);
 app.use("/api", feedRoutes);
 app.use("/api/notifications", notificationsRoutes);
+app.use("/api", commentLikesRoutes);
 
 // Must come after every valid route
 app.use(notFoundHandler);

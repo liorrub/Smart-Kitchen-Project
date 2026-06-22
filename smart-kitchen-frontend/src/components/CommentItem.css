@@ -203,4 +203,64 @@
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    align-items: center;
+}
+
+/* ==========================================================================
+   Like button
+   ========================================================================== */
+
+.comment-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+
+    border-radius: 14px;
+    border: 1.5px solid #e0eed9;
+    background: transparent;
+    color: #6a7d70;
+
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.comment-like-btn:hover:not(:disabled) {
+    background: #e9fbe5;
+    border-color: #93d656;
+    color: #2a7545;
+}
+
+.comment-like-btn:focus-visible {
+    outline: 2px solid #67d656;
+    outline-offset: 2px;
+}
+
+.comment-like-btn.liked {
+    color: #e05a5a;
+    border-color: #f4c0c0;
+    background: #fff5f5;
+}
+
+.comment-like-btn.liked:hover:not(:disabled) {
+    background: #ffe8e8;
+    border-color: #e05a5a;
+}
+
+/* Disabled state for own-comment self-like prevention */
+.comment-like-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.comment-like-icon {
+    font-style: normal;
+    line-height: 1;
+}
+
+.comment-like-count {
+    min-width: 12px;
+    text-align: center;
 }

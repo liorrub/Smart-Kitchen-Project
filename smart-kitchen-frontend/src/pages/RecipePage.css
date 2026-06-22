@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Recipe Page — wraps RecipeDetailsModal in a full-page non-overlay context
+   ========================================================================== */
+
+.recipe-page {
+    min-height: 100vh;
+    padding: 24px 20px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.recipe-page-loading,
+.recipe-page-error {
+    padding: 60px 20px;
+    text-align: center;
+    color: #6a7d70;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.recipe-page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.recipe-page-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.recipe-page-back-btn {
+    padding: 8px 16px;
+    border-radius: 18px;
+    border: 1.5px solid #cde8c7;
+    background: #f6fbf5;
+    color: #2a7545;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.recipe-page-back-btn:hover {
+    background: #e9fbe5;
+}
+
+.recipe-page-discussion-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 18px;
+    border: 1.5px solid #cde8c7;
+    background: #f6fbf5;
+    color: #2a7545;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+
+.recipe-page-discussion-link:hover {
+    background: #e9fbe5;
+}
+
+/* Override modal overlay styles so RecipeDetailsModal renders as a page element */
+.recipe-page-modal-wrapper .recipe-modal-overlay {
+    position: static;
+    background: none;
+    padding: 0;
+    z-index: auto;
+    overflow: visible;
+    display: block;
+}
+
+.recipe-page-modal-wrapper .recipe-modal {
+    max-width: 100%;
+    max-height: none;
+    margin: 0;
+    border-radius: 20px;
+    overflow: visible;
+}
+
+/* Hide the × close button — navigation is via the back button at the top */
+.recipe-page-modal-wrapper .recipe-modal-close {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .recipe-page {
+        padding: 16px 12px 32px;
+    }
+}
