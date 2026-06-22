@@ -273,25 +273,6 @@
     backdrop-filter: blur(6px);
 }
 
-.recipe-modal {
-    position: relative;
-    z-index: 20001;
-
-    width: min(760px, calc(100vw - 48px));
-    max-height: calc(100vh - 210px);
-
-    overflow-y: auto;
-
-    border-radius: 30px;
-    box-shadow: 0 28px 70px rgba(31, 61, 43, 0.28);
-
-    background:
-        radial-gradient(circle at top left, rgba(103, 214, 86, 0.08), transparent 34%),
-        linear-gradient(135deg, rgba(255, 254, 250, 0.98), rgba(246, 251, 245, 0.98));
-    border: 1px solid rgba(139, 213, 174, 0.85);
-
-    animation: recipeModalPopIn 0.22s ease;
-}
 
 .recipe-form-card {
     margin: 0;
@@ -421,13 +402,13 @@
 }
 
 @media (max-width: 650px) {
-    .recipe-modal-overlay {
+    .recipe-management-modal-overlay {
         padding: 90px 14px 20px;
     }
 
-    .recipe-modal {
-        width: 100%;
-        max-height: calc(100vh - 110px);
+    .recipe-management-modal {
+        width: 100% !important;
+        max-height: calc(100vh - 110px) !important;
     }
 }
 
@@ -451,6 +432,7 @@
 /* The modal container itself does not scroll — the inner body scrolls.
    This keeps the close button always visible at the top right. */
 .recipe-management-modal {
+    width: min(760px, calc(100vw - 48px));
     max-height: calc(100vh - 150px) !important;
 
     display: flex !important;

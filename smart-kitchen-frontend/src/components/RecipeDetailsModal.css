@@ -7,10 +7,10 @@
     inset: 0;
     z-index: 9998;
 
-    padding: 80px 24px 24px;
+    padding: 24px 20px;
 
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
 
     background: rgba(31, 61, 43, 0.34);
@@ -21,8 +21,8 @@
     position: relative;
     z-index: 9999;
 
-    width: min(1080px, calc(100vw - 48px));
-    max-height: calc(100vh - 104px);
+    width: min(860px, calc(100vw - 40px));
+    max-height: calc(100vh - 48px);
     padding: 0;
 
     display: flex;
@@ -46,7 +46,7 @@
 .recipe-modal-body {
     flex: 1;
     overflow-y: auto;
-    padding: 14px;
+    padding: 10px 16px;
 }
 
 /* ==========================================================================
@@ -119,14 +119,14 @@
 
 .recipe-modal-image-wrapper {
     width: 100%;
-    max-height: 140px;
+    max-height: 260px;
     overflow: hidden;
     flex-shrink: 0;
 }
 
 .recipe-modal-image {
     width: 100%;
-    height: 140px;
+    height: 260px;
     object-fit: cover;
     display: block;
 }
@@ -136,17 +136,17 @@
    ========================================================================== */
 
 .recipe-modal-header {
-    max-width: 700px;
-    margin: 0 auto 8px;
-    padding: 0 36px;
+    max-width: 680px;
+    margin: 0 auto 4px;
+    padding: 0 20px;
 
     text-align: center;
 }
 
 .recipe-modal-label {
     width: fit-content;
-    margin: 0 auto 10px;
-    padding: 7px 13px;
+    margin: 0 auto 5px;
+    padding: 5px 10px;
 
     border-radius: 999px;
     background: #e9fbe5;
@@ -165,18 +165,18 @@
 
     color: #1f3d2b;
 
-    font-size: clamp(22px, 2.8vw, 32px);
+    font-size: clamp(17px, 1.8vw, 24px);
     font-weight: 900;
-    line-height: 1.08;
-    letter-spacing: -0.8px;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
 }
 
 .recipe-modal-subtitle {
-    margin: 10px 0 0;
+    margin: 5px 0 0;
 
     color: #55705d;
 
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 800;
 }
 
@@ -184,9 +184,9 @@
 .recipe-modal-header-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
-    margin-top: 14px;
+    margin-top: 7px;
 }
 
 /* Like button in the modal header */
@@ -194,7 +194,7 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 9px 18px;
+    padding: 6px 13px;
 
     border: 1px solid #f0cdd8;
     border-radius: 999px;
@@ -230,7 +230,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 9px 20px;
+    padding: 6px 15px;
 
     border: none;
     border-radius: 999px;
@@ -264,13 +264,13 @@
 .recipe-modal-stats {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
+    gap: 8px;
 
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .recipe-modal-stat {
-    padding: 10px 8px;
+    padding: 7px 6px;
 
     border-radius: 18px;
     background: rgba(255, 254, 250, 0.94);
@@ -286,14 +286,14 @@
 
     color: #2a7545;
 
-    font-size: 19px;
+    font-size: 16px;
     font-weight: 900;
     line-height: 1;
 }
 
 .recipe-modal-stat span {
     display: block;
-    margin-top: 7px;
+    margin-top: 4px;
 
     color: #55705d;
 
@@ -309,11 +309,11 @@
 
 .recipe-main-grid {
     display: grid;
-    grid-template-columns: minmax(280px, 0.9fr) minmax(380px, 1.55fr);
-    gap: 16px;
+    grid-template-columns: minmax(260px, 0.9fr) minmax(360px, 1.55fr);
+    gap: 12px;
     align-items: stretch;
 
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .recipe-detail-card {
@@ -335,17 +335,17 @@
 }
 
 .recipe-card-title > span {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 13px;
+    border-radius: 10px;
     background: #e9fbe5;
 
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .recipe-card-title h3 {
@@ -705,26 +705,25 @@
 
     .recipe-modal {
         width: 100%;
-        max-height: 90vh;
-        padding: 22px 18px;
-        border-radius: 24px;
+        max-height: calc(100vh - 24px);
+        border-radius: 22px;
     }
 
     .recipe-modal-header {
-        padding: 34px 0 0;
+        padding: 0 8px;
     }
 
     .recipe-modal h2 {
-        font-size: 30px;
+        font-size: 18px;
     }
 
     .recipe-detail-card {
-        padding: 24px 20px;
+        padding: 14px 14px;
     }
 
     .recipe-simple-ingredients li {
         grid-template-columns: 1fr;
-        gap: 5px;
+        gap: 3px;
     }
 
     .recipe-simple-ingredients p {
