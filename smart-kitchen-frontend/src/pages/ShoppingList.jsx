@@ -56,6 +56,7 @@ function ShoppingList() {
 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [noCitySet, setNoCitySet] = useState(false);
 
     const storedUser = getStoredUser();
     const activeMessage = success || error;
@@ -97,12 +98,17 @@ function ShoppingList() {
                     }
                 ),
                 axios.get(
-                    STORES_API_URL,
+                    `${STORES_API_URL}/nearby`,
                     {
                         headers: getAuthHeaders(),
                         params: { _t: Date.now() }
                     }
-                ),
+                ).catch(err => {
+                    if (err.response?.data?.code === "NO_CITY") {
+                        return { _noCityError: true };
+                    }
+                    throw err;
+                }),
                 axios.get(
                     `${USERS_API_URL}/${storedUser.userId}/shopping-list/recommendations`,
                     {
@@ -114,7 +120,12 @@ function ShoppingList() {
 
             setShoppingItems(getResponseData(shoppingResponse));
             setIngredients(getResponseData(ingredientsResponse));
-            setStores(getResponseData(storesResponse));
+            if (storesResponse?._noCityError) {
+                setNoCitySet(true);
+                setStores([]);
+            } else {
+                setStores(getResponseData(storesResponse));
+            }
             setStoreRecommendations(getResponseData(recommendationsResponse));
         } catch (err) {
             console.error("Shopping list loading error:", err);
@@ -200,10 +211,10 @@ function ShoppingList() {
 
             return {
                 ...recommendation,
-                name: storeDetails?.name || `Store #${recommendation.storeId}`,
-                city: storeDetails?.city,
-                address: storeDetails?.address,
-                rating: storeDetails?.rating
+                name: recommendation.store?.name || storeDetails?.name || `Store #${recommendation.storeId}`,
+                city: recommendation.store?.city || storeDetails?.city,
+                address: recommendation.store?.address || storeDetails?.address,
+                rating: recommendation.store?.rating || storeDetails?.rating
             };
         });
     }
@@ -504,6 +515,12 @@ function ShoppingList() {
                     }
                 ]}
             />
+
+            {noCitySet && (
+                <div className="shopping-city-notice">
+                    📍 Please set your city in your profile to see nearby store suggestions.
+                </div>
+            )}
 
             <section className="shopping-card">
                 <div className="shopping-card-header">

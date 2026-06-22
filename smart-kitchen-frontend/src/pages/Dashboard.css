@@ -442,7 +442,7 @@
 
 .dashboard-mini-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
 
@@ -452,6 +452,11 @@
     border-radius: 18px;
 
     background: rgba(255, 255, 255, 0.62);
+}
+
+.dashboard-mini-item > div:first-child {
+    flex: 1;
+    min-width: 0;
 }
 
 .dashboard-mini-item strong {
@@ -468,7 +473,7 @@
     align-items: center;
     justify-content: flex-end;
     gap: 8px;
-    flex-wrap: wrap;
+    flex-shrink: 0;
 }
 
 .dashboard-tag {

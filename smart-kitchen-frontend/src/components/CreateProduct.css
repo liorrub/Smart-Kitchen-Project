@@ -1,13 +1,13 @@
 .create-product-overlay {
     position: fixed;
     inset: 0;
-    z-index: 9998;
+    z-index: 10001;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    padding: 24px;
+    padding: 90px 24px 24px;
     background: rgba(31, 61, 43, 0.28);
     backdrop-filter: blur(6px);
 }

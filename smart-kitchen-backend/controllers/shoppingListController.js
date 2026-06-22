@@ -23,6 +23,10 @@ const {
     getIngredientById
 } = require("../models/ingredientsModel");
 
+const {
+    getUserById
+} = require("../models/usersModel");
+
 // Get shopping list
 async function getShoppingList(req, res, next) {
     try {
@@ -151,10 +155,22 @@ async function generateShoppingList(req, res, next) {
     }
 }
 
-// Store recommendations
+// Store recommendations filtered by the user's city
 async function getStoreRecommendations(req, res, next) {
     try {
         const userId = Number(req.params.id);
+
+        const user = await getUserById(userId);
+        const city = user?.city || null;
+
+        if (!city) {
+            return errorResponse(
+                res,
+                400,
+                "NO_CITY",
+                "User has no city configured"
+            );
+        }
 
         const shoppingItems =
             await getUserShoppingList(userId);
@@ -163,7 +179,8 @@ async function getStoreRecommendations(req, res, next) {
 
         for (const item of shoppingItems) {
             const stores = await comparePrices(
-                item.ingredientId
+                item.ingredientId,
+                city
             );
 
             recommendations.push({
