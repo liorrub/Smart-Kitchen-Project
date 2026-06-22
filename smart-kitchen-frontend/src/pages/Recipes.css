@@ -84,7 +84,7 @@
 
 .recipes-filters-grid {
     display: grid;
-    grid-template-columns: 1.35fr repeat(3, minmax(150px, 0.75fr));
+    grid-template-columns: 1.35fr repeat(4, minmax(130px, 0.75fr));
     gap: 14px;
     align-items: end;
 
@@ -101,6 +101,33 @@
 }
 
 /* ==========================================================================
+   Sort dropdown — wider menu, scoped to the Sort control only.
+   The base .custom-select-options uses right: 0, which constrains the menu
+   to the same width as the trigger's grid column. Override here so the menu
+   can grow to fit long option labels without affecting other dropdowns.
+   ========================================================================== */
+
+.recipes-sort-select .custom-select-options {
+    width: max-content;
+    min-width: 280px;
+    max-width: 340px;
+    right: auto;
+}
+
+.recipes-sort-select .custom-select-option {
+    white-space: nowrap;
+    padding: 11px 16px;
+    min-height: auto;
+}
+
+@media (max-width: 760px) {
+    .recipes-sort-select .custom-select-options {
+        width: min(320px, calc(100vw - 32px));
+        min-width: 0;
+    }
+}
+
+/* ==========================================================================
    Recipe cards grid
    ========================================================================== */
 
@@ -108,8 +135,8 @@
     margin-top: 24px;
 
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
 }
 
 /* ==========================================================================
@@ -168,6 +195,12 @@
    ========================================================================== */
 
 @media (max-width: 1150px) {
+    .recipes-filters-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
     .recipes-filters-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }

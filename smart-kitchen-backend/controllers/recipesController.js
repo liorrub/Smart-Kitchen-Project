@@ -4,7 +4,9 @@ const {
     createRecipe,
     updateRecipe,
     deleteRecipe,
-    filterRecipes
+    filterRecipes,
+    getMyRecipesForFoodie,
+    getPendingRecipes
 } = require("../models/recipesModel");
 
 const {
@@ -35,6 +37,9 @@ const {
 } = require("../models/ingredientsModel");
 
 const { sequelize } = require("../models");
+
+const { createNotification } = require("../models/notificationsModel");
+const { resolveAuthUser } = require("../middleware/auth");
 
 async function buildRecipeWithIngredients(recipe) {
     const ingredients = await getIngredientsByRecipeId(recipe.recipeId);
@@ -74,14 +79,14 @@ async function addIngredientsToRecipe(recipeId, ingredients, options = {}) {
 }
 
 // Replace the full ingredient list of a recipe.
-// Used when a chef/admin updates the ingredients of an existing recipe.
+// Used when a chef/admin/influencer updates the ingredients of an existing recipe.
 // First deletes the old relations, then creates the new relations.
 async function replaceRecipeIngredients(recipeId, ingredients, options = {}) {
     await deleteIngredientsByRecipeId(recipeId, options);
     await addIngredientsToRecipe(recipeId, ingredients, options);
 }
 
-// Get all recipes
+// Get all recipes (public — only approved)
 async function getRecipes(req, res, next) {
     try {
         const filters = req.query;
@@ -97,7 +102,8 @@ async function getRecipes(req, res, next) {
     }
 }
 
-// Get one recipe
+// Get one recipe.
+// Approved recipes are public. Non-approved recipes are visible only to their creator and admins.
 async function getSingleRecipe(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
@@ -105,6 +111,17 @@ async function getSingleRecipe(req, res, next) {
 
         if (!recipe) {
             return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+        }
+
+        if (recipe.approvalStatus !== "approved") {
+            await resolveAuthUser(req);
+            const caller = req.authUser;
+            const isCreator = caller && caller.userId === recipe.creatorId;
+            const isAdmin = caller && caller.userRole === "admin";
+
+            if (!isCreator && !isAdmin) {
+                return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+            }
         }
 
         const recipeWithIngredients = await buildRecipeWithIngredients(recipe);
@@ -115,7 +132,9 @@ async function getSingleRecipe(req, res, next) {
     }
 }
 
-// Create recipe
+// Create recipe.
+// approvalStatus is set server-side: influencer → pending, chef/admin → approved.
+// Never trust approvalStatus from the request body.
 async function createSingleRecipe(req, res, next) {
     try {
         // Make sure the recipe creator exists before opening a transaction.
@@ -125,10 +144,13 @@ async function createSingleRecipe(req, res, next) {
             return errorResponse(res, 404, "USER_NOT_FOUND", "Creator user not found");
         }
 
-        // Keep ingredients separate from recipeData.
-        // Both are written inside one transaction so a failed ingredient insert
-        // rolls back the recipe row as well — no orphan Recipe can remain.
-        const { ingredients, ...recipeData } = req.body;
+        const { userRole } = req.authUser;
+
+        // Strip approval-related fields from the client payload — never trust them.
+        // eslint-disable-next-line no-unused-vars
+        const { ingredients, approvalStatus: _a, reviewedByUserId: _b, reviewedAt: _c, rejectionReason: _d, ...recipeData } = req.body;
+
+        recipeData.approvalStatus = userRole === "influencer" ? "pending" : "approved";
 
         const recipe = await sequelize.transaction(async (t) => {
             const created = await createRecipe(recipeData, { transaction: t });
@@ -143,16 +165,32 @@ async function createSingleRecipe(req, res, next) {
     }
 }
 
-// Update recipe
+// Update recipe.
+// Influencers can only edit their own recipes; editing resets approvalStatus to pending.
+// approvalStatus is never accepted from the request body for any role.
 async function updateSingleRecipe(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
+        const { userRole, userId } = req.authUser;
 
-        // Keep ingredients separate from recipeData.
-        // When ingredients are provided, the recipe field update and the full
-        // ingredient replacement run inside one transaction so a failure rolls
-        // back both the field changes and the ingredient deletion/re-insertion.
-        const { ingredients, ...recipeData } = req.body;
+        // Strip approval-related fields from the client payload — never trust them.
+        // eslint-disable-next-line no-unused-vars
+        const { ingredients, approvalStatus: _a, reviewedByUserId: _b, reviewedAt: _c, rejectionReason: _d, ...recipeData } = req.body;
+
+        if (userRole === "influencer") {
+            const existing = await getRecipeById(recipeId);
+            if (!existing) {
+                return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+            }
+            if (existing.creatorId !== userId) {
+                return errorResponse(res, 403, "FORBIDDEN", "You can only edit your own recipes");
+            }
+            // Any edit by the influencer resets the recipe back to pending review.
+            recipeData.approvalStatus = "pending";
+            recipeData.reviewedByUserId = null;
+            recipeData.reviewedAt = null;
+            recipeData.rejectionReason = null;
+        }
 
         let updatedRecipe;
 
@@ -183,10 +221,23 @@ async function updateSingleRecipe(req, res, next) {
     }
 }
 
-// Delete recipe
+// Delete recipe.
+// Influencers can only delete their own recipes; chef and admin can delete any.
 async function deleteSingleRecipe(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
+        const { userRole, userId } = req.authUser;
+
+        if (userRole === "influencer") {
+            const existing = await getRecipeById(recipeId);
+            if (!existing) {
+                return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+            }
+            if (existing.creatorId !== userId) {
+                return errorResponse(res, 403, "FORBIDDEN", "You can only delete your own recipes");
+            }
+        }
+
         const deleted = await deleteRecipe(recipeId);
 
         if (!deleted) {
@@ -196,6 +247,112 @@ async function deleteSingleRecipe(req, res, next) {
         return successResponse(res, 200, {
             message: "Recipe deleted successfully"
         });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Return all recipes (all statuses) created by the authenticated influencer.
+async function getMyFoodieRecipes(req, res, next) {
+    try {
+        const { userId } = req.authUser;
+        const recipes = await getMyRecipesForFoodie(userId);
+        const recipesWithIngredients = await Promise.all(
+            recipes.map(recipe => buildRecipeWithIngredients(recipe))
+        );
+        return successResponse(res, 200, recipesWithIngredients);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Return all pending recipes for the admin approval queue.
+async function getPendingQueue(req, res, next) {
+    try {
+        const recipes = await getPendingRecipes();
+        const recipesWithIngredients = await Promise.all(
+            recipes.map(recipe => buildRecipeWithIngredients(recipe))
+        );
+        return successResponse(res, 200, recipesWithIngredients);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Approve a recipe. Sends recipe_approved notification only on first approval.
+async function approveRecipe(req, res, next) {
+    try {
+        const recipeId = Number(req.params.id);
+        const { userId } = req.authUser;
+
+        const recipe = await getRecipeById(recipeId);
+        if (!recipe) {
+            return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+        }
+
+        const wasAlreadyApproved = recipe.approvalStatus === "approved";
+
+        const updated = await updateRecipe(recipeId, {
+            approvalStatus: "approved",
+            reviewedByUserId: userId,
+            reviewedAt: new Date(),
+            rejectionReason: null
+        });
+
+        if (!wasAlreadyApproved) {
+            await createNotification({
+                userId: recipe.creatorId,
+                type: "recipe_approved",
+                message: `Your recipe "${recipe.title}" has been approved!`,
+                sourceUserId: userId,
+                entityId: recipeId,
+                entityType: "recipe"
+            });
+        }
+
+        return successResponse(res, 200, updated);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Reject a recipe with a required reason. Sends recipe_rejected notification only on first rejection.
+async function rejectRecipe(req, res, next) {
+    try {
+        const recipeId = Number(req.params.id);
+        const { userId } = req.authUser;
+        const { reason } = req.body;
+
+        if (!reason || !String(reason).trim()) {
+            return errorResponse(res, 400, "VALIDATION_ERROR", "Rejection reason is required");
+        }
+
+        const recipe = await getRecipeById(recipeId);
+        if (!recipe) {
+            return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+        }
+
+        const wasAlreadyRejected = recipe.approvalStatus === "rejected";
+
+        const updated = await updateRecipe(recipeId, {
+            approvalStatus: "rejected",
+            reviewedByUserId: userId,
+            reviewedAt: new Date(),
+            rejectionReason: String(reason).trim()
+        });
+
+        if (!wasAlreadyRejected) {
+            await createNotification({
+                userId: recipe.creatorId,
+                type: "recipe_rejected",
+                message: `Your recipe "${recipe.title}" has been reviewed.`,
+                sourceUserId: userId,
+                entityId: recipeId,
+                entityType: "recipe"
+            });
+        }
+
+        return successResponse(res, 200, updated);
     } catch (error) {
         next(error);
     }
@@ -335,6 +492,10 @@ module.exports = {
     createSingleRecipe,
     updateSingleRecipe,
     deleteSingleRecipe,
+    getMyFoodieRecipes,
+    getPendingQueue,
+    approveRecipe,
+    rejectRecipe,
     getRecipeReviews,
     createRecipeReview,
     updateRecipeReview,

@@ -49,11 +49,18 @@ const tags = [
     "spicy"
 ];
 
+const approvalStatuses = [
+    "pending",
+    "approved",
+    "rejected"
+];
+
 module.exports = {
     difficulties,
     cuisines,
     categories,
     allergens,
     dietaryPreferences,
-    tags
+    tags,
+    approvalStatuses
 };

@@ -11,12 +11,13 @@ const LIKE_COUNT_SUBQUERY = sequelize.literal(
     `(SELECT COUNT(*) FROM RecipeLikes AS rl WHERE rl.recipeId = Recipe.recipeId)`
 );
 
-// Return all recipes ordered by recipeId, as plain objects (includes public like count)
+// Return all approved recipes ordered by recipeId, as plain objects (includes public like count)
 async function getAllRecipes() {
     const rows = await Recipe.findAll({
         attributes: {
             include: [[LIKE_COUNT_SUBQUERY, "likeCount"]]
         },
+        where: { approvalStatus: "approved" },
         order: [["recipeId", "ASC"]]
     });
     return rows.map(r => {
@@ -70,10 +71,10 @@ async function deleteRecipe(recipeId, options = {}) {
     return true;
 }
 
-// Return recipes matching any combination of category / cuisine / difficulty / creatorId.
+// Return approved recipes matching any combination of category / cuisine / difficulty / creatorId.
 // All conditions are AND-ed together; omitted filters are ignored.
 async function filterRecipes(filters = {}) {
-    const where = {};
+    const where = { approvalStatus: "approved" };
     if (filters.category)   where.category   = filters.category;
     if (filters.cuisine)    where.cuisine     = filters.cuisine;
     if (filters.difficulty) where.difficulty  = filters.difficulty;
@@ -93,11 +94,59 @@ async function filterRecipes(filters = {}) {
     });
 }
 
+// Return all recipes (any status) created by a specific user — for the Foodie's own recipe view.
+async function getMyRecipesForFoodie(userId) {
+    const rows = await Recipe.findAll({
+        attributes: {
+            include: [[LIKE_COUNT_SUBQUERY, "likeCount"]]
+        },
+        include: [
+            {
+                model: User,
+                as: "creator",
+                attributes: ["userId", "firstName", "lastName", "userRole"]
+            }
+        ],
+        where: { creatorId: userId },
+        order: [["recipeId", "DESC"]]
+    });
+    return rows.map(r => {
+        const obj = r.toJSON();
+        obj.likeCount = Number(obj.likeCount || 0);
+        return obj;
+    });
+}
+
+// Return all pending recipes with creator info — for the admin approval queue.
+async function getPendingRecipes() {
+    const rows = await Recipe.findAll({
+        attributes: {
+            include: [[LIKE_COUNT_SUBQUERY, "likeCount"]]
+        },
+        include: [
+            {
+                model: User,
+                as: "creator",
+                attributes: ["userId", "firstName", "lastName", "userRole"]
+            }
+        ],
+        where: { approvalStatus: "pending" },
+        order: [["createdAt", "ASC"], ["recipeId", "ASC"]]
+    });
+    return rows.map(r => {
+        const obj = r.toJSON();
+        obj.likeCount = Number(obj.likeCount || 0);
+        return obj;
+    });
+}
+
 module.exports = {
     getAllRecipes,
     getRecipeById,
     createRecipe,
     updateRecipe,
     deleteRecipe,
-    filterRecipes
+    filterRecipes,
+    getMyRecipesForFoodie,
+    getPendingRecipes
 };

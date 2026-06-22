@@ -21,14 +21,29 @@ const QUICK_ACTIONS = [
         label: "Add Recipe",
         description: "Manage recipes",
         path: "/recipe-management",
-        icon: "+"
+        icon: "+",
+        showForRoles: ["chef", "admin"]
+    },
+    {
+        label: "My Recipes",
+        description: "View my submissions",
+        path: "/foodie/my-recipes",
+        icon: "+",
+        showForRoles: ["influencer"]
+    },
+    {
+        label: "Recipe Queue",
+        description: "Review pending recipes",
+        path: "/admin/recipe-queue",
+        icon: "Q",
+        showForRoles: ["admin"]
     },
     {
         label: "Add Ingredient",
         description: "Update ingredients",
         path: "/ingredients",
         icon: "+",
-        adminOnly: true
+        showForRoles: ["admin"]
     },
     {
         label: "Ask AI",
@@ -500,7 +515,7 @@ function KitchenSidebar() {
                         </div>
 
                         <div className="quick-actions-list">
-                            {QUICK_ACTIONS.filter(action => !action.adminOnly || currentUserRole === "admin").map((action) => (
+                            {QUICK_ACTIONS.filter(action => !action.showForRoles || action.showForRoles.includes(currentUserRole)).map((action) => (
                                 <button
                                     key={action.label}
                                     type="button"

@@ -93,7 +93,7 @@ async function getFeedForUser(userId) {
         attributes: {
             include: [[LIKE_COUNT_SUBQUERY, "likeCount"]]
         },
-        where: { creatorId: { [Op.in]: followeeIds } },
+        where: { creatorId: { [Op.in]: followeeIds }, approvalStatus: "approved" },
         include: [
             {
                 model: User,

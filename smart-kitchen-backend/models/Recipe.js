@@ -130,6 +130,26 @@ const Recipe = sequelize.define(
             type: DataTypes.JSON,
             allowNull: false,
             defaultValue: []
+        },
+        approvalStatus: {
+            type: DataTypes.ENUM("pending", "approved", "rejected"),
+            allowNull: false,
+            defaultValue: "approved"
+        },
+        reviewedByUserId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: null
+        },
+        reviewedAt: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            defaultValue: null
+        },
+        rejectionReason: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+            defaultValue: null
         }
     },
     {

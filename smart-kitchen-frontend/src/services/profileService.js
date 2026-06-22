@@ -16,7 +16,7 @@ export async function getUserProfile(userId) {
     return getResponseData(response);
 }
 
-// Search users by name/city and optional role filter.
+// Search users by username or name (prefix match only) with optional role filter.
 export async function searchUsers(query, role = "all") {
     const response = await axios.get(
         `${API_BASE_URL}/users/search`,

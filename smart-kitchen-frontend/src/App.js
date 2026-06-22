@@ -23,6 +23,8 @@ import RecipePage from "./pages/RecipePage";
 import Profile from "./pages/Profile";
 import Discover from "./pages/Discover";
 import Feed from "./pages/Feed";
+import FoodieMyRecipes from "./pages/FoodieMyRecipes";
+import AdminRecipeQueue from "./pages/AdminRecipeQueue";
 
 function App() {
     return (
@@ -130,6 +132,16 @@ function App() {
                             <Route
                                 path="/feed"
                                 element={<Feed />}
+                            />
+
+                            <Route
+                                path="/foodie/my-recipes"
+                                element={<FoodieMyRecipes />}
+                            />
+
+                            <Route
+                                path="/admin/recipe-queue"
+                                element={<AdminRecipeQueue />}
                             />
 
                         </Route>
