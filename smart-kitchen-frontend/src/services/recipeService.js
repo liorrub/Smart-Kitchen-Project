@@ -88,6 +88,20 @@ export async function getMyFoodieRecipes(user) {
     return getResponseDataOrBody(response);
 }
 
+// Return the count of pending recipes — admin only, used for the navbar control.
+export async function getPendingRecipeCount(user) {
+    const response = await axios.get(
+        `${RECIPES_API_URL}/pending/count`,
+        {
+            headers: {
+                "x-user-id": user.userId,
+                "x-user-role": user.userRole
+            }
+        }
+    );
+    return getResponseDataOrBody(response);
+}
+
 // Return all pending recipes — admin only.
 export async function getPendingRecipes(user) {
     const response = await axios.get(

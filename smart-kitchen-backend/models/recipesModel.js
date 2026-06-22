@@ -117,6 +117,12 @@ async function getMyRecipesForFoodie(userId) {
     });
 }
 
+// Return the count of pending recipes — lightweight poll for the admin navbar control.
+async function getPendingCount() {
+    const count = await Recipe.count({ where: { approvalStatus: "pending" } });
+    return { count };
+}
+
 // Return all pending recipes with creator info — for the admin approval queue.
 async function getPendingRecipes() {
     const rows = await Recipe.findAll({
@@ -148,5 +154,6 @@ module.exports = {
     deleteRecipe,
     filterRecipes,
     getMyRecipesForFoodie,
-    getPendingRecipes
+    getPendingRecipes,
+    getPendingCount
 };

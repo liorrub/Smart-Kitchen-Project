@@ -6,7 +6,8 @@ const {
     deleteRecipe,
     filterRecipes,
     getMyRecipesForFoodie,
-    getPendingRecipes
+    getPendingRecipes,
+    getPendingCount
 } = require("../models/recipesModel");
 
 const {
@@ -279,6 +280,16 @@ async function getPendingQueue(req, res, next) {
     }
 }
 
+// Return just the count of pending recipes — lightweight endpoint for the admin navbar control.
+async function getPendingRecipeCount(req, res, next) {
+    try {
+        const result = await getPendingCount();
+        return successResponse(res, 200, result);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // Approve a recipe. Sends recipe_approved notification only on first approval.
 async function approveRecipe(req, res, next) {
     try {
@@ -494,6 +505,7 @@ module.exports = {
     deleteSingleRecipe,
     getMyFoodieRecipes,
     getPendingQueue,
+    getPendingRecipeCount,
     approveRecipe,
     rejectRecipe,
     getRecipeReviews,

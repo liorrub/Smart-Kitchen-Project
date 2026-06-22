@@ -1,12 +1,13 @@
 import "./Dashboard.css";
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 import PageHero from "../components/PageHero";
 import RecipeDetailsModal from "../components/RecipeDetailsModal";
 import MessageModal from "../components/MessageModal";
+import AdminRecipeApprovalSection from "../components/AdminRecipeApprovalSection";
 
 import { getDashboardData } from "../services/dashboardService";
 import { useAuth } from "../context/AuthContext";
@@ -35,6 +36,7 @@ const ROUTES = {
 function Dashboard() {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -71,6 +73,16 @@ function Dashboard() {
         loadDashboard();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.userId, user?.userRole]);
+
+    // Scroll to the recipe approvals section when navigating to /dashboard#recipe-approvals.
+    useEffect(() => {
+        if (!loading && location.hash === "#recipe-approvals") {
+            const el = document.getElementById("recipe-approvals");
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }, [location.hash, loading]);
 
     // Load all dashboard data plus role-specific extras (chef stats or pending chef requests).
     async function loadDashboard() {
@@ -720,6 +732,8 @@ function Dashboard() {
                             )}
                         </article>
                     </section>
+
+                    <AdminRecipeApprovalSection />
                 </>
             )}
 

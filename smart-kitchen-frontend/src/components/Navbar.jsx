@@ -8,6 +8,7 @@ import { logout } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 import { getStoredUser } from "../utils/authUtils";
 import NotificationBell from "./NotificationBell";
+import AdminReviewControl from "./AdminReviewControl";
 import UserSearch from "./UserSearch";
 
 const menuLinks = [
@@ -169,6 +170,7 @@ function Navbar() {
                     <strong>{activeUser?.firstName || "User"}</strong>
                 </NavLink>
 
+                <AdminReviewControl />
                 <NotificationBell />
 
                 <button

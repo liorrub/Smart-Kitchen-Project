@@ -1,24 +1,17 @@
-import "./AdminRecipeQueue.css";
-import "./Recipes.css";
+import "./AdminRecipeApprovalSection.css";
 
 import { useEffect, useState } from "react";
 
-import MessageModal from "../components/MessageModal";
-import PageHero from "../components/PageHero";
-import RecipeDetailsModal from "../components/RecipeDetailsModal";
-import AppButton from "../components/AppButton";
-import FormField from "../components/FormField";
+import AppButton from "./AppButton";
+import FormField from "./FormField";
+import RecipeDetailsModal from "./RecipeDetailsModal";
 
-import {
-    getPendingRecipes,
-    approveRecipe,
-    rejectRecipe
-} from "../services/recipeService";
-
-import { getErrorMessage } from "../utils/apiUtils";
+import { getPendingRecipes, approveRecipe, rejectRecipe } from "../services/recipeService";
+import { usePendingRecipes } from "../context/PendingRecipeContext";
 import { getStoredUser } from "../utils/authUtils";
+import { getErrorMessage } from "../utils/apiUtils";
 
-function AdminRecipeQueue() {
+function AdminRecipeApprovalSection() {
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -28,35 +21,37 @@ function AdminRecipeQueue() {
     const [rejectReason, setRejectReason] = useState("");
     const [actionLoading, setActionLoading] = useState(null);
 
+    const { refreshCount } = usePendingRecipes();
     const storedUser = getStoredUser();
 
     useEffect(() => {
-        async function loadQueue() {
-            try {
-                setLoading(true);
-                setError("");
-                const data = await getPendingRecipes(storedUser);
-                setRecipes(Array.isArray(data) ? data : []);
-            } catch (err) {
-                console.error("Recipe queue loading error:", err);
-                setError(getErrorMessage(err, "Failed to load pending recipes."));
-            } finally {
-                setLoading(false);
-            }
-        }
-
         loadQueue();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    async function loadQueue() {
+        try {
+            setLoading(true);
+            setError("");
+            const data = await getPendingRecipes(storedUser);
+            setRecipes(Array.isArray(data) ? data : []);
+        } catch (err) {
+            setError(getErrorMessage(err, "Failed to load pending recipes."));
+        } finally {
+            setLoading(false);
+        }
+    }
 
     async function handleApprove(recipe) {
         try {
             setActionLoading(recipe.recipeId);
             setError("");
+            setSuccess("");
             await approveRecipe(recipe.recipeId, storedUser);
             setRecipes(prev => prev.filter(r => r.recipeId !== recipe.recipeId));
             setSuccess(`"${recipe.title}" approved and is now live.`);
+            refreshCount();
         } catch (err) {
-            console.error("Approve error:", err);
             setError(getErrorMessage(err, "Failed to approve recipe."));
         } finally {
             setActionLoading(null);
@@ -79,35 +74,22 @@ function AdminRecipeQueue() {
         try {
             setActionLoading(recipe.recipeId);
             setError("");
+            setSuccess("");
             await rejectRecipe(recipe.recipeId, rejectReason.trim(), storedUser);
             setRecipes(prev => prev.filter(r => r.recipeId !== recipe.recipeId));
             setRejectingRecipe(null);
             setRejectReason("");
             setSuccess(`"${recipe.title}" has been rejected.`);
+            refreshCount();
         } catch (err) {
-            console.error("Reject error:", err);
             setError(getErrorMessage(err, "Failed to reject recipe."));
         } finally {
             setActionLoading(null);
         }
     }
 
-    if (loading) {
-        return (
-            <div className="recipes-page">
-                <div className="recipes-message-card">
-                    <h1>Loading pending recipes...</h1>
-                    <p>Please wait while we load the approval queue.</p>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="recipes-page admin-queue-page">
-            <MessageModal type="success" title="Success" message={success} onClose={() => setSuccess("")} />
-            <MessageModal type="error" title="Queue Error" message={error} onClose={() => setError("")} />
-
+        <section id="recipe-approvals" className="dashboard-section">
             <RecipeDetailsModal
                 recipe={selectedRecipe}
                 onClose={() => setSelectedRecipe(null)}
@@ -150,23 +132,30 @@ function AdminRecipeQueue() {
                 </div>
             )}
 
-            <PageHero
-                label="Admin Area"
-                title="Recipe Approval Queue"
-                description="Review submitted recipes and approve or reject them. Approved recipes go live immediately."
-                stats={[
-                    { value: recipes.length, label: "Pending review" }
-                ]}
-            />
+            <div className="dashboard-section-header">
+                <div>
+                    <p className="dashboard-section-kicker">Admin Area</p>
+                    <h2>Pending Recipe Approvals</h2>
+                </div>
+                <p>Review submitted recipes and approve or reject them.</p>
+            </div>
 
-            {recipes.length === 0 ? (
-                <section className="recipes-empty-state">
-                    <div className="recipes-empty-icon">✓</div>
-                    <h3>Queue is empty</h3>
-                    <p>All submitted recipes have been reviewed. Check back later.</p>
-                </section>
+            {error && (
+                <div className="admin-queue-message admin-queue-message--error">{error}</div>
+            )}
+            {success && (
+                <div className="admin-queue-message admin-queue-message--success">{success}</div>
+            )}
+
+            {loading ? (
+                <p style={{ color: "#55705d", fontWeight: 700 }}>Loading pending recipes…</p>
+            ) : recipes.length === 0 ? (
+                <div className="dashboard-empty-state">
+                    <span>✓</span>
+                    <p>Queue is empty — all submitted recipes have been reviewed.</p>
+                </div>
             ) : (
-                <section className="admin-queue-list">
+                <div className="admin-queue-list">
                     {recipes.map(recipe => {
                         const creator = recipe.creator;
                         const isProcessing = actionLoading === recipe.recipeId;
@@ -219,7 +208,7 @@ function AdminRecipeQueue() {
                                         disabled={isProcessing}
                                         onClick={() => handleApprove(recipe)}
                                     >
-                                        {isProcessing ? "Processing..." : "Approve"}
+                                        {isProcessing ? "Processing…" : "Approve"}
                                     </AppButton>
 
                                     <AppButton
@@ -235,10 +224,10 @@ function AdminRecipeQueue() {
                             </div>
                         );
                     })}
-                </section>
+                </div>
             )}
-        </div>
+        </section>
     );
 }
 
-export default AdminRecipeQueue;
+export default AdminRecipeApprovalSection;

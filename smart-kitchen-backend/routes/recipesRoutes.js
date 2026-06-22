@@ -37,6 +37,13 @@ router.get(
     recipesController.getMyFoodieRecipes
 );
 
+// Get the count of pending recipes (admin only) — lightweight poll for the navbar control
+router.get(
+    "/pending/count",
+    authorize("admin"),
+    recipesController.getPendingRecipeCount
+);
+
 // Get the pending recipe queue (admin only)
 router.get(
     "/pending",

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { NotificationProvider } from "./context/NotificationContext";
+import { PendingRecipeProvider } from "./context/PendingRecipeContext";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -24,12 +25,12 @@ import Profile from "./pages/Profile";
 import Discover from "./pages/Discover";
 import Feed from "./pages/Feed";
 import FoodieMyRecipes from "./pages/FoodieMyRecipes";
-import AdminRecipeQueue from "./pages/AdminRecipeQueue";
 
 function App() {
     return (
         <AuthProvider>
             <NotificationProvider>
+            <PendingRecipeProvider>
             <BrowserRouter>
                 <Routes>
 
@@ -139,17 +140,13 @@ function App() {
                                 element={<FoodieMyRecipes />}
                             />
 
-                            <Route
-                                path="/admin/recipe-queue"
-                                element={<AdminRecipeQueue />}
-                            />
-
                         </Route>
 
                     </Route>
 
                 </Routes>
             </BrowserRouter>
+            </PendingRecipeProvider>
             </NotificationProvider>
         </AuthProvider>
     );

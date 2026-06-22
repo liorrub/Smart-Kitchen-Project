@@ -32,13 +32,6 @@ const QUICK_ACTIONS = [
         showForRoles: ["influencer"]
     },
     {
-        label: "Recipe Queue",
-        description: "Review pending recipes",
-        path: "/admin/recipe-queue",
-        icon: "Q",
-        showForRoles: ["admin"]
-    },
-    {
         label: "Add Ingredient",
         description: "Update ingredients",
         path: "/ingredients",

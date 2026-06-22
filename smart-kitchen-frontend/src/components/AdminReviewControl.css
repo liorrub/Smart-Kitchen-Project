@@ -1,0 +1,71 @@
+/* Icon-only admin review button — mirrors .notif-bell-btn but uses amber tones */
+
+.admin-review-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+
+    border: 1px solid rgba(194, 149, 82, 0.5);
+    border-radius: 14px;
+    background: rgba(255, 248, 225, 0.9);
+
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.admin-review-btn:hover {
+    background: rgba(255, 225, 140, 0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(194, 149, 82, 0.2);
+}
+
+.admin-review-btn:focus-visible {
+    outline: 2px solid rgba(194, 149, 82, 0.8);
+    outline-offset: 2px;
+}
+
+.admin-review-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* Count badge — always visible, amber color (distinguishes from red notification badge) */
+.admin-review-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+
+    background: #c47f2a;
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 2px 6px rgba(194, 149, 82, 0.45);
+    pointer-events: none;
+}
+
+/* Muted state when queue is empty */
+.admin-review-btn--empty .admin-review-badge {
+    background: rgba(194, 149, 82, 0.38);
+    box-shadow: none;
+}
+
+.admin-review-btn--empty {
+    border-color: rgba(194, 149, 82, 0.3);
+    background: rgba(255, 248, 225, 0.55);
+}
