@@ -13,9 +13,17 @@ const {
 const {
     getReviewsByRecipeId,
     getReviewById,
+    findExistingReview,
     addReview,
     updateReview,
-    deleteReview
+    deleteReview,
+    toggleHelpfulVote,
+    createReport,
+    findExistingReport,
+    getReportById,
+    getReports,
+    updateReport,
+    getOpenReportCount
 } = require("../models/reviewsModel");
 
 const {
@@ -369,7 +377,7 @@ async function rejectRecipe(req, res, next) {
     }
 }
 
-// Get recipe reviews
+// Get recipe reviews — public endpoint, optional auth for isHelpfulByMe flag
 async function getRecipeReviews(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
@@ -379,7 +387,8 @@ async function getRecipeReviews(req, res, next) {
             return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
         }
 
-        const reviews = await getReviewsByRecipeId(recipeId);
+        await resolveAuthUser(req);
+        const reviews = await getReviewsByRecipeId(recipeId, req.authUser?.userId);
         return successResponse(res, 200, reviews);
     } catch (error) {
         next(error);
@@ -401,6 +410,12 @@ async function createRecipeReview(req, res, next) {
                 "RECIPE_NOT_FOUND",
                 "Recipe not found"
             );
+        }
+
+        // Prevent duplicate reviews — one review per user per recipe
+        const existing = await findExistingReview(userId, recipeId);
+        if (existing) {
+            return errorResponse(res, 409, "DUPLICATE_REVIEW", "You have already reviewed this recipe");
         }
 
         // Whitelist only user-supplied fields; all other fields are set server-side.
@@ -438,11 +453,8 @@ async function updateRecipeReview(req, res, next) {
             );
         }
 
-        // Only the review owner or admin can update the review
-        if (
-            review.userId !== userId &&
-            userRole !== "admin"
-        ) {
+        // Only the review owner can update the review
+        if (review.userId !== userId) {
             return errorResponse(res, 403, "FORBIDDEN", "You can only edit your own review");
         }
 
@@ -479,11 +491,8 @@ async function deleteRecipeReview(req, res, next) {
             );
         }
 
-        // Only the review owner or admin can delete the review
-        if (
-            review.userId !== userId &&
-            userRole !== "admin"
-        ) {
+        // Only the review owner can delete the review (admin deletes via moderation)
+        if (review.userId !== userId) {
             return errorResponse(res, 403, "FORBIDDEN", "You can only delete your own review");
         }
 
@@ -492,6 +501,147 @@ async function deleteRecipeReview(req, res, next) {
             message: "Review deleted successfully"
         });
 
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Toggle helpful vote for a review (any authenticated user, cannot vote on own reviews)
+async function toggleReviewHelpfulVote(req, res, next) {
+    try {
+        const reviewId = Number(req.params.reviewId);
+        const { userId } = req.authUser;
+
+        const review = await getReviewById(reviewId);
+        if (!review) {
+            return errorResponse(res, 404, "REVIEW_NOT_FOUND", "Review not found");
+        }
+
+        if (review.userId === userId) {
+            return errorResponse(res, 403, "FORBIDDEN", "You cannot mark your own review as helpful");
+        }
+
+        const result = await toggleHelpfulVote(reviewId, userId);
+        return successResponse(res, 200, result);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Report a review
+async function createReviewReport(req, res, next) {
+    try {
+        const reviewId = Number(req.params.reviewId);
+        const { userId } = req.authUser;
+
+        const review = await getReviewById(reviewId);
+        if (!review) {
+            return errorResponse(res, 404, "REVIEW_NOT_FOUND", "Review not found");
+        }
+
+        // Reporters cannot report their own reviews
+        if (review.userId === userId) {
+            return errorResponse(res, 403, "FORBIDDEN", "You cannot report your own review");
+        }
+
+        const { reason, details } = req.body;
+        const validReasons = ["spam", "inappropriate", "harassment", "misinformation", "off-topic", "other"];
+        if (!reason || !validReasons.includes(reason)) {
+            return errorResponse(res, 400, "VALIDATION_ERROR", "A valid report reason is required");
+        }
+
+        const trimmedDetails = details ? String(details).trim() : "";
+        if (reason === "other" && !trimmedDetails) {
+            return errorResponse(res, 400, "VALIDATION_ERROR", "Please provide details when selecting 'Other'");
+        }
+
+        // Prevent duplicate open reports from the same user
+        const existing = await findExistingReport(reviewId, userId);
+        if (existing) {
+            return errorResponse(res, 409, "DUPLICATE_REPORT", "You have already reported this review");
+        }
+
+        const report = await createReport({
+            reviewId,
+            reporterUserId: userId,
+            reason,
+            details: trimmedDetails || null
+        });
+
+        return successResponse(res, 201, report);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Get all review reports — admin only
+async function getReviewReports(req, res, next) {
+    try {
+        const { status } = req.query;
+        const reports = await getReports(status ? { status } : {});
+        return successResponse(res, 200, reports);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Update a review report's status — admin only
+async function updateReviewReport(req, res, next) {
+    try {
+        const reportId = Number(req.params.reportId);
+        const { userId } = req.authUser;
+        const { status } = req.body;
+
+        const validStatuses = ["open", "dismissed", "actioned"];
+        if (!status || !validStatuses.includes(status)) {
+            return errorResponse(res, 400, "VALIDATION_ERROR", "A valid status is required");
+        }
+
+        const updated = await updateReport(reportId, {
+            status,
+            reviewedByUserId: userId,
+            reviewedAt: new Date()
+        });
+
+        if (!updated) {
+            return errorResponse(res, 404, "REPORT_NOT_FOUND", "Report not found");
+        }
+
+        return successResponse(res, 200, updated);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Get open review report count — for admin navbar indicator
+async function getOpenReviewReportCount(req, res, next) {
+    try {
+        const result = await getOpenReportCount();
+        return successResponse(res, 200, result);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Admin: delete a review through the moderation workflow.
+// Deletes the review itself; ON DELETE CASCADE removes helpful votes and all reports.
+async function deleteReviewThroughModeration(req, res, next) {
+    try {
+        const reportId = Number(req.params.reportId);
+
+        const report = await getReportById(reportId);
+        if (!report) {
+            return errorResponse(res, 404, "REPORT_NOT_FOUND", "Report not found");
+        }
+
+        if (!report.review) {
+            return errorResponse(res, 404, "REVIEW_NOT_FOUND", "Review has already been deleted");
+        }
+
+        const { reviewId, recipeId } = report.review;
+        await deleteReview(recipeId, reviewId);
+
+        return successResponse(res, 200, { message: "Review deleted through moderation" });
     } catch (error) {
         next(error);
     }
@@ -511,5 +661,11 @@ module.exports = {
     getRecipeReviews,
     createRecipeReview,
     updateRecipeReview,
-    deleteRecipeReview
+    deleteRecipeReview,
+    toggleReviewHelpfulVote,
+    createReviewReport,
+    getReviewReports,
+    updateReviewReport,
+    getOpenReviewReportCount,
+    deleteReviewThroughModeration
 };

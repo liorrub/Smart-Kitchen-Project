@@ -19,6 +19,8 @@ const RecipeLike = require("./RecipeLike");
 const UserFollow = require("./UserFollow");
 const Notification = require("./Notification");
 const CommentLike = require("./CommentLike");
+const ReviewHelpfulVote = require("./ReviewHelpfulVote");
+const ReviewReport = require("./ReviewReport");
 
 // User → Recipe (one-to-many via creatorId)
 User.hasMany(Recipe, { foreignKey: "creatorId", as: "recipes" });
@@ -279,6 +281,20 @@ Notification.belongsTo(User, {
     as: "sourceUser"
 });
 
+// Review → ReviewHelpfulVote (many users can mark a review helpful)
+Review.hasMany(ReviewHelpfulVote, { foreignKey: "reviewId", as: "helpfulVoteRecords" });
+ReviewHelpfulVote.belongsTo(Review, { foreignKey: "reviewId" });
+User.hasMany(ReviewHelpfulVote, { foreignKey: "userId", as: "helpfulVotesCast" });
+ReviewHelpfulVote.belongsTo(User, { foreignKey: "userId" });
+
+// Review → ReviewReport
+Review.hasMany(ReviewReport, { foreignKey: "reviewId", as: "reports" });
+ReviewReport.belongsTo(Review, { foreignKey: "reviewId", as: "review" });
+User.hasMany(ReviewReport, { foreignKey: "reporterUserId", as: "reviewReports" });
+ReviewReport.belongsTo(User, { foreignKey: "reporterUserId", as: "reporter" });
+User.hasMany(ReviewReport, { foreignKey: "reviewedByUserId", as: "moderatedReports" });
+ReviewReport.belongsTo(User, { foreignKey: "reviewedByUserId", as: "moderator" });
+
 module.exports = {
     sequelize,
     User,
@@ -298,5 +314,7 @@ module.exports = {
     RecipeLike,
     UserFollow,
     Notification,
-    CommentLike
+    CommentLike,
+    ReviewHelpfulVote,
+    ReviewReport
 };

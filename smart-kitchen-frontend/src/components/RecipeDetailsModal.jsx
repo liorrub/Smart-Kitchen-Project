@@ -4,9 +4,17 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import ReviewCard from "./ReviewCard";
+import ReviewForm from "./ReviewForm";
 import ShareRecipeButton from "./ShareRecipeButton";
 
-import { getRecipeReviews } from "../services/reviewsService";
+import {
+    getRecipeReviews,
+    createRecipeReview,
+    updateRecipeReview,
+    deleteRecipeReview,
+    toggleReviewHelpfulVote,
+    reportReview
+} from "../services/reviewsService";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
@@ -116,41 +124,98 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(false);
     const [reviewsError, setReviewsError] = useState("");
+    const [reviewFormLoading, setReviewFormLoading] = useState(false);
+    const [reviewFormError, setReviewFormError] = useState("");
+    const [editingReview, setEditingReview] = useState(null);
+    const [confirmDeleteReview, setConfirmDeleteReview] = useState(null);
 
     const navigate = useNavigate();
     const currentUser = getStoredUser();
 
+    async function loadReviews() {
+        if (!recipe?.recipeId) {
+            setReviews([]);
+            return;
+        }
+        try {
+            setReviewsLoading(true);
+            setReviewsError("");
+            const data = await getRecipeReviews(recipe.recipeId);
+            setReviews(Array.isArray(data) ? data : []);
+        } catch (error) {
+            setReviewsError(getErrorMessage(error, "Failed to load recipe reviews."));
+        } finally {
+            setReviewsLoading(false);
+        }
+    }
+
     // Load reviews for the current recipe whenever the recipe changes.
     useEffect(() => {
-        async function loadReviews() {
-            if (!recipe?.recipeId) {
-                setReviews([]);
-                return;
-            }
-
-            try {
-                setReviewsLoading(true);
-                setReviewsError("");
-
-                const data = await getRecipeReviews(recipe.recipeId);
-
-                setReviews(Array.isArray(data) ? data : []);
-            } catch (error) {
-                console.error("Reviews loading error:", error);
-
-                setReviewsError(
-                    getErrorMessage(
-                        error,
-                        "Failed to load recipe reviews."
-                    )
-                );
-            } finally {
-                setReviewsLoading(false);
-            }
-        }
-
         loadReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [recipe?.recipeId]);
+
+    async function handleCreateReview(data) {
+        setReviewFormLoading(true);
+        setReviewFormError("");
+        try {
+            await createRecipeReview(recipe.recipeId, data);
+            await loadReviews();
+        } catch (err) {
+            const status = err?.response?.status;
+            if (status === 409) {
+                setReviewFormError("You have already reviewed this recipe.");
+            } else {
+                setReviewFormError(getErrorMessage(err, "Failed to post review."));
+            }
+        } finally {
+            setReviewFormLoading(false);
+        }
+    }
+
+    async function handleUpdateReview(data) {
+        if (!editingReview) return;
+        setReviewFormLoading(true);
+        setReviewFormError("");
+        try {
+            await updateRecipeReview(recipe.recipeId, editingReview.reviewId, data);
+            setEditingReview(null);
+            await loadReviews();
+        } catch (err) {
+            setReviewFormError(getErrorMessage(err, "Failed to update review."));
+        } finally {
+            setReviewFormLoading(false);
+        }
+    }
+
+    async function handleDeleteReview(review) {
+        try {
+            await deleteRecipeReview(recipe.recipeId, review.reviewId);
+            setConfirmDeleteReview(null);
+            await loadReviews();
+        } catch {
+            // Swallow — refresh will reflect server state
+        }
+    }
+
+    async function handleHelpfulVote(reviewId) {
+        try {
+            const result = await toggleReviewHelpfulVote(recipe.recipeId, reviewId);
+            setReviews((prev) =>
+                prev.map((r) =>
+                    r.reviewId === reviewId
+                        ? { ...r, viewerHasMarkedHelpful: result.viewerHasMarkedHelpful, helpfulCount: result.helpfulCount }
+                        : r
+                )
+            );
+        } catch {
+            // Swallow — UI state reverts on next load
+        }
+    }
+
+    async function handleReport(reviewId, data) {
+        await reportReview(recipe.recipeId, reviewId, data);
+    }
 
     // Lock page scroll while the modal is open and restore it on close.
     useEffect(() => {
@@ -162,7 +227,12 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
         };
     }, [recipe]);
 
-    // Filter out the current user's own review so only other users' reviews are shown.
+    // Separate the current user's own review from others
+    const myReview = useMemo(() =>
+        reviews.find((r) => r.userId === currentUser?.userId) || null,
+        [reviews, currentUser?.userId]
+    );
+
     const otherUsersReviews = useMemo(() => {
         return reviews.filter(
             (review) => review.userId !== currentUser?.userId
@@ -178,7 +248,7 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
     const ingredients = getRecipeIngredients(recipe);
     const averageRating = getAverageRating(otherUsersReviews);
     const influencerReviewsCount = otherUsersReviews.filter(
-        (review) => review.isInfluencer
+        (review) => review.author?.userRole === "influencer"
     ).length;
 
     return (
@@ -420,11 +490,85 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
                                     <ReviewCard
                                         key={review.reviewId}
                                         review={review}
+                                        currentUser={currentUser}
+                                        onHelpfulVote={currentUser ? handleHelpfulVote : undefined}
+                                        onReport={currentUser ? handleReport : undefined}
                                     />
                                 ))}
                             </div>
                         )}
+
+                    {/* Current user's own review — shown separately with edit/delete */}
+                    {!reviewsLoading && currentUser && (
+                        <div className="recipe-my-review-section">
+                            {myReview && !editingReview && (
+                                <>
+                                    <p className="recipe-my-review-label">Your review</p>
+                                    <ReviewCard
+                                        key={myReview.reviewId}
+                                        review={myReview}
+                                        currentUser={currentUser}
+                                        onEdit={(r) => setEditingReview(r)}
+                                        onDelete={(r) => setConfirmDeleteReview(r)}
+                                    />
+                                </>
+                            )}
+
+                            {editingReview && (
+                                <ReviewForm
+                                    initial={editingReview}
+                                    onSubmit={handleUpdateReview}
+                                    onCancel={() => setEditingReview(null)}
+                                    loading={reviewFormLoading}
+                                />
+                            )}
+
+                            {!myReview && !editingReview && (
+                                <ReviewForm
+                                    onSubmit={handleCreateReview}
+                                    loading={reviewFormLoading}
+                                />
+                            )}
+
+                            {reviewFormError && (
+                                <p className="recipe-reviews-error" style={{ marginTop: 10 }}>
+                                    {reviewFormError}
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </section>
+
+                {/* Delete review confirmation modal */}
+                {confirmDeleteReview && (
+                    <div
+                        className="recipe-modal-overlay recipe-delete-review-overlay"
+                        onClick={() => setConfirmDeleteReview(null)}
+                    >
+                        <div
+                            className="recipe-delete-review-modal"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <p>Delete this review? This cannot be undone.</p>
+                            <div className="recipe-delete-review-actions">
+                                <button
+                                    type="button"
+                                    className="review-form-btn review-form-btn--cancel"
+                                    onClick={() => setConfirmDeleteReview(null)}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    className="review-form-btn review-form-btn--delete"
+                                    onClick={() => handleDeleteReview(confirmDeleteReview)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 </div>
             </div>
         </div>

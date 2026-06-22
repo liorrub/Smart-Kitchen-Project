@@ -25,7 +25,9 @@ function AdminReviewControl() {
             title={label}
         >
             <span className="admin-review-icon" aria-hidden="true">📋</span>
-            <span className="admin-review-badge" aria-hidden="true">{pendingCount}</span>
+            {pendingCount > 0 && (
+                <span className="admin-review-badge" aria-hidden="true">{pendingCount}</span>
+            )}
         </button>
     );
 }

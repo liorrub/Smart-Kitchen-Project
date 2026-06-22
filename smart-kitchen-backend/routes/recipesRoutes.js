@@ -169,4 +169,22 @@ router.delete(
     recipesController.deleteRecipeReview
 );
 
+// Toggle helpful vote on a review (any authenticated user)
+router.post(
+    "/:id/reviews/:reviewId/helpful",
+    validateIdParam(),
+    validateIdParam("reviewId"),
+    authorize("user", "chef", "influencer", "admin"),
+    recipesController.toggleReviewHelpfulVote
+);
+
+// Report a review (any authenticated user)
+router.post(
+    "/:id/reviews/:reviewId/report",
+    validateIdParam(),
+    validateIdParam("reviewId"),
+    authorize("user", "chef", "influencer", "admin"),
+    recipesController.createReviewReport
+);
+
 module.exports = router;

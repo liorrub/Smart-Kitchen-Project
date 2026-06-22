@@ -9,6 +9,7 @@ import { useAuth } from "../context/AuthContext";
 import { getStoredUser } from "../utils/authUtils";
 import NotificationBell from "./NotificationBell";
 import AdminReviewControl from "./AdminReviewControl";
+import ReviewReportControl from "./ReviewReportControl";
 import UserSearch from "./UserSearch";
 
 const menuLinks = [
@@ -171,6 +172,7 @@ function Navbar() {
                 </NavLink>
 
                 <AdminReviewControl />
+                <ReviewReportControl />
                 <NotificationBell />
 
                 <button

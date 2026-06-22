@@ -12,7 +12,7 @@ module.exports = {
             title:        review.title,
             comment:      review.comment,
             isInfluencer: review.isInfluencer,
-            helpfulVotes: review.helpfulVotes,
+            helpfulVotes: 0,
             createdAt:    new Date(review.createdAt),
             updatedAt:    new Date(review.createdAt)
         }));

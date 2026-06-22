@@ -1,0 +1,116 @@
+.review-form {
+    padding: 20px 24px;
+    border-radius: 20px;
+    background: rgba(255, 254, 250, 0.95);
+    border: 1px solid rgba(139, 213, 174, 0.5);
+    box-shadow: 0 8px 24px rgba(63, 74, 52, 0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.review-form-heading {
+    margin: 0;
+    color: #1f3d2b;
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.review-form-stars {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.review-form-label {
+    color: #55705d;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.review-form-rating-label {
+    color: #9a6a00;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.review-form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.review-form-input,
+.review-form-textarea {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(139, 213, 174, 0.6);
+    background: #fafffe;
+    color: #1f3d2b;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    transition: border-color 0.15s ease;
+    resize: vertical;
+}
+
+.review-form-input:focus,
+.review-form-textarea:focus {
+    outline: none;
+    border-color: #2a7545;
+}
+
+.review-form-error {
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(220, 53, 69, 0.07);
+    border: 1px solid rgba(220, 53, 69, 0.22);
+    color: #a11c2b;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.review-form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.review-form-btn {
+    padding: 10px 22px;
+    border-radius: 14px;
+    border: none;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.review-form-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.review-form-btn--submit {
+    background: #2a7545;
+    color: white;
+}
+
+.review-form-btn--submit:hover:not(:disabled) {
+    background: #1f5c35;
+}
+
+.review-form-btn--cancel {
+    background: rgba(248, 233, 238, 0.85);
+    color: #cc6089;
+}
+
+.review-form-btn--cancel:hover:not(:disabled) {
+    background: #cc6089;
+    color: white;
+}

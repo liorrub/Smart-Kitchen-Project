@@ -1,0 +1,66 @@
+/* Icon-only report button — uses red tones to distinguish from amber clipboard and bell */
+
+.review-report-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+
+    border: 1px solid rgba(220, 53, 69, 0.35);
+    border-radius: 14px;
+    background: rgba(255, 245, 247, 0.9);
+
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.review-report-btn:hover {
+    background: rgba(248, 215, 220, 0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.18);
+}
+
+.review-report-btn:focus-visible {
+    outline: 2px solid rgba(220, 53, 69, 0.7);
+    outline-offset: 2px;
+}
+
+.review-report-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* Red badge — distinguishes from amber admin-review badge */
+.review-report-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+
+    background: #dc3545;
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.45);
+    pointer-events: none;
+}
+
+/* Muted state when count is 0 (button still renders) */
+.review-report-btn--empty {
+    border-color: rgba(220, 53, 69, 0.2);
+    background: rgba(255, 245, 247, 0.5);
+}

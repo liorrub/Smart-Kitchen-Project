@@ -139,6 +139,99 @@
 }
 
 /* ==========================================================================
+   Header right — Foodie badge + owner actions grouped together
+   ========================================================================== */
+
+.review-card-header-right {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.review-card-owner-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.review-card-action-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+}
+
+.review-card-action-btn--edit:hover {
+    background: rgba(42, 117, 69, 0.1);
+}
+
+.review-card-action-btn--delete:hover {
+    background: rgba(220, 53, 69, 0.1);
+}
+
+/* ==========================================================================
+   Footer — helpful vote toggle + report button
+   ========================================================================== */
+
+.review-card-helpful-btn,
+.review-card-helpful-static {
+    background: none;
+    border: none;
+    color: #46ae6b;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 0;
+    cursor: pointer;
+}
+
+.review-card-helpful-btn {
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1.5px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.review-card-helpful-btn:hover {
+    background: rgba(70, 174, 107, 0.12);
+    border-color: rgba(70, 174, 107, 0.35);
+}
+
+.review-card-helpful-btn--active {
+    background: rgba(70, 174, 107, 0.15);
+    border-color: rgba(70, 174, 107, 0.5);
+}
+
+.review-card-report-btn {
+    background: none;
+    border: none;
+    color: #a1a1aa;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.review-card-report-btn:hover {
+    color: #a11c2b;
+    background: rgba(220, 53, 69, 0.08);
+}
+
+.review-card-report-sent {
+    color: #2a7545;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+/* ==========================================================================
    Reviews section
    ========================================================================== */
 

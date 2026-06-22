@@ -37,10 +37,10 @@ describe("AdminReviewControl", () => {
         expect(screen.getByRole("button")).toBeInTheDocument();
     });
 
-    // 2. Badge displays "0" when count is 0
-    it("2. badge displays 0 when count is 0", () => {
+    // 2. Badge is hidden when count is 0 (consistent with NotificationBell and ReviewReportControl)
+    it("2. badge is not shown when count is 0", () => {
         renderControl({ pendingCount: 0, role: "admin" });
-        expect(screen.getByText("0")).toBeInTheDocument();
+        expect(screen.queryByText("0")).not.toBeInTheDocument();
     });
 
     // 3. Badge displays the correct positive count

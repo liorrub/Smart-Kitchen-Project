@@ -8,6 +8,7 @@ import PageHero from "../components/PageHero";
 import RecipeDetailsModal from "../components/RecipeDetailsModal";
 import MessageModal from "../components/MessageModal";
 import AdminRecipeApprovalSection from "../components/AdminRecipeApprovalSection";
+import AdminReviewReportSection from "../components/AdminReviewReportSection";
 
 import { getDashboardData } from "../services/dashboardService";
 import { useAuth } from "../context/AuthContext";
@@ -74,13 +75,14 @@ function Dashboard() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.userId, user?.userRole]);
 
-    // Scroll to the recipe approvals section when navigating to /dashboard#recipe-approvals.
+    // Scroll to the correct section when navigating via hash link.
     useEffect(() => {
-        if (!loading && location.hash === "#recipe-approvals") {
-            const el = document.getElementById("recipe-approvals");
-            if (el) {
-                el.scrollIntoView({ behavior: "smooth" });
-            }
+        if (loading) return;
+        const hashIds = ["recipe-approvals", "review-reports"];
+        const targetId = hashIds.find((id) => location.hash === `#${id}`);
+        if (targetId) {
+            const el = document.getElementById(targetId);
+            if (el) el.scrollIntoView({ behavior: "smooth" });
         }
     }, [location.hash, loading]);
 
@@ -734,6 +736,7 @@ function Dashboard() {
                     </section>
 
                     <AdminRecipeApprovalSection />
+                    <AdminReviewReportSection />
                 </>
             )}
 

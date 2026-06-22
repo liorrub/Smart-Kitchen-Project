@@ -55,3 +55,63 @@ export async function deleteRecipeReview(recipeId, reviewId) {
 
     return getResponseData(response);
 }
+
+// Toggle the current user's helpful vote on a review.
+export async function toggleReviewHelpfulVote(recipeId, reviewId) {
+    const response = await axios.post(
+        `${API_BASE_URL}/recipes/${recipeId}/reviews/${reviewId}/helpful`,
+        {},
+        { headers: getAuthHeaders() }
+    );
+    return getResponseData(response);
+}
+
+// Report a review with a reason and optional details.
+export async function reportReview(recipeId, reviewId, data) {
+    const response = await axios.post(
+        `${API_BASE_URL}/recipes/${recipeId}/reviews/${reviewId}/report`,
+        data,
+        { headers: getAuthHeaders() }
+    );
+    return getResponseData(response);
+}
+
+// Admin: get all review reports (optional ?status= filter).
+export async function getReviewReports(status) {
+    const response = await axios.get(
+        `${API_BASE_URL}/review-reports`,
+        {
+            params: status ? { status } : {},
+            headers: getAuthHeaders()
+        }
+    );
+    return getResponseData(response);
+}
+
+// Admin: update a review report's status.
+export async function updateReviewReport(reportId, data) {
+    const response = await axios.patch(
+        `${API_BASE_URL}/review-reports/${reportId}`,
+        data,
+        { headers: getAuthHeaders() }
+    );
+    return getResponseData(response);
+}
+
+// Admin: get count of open review reports — for the navbar indicator.
+export async function getOpenReviewReportCount() {
+    const response = await axios.get(
+        `${API_BASE_URL}/review-reports/count`,
+        { headers: getAuthHeaders() }
+    );
+    return getResponseData(response);
+}
+
+// Admin: delete a review through the moderation workflow.
+export async function deleteReviewThroughModeration(reportId) {
+    const response = await axios.delete(
+        `${API_BASE_URL}/review-reports/${reportId}/delete-review`,
+        { headers: getAuthHeaders() }
+    );
+    return getResponseData(response);
+}
