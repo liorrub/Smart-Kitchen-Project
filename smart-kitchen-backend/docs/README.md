@@ -1,28 +1,100 @@
 # Smart Kitchen API
 
 A backend REST API for the Smart Kitchen project.
-The system supports management of users, recipes, ingredients, pantry items, shopping lists, meal planning, chef account requests, and mock AI-based food suggestion features through a structured REST API.
+The system supports user management, recipes with an approval workflow, ingredients, pantry tracking, shopping lists with city-based store recommendations, meal planning, chef account requests, real-time recipe discussions via Socket.IO, social features (follows, likes, feeds, notifications), and AI-powered food suggestions via Google Gemini.
+
+---
+
+## Prerequisites
+
+| Requirement | Minimum Version |
+|-------------|----------------|
+| **Node.js** | 20.x |
+| **MySQL** | 8.0 |
+| **npm** | 9.x |
 
 ---
 
 ## Installation
 
-Extract the project ZIP file and install dependencies:
+### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-This will install Express.js 5.2.1, which is the only runtime dependency.
+### 2. Create environment file
+
+Copy `.env.example` to `.env` and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env`:
+
+```env
+PORT=3000
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=smart_kitchen_enriched
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=gemini-3.1-flash-lite
+```
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `PORT` | No | Server port (default: 3000) |
+| `DB_HOST` | Yes | MySQL host |
+| `DB_PORT` | No | MySQL port (default: 3306) |
+| `DB_NAME` | Yes | Database name |
+| `DB_USER` | Yes | MySQL username |
+| `DB_PASSWORD` | Yes | MySQL password |
+| `GEMINI_API_KEY` | Yes | Google Gemini API key (for AI endpoints) |
+| `GEMINI_MODEL` | No | Gemini model name (default: `gemini-3.1-flash-lite`) |
+
+---
+
+## Database Setup
+
+### Create the database in MySQL
+
+```sql
+CREATE DATABASE smart_kitchen_enriched CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### Run migrations (creates all tables)
+
+```bash
+npx sequelize-cli db:migrate
+```
+
+### Seed initial data
+
+```bash
+npx sequelize-cli db:seed:all
+```
+
+This seeds: users (40 records), ingredients, recipes with ingredients, recipe comments, AI history, favorites, chef requests, pantry items, shopping list, meal plan items, stores, ingredient-store price data, recipe likes, user follows, notifications, comment likes, reviews, and recipe image URLs.
+
+### Reset database (drop all tables and re-run)
+
+```bash
+npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all
+```
 
 ---
 
 ## Starting the Server
 
-Since there is no `npm start` script configured, run the server directly:
-
 ```bash
-node server.js
+# Production
+npm start
+
+# Development (with auto-restart via nodemon)
+npm run dev
 ```
 
 You should see:
@@ -36,78 +108,105 @@ Server running on port 3000
 
 | Property | Value |
 |----------|-------|
-| **Port** | 3000 |
+| **Port** | 3000 (configurable via `PORT` env) |
 | **Host** | localhost |
 | **Base URL** | `http://localhost:3000` |
 | **API Base Path** | `/api` |
+| **Static Files** | `http://localhost:3000/uploads/recipes/<filename>` |
+| **WebSocket** | `ws://localhost:3000` (Socket.IO) |
 
 ---
 
 ## Project Structure
 
 ```
-smart-kitchen-api/
-├── server.js                    # Express app initialization and route mounting
-├── package.json                 # Project dependencies
+smart-kitchen-backend/
+├── server.js                    # Express app + Socket.IO initialization
+├── package.json
+├── .env                         # Environment variables (not committed)
+├── .env.example                 # Environment variable template
+├── .sequelizerc                 # Sequelize CLI configuration
 ├── middleware/
 │   ├── auth.js                  # Role-based authorization middleware
-│   └── logger.js                # Request logging middleware
-├── routes/                      # API endpoint definitions
-├── controllers/                 # Business logic and request handlers
-├── models/                      # In-memory data models and CRUD operations
-├── validators/                  # Request validation logic
+│   ├── errorHandler.js          # Global error handler
+│   ├── logger.js                # Request logging middleware (masks passwords)
+│   ├── notFoundHandler.js       # 404 handler for unmatched routes
+│   └── upload.js                # Multer config for recipe image uploads (5 MB max)
+├── routes/                      # Express router files (21 files)
+├── controllers/                 # Business logic and request handlers (19 files)
+├── models/                      # Sequelize model definitions and query functions
+├── migrations/                  # Sequelize database migrations (28 files)
+├── seeders/                     # Sequelize seed data (18 files)
+├── services/
+│   ├── geminiService.js         # Google Gemini API integration
+│   └── notificationService.js   # Notification creation + Socket.IO emit
+├── socket/
+│   ├── index.js                 # Socket.IO server initialization
+│   ├── recipeDiscussion.js      # Real-time comment events
+│   └── notifications.js         # Real-time notification events
+├── validators/                  # Request validation helpers
 ├── utils/
-├── data/                        # Mock JSON data storage
-└── docs/
-
+│   └── responseHelper.js        # successResponse / errorResponse helpers
+├── data/                        # JSON source files used by seeders
+└── uploads/
+    └── recipes/                 # Uploaded recipe images (created automatically)
 ```
+
+---
+
+## Technologies
+
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Node.js** | 20.x | Runtime |
+| **Express** | 5.2.1 | HTTP framework |
+| **MySQL** | 8.0 | Relational database |
+| **Sequelize** | 6.37.8 | ORM + migrations + seeders |
+| **mysql2** | 3.22.5 | MySQL driver for Sequelize |
+| **bcryptjs** | 3.0.3 | Password hashing |
+| **Socket.IO** | 4.8.3 | Real-time WebSocket events |
+| **Multer** | 2.2.0 | File upload handling |
+| **@google/generative-ai** | 0.24.1 | Gemini AI integration |
+| **cors** | 2.8.6 | Cross-origin request support |
+| **dotenv** | 17.4.2 | Environment variable loading |
+| **nodemon** | 3.1.14 | Dev auto-restart (devDependency) |
+| **sequelize-cli** | 6.6.5 | Migration + seeder CLI (devDependency) |
 
 ---
 
 ## Authentication & Authorization
 
-The API uses **header-based authentication** with role-based access control. No real token-based authentication is implemented;
+The API uses **header-based authentication** with role-based access control.
+Passwords are hashed with bcrypt (salt rounds: 10). Login returns a mock token for demonstration purposes; the token itself is not validated on subsequent requests — only `x-user-id` is read.
 
 ### Authentication Headers
 
-Every protected endpoint requires the following headers:
+Every protected endpoint requires:
 
 | Header | Description | Example |
 |--------|-------------|---------|
-| `x-user-id` | Authenticated user ID | `1` |
-| `x-user-role` | User role | `chef`, `admin`, `user` |
+| `x-user-id` | Authenticated user's database ID | `1` |
+| `x-user-role` | User's role (used for authorization checks) | `chef` |
 
-### Public vs. Protected Endpoints
+### Roles
 
-- **Public endpoints**: No headers required (e.g., GET recipes, GET ingredients)
-- **Protected endpoints**: Require `x-user-id` and `x-user-role` headers
-- **Role-restricted endpoints**: Require specific roles (`admin`, `chef`, etc.)
-- **Self-or-admin endpoints**: Allow a user to access their own data or admins to access any user's data
+| Role | Capabilities |
+|------|-------------|
+| `user` | View public resources, manage own pantry/shopping list/meal plan, submit chef request |
+| `chef` | All user capabilities + create/edit/delete recipes, post reviews |
+| `influencer` | All user capabilities + create/edit/delete own recipes (approval required), reviews |
+| `admin` | Full access to all resources, approve/reject recipes and chef requests, manage users and ingredients |
 
-### Access Control Examples
+### Endpoint Access Types
 
-```
-**Chef**
-- Create and edit recipes
-- Post recipe reviews
-- Manage personal pantry, shopping list, and meal plan
-
-**Admin**
-- View all users
-- Create and delete users
-- Update and delete ingredients
-- Manage stores
-- Access system statistics
-- Review, approve, and reject chef account requests
-
-**User / Influencer**
-- View public resources
-- Create ingredients
-- Manage only personal resources
-- Register new account
-- Change own password
-- Submit a request to become a chef
-```
+| Access Level | Description |
+|---|---|
+| Public | No headers required |
+| `requireAuth` | Any authenticated user (`x-user-id` must resolve to a valid user) |
+| `self or admin` | User ID in URL must match `x-user-id`, or role must be `admin` |
+| `self only` | User ID in URL must match `x-user-id` exactly |
+| `chef or admin` | Role must be `chef`, `influencer`, or `admin` |
+| `admin only` | Role must be `admin` |
 
 ---
 
@@ -119,10 +218,7 @@ All endpoints return a consistent JSON response structure:
 ```json
 {
   "success": true,
-  "data": {
-    "id": 123,
-    "message": "Operation completed successfully"
-  },
+  "data": { ... },
   "error": null
 }
 ```
@@ -135,29 +231,154 @@ All endpoints return a consistent JSON response structure:
   "error": {
     "code": "VALIDATION_ERROR",
     "message": "Missing required fields",
-    "details": {
-      "field": "email"
-    }
+    "details": { "field": "email" }
   }
 }
 ```
 
-**Fields:**
-- `success` (`boolean`) – Indicates whether the request completed successfully
-- `data` (`object | array | null`) – The response payload; `null` when the request fails
-- `error` (`object | null`) – Error information; `null` when the request succeeds
+---
+
+## Socket.IO
+
+The server initializes a Socket.IO instance attached to the same HTTP server on port 3000.
+Allowed CORS origin: `http://localhost:5173`.
+
+### Recipe Discussion (real-time comments)
+
+Clients authenticate via `socket.handshake.auth.userId`.
+
+| Event (Client → Server) | Payload | Description |
+|---|---|---|
+| `joinRecipeRoom` | `{ recipeId }` | Join a recipe's discussion room |
+| `leaveRecipeRoom` | `{ recipeId }` | Leave the room |
+| `sendRecipeComment` | `{ recipeId, content, tags?, parentCommentId?, mentionedUserId? }` | Post a comment |
+| `editRecipeComment` | `{ recipeId, commentId, content }` | Edit own comment |
+| `deleteRecipeComment` | `{ recipeId, commentId }` | Delete own comment |
+| `typingRecipeComment` | `{ recipeId }` | Broadcast typing indicator |
+| `stopTypingRecipeComment` | `{ recipeId }` | Stop typing indicator |
+
+| Event (Server → Client) | Description |
+|---|---|
+| `roomUserCount` | Current viewer count in the recipe room |
+| `newRecipeComment` | New comment broadcast to all room members |
+| `recipeCommentEdited` | Edited comment broadcast |
+| `recipeCommentDeleted` | Deleted comment broadcast |
+| `userTyping` | Typing indicator (others in room) |
+| `userStoppedTyping` | Stop typing indicator |
+
+### Notifications (real-time)
+
+Users join their personal room `user:{userId}` on connect.
+
+| Event (Server → Client) | Description |
+|---|---|
+| `newNotification` | Fired when a notification is created for the user (follow, reply, mention, recipe approval/rejection, chef request approval/rejection, comment like) |
 
 ---
 
-## Testing the API
+## File Uploads
 
-### Prerequisites
+Recipe images are uploaded via multipart form-data to `POST /api/recipes/:id/image`.
 
-1. **Server running**: `node server.js` on port 3000
-2. **Postman installed** (optional but recommended for easier testing)
-3. **Sample user credentials** (see below)
+| Property | Value |
+|----------|-------|
+| **Field name** | `image` |
+| **Allowed types** | JPEG, PNG, GIF, WebP |
+| **Max size** | 5 MB |
+| **Storage path** | `uploads/recipes/<timestamp>-<originalname>` |
+| **Served at** | `http://localhost:3000/uploads/recipes/<filename>` |
+| **imageUrl format** | `/uploads/recipes/<filename>` (relative path stored in DB) |
 
-### Using Postman
+If a recipe already has a locally-uploaded image, the old file is deleted from disk when a new image is uploaded or when the image is deleted.
+The `imageUrl` field also accepts external URLs — if `imageUrl` does not start with `/uploads/`, no file deletion occurs.
+
+---
+
+## Recipe Approval Workflow
+
+| Role | On Create | On Update |
+|------|-----------|-----------|
+| `chef` / `admin` | `approvalStatus: approved` | Status unchanged |
+| `influencer` | `approvalStatus: pending` | Reset to `pending` on every edit |
+
+- Only **approved** recipes appear in `GET /api/recipes` (public list).
+- An influencer can see all their own recipes (all statuses) via `GET /api/recipes/my-recipes`.
+- Admins see pending recipes in `GET /api/recipes/pending`.
+- On approval/rejection, the recipe creator receives a real-time notification via Socket.IO.
+- `approvalStatus`, `reviewedByUserId`, `reviewedAt`, and `rejectionReason` are always set server-side and are stripped from the request body.
+
+---
+
+## Sample Test Users
+
+The seed data includes 40 users. Key accounts for testing:
+
+### Chef (userId: 1)
+| Property | Value |
+|----------|-------|
+| **User ID** | 1 |
+| **Name** | Lior Rubinshtein |
+| **Username** | lior_rubinshtein |
+| **Email** | lior@project.com |
+| **Password** | password_1 |
+| **Role** | chef |
+| **City** | Gan Yavne |
+
+```
+x-user-id: 1
+x-user-role: chef
+```
+
+### Admin (userId: 2)
+| Property | Value |
+|----------|-------|
+| **User ID** | 2 |
+| **Name** | Ellen Levin |
+| **Username** | ellen_levin |
+| **Email** | ellen@project.com |
+| **Password** | password_2 |
+| **Role** | admin |
+| **City** | Ashdod |
+
+```
+x-user-id: 2
+x-user-role: admin
+```
+
+### Influencer (userId: 6)
+| Property | Value |
+|----------|-------|
+| **User ID** | 6 |
+| **Name** | Shir Mizrahi |
+| **Username** | shir_mizrahi |
+| **Email** | shir@project.com |
+| **Password** | password_6 |
+| **Role** | influencer |
+| **City** | Haifa |
+
+```
+x-user-id: 6
+x-user-role: influencer
+```
+
+### Regular User (userId: 4)
+| Property | Value |
+|----------|-------|
+| **User ID** | 4 |
+| **Name** | Daniel Levi |
+| **Email** | daniel@project.com |
+| **Password** | password_4 |
+| **Role** | user |
+| **City** | Beer Sheva |
+
+```
+x-user-id: 4
+x-user-role: user
+```
+
+---
+
+## Testing with Postman
 
 A Postman collection is provided for testing all endpoints:
 
@@ -173,169 +394,115 @@ docs/Smart Kitchen API.postman_collection.json
 
 ---
 
-### Recommended Testing Flow
-
-1. **Public endpoints** (no auth needed):
-   - GET `/api/recipes` - List all recipes
-   - GET `/api/ingredients` - List all ingredients
-   - GET `/api/stores` - List all stores
-
-2. **Protected user endpoints** ((using a Chef test user):
-   - GET `/api/auth/me` - Get your profile
-   - GET `/api/users/1/pantry` - Get your pantry
-   - POST `/api/users/1/shopping-list` - Add to shopping list
-   - PUT `/api/users/1/change-password` - Change password
-
-3. **Admin-only endpoints**:
-   - GET `/api/users` - List all users
-   - POST `/api/users` - Create new user
-   - POST `/api/ingredients` - Create ingredient
-   - PUT `/api/ingredients/:id` - Update ingredient
-   - DELETE `/api/ingredients/:id` - Delete ingredient
-
-4. **Authenticated user endpoints**:
-   - POST `/api/ingredients` - Create ingredient
-
----
-
-## Sample Test Users
-
-The mock data includes two pre-configured users for testing different roles:
-
-### Chef User
-| Property | Value |
-|----------|-------|
-| **User ID** | 1 |
-| **Name** | Lior Rubinshtein |
-| **Email** | lior@project.com |
-| **Password** | password_1 |
-| **Role** | chef |
-| **Cooking Level** | advanced |
-
-**Use in headers:**
-```
-x-user-id: 1
-x-user-role: chef
-```
-
-### Admin User
-| Property | Value |
-|----------|-------|
-| **User ID** | 2 |
-| **Name** | Ellen Levin |
-| **Email** | ellen@project.com |
-| **Password** | password_2 |
-| **Role** | admin |
-| **Cooking Level** | intermediate |
-
-**Use in headers:**
-```
-x-user-id: 2
-x-user-role: admin
-```
-
----
-
-## Important Assumptions
-
-### Data Storage
-- All data is loaded from JSON files inside the `data/` directory
-- No real database is used
-- Data exists in memory only while the server is running
-- Restarting the server resets all mock data to its initial state
-
-### Authentication
-- Mock authentication is used for assignment purposes
-- No real password hashing, JWT tokens, or session management
-- Protected endpoints require `x-user-id` and `x-user-role` headers
-
-### IDs & Generation
-- Initial IDs are loaded from mock data
-- New records are assigned the next available ID
-- Generated IDs exist only in memory and are reset when the server restarts
-
-### Validation
-- Request validators enforce required fields, valid enums, and ID existence
-- Email format is validated for user creation/updates
-- Invalid requests return 400 Bad Request with error details
-
-### Features & Limitations
-- AI endpoints return mock suggestions, not real AI output
-- Image analysis is mocked (no actual image processing)
-- Store city data is hardcoded mock data and is used for city-based store recommendations
-- Favorites and reviews are based on recipe IDs
-- Ingredients can be created by authenticated users when a required ingredient does not already exist in the system.
-- Ingredient updates and deletions remain restricted to administrators.
-- - Creating a recipe requires at least one ingredient.
-- Recipe ingredients are stored separately in the `recipe_ingredients` relation data.
-- Updating a recipe can also replace its ingredient list when an `ingredients` array is provided.
----
-
 ## API Endpoints Summary
-
-The Smart Kitchen API provides 49 endpoints across the following resource categories:
 
 | Category | Endpoints |
 |----------|-----------|
-| **Authentication** | 3         |
-| **Users** | 6         |
-| **Favorites** | 3         |
-| **Pantry** | 4         |
-| **Shopping List** | 6         |
-| **Meal Plan** | 4         |
-| **Recipes** | 5         |
-| **Reviews** | 4         |
-| **Ingredients** | 5         |
-| **Stores** | 3         |
-| **AI** | 6         |
-| **Options** | 1         |
-| **Chef Requests** | 5         |
+| **Authentication** | 4 |
+| **Users** | 8 |
+| **Settings** | 2 |
+| **Favorites** | 3 |
+| **Pantry** | 4 |
+| **Shopping List** | 6 |
+| **Meal Plan** | 5 |
+| **Recipes** | 8 |
+| **Recipe Images** | 2 |
+| **Recipe Approval** | 2 |
+| **Recipe Reviews** | 4 |
+| **Review Actions** | 2 |
+| **Recipe Comments (REST)** | 3 |
+| **Recipe Likes** | 3 |
+| **Ingredients** | 6 |
+| **Stores** | 3 |
+| **AI** | 6 |
+| **Options** | 1 |
+| **Chef Requests** | 5 |
+| **User Follows** | 4 |
+| **Feed** | 1 |
+| **Discover** | 1 |
+| **Notifications** | 4 |
+| **Comment Likes** | 2 |
+| **Review Reports** | 4 |
 
-**Total: 56 endpoints**
+**Total: 98 endpoints**
 
-For detailed endpoint documentation, see:
-- [API_REFERENCE.md](API_REFERENCE.md) - Comprehensive endpoint documentation
+For full endpoint documentation see [API_REFERENCE.md](API_REFERENCE.md).
+
 ---
 
 ## Features
 
 ### Core Features
-✓ User authentication and role-based access control  
-✓ Recipe creation, retrieval, and management  
-✓ Ingredient management and user-driven ingredient creation 
-✓ Personal pantry tracking with expiry date monitoring  
-✓ Shopping list generation and management  
-✓ Meal planning by date and meal type  
-✓ Recipe reviews and ratings  
-✓ Favorite recipes tracking  
-✓ City-based store recommendations and ingredient pricing
-✓ Mock AI-based meal suggestions
-✓ Recipe generation from available ingredients  
-✓ User self-registration
-✓ Password change functionality
-✓ Chef account request workflow (submit, review, approve, reject)
-✓ Meal plan items support both recipes and pantry ingredients
+- User authentication with bcrypt password hashing
+- Role-based access control (user / chef / influencer / admin)
+- Recipe creation, retrieval, update, and deletion
+- Recipe approval workflow — influencer recipes require admin approval
+- Recipe image upload (JPEG/PNG/GIF/WebP, max 5 MB) with automatic old-file cleanup
+- Recipe image position control via `imagePositionX` and `imagePositionY` (0–100, CSS object-position)
+- Ingredient management with user-driven ingredient creation
+- Personal pantry tracking with expiry date monitoring
+- Shopping list generation from expired pantry items
+- City-based store recommendations on shopping list (filtered by user's city)
+- Meal planning by date and meal type (supports both recipe and ingredient item types)
+- Recipe reviews and ratings (one review per user per recipe) with helpful vote tracking
+- Review reporting and admin moderation workflow
+- Recipe likes (public like count, one like per user per recipe)
+- Favorites (private recipe saves)
+- Chef account request workflow (submit, review, approve, reject)
+- Real-time recipe discussions via Socket.IO (comments, replies, @mentions, typing indicators, viewer count)
+- User follow / unfollow with social feed (recipes from followed creators)
+- Discover page — lists all chefs and influencers with stats
+- Public user profiles with follower/following counts
+- Real-time notifications via Socket.IO (follows, recipe approval/rejection, replies, @mentions, helpful votes, chef request decisions, comment likes)
+- AI-powered recipe generation, meal suggestions, and ingredient substitutions via Google Gemini
+- User settings management (update profile, city, preferences, avatar, username)
+- User search (by name, city, or role)
+- Password change with current-password verification
 
 ### Technical Features
-✓ Structured error handling  
-✓ Request validation  
-✓ Request logging with password masking  
-✓ Consistent API response format  
-✓ Role-based authorization middleware  
+- Sequelize ORM with MySQL
+- Database migrations and seeders (sequelize-cli)
+- Socket.IO real-time WebSocket server
+- Multer file upload middleware
+- bcryptjs password hashing
+- Structured error handling with global error middleware
+- Request logging with password masking
+- Consistent API response format (`success`, `data`, `error`)
+- Role-based authorization middleware
+- Sequelize transactions for atomic operations (recipe + ingredients, chef request approval)
 
 ---
 
 ## Error Handling
 
-The API returns appropriate HTTP status codes and error codes:
-
 | HTTP Status | Error Code | Description |
 |-------------|-----------|-------------|
-| 200 | SUCCESS | Request successful |
-| 201 | CREATED | Resource created |
-| 400 | VALIDATION_ERROR, INVALID_CREDENTIALS | Bad request or validation failed |
-| 401 | UNAUTHORIZED | Authentication required |
-| 403 | FORBIDDEN | Permission denied |
-| 404 | NOT_FOUND | Resource not found |
-| 409 | CONFLICT | Resource already exists |
-| 500 | SERVER_ERROR | Unexpected server error |
+| 200 | — | Request successful |
+| 201 | — | Resource created |
+| 400 | `VALIDATION_ERROR` | Missing or invalid fields |
+| 400 | `MISSING_FIELD` | Required field absent |
+| 400 | `INVALID_USERNAME` | Username format invalid |
+| 400 | `INVALID_AVATAR_KEY` | Unknown avatar key |
+| 400 | `NO_FILE` | Image upload missing file |
+| 400 | `NO_CITY` | User has no city configured |
+| 401 | `UNAUTHORIZED` | Authentication required |
+| 401 | `INVALID_CREDENTIALS` | Wrong email or password |
+| 403 | `FORBIDDEN` | Permission denied |
+| 404 | `NOT_FOUND` | Route not found |
+| 404 | `USER_NOT_FOUND` | User does not exist |
+| 404 | `RECIPE_NOT_FOUND` | Recipe does not exist |
+| 404 | `INGREDIENT_NOT_FOUND` | Ingredient does not exist |
+| 404 | `STORE_NOT_FOUND` | Store does not exist |
+| 404 | `PANTRY_ITEM_NOT_FOUND` | Pantry item does not exist |
+| 404 | `SHOPPING_ITEM_NOT_FOUND` | Shopping item does not exist |
+| 404 | `MEAL_NOT_FOUND` | Meal plan item does not exist |
+| 404 | `REVIEW_NOT_FOUND` | Review does not exist |
+| 404 | `REPORT_NOT_FOUND` | Review report does not exist |
+| 404 | `HISTORY_NOT_FOUND` | AI history item does not exist |
+| 409 | `EMAIL_ALREADY_EXISTS` | Email already registered |
+| 409 | `USERNAME_TAKEN` | Username already taken |
+| 409 | `FAVORITE_ALREADY_EXISTS` | Recipe already in favorites |
+| 409 | `DUPLICATE_REVIEW` | User already reviewed this recipe |
+| 409 | `DUPLICATE_REPORT` | User already reported this review |
+| 409 | `REQUEST_ALREADY_EXISTS` | Pending chef request already exists |
+| 500 | `SERVER_ERROR` | Unexpected server error |
