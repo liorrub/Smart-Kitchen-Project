@@ -27,12 +27,14 @@ const Notification = sequelize.define(
                 "comment_reply",
                 "mention",
                 "chef_approved",
-                "chef_rejected"
+                "chef_rejected",
+                "recipe_approved",
+                "recipe_rejected"
             ),
             allowNull: false,
             validate: {
                 isIn: {
-                    args: [["follow", "recipe_comment", "comment_reply", "mention", "chef_approved", "chef_rejected"]],
+                    args: [["follow", "recipe_comment", "comment_reply", "mention", "chef_approved", "chef_rejected", "recipe_approved", "recipe_rejected"]],
                     msg: "Invalid notification type"
                 }
             }

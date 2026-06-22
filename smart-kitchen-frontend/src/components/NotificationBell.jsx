@@ -38,6 +38,10 @@ function notificationHref(notification) {
         case "chef_approved":
         case "chef_rejected":
             return "/settings";
+        case "recipe_approved":
+            return notification.entityId ? `/recipes/${notification.entityId}` : null;
+        case "recipe_rejected":
+            return "/foodie/my-recipes";
         default:
             return null;
     }

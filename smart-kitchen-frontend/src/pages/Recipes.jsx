@@ -23,10 +23,24 @@ import {
 import { getResponseData, getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
+import { applySort } from "../utils/recipeSortUtils";
 
 const RECIPES_API_URL = `${API_BASE_URL}/recipes`;
 
 const DEFAULT_FILTER_VALUE = "all";
+
+const SORT_OPTIONS = [
+    { value: "default",         label: "Recommended" },
+    { value: "newest",          label: "Newest first" },
+    { value: "oldest",          label: "Oldest first" },
+    { value: "prep-asc",        label: "Prep time: shortest first" },
+    { value: "prep-desc",       label: "Prep time: longest first" },
+    { value: "servings-asc",    label: "Servings: lowest first" },
+    { value: "servings-desc",   label: "Servings: highest first" },
+    { value: "difficulty-asc",  label: "Difficulty: easiest first" },
+    { value: "difficulty-desc", label: "Difficulty: hardest first" },
+    { value: "likes-desc",      label: "Most liked" },
+];
 
 // Build a filter dropdown options list from a list of values, with an "all" option prepended.
 function createFilterOptions(values, allLabel) {
@@ -54,6 +68,7 @@ function Recipes() {
     const [categoryFilter, setCategoryFilter] = useState(DEFAULT_FILTER_VALUE);
     const [cuisineFilter, setCuisineFilter] = useState(DEFAULT_FILTER_VALUE);
     const [difficultyFilter, setDifficultyFilter] = useState(DEFAULT_FILTER_VALUE);
+    const [sortBy, setSortBy] = useState("default");
 
     const [loading, setLoading] = useState(true);
     const [favoriteLoadingRecipeId, setFavoriteLoadingRecipeId] = useState(null);
@@ -137,11 +152,12 @@ function Recipes() {
         );
     }, [recipes]);
 
-    // Filter the recipe list by search term, category, cuisine, and difficulty.
+    // Filter the recipe list by search term, category, cuisine, and difficulty,
+    // then sort the filtered copy according to the selected sort option.
     const visibleRecipes = useMemo(() => {
         const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 
-        return recipes.filter((recipe) => {
+        const filtered = recipes.filter((recipe) => {
             const title = String(recipe.title || "").toLowerCase();
             const instructions = String(recipe.instructions || "").toLowerCase();
             const tags = recipe.tags || [];
@@ -173,24 +189,28 @@ function Recipes() {
                 matchesDifficulty
             );
         });
+
+        return applySort(filtered, sortBy);
     }, [
         recipes,
         searchTerm,
         categoryFilter,
         cuisineFilter,
-        difficultyFilter
+        difficultyFilter,
+        sortBy
     ]);
 
     const quickRecipesCount = recipes.filter(
         (recipe) => Number(recipe.totalTime) <= 30
     ).length;
 
-    // Reset all active filters and the search term back to their default values.
+    // Reset all active filters, the search term, and the sort back to their default values.
     function clearFilters() {
         setSearchTerm("");
         setCategoryFilter(DEFAULT_FILTER_VALUE);
         setCuisineFilter(DEFAULT_FILTER_VALUE);
         setDifficultyFilter(DEFAULT_FILTER_VALUE);
+        setSortBy("default");
     }
 
     // Toggle a recipe as favorite: add it if not saved, remove it if already saved.
@@ -426,6 +446,17 @@ function Recipes() {
                         onChange={(event) =>
                             setDifficultyFilter(event.target.value)
                         }
+                    />
+
+                    <CustomSelect
+                        label="Sort by"
+                        name="sort"
+                        value={sortBy}
+                        options={SORT_OPTIONS}
+                        onChange={(event) =>
+                            setSortBy(event.target.value)
+                        }
+                        wrapperClassName="recipes-sort-select"
                     />
                 </div>
             </section>

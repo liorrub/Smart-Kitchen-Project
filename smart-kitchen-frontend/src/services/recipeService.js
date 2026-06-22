@@ -72,3 +72,65 @@ export async function deleteRecipe(recipeId, user) {
 
     return getResponseDataOrBody(response);
 }
+
+// Return all recipes (all statuses) created by the authenticated influencer.
+export async function getMyFoodieRecipes(user) {
+    const response = await axios.get(
+        `${RECIPES_API_URL}/my-recipes`,
+        {
+            headers: {
+                "x-user-id": user.userId,
+                "x-user-role": user.userRole
+            }
+        }
+    );
+
+    return getResponseDataOrBody(response);
+}
+
+// Return all pending recipes — admin only.
+export async function getPendingRecipes(user) {
+    const response = await axios.get(
+        `${RECIPES_API_URL}/pending`,
+        {
+            headers: {
+                "x-user-id": user.userId,
+                "x-user-role": user.userRole
+            }
+        }
+    );
+
+    return getResponseDataOrBody(response);
+}
+
+// Approve a recipe — admin only.
+export async function approveRecipe(recipeId, user) {
+    const response = await axios.post(
+        `${RECIPES_API_URL}/${recipeId}/approve`,
+        {},
+        {
+            headers: {
+                "x-user-id": user.userId,
+                "x-user-role": user.userRole
+            }
+        }
+    );
+
+    return getResponseDataOrBody(response);
+}
+
+// Reject a recipe with a required reason — admin only.
+export async function rejectRecipe(recipeId, reason, user) {
+    const response = await axios.post(
+        `${RECIPES_API_URL}/${recipeId}/reject`,
+        { reason },
+        {
+            headers: {
+                "x-user-id": user.userId,
+                "x-user-role": user.userRole
+            }
+        }
+    );
+
+    return getResponseDataOrBody(response);
+}

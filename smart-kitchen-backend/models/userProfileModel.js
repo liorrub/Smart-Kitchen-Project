@@ -75,7 +75,8 @@ async function getUserPublicProfile(userId, viewerId) {
     };
 }
 
-// Search users by username, name, or city — username-prefix matches rank first.
+// Search users by username or name — prefix match only, no city search.
+// Priority order: exact username > username prefix > first name prefix > last name prefix.
 async function searchPublicUsers(query, role) {
     const where = {};
 
@@ -84,13 +85,12 @@ async function searchPublicUsers(query, role) {
     }
 
     if (query) {
-        const pattern = `%${query}%`;
-        const usernamePattern = `${query.toLowerCase()}%`;
+        const prefix = `${query}%`;
+        const lowerPrefix = `${query.toLowerCase()}%`;
         where[Op.or] = [
-            { username: { [Op.like]: usernamePattern } },
-            { firstName: { [Op.like]: pattern } },
-            { lastName: { [Op.like]: pattern } },
-            { city: { [Op.like]: pattern } }
+            { username: { [Op.like]: lowerPrefix } },
+            { firstName: { [Op.like]: prefix } },
+            { lastName: { [Op.like]: prefix } }
         ];
     }
 
@@ -115,10 +115,15 @@ async function searchPublicUsers(query, role) {
         ],
         order: query
             ? [
-                // Username prefix matches rank first: LIKE 'query%' returns 1, else 0
                 [
                     sequelize.literal(
-                        `CASE WHEN username LIKE ${sequelize.escape(query.toLowerCase() + "%")} THEN 0 ELSE 1 END`
+                        `CASE
+                            WHEN LOWER(username) = ${sequelize.escape(query.toLowerCase())} THEN 0
+                            WHEN username LIKE ${sequelize.escape(query + "%")} THEN 1
+                            WHEN firstName LIKE ${sequelize.escape(query + "%")} THEN 2
+                            WHEN lastName LIKE ${sequelize.escape(query + "%")} THEN 3
+                            ELSE 4
+                        END`
                     ),
                     "ASC"
                 ],

@@ -197,4 +197,103 @@ describe("UserSearch", () => {
             });
         });
     });
+
+    it("passes the trimmed query to searchUsers when input has leading/trailing spaces", async () => {
+        searchUsers.mockResolvedValue([]);
+        renderSearch();
+        const input = screen.getByLabelText(/search users/i);
+
+        fireEvent.change(input, { target: { value: "  dan  " } });
+        await act(async () => {
+            jest.advanceTimersByTime(300);
+        });
+
+        await waitFor(() => {
+            expect(searchUsers).toHaveBeenCalledWith("dan", "all");
+        });
+    });
+
+    it("calls searchUsers with the query regardless of case typed by user", async () => {
+        searchUsers.mockResolvedValue(MOCK_USERS);
+        renderSearch();
+        const input = screen.getByLabelText(/search users/i);
+
+        fireEvent.change(input, { target: { value: "LIOR" } });
+        await act(async () => {
+            jest.advanceTimersByTime(300);
+        });
+
+        await waitFor(() => {
+            expect(searchUsers).toHaveBeenCalledWith("LIOR", "all");
+        });
+    });
+
+    it("shows no results when 'ee' returns empty (city Beer Sheva must not cause matches)", async () => {
+        searchUsers.mockResolvedValue([]);
+        renderSearch();
+        const input = screen.getByLabelText(/search users/i);
+
+        fireEvent.change(input, { target: { value: "ee" } });
+        await act(async () => {
+            jest.advanceTimersByTime(300);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText(/no users found/i)).toBeInTheDocument();
+        });
+    });
+
+    it("navigates to /profile/:userId when a result is selected", async () => {
+        const onClose = jest.fn();
+        searchUsers.mockResolvedValue([
+            {
+                userId: 3,
+                firstName: "Daniel",
+                lastName: "Levi",
+                username: "daniel_3",
+                userRole: "user",
+                city: "Beer Sheva",
+                avatarKey: null
+            }
+        ]);
+        renderSearch(onClose);
+        const input = screen.getByLabelText(/search users/i);
+
+        fireEvent.change(input, { target: { value: "dan" } });
+        await act(async () => {
+            jest.advanceTimersByTime(300);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText("@daniel_3")).toBeInTheDocument();
+        });
+
+        fireEvent.click(screen.getByRole("option"));
+        expect(mockNavigate).toHaveBeenCalledWith("/profile/3");
+    });
+
+    it("last-name prefix result is displayed when service returns a match", async () => {
+        searchUsers.mockResolvedValue([
+            {
+                userId: 2,
+                firstName: "Ellen",
+                lastName: "Levin",
+                username: "ellen_2",
+                userRole: "admin",
+                city: "Tel Aviv",
+                avatarKey: null
+            }
+        ]);
+        renderSearch();
+        const input = screen.getByLabelText(/search users/i);
+
+        fireEvent.change(input, { target: { value: "lev" } });
+        await act(async () => {
+            jest.advanceTimersByTime(300);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText("Ellen Levin")).toBeInTheDocument();
+        });
+    });
 });

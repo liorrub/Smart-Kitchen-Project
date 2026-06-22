@@ -44,6 +44,15 @@ async function createFavorite(req, res, next) {
             );
         }
 
+        if (recipe.approvalStatus !== "approved") {
+            return errorResponse(
+                res,
+                403,
+                "FORBIDDEN",
+                "You can only favorite approved recipes"
+            );
+        }
+
         const exists = await isFavoriteExists(
             userId,
             recipeId

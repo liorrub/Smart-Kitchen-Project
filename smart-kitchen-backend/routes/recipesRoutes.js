@@ -24,23 +24,37 @@ const {
     validateReviewInput
 } = require("../validators/reviewValidator");
 
-// Get all recipes
+// Get all approved recipes (public)
 router.get(
     "/",
     recipesController.getRecipes
 );
 
-// Get single recipe
+// Get the authenticated influencer's own recipes (all statuses)
+router.get(
+    "/my-recipes",
+    authorize("influencer"),
+    recipesController.getMyFoodieRecipes
+);
+
+// Get the pending recipe queue (admin only)
+router.get(
+    "/pending",
+    authorize("admin"),
+    recipesController.getPendingQueue
+);
+
+// Get single recipe (approved = public; non-approved = creator/admin only)
 router.get(
     "/:id",
     validateIdParam(),
     recipesController.getSingleRecipe
 );
 
-// Only authenticated users can add reviews
+// Create recipe — chef and admin create approved; influencer creates pending
 router.post(
     "/",
-    authorize("chef", "admin"),
+    authorize("chef", "admin", "influencer"),
     validateRequiredFields([
         "title",
         "instructions",
@@ -61,7 +75,7 @@ router.post(
 router.put(
     "/:id",
     validateIdParam(),
-    authorize("chef", "admin"),
+    authorize("chef", "admin", "influencer"),
     validateDifficulty,
     validateCuisine,
     validateRecipeCategory,
@@ -73,8 +87,24 @@ router.put(
 router.delete(
     "/:id",
     validateIdParam(),
-    authorize("chef", "admin"),
+    authorize("chef", "admin", "influencer"),
     recipesController.deleteSingleRecipe
+);
+
+// Approve a recipe (admin only)
+router.post(
+    "/:id/approve",
+    validateIdParam(),
+    authorize("admin"),
+    recipesController.approveRecipe
+);
+
+// Reject a recipe with a reason (admin only)
+router.post(
+    "/:id/reject",
+    validateIdParam(),
+    authorize("admin"),
+    recipesController.rejectRecipe
 );
 
 // Get recipe reviews

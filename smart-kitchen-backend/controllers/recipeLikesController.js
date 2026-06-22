@@ -27,6 +27,10 @@ async function likeRecipe(req, res, next) {
             return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
         }
 
+        if (recipe.approvalStatus !== "approved") {
+            return errorResponse(res, 403, "FORBIDDEN", "You can only like approved recipes");
+        }
+
         const alreadyLiked = await isLikeExists(userId, recipeId);
         if (alreadyLiked) {
             return errorResponse(res, 409, "LIKE_ALREADY_EXISTS", "You have already liked this recipe");
