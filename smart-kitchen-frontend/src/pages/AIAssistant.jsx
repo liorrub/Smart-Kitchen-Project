@@ -4,10 +4,10 @@ import "../components/RecipeCard.css";
 import "../components/RecipeDetailsModal.css";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import AppButton from "../components/AppButton";
 import FormCard from "../components/FormCard";
-import MessageModal from "../components/MessageModal";
 import MultiIngredientPicker from "../components/MultiIngredientPicker";
 import PageHero from "../components/PageHero";
 
@@ -52,7 +52,7 @@ const REQUEST_TYPE_TO_FEATURE = {
     ingredient_substitute: "ingredient-substitute"
 };
 
-// ── Helpers (kept from original) ─────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatDate(value) {
     if (!value) return "No date";
@@ -78,17 +78,7 @@ function getResultTitle(historyItem) {
     if (Array.isArray(result) && result[0]?.substitute) return `${historyItem.inputData?.ingredient} substitutes`;
     if (Array.isArray(result.suggestedRecipes) && result.suggestedRecipes.length > 0) return result.suggestedRecipes[0];
     if (Array.isArray(result.suggestions) && result.suggestions.length > 0 && result.suggestions[0]?.title) return result.suggestions[0].title;
-    return "AI conversation";
-}
-
-function getResultDescription(historyItem) {
-    const result = historyItem.result || historyItem.outputData || {};
-    if (result.description) return result.description;
-    if (Array.isArray(result.suggestedRecipes)) return `Suggested recipes: ${result.suggestedRecipes.join(", ")}`;
-    if (Array.isArray(result.instructions)) return result.instructions.join(", ");
-    if (Array.isArray(result.detectedIngredients)) return `Detected: ${result.detectedIngredients.join(", ")}`;
-    if (Array.isArray(result) && result[0]?.explanation) return result[0].explanation;
-    return "This is where the assistant response from the saved conversation appears.";
+    return "AI request";
 }
 
 function getHistoryColorClass(requestType) {
@@ -96,16 +86,15 @@ function getHistoryColorClass(requestType) {
         case "recipe_generation":     return "ai-history-recipe";
         case "suggestions":           return "ai-history-suggestion";
         case "ingredient_substitute": return "ai-history-substitute";
-        case "image_analysis":        return "ai-history-image";
         default:                      return "ai-history-general";
     }
 }
 
 function getHistoryLabel(requestType) {
     switch (requestType) {
-        case "recipe_generation":     return "Recipe";
-        case "suggestions":           return "Suggestions";
-        case "ingredient_substitute": return "Substitute";
+        case "recipe_generation":     return "Recipe Generation";
+        case "suggestions":           return "Personalized Suggestion";
+        case "ingredient_substitute": return "Ingredient Substitute";
         default:                      return formatText(requestType);
     }
 }
@@ -116,21 +105,6 @@ function normalizeHistory(history) {
         ...item,
         createDate: item.createDate || item.createdAt || item.date
     }));
-}
-
-// Build the chat message list for a selected history item, or return demo messages if none is selected.
-function buildConversationMessages(historyItem) {
-    if (!historyItem) {
-        return [
-            { id: "welcome",      sender: "assistant", text: "Hi! I can help you plan meals, suggest recipes and answer kitchen questions once the AI connection is added." },
-            { id: "demo-question", sender: "user",      text: "Can you suggest dinner from my pantry?" },
-            { id: "demo-answer",  sender: "assistant", text: "This chat is currently in demo mode. The real response will appear here after integration." }
-        ];
-    }
-    return [
-        { id: `${historyItem.historyId}-input`,  sender: "user",      text: getInputSummary(historyItem.inputData) },
-        { id: `${historyItem.historyId}-result`, sender: "assistant", text: getResultDescription(historyItem) }
-    ];
 }
 
 // ── Result sub-displays ──────────────────────────────────────────────────────
@@ -389,23 +363,22 @@ function SubstituteDisplay({ substitutes }) {
 // ── Main component ───────────────────────────────────────────────────────────
 
 function AIAssistant() {
-    // ── Existing state (preserved) ──
+    const [searchParams] = useSearchParams();
+
+    // History state
     const [history, setHistory]               = useState([]);
     const [loadingHistory, setLoadingHistory] = useState(true);
     const [historyError, setHistoryError]     = useState("");
-    const [activeConversation, setActiveConversation] = useState(null);
-    const [notice, setNotice]   = useState("");
-    const [chatText, setChatText] = useState("");
 
-    // ── New state ──
-    const [allIngredients, setAllIngredients] = useState([]);
-    const [activeFeature, setActiveFeature]   = useState(null);
+    // Feature state
+    const [allIngredients, setAllIngredients]   = useState([]);
+    const [activeFeature, setActiveFeature]     = useState(null);
     const [selectedIngredientIds, setSelectedIngredientIds] = useState([]);
     const [constraints, setConstraints] = useState({ difficulty: "", prepTime: "", cookTime: "", servings: "" });
-    const [subForm, setSubForm] = useState({ ingredient: "", context: "", reason: "" });
-    const [result, setResult]     = useState(null);
-    const [aiLoading, setAiLoading] = useState(false);
-    const [aiError, setAiError]   = useState("");
+    const [subForm, setSubForm]         = useState({ ingredient: "", context: "", reason: "" });
+    const [result, setResult]           = useState(null);
+    const [aiLoading, setAiLoading]     = useState(false);
+    const [aiError, setAiError]         = useState("");
     const [selectedSuggestion, setSelectedSuggestion]       = useState(null);
     const [selectedSuggestionIdx, setSelectedSuggestionIdx] = useState(0);
 
@@ -421,7 +394,7 @@ function AIAssistant() {
                 setHistory(normalizeHistory(historyData));
                 setAllIngredients(Array.isArray(ingredientsData) ? ingredientsData : []);
             } catch {
-                setHistoryError("Could not load saved AI history. Showing empty state for now.");
+                setHistoryError("Could not load AI history. Check your connection and try again.");
             } finally {
                 setLoadingHistory(false);
             }
@@ -429,12 +402,28 @@ function AIAssistant() {
         init();
     }, []);
 
+    // Open the feature panel specified in the ?feature= query param (set by Sidebar buttons).
+    useEffect(() => {
+        const feature = searchParams.get("feature");
+        if (!feature) return;
+        if (!AI_FEATURES.some((f) => f.id === feature)) return;
+        setActiveFeature(feature);
+        setResult(null);
+        setAiError("");
+        setSelectedIngredientIds([]);
+        setConstraints({ difficulty: "", prepTime: "", cookTime: "", servings: "" });
+        setSubForm({ ingredient: "", context: "", reason: "" });
+        window.requestAnimationFrame(() => {
+            document.querySelector(".ai-active-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    }, [searchParams]);
+
     async function refreshHistory() {
         try {
             const data = await getAIHistory();
             setHistory(normalizeHistory(data));
         } catch {
-            // non-critical
+            // non-critical — history display is secondary to the AI result
         }
     }
 
@@ -523,24 +512,12 @@ function AIAssistant() {
             await deleteAIHistoryItem(historyId);
             setHistory((prev) => prev.filter((h) => h.historyId !== historyId));
         } catch {
-            // silent
+            // silent — item will still show until next refresh
         }
     }
 
-    // ── Existing handlers (preserved) ──
-
-    // Show a notice that the AI chat is not yet connected to a real backend.
-    function handleChatSubmit(event) {
-        event.preventDefault();
-        setNotice("AI chat is not connected yet. This chat interface is ready for the next implementation step.");
-        setChatText("");
-    }
-
-    // Select a past conversation and scroll the chat window into view.
-    // Also opens the matching inline feature panel to show the full result.
+    // Open the matching feature panel and show the saved result from history.
     function handleHistoryClick(historyItem) {
-        setActiveConversation(historyItem);
-
         const featureId = REQUEST_TYPE_TO_FEATURE[historyItem.requestType];
         if (featureId) {
             setActiveFeature(featureId);
@@ -549,36 +526,22 @@ function AIAssistant() {
             window.requestAnimationFrame(() => {
                 document.querySelector(".ai-active-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
             });
-        } else {
-            window.requestAnimationFrame(() => {
-                document.querySelector(".ai-chat-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
         }
     }
 
     const visibleHistory = useMemo(() => history, [history]);
 
-    const chatMessages = useMemo(() => buildConversationMessages(activeConversation), [activeConversation]);
-
     // ── Render ──────────────────────────────────────────────────────────────
 
     return (
         <div className="ai-assistant-page">
-            <MessageModal
-                type="success"
-                title="AI Assistant"
-                message={notice}
-                onClose={() => setNotice("")}
-            />
-
             <PageHero
                 label="AI Assistant"
                 title="Smart tools for smarter cooking"
                 description="Generate recipes, get personalised suggestions, and find ingredient substitutes — powered by Google Gemini."
                 stats={[
                     { value: AI_FEATURES.length, label: "AI tools" },
-                    { value: visibleHistory.length, label: "Past requests" },
-                    { value: activeFeature ? "Active" : "Demo", label: "Chat mode" }
+                    { value: visibleHistory.length, label: "Past requests" }
                 ]}
             />
 
@@ -762,79 +725,17 @@ function AIAssistant() {
                                     onSelect={(s, i) => { setSelectedSuggestion(s); setSelectedSuggestionIdx(i); }}
                                 />
                             )}
-                            {result.type === "ingredient_substitute" && <SubstituteDisplay  substitutes={result.data} />}
+                            {result.type === "ingredient_substitute" && <SubstituteDisplay substitutes={result.data} />}
                         </div>
                     )}
                 </section>
             )}
 
-            {/* ── Chat section (preserved as-is) ── */}
-            <section className="ai-chat-section">
-                <div className="ai-chat-window">
-                    <div className="ai-chat-header">
-                        <div className="ai-chat-avatar">💬</div>
-
-                        <div>
-                            <p>AI Chat</p>
-                            <h2>
-                                {activeConversation
-                                    ? getResultTitle(activeConversation)
-                                    : "Kitchen assistant chat"}
-                            </h2>
-                            <span>
-                                {activeConversation
-                                    ? "Resumed conversation · demo mode"
-                                    : "Demo chat · not connected yet"}
-                            </span>
-                        </div>
-
-                        {activeConversation && (
-                            <button
-                                type="button"
-                                className="ai-new-chat-button"
-                                onClick={() => setActiveConversation(null)}
-                            >
-                                New chat
-                            </button>
-                        )}
-                    </div>
-
-                    <div className="ai-chat-messages">
-                        {chatMessages.map((message) => (
-                            <div
-                                key={message.id}
-                                className={
-                                    message.sender === "user"
-                                        ? "ai-message ai-message-user"
-                                        : "ai-message ai-message-assistant"
-                                }
-                            >
-                                <p>{message.text}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    <form className="ai-chat-input-row" onSubmit={handleChatSubmit}>
-                        <input
-                            type="text"
-                            value={chatText}
-                            onChange={(e) => setChatText(e.target.value)}
-                            placeholder={
-                                activeConversation
-                                    ? "Continue this conversation..."
-                                    : "Ask the kitchen assistant..."
-                            }
-                        />
-                        <button type="submit">Send</button>
-                    </form>
-                </div>
-            </section>
-
-            {/* ── History ── */}
+            {/* ── AI Request History ── */}
             <FormCard
                 label="History"
-                title="Previous AI Conversations"
-                description="Click a previous conversation to open it in the chat and continue where you stopped."
+                title="AI Request History"
+                description="Your previous recipe generations, suggestions, and ingredient substitutions."
                 className="ai-history-card"
             >
                 {loadingHistory && (
@@ -849,7 +750,9 @@ function AIAssistant() {
                 )}
 
                 {!loadingHistory && !historyError && history.length === 0 && (
-                    <div className="ai-history-warning">No saved AI conversations yet.</div>
+                    <div className="ai-history-warning">
+                        No AI requests yet. Use one of the tools above to create your first result.
+                    </div>
                 )}
 
                 {!loadingHistory && visibleHistory.length > 0 && (
@@ -859,9 +762,8 @@ function AIAssistant() {
                                 key={historyItem.historyId}
                                 className={[
                                     "ai-history-row",
-                                    getHistoryColorClass(historyItem.requestType),
-                                    activeConversation?.historyId === historyItem.historyId ? "active" : ""
-                                ].filter(Boolean).join(" ")}
+                                    getHistoryColorClass(historyItem.requestType)
+                                ].join(" ")}
                                 onClick={() => handleHistoryClick(historyItem)}
                                 role="button"
                                 tabIndex={0}
