@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import ReviewCard from "./ReviewCard";
 import ReviewForm from "./ReviewForm";
 import ShareRecipeButton from "./ShareRecipeButton";
+import defaultImg from "../assets/default.png";
+
+import { resolveImageUrl } from "../utils/apiConfig";
 
 import {
     getRecipeReviews,
@@ -152,7 +155,7 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
     // Load reviews for the current recipe whenever the recipe changes.
     useEffect(() => {
         loadReviews();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [recipe?.recipeId]);
 
     async function handleCreateReview(data) {
@@ -229,7 +232,7 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
 
     // Separate the current user's own review from others
     const myReview = useMemo(() =>
-        reviews.find((r) => r.userId === currentUser?.userId) || null,
+            reviews.find((r) => r.userId === currentUser?.userId) || null,
         [reviews, currentUser?.userId]
     );
 
@@ -270,305 +273,319 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
                 </button>
 
                 <div className="recipe-modal-body">
-                <header className="recipe-modal-header">
-                    <p className="recipe-modal-label">
-                        {formatText(recipe.category)}
-                    </p>
+                    {recipe.imageUrl && (
+                        <div className="recipe-modal-image-wrapper">
+                            <img
+                                src={resolveImageUrl(recipe.imageUrl)}
+                                alt={recipe.title}
+                                className="recipe-modal-image"
+                                style={{
+                                    objectPosition: `${recipe.imagePositionX ?? 50}% ${recipe.imagePositionY ?? 50}%`
+                                }}
+                                onError={(e) => { e.currentTarget.src = defaultImg; }}
+                            />
+                        </div>
+                    )}
 
-                    <h2>{recipe.title}</h2>
+                    <header className="recipe-modal-header">
+                        <p className="recipe-modal-label">
+                            {formatText(recipe.category)}
+                        </p>
 
-                    <p className="recipe-modal-subtitle">
-                        {formatText(recipe.cuisine)} cuisine ·{" "}
-                        {formatText(recipe.difficulty)}
-                    </p>
+                        <h2>{recipe.title}</h2>
 
-                    <div className="recipe-modal-header-actions">
-                        {onLikeClick && (
+                        <p className="recipe-modal-subtitle">
+                            {formatText(recipe.cuisine)} cuisine ·{" "}
+                            {formatText(recipe.difficulty)}
+                        </p>
+
+                        <div className="recipe-modal-header-actions">
+                            {onLikeClick && (
+                                <button
+                                    type="button"
+                                    className={isLiked ? "recipe-modal-like-btn active" : "recipe-modal-like-btn"}
+                                    onClick={() => onLikeClick(recipe)}
+                                    title={isLiked ? "Unlike" : "Like this recipe"}
+                                >
+                                    {isLiked ? "❤️" : "🤍"} {recipe.likeCount || 0}
+                                </button>
+                            )}
+
+                            <ShareRecipeButton recipe={recipe} />
+
+                            {/* Opens the full discussion page for this recipe */}
                             <button
                                 type="button"
-                                className={isLiked ? "recipe-modal-like-btn active" : "recipe-modal-like-btn"}
-                                onClick={() => onLikeClick(recipe)}
-                                title={isLiked ? "Unlike" : "Like this recipe"}
+                                className="recipe-modal-discussion-btn"
+                                onClick={() => navigate(`/recipes/${recipe.recipeId}/discussion`)}
                             >
-                                {isLiked ? "❤️" : "🤍"} {recipe.likeCount || 0}
+                                💬 Open Discussion
                             </button>
-                        )}
+                        </div>
+                    </header>
 
-                        <ShareRecipeButton recipe={recipe} />
-
-                        {/* Opens the full discussion page for this recipe */}
-                        <button
-                            type="button"
-                            className="recipe-modal-discussion-btn"
-                            onClick={() => navigate(`/recipes/${recipe.recipeId}/discussion`)}
-                        >
-                            💬 Open Discussion
-                        </button>
-                    </div>
-                </header>
-
-                <section className="recipe-modal-stats">
-                    <div className="recipe-modal-stat">
-                        <strong>{recipe.prepTime || 0}</strong>
-                        <span>Prep min</span>
-                    </div>
-
-                    <div className="recipe-modal-stat">
-                        <strong>{recipe.cookTime || 0}</strong>
-                        <span>Cook min</span>
-                    </div>
-
-                    <div className="recipe-modal-stat">
-                        <strong>{recipe.totalTime || 0}</strong>
-                        <span>Total min</span>
-                    </div>
-
-                    <div className="recipe-modal-stat">
-                        <strong>{recipe.servings || 1}</strong>
-                        <span>Servings</span>
-                    </div>
-
-                    <div className="recipe-modal-stat">
-                        <strong>{recipe.calories || 0}</strong>
-                        <span>Calories</span>
-                    </div>
-                </section>
-
-                <section className="recipe-main-grid">
-                    <article className="recipe-detail-card recipe-ingredients-card">
-                        <div className="recipe-card-title">
-                            <span>🥕</span>
-                            <h3>Ingredients</h3>
+                    <section className="recipe-modal-stats">
+                        <div className="recipe-modal-stat">
+                            <strong>{recipe.prepTime || 0}</strong>
+                            <span>Prep min</span>
                         </div>
 
-                        {ingredients.length > 0 ? (
-                            <ul className="recipe-simple-ingredients">
-                                {ingredients.map((ingredient, index) => {
-                                    const ingredientName =
-                                        getIngredientName(ingredient);
-                                    const quantity =
-                                        getIngredientQuantity(ingredient);
-                                    const unit = getIngredientUnit(ingredient);
+                        <div className="recipe-modal-stat">
+                            <strong>{recipe.cookTime || 0}</strong>
+                            <span>Cook min</span>
+                        </div>
 
-                                    return (
-                                        <li key={`${ingredientName}-${index}`}>
-                                            <div>
-                                                <strong>{ingredientName}</strong>
-                                            </div>
+                        <div className="recipe-modal-stat">
+                            <strong>{recipe.totalTime || 0}</strong>
+                            <span>Total min</span>
+                        </div>
 
-                                            <p>
-                                                {quantity} {unit}
-                                            </p>
+                        <div className="recipe-modal-stat">
+                            <strong>{recipe.servings || 1}</strong>
+                            <span>Servings</span>
+                        </div>
+
+                        <div className="recipe-modal-stat">
+                            <strong>{recipe.calories || 0}</strong>
+                            <span>Calories</span>
+                        </div>
+                    </section>
+
+                    <section className="recipe-main-grid">
+                        <article className="recipe-detail-card recipe-ingredients-card">
+                            <div className="recipe-card-title">
+                                <span>🥕</span>
+                                <h3>Ingredients</h3>
+                            </div>
+
+                            {ingredients.length > 0 ? (
+                                <ul className="recipe-simple-ingredients">
+                                    {ingredients.map((ingredient, index) => {
+                                        const ingredientName =
+                                            getIngredientName(ingredient);
+                                        const quantity =
+                                            getIngredientQuantity(ingredient);
+                                        const unit = getIngredientUnit(ingredient);
+
+                                        return (
+                                            <li key={`${ingredientName}-${index}`}>
+                                                <div>
+                                                    <strong>{ingredientName}</strong>
+                                                </div>
+
+                                                <p>
+                                                    {quantity} {unit}
+                                                </p>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            ) : (
+                                <p className="recipe-empty-text">
+                                    No ingredients were added for this recipe.
+                                </p>
+                            )}
+                        </article>
+
+                        <article className="recipe-detail-card recipe-instructions-card">
+                            <div className="recipe-card-title">
+                                <span>👩‍🍳</span>
+                                <h3>Instructions</h3>
+                            </div>
+
+                            {instructionSteps.length > 0 ? (
+                                <ol className="recipe-simple-instructions">
+                                    {instructionSteps.map((step, index) => (
+                                        <li key={`${step}-${index}`}>
+                                            <span>{index + 1}.</span>
+                                            <p>{step}</p>
                                         </li>
-                                    );
-                                })}
-                            </ul>
-                        ) : (
-                            <p className="recipe-empty-text">
-                                No ingredients were added for this recipe.
-                            </p>
-                        )}
-                    </article>
+                                    ))}
+                                </ol>
+                            ) : (
+                                <p className="recipe-empty-text">
+                                    No instructions were added for this recipe.
+                                </p>
+                            )}
+                        </article>
+                    </section>
 
-                    <article className="recipe-detail-card recipe-instructions-card">
-                        <div className="recipe-card-title">
-                            <span>👩‍🍳</span>
-                            <h3>Instructions</h3>
-                        </div>
+                    {((recipe.tags || []).length > 0 ||
+                        (recipe.allergens || []).length > 0) && (
+                        <section className="recipe-extra-row">
+                            {(recipe.tags || []).length > 0 && (
+                                <div className="recipe-extra-group">
+                                    <h4>Tags</h4>
 
-                        {instructionSteps.length > 0 ? (
-                            <ol className="recipe-simple-instructions">
-                                {instructionSteps.map((step, index) => (
-                                    <li key={`${step}-${index}`}>
-                                        <span>{index + 1}.</span>
-                                        <p>{step}</p>
-                                    </li>
-                                ))}
-                            </ol>
-                        ) : (
-                            <p className="recipe-empty-text">
-                                No instructions were added for this recipe.
-                            </p>
-                        )}
-                    </article>
-                </section>
-
-                {((recipe.tags || []).length > 0 ||
-                    (recipe.allergens || []).length > 0) && (
-                    <section className="recipe-extra-row">
-                        {(recipe.tags || []).length > 0 && (
-                            <div className="recipe-extra-group">
-                                <h4>Tags</h4>
-
-                                <div className="recipe-extra-pills">
-                                    {recipe.tags.map((tag) => (
-                                        <span key={tag}>
+                                    <div className="recipe-extra-pills">
+                                        {recipe.tags.map((tag) => (
+                                            <span key={tag}>
                                             #{formatText(tag)}
                                         </span>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {(recipe.allergens || []).length > 0 && (
-                            <div className="recipe-extra-group">
-                                <h4>Allergens</h4>
+                            {(recipe.allergens || []).length > 0 && (
+                                <div className="recipe-extra-group">
+                                    <h4>Allergens</h4>
 
-                                <div className="recipe-extra-pills allergen">
-                                    {recipe.allergens.map((allergen) => (
-                                        <span key={allergen}>
+                                    <div className="recipe-extra-pills allergen">
+                                        {recipe.allergens.map((allergen) => (
+                                            <span key={allergen}>
                                             {formatText(allergen)}
                                         </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </section>
+                    )}
+
+                    <section className="recipe-detail-card recipe-reviews-card">
+                        <div className="recipe-reviews-header">
+                            <div className="recipe-card-title">
+                                <span>⭐</span>
+
+                                <div>
+                                    <h3>Reviews from other users</h3>
+
+                                    <p>
+                                        See what other users thought about this recipe.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="recipe-reviews-summary">
+                                <strong>
+                                    {otherUsersReviews.length > 0
+                                        ? averageRating
+                                        : "-"}
+                                </strong>
+
+                                <span>/ 5</span>
+
+                                <p>
+                                    {otherUsersReviews.length > 0
+                                        ? renderRatingStars(averageRating)
+                                        : "☆☆☆☆☆"}
+                                </p>
+
+                                <small>
+                                    {otherUsersReviews.length} reviews ·{" "}
+                                    {influencerReviewsCount} Foodie
+                                </small>
+                            </div>
+                        </div>
+
+                        {reviewsLoading && (
+                            <p className="recipe-empty-text">
+                                Loading reviews...
+                            </p>
+                        )}
+
+                        {!reviewsLoading && reviewsError && (
+                            <p className="recipe-reviews-error">
+                                {reviewsError}
+                            </p>
+                        )}
+
+                        {!reviewsLoading &&
+                            !reviewsError &&
+                            otherUsersReviews.length === 0 && (
+                                <p className="recipe-empty-text">
+                                    No reviews from other users yet.
+                                </p>
+                            )}
+
+                        {!reviewsLoading &&
+                            !reviewsError &&
+                            otherUsersReviews.length > 0 && (
+                                <div className="recipe-reviews-grid">
+                                    {otherUsersReviews.map((review) => (
+                                        <ReviewCard
+                                            key={review.reviewId}
+                                            review={review}
+                                            currentUser={currentUser}
+                                            onHelpfulVote={currentUser ? handleHelpfulVote : undefined}
+                                            onReport={currentUser ? handleReport : undefined}
+                                        />
                                     ))}
                                 </div>
+                            )}
+
+                        {/* Current user's own review — shown separately with edit/delete */}
+                        {!reviewsLoading && currentUser && (
+                            <div className="recipe-my-review-section">
+                                {myReview && !editingReview && (
+                                    <>
+                                        <p className="recipe-my-review-label">Your review</p>
+                                        <ReviewCard
+                                            key={myReview.reviewId}
+                                            review={myReview}
+                                            currentUser={currentUser}
+                                            onEdit={(r) => setEditingReview(r)}
+                                            onDelete={(r) => setConfirmDeleteReview(r)}
+                                        />
+                                    </>
+                                )}
+
+                                {editingReview && (
+                                    <ReviewForm
+                                        initial={editingReview}
+                                        onSubmit={handleUpdateReview}
+                                        onCancel={() => setEditingReview(null)}
+                                        loading={reviewFormLoading}
+                                    />
+                                )}
+
+                                {!myReview && !editingReview && (
+                                    <ReviewForm
+                                        onSubmit={handleCreateReview}
+                                        loading={reviewFormLoading}
+                                    />
+                                )}
+
+                                {reviewFormError && (
+                                    <p className="recipe-reviews-error" style={{ marginTop: 10 }}>
+                                        {reviewFormError}
+                                    </p>
+                                )}
                             </div>
                         )}
                     </section>
-                )}
 
-                <section className="recipe-detail-card recipe-reviews-card">
-                    <div className="recipe-reviews-header">
-                        <div className="recipe-card-title">
-                            <span>⭐</span>
-
-                            <div>
-                                <h3>Reviews from other users</h3>
-
-                                <p>
-                                    See what other users thought about this recipe.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="recipe-reviews-summary">
-                            <strong>
-                                {otherUsersReviews.length > 0
-                                    ? averageRating
-                                    : "-"}
-                            </strong>
-
-                            <span>/ 5</span>
-
-                            <p>
-                                {otherUsersReviews.length > 0
-                                    ? renderRatingStars(averageRating)
-                                    : "☆☆☆☆☆"}
-                            </p>
-
-                            <small>
-                                {otherUsersReviews.length} reviews ·{" "}
-                                {influencerReviewsCount} Foodie
-                            </small>
-                        </div>
-                    </div>
-
-                    {reviewsLoading && (
-                        <p className="recipe-empty-text">
-                            Loading reviews...
-                        </p>
-                    )}
-
-                    {!reviewsLoading && reviewsError && (
-                        <p className="recipe-reviews-error">
-                            {reviewsError}
-                        </p>
-                    )}
-
-                    {!reviewsLoading &&
-                        !reviewsError &&
-                        otherUsersReviews.length === 0 && (
-                            <p className="recipe-empty-text">
-                                No reviews from other users yet.
-                            </p>
-                        )}
-
-                    {!reviewsLoading &&
-                        !reviewsError &&
-                        otherUsersReviews.length > 0 && (
-                            <div className="recipe-reviews-grid">
-                                {otherUsersReviews.map((review) => (
-                                    <ReviewCard
-                                        key={review.reviewId}
-                                        review={review}
-                                        currentUser={currentUser}
-                                        onHelpfulVote={currentUser ? handleHelpfulVote : undefined}
-                                        onReport={currentUser ? handleReport : undefined}
-                                    />
-                                ))}
-                            </div>
-                        )}
-
-                    {/* Current user's own review — shown separately with edit/delete */}
-                    {!reviewsLoading && currentUser && (
-                        <div className="recipe-my-review-section">
-                            {myReview && !editingReview && (
-                                <>
-                                    <p className="recipe-my-review-label">Your review</p>
-                                    <ReviewCard
-                                        key={myReview.reviewId}
-                                        review={myReview}
-                                        currentUser={currentUser}
-                                        onEdit={(r) => setEditingReview(r)}
-                                        onDelete={(r) => setConfirmDeleteReview(r)}
-                                    />
-                                </>
-                            )}
-
-                            {editingReview && (
-                                <ReviewForm
-                                    initial={editingReview}
-                                    onSubmit={handleUpdateReview}
-                                    onCancel={() => setEditingReview(null)}
-                                    loading={reviewFormLoading}
-                                />
-                            )}
-
-                            {!myReview && !editingReview && (
-                                <ReviewForm
-                                    onSubmit={handleCreateReview}
-                                    loading={reviewFormLoading}
-                                />
-                            )}
-
-                            {reviewFormError && (
-                                <p className="recipe-reviews-error" style={{ marginTop: 10 }}>
-                                    {reviewFormError}
-                                </p>
-                            )}
-                        </div>
-                    )}
-                </section>
-
-                {/* Delete review confirmation modal */}
-                {confirmDeleteReview && (
-                    <div
-                        className="recipe-modal-overlay recipe-delete-review-overlay"
-                        onClick={() => setConfirmDeleteReview(null)}
-                    >
+                    {/* Delete review confirmation modal */}
+                    {confirmDeleteReview && (
                         <div
-                            className="recipe-delete-review-modal"
-                            onClick={(e) => e.stopPropagation()}
+                            className="recipe-modal-overlay recipe-delete-review-overlay"
+                            onClick={() => setConfirmDeleteReview(null)}
                         >
-                            <p>Delete this review? This cannot be undone.</p>
-                            <div className="recipe-delete-review-actions">
-                                <button
-                                    type="button"
-                                    className="review-form-btn review-form-btn--cancel"
-                                    onClick={() => setConfirmDeleteReview(null)}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="button"
-                                    className="review-form-btn review-form-btn--delete"
-                                    onClick={() => handleDeleteReview(confirmDeleteReview)}
-                                >
-                                    Delete
-                                </button>
+                            <div
+                                className="recipe-delete-review-modal"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <p>Delete this review? This cannot be undone.</p>
+                                <div className="recipe-delete-review-actions">
+                                    <button
+                                        type="button"
+                                        className="review-form-btn review-form-btn--cancel"
+                                        onClick={() => setConfirmDeleteReview(null)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="review-form-btn review-form-btn--delete"
+                                        onClick={() => handleDeleteReview(confirmDeleteReview)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
                 </div>
             </div>
         </div>

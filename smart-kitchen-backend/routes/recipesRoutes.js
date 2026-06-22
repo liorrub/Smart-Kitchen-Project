@@ -24,6 +24,8 @@ const {
     validateReviewInput
 } = require("../validators/reviewValidator");
 
+const { upload } = require("../middleware/upload");
+
 // Get all approved recipes (public)
 router.get(
     "/",
@@ -96,6 +98,23 @@ router.delete(
     validateIdParam(),
     authorize("chef", "admin", "influencer"),
     recipesController.deleteSingleRecipe
+);
+
+// Upload a recipe image (file upload — multipart/form-data, field name: "image")
+router.post(
+    "/:id/image",
+    validateIdParam(),
+    authorize("chef", "admin", "influencer"),
+    upload.single("image"),
+    recipesController.uploadRecipeImage
+);
+
+// Remove the recipe image and delete the file from disk
+router.delete(
+    "/:id/image",
+    validateIdParam(),
+    authorize("chef", "admin", "influencer"),
+    recipesController.deleteRecipeImage
 );
 
 // Approve a recipe (admin only)

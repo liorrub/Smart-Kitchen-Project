@@ -1,6 +1,6 @@
 .dashboard-page {
     min-height: 100vh;
-    padding: 32px clamp(18px, 4vw, 56px);
+    padding: 16px clamp(10px, 2.5vw, 28px);
     color: #2f241b;
     background: transparent;
 }
@@ -76,11 +76,11 @@
    ========================================================================== */
 
 .dashboard-section {
-    margin-bottom: 26px;
-    padding: 28px;
+    margin-bottom: 14px;
+    padding: 14px;
 
     border: 1px solid rgba(96, 64, 38, 0.12);
-    border-radius: 30px;
+    border-radius: 18px;
 
     background: rgba(255, 253, 246, 0.78);
     box-shadow: 0 18px 48px rgba(78, 52, 35, 0.09);
@@ -98,7 +98,7 @@
 .dashboard-section-header h2 {
     margin: 0;
     color: #2d2118;
-    font-size: clamp(1.45rem, 2vw, 2rem);
+    font-size: clamp(1.2rem, 1.6vw, 1.55rem);
 }
 
 .dashboard-section-header > p {
@@ -120,9 +120,9 @@
 
 .dashboard-stat-card {
     display: flex;
-    gap: 14px;
-    min-height: 132px;
-    padding: 18px;
+    gap: 10px;
+    min-height: 72px;
+    padding: 10px;
 
     border: 1px solid rgba(96, 64, 38, 0.1);
     border-radius: 24px;
@@ -143,15 +143,15 @@
 
 .dashboard-stat-icon {
     display: grid;
-    flex: 0 0 46px;
-    width: 46px;
-    height: 46px;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
     place-items: center;
 
-    border-radius: 16px;
+    border-radius: 12px;
     background: #f7dfae;
 
-    font-size: 1.35rem;
+    font-size: 1.1rem;
 }
 
 .dashboard-stat-card span {
@@ -166,11 +166,11 @@
 
 .dashboard-stat-card strong {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 
     color: #2d2118;
 
-    font-size: 2rem;
+    font-size: 1.3rem;
     line-height: 1;
 }
 
@@ -194,8 +194,8 @@
 }
 
 .dashboard-management-card {
-    min-height: 260px;
-    padding: 22px;
+    min-height: 160px;
+    padding: 14px;
 
     display: flex;
     flex-direction: column;

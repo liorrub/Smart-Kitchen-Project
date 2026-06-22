@@ -46,9 +46,12 @@ const {
 } = require("../models/ingredientsModel");
 
 const { sequelize } = require("../models");
+const fs = require("fs");
+const path = require("path");
 
 const { createNotification } = require("../models/notificationsModel");
 const { resolveAuthUser } = require("../middleware/auth");
+const { UPLOAD_DIR } = require("../middleware/upload");
 
 async function buildRecipeWithIngredients(recipe) {
     const ingredients = await getIngredientsByRecipeId(recipe.recipeId);
@@ -440,7 +443,7 @@ async function updateRecipeReview(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
         const reviewId = Number(req.params.reviewId);
-        const { userId, userRole } = req.authUser;
+        const { userId } = req.authUser;
 
         const review = await getReviewById(reviewId);
 
@@ -478,7 +481,7 @@ async function deleteRecipeReview(req, res, next) {
     try {
         const recipeId = Number(req.params.id);
         const reviewId = Number(req.params.reviewId);
-        const { userId, userRole } = req.authUser;
+        const { userId } = req.authUser;
 
         const review = await getReviewById(reviewId);
 
@@ -579,6 +582,7 @@ async function getReviewReports(req, res, next) {
     try {
         const { status } = req.query;
         const reports = await getReports(status ? { status } : {});
+
         return successResponse(res, 200, reports);
     } catch (error) {
         next(error);
@@ -593,8 +597,14 @@ async function updateReviewReport(req, res, next) {
         const { status } = req.body;
 
         const validStatuses = ["open", "dismissed", "actioned"];
+
         if (!status || !validStatuses.includes(status)) {
-            return errorResponse(res, 400, "VALIDATION_ERROR", "A valid status is required");
+            return errorResponse(
+                res,
+                400,
+                "VALIDATION_ERROR",
+                "A valid status is required"
+            );
         }
 
         const updated = await updateReport(reportId, {
@@ -604,7 +614,12 @@ async function updateReviewReport(req, res, next) {
         });
 
         if (!updated) {
-            return errorResponse(res, 404, "REPORT_NOT_FOUND", "Report not found");
+            return errorResponse(
+                res,
+                404,
+                "REPORT_NOT_FOUND",
+                "Report not found"
+            );
         }
 
         return successResponse(res, 200, updated);
@@ -613,7 +628,7 @@ async function updateReviewReport(req, res, next) {
     }
 }
 
-// Get open review report count — for admin navbar indicator
+// Get open review report count — admin Navbar indicator
 async function getOpenReviewReportCount(req, res, next) {
     try {
         const result = await getOpenReportCount();
@@ -623,25 +638,96 @@ async function getOpenReviewReportCount(req, res, next) {
     }
 }
 
-// Admin: delete a review through the moderation workflow.
-// Deletes the review itself; ON DELETE CASCADE removes helpful votes and all reports.
+// Admin: delete a review through the moderation workflow
 async function deleteReviewThroughModeration(req, res, next) {
     try {
         const reportId = Number(req.params.reportId);
-
         const report = await getReportById(reportId);
+
         if (!report) {
-            return errorResponse(res, 404, "REPORT_NOT_FOUND", "Report not found");
+            return errorResponse(
+                res,
+                404,
+                "REPORT_NOT_FOUND",
+                "Report not found"
+            );
         }
 
         if (!report.review) {
-            return errorResponse(res, 404, "REVIEW_NOT_FOUND", "Review has already been deleted");
+            return errorResponse(
+                res,
+                404,
+                "REVIEW_NOT_FOUND",
+                "Review has already been deleted"
+            );
         }
 
         const { reviewId, recipeId } = report.review;
+
         await deleteReview(recipeId, reviewId);
 
-        return successResponse(res, 200, { message: "Review deleted through moderation" });
+        return successResponse(res, 200, {
+            message: "Review deleted through moderation"
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Upload an image file for a recipe and store its path in imageUrl.
+// If the recipe already had a locally-uploaded image, the old file is deleted.
+async function uploadRecipeImage(req, res, next) {
+    try {
+        const recipeId = Number(req.params.id);
+        const recipe = await getRecipeById(recipeId);
+        if (!recipe) {
+            return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+        }
+
+        const { userId, userRole } = req.authUser;
+        if (userRole !== "admin" && recipe.creatorId !== userId) {
+            return errorResponse(res, 403, "FORBIDDEN", "You can only edit images for your own recipes");
+        }
+
+        if (!req.file) {
+            return errorResponse(res, 400, "NO_FILE", "No image file was provided");
+        }
+
+        // Delete the previous locally-uploaded file if it exists
+        if (recipe.imageUrl && recipe.imageUrl.startsWith("/uploads/")) {
+            const oldPath = path.join(__dirname, "..", recipe.imageUrl);
+            fs.unlink(oldPath, () => {}); // ignore error if already gone
+        }
+
+        const imageUrl = `/uploads/recipes/${req.file.filename}`;
+        const updated = await updateRecipe(recipeId, { imageUrl });
+        return successResponse(res, 200, updated);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Remove the image from a recipe (locally-uploaded files are deleted from disk).
+async function deleteRecipeImage(req, res, next) {
+    try {
+        const recipeId = Number(req.params.id);
+        const recipe = await getRecipeById(recipeId);
+        if (!recipe) {
+            return errorResponse(res, 404, "RECIPE_NOT_FOUND", "Recipe not found");
+        }
+
+        const { userId, userRole } = req.authUser;
+        if (userRole !== "admin" && recipe.creatorId !== userId) {
+            return errorResponse(res, 403, "FORBIDDEN", "You can only edit images for your own recipes");
+        }
+
+        if (recipe.imageUrl && recipe.imageUrl.startsWith("/uploads/")) {
+            const filePath = path.join(__dirname, "..", recipe.imageUrl);
+            fs.unlink(filePath, () => {}); // ignore if already gone
+        }
+
+        const updated = await updateRecipe(recipeId, { imageUrl: null });
+        return successResponse(res, 200, updated);
     } catch (error) {
         next(error);
     }
@@ -667,5 +753,7 @@ module.exports = {
     getReviewReports,
     updateReviewReport,
     getOpenReviewReportCount,
-    deleteReviewThroughModeration
+    deleteReviewThroughModeration,
+    uploadRecipeImage,
+    deleteRecipeImage
 };

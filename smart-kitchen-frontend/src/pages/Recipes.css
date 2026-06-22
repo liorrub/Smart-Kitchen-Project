@@ -16,14 +16,14 @@
    ========================================================================== */
 
 .recipes-card {
-    margin-top: 24px;
-    padding: 30px;
+    margin-top: 16px;
+    padding: 14px;
 
     overflow: visible;
 
     background: rgba(246, 251, 245, 0.95);
     border: 1px solid rgba(139, 213, 174, 0.75);
-    border-radius: 28px;
+    border-radius: 20px;
     box-shadow: 0 18px 45px rgba(63, 74, 52, 0.1);
 }
 
@@ -41,7 +41,7 @@
 
     color: #1f3d2b;
 
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 900;
 }
 
@@ -132,11 +132,11 @@
    ========================================================================== */
 
 .recipes-grid {
-    margin-top: 24px;
+    margin-top: 16px;
 
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
 }
 
 /* ==========================================================================
@@ -637,6 +637,175 @@
 .recipe-step-remove:hover {
     background: #67d656;
     color: white;
+}
+
+/* ==========================================================================
+   Image section (inside create / edit recipe form)
+   ========================================================================== */
+
+.recipe-image-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recipe-image-label {
+    color: #46ae6b;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.recipe-image-mode-tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.recipe-image-tab {
+    padding: 8px 18px;
+
+    border: 1px solid #cde8c7;
+    border-radius: 999px;
+
+    background: #fffefa;
+    color: #2a7545;
+
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+            background 0.18s ease,
+            color 0.18s ease,
+            border-color 0.18s ease;
+}
+
+.recipe-image-tab:hover {
+    background: #e9fbe5;
+}
+
+.recipe-image-tab.active {
+    background: #67d656;
+    border-color: #67d656;
+    color: white;
+}
+
+.recipe-image-upload-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.recipe-image-file-hidden {
+    display: none;
+}
+
+.recipe-image-filename {
+    color: #55705d;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.recipe-image-preview-wrapper {
+    width: 100%;
+    max-height: 200px;
+    overflow: hidden;
+
+    border-radius: 18px;
+    border: 1px solid #cde8c7;
+}
+
+.recipe-image-preview {
+    width: 100%;
+    height: 200px;
+
+    object-fit: cover;
+    display: block;
+}
+
+/* ==========================================================================
+   Image focal-point controls (sliders shown when a preview is visible)
+   ========================================================================== */
+
+.recipe-image-position-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 16px 20px;
+
+    border-radius: 18px;
+    background: rgba(246, 251, 245, 0.9);
+    border: 1px solid #cde8c7;
+}
+
+.recipe-image-slider-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.recipe-image-slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    color: #2a7545;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.recipe-image-slider-value {
+    color: #55705d;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.recipe-image-slider {
+    width: 100%;
+    height: 4px;
+
+    appearance: none;
+    border-radius: 999px;
+    background: #cde8c7;
+    outline: none;
+    cursor: pointer;
+}
+
+.recipe-image-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+    background: #67d656;
+    border: 2px solid white;
+
+    box-shadow: 0 2px 6px rgba(42, 117, 69, 0.3);
+    cursor: pointer;
+
+    transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.recipe-image-slider::-webkit-slider-thumb:hover {
+    background: #2a7545;
+    transform: scale(1.15);
+}
+
+.recipe-image-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+    background: #67d656;
+    border: 2px solid white;
+
+    box-shadow: 0 2px 6px rgba(42, 117, 69, 0.3);
+    cursor: pointer;
 }
 
 @media (max-width: 600px) {
