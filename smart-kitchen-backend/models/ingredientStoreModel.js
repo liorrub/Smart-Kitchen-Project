@@ -1,6 +1,6 @@
 "use strict";
 
-const { IngredientStore } = require("./index");
+const { IngredientStore, Store } = require("./index");
 
 // lastUpdated (updatedAt alias) is preserved — it was exposed in the original API.
 // createdAt: false in the model means it never appears in the plain object.
@@ -41,9 +41,18 @@ async function updateIngredientStore(ingredientStoreId, updatedData) {
 }
 
 // Returns stores for the ingredient sorted by price ascending.
-async function comparePrices(ingredientId) {
+// If city is provided, only stores in that city are returned.
+async function comparePrices(ingredientId, city) {
+    const storeWhere = city ? { city } : {};
+
     const rows = await IngredientStore.findAll({
         where: { ingredientId },
+        include: [{
+            model: Store,
+            as: "store",
+            attributes: ["name", "city", "address", "rating"],
+            where: storeWhere
+        }],
         order: [["price", "ASC"]]
     });
     return rows.map(toPlain);

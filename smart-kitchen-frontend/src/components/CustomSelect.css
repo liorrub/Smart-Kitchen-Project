@@ -9,11 +9,11 @@
 
 .custom-select-field label {
     display: block;
-    margin-bottom: 9px;
+    margin-bottom: 8px;
 
     color: #46ae6b;
 
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 900;
 }
 
@@ -39,7 +39,7 @@
     color: #1f3d2b;
 
     font-family: inherit;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 900;
     text-align: left;
 

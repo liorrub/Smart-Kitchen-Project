@@ -521,6 +521,20 @@
     font-weight: 700;
 }
 
+.shopping-city-notice {
+    margin-top: 16px;
+    padding: 13px 20px;
+
+    border-radius: 18px;
+    background: rgba(246, 251, 245, 0.95);
+    border: 1px solid rgba(139, 213, 174, 0.75);
+
+    color: #55705d;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
 /* ==========================================================================
    Responsive adjustments
    ========================================================================== */
