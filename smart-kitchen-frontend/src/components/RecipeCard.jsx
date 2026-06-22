@@ -1,29 +1,14 @@
 import "./RecipeCard.css";
 
 import { Link } from "react-router-dom";
-import breakfastImg from "../assets/breakfast.png";
-import defaultImg from "../assets/default.png";
-import dinnerImg from "../assets/dinner.png";
-import lunchImg from "../assets/lunch.png";
-import snackImg from "../assets/snack.png";
 
 import { resolveImageUrl } from "../utils/apiConfig";
+import { getCategoryDefaultImage, handleImageError } from "../utils/recipeImageUtils";
 import { formatText } from "../utils/formatUtils";
 import ShareRecipeButton from "./ShareRecipeButton";
 
-// Returns a fallback image based on category when no imageUrl is set.
-function getFallbackImage(recipe) {
-    const byCategory = {
-        breakfast: breakfastImg,
-        lunch: lunchImg,
-        dinner: dinnerImg,
-        snack: snackImg
-    };
-    return byCategory[recipe?.category] || defaultImg;
-}
-
 function getCategoryClass(category) {
-    const validCategories = ["breakfast", "lunch", "dinner", "snack"];
+    const validCategories = ["breakfast", "lunch", "dinner", "dessert", "snack"];
     return validCategories.includes(category)
         ? `recipe-card-${category}`
         : "recipe-card-default";
@@ -51,7 +36,7 @@ function RecipeCard({
     showShareButton = false,
     actions
 }) {
-    const recipeImage = resolveImageUrl(recipe.imageUrl) || getFallbackImage(recipe);
+    const recipeImage = resolveImageUrl(recipe.imageUrl) || getCategoryDefaultImage(recipe.category);
     const imagePositionX = recipe.imageUrl ? (recipe.imagePositionX ?? 50) : 50;
     const imagePositionY = recipe.imageUrl ? (recipe.imagePositionY ?? 50) : 50;
     const categoryClass = getCategoryClass(recipe.category);
@@ -80,7 +65,7 @@ function RecipeCard({
                     alt={recipe.title}
                     className="recipe-card-image"
                     style={{ objectPosition: `${imagePositionX}% ${imagePositionY}%` }}
-                    onError={(e) => { e.currentTarget.src = defaultImg; }}
+                    onError={(e) => handleImageError(e, recipe.category)}
                 />
                 <span className="recipe-card-category">
                     {formatText(recipe.category)}

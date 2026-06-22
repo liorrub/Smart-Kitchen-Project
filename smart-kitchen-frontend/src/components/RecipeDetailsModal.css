@@ -69,6 +69,10 @@
     border-top: 6px solid #eb5757;
 }
 
+.recipe-modal-dessert {
+    border-top: 6px solid #a855f7;
+}
+
 .recipe-modal-default {
     border-top: 6px solid #67d656;
 }

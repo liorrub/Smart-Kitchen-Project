@@ -6,9 +6,9 @@ import { useNavigate } from "react-router-dom";
 import ReviewCard from "./ReviewCard";
 import ReviewForm from "./ReviewForm";
 import ShareRecipeButton from "./ShareRecipeButton";
-import defaultImg from "../assets/default.png";
 
 import { resolveImageUrl } from "../utils/apiConfig";
+import { getCategoryDefaultImage, handleImageError } from "../utils/recipeImageUtils";
 
 import {
     getRecipeReviews,
@@ -28,6 +28,7 @@ function getCategoryClass(category) {
         "breakfast",
         "lunch",
         "dinner",
+        "dessert",
         "snack"
     ];
 
@@ -273,19 +274,17 @@ function RecipeDetailsModal({ recipe, onClose, isLiked = false, onLikeClick }) {
                 </button>
 
                 <div className="recipe-modal-body">
-                    {recipe.imageUrl && (
-                        <div className="recipe-modal-image-wrapper">
-                            <img
-                                src={resolveImageUrl(recipe.imageUrl)}
-                                alt={recipe.title}
-                                className="recipe-modal-image"
-                                style={{
-                                    objectPosition: `${recipe.imagePositionX ?? 50}% ${recipe.imagePositionY ?? 50}%`
-                                }}
-                                onError={(e) => { e.currentTarget.src = defaultImg; }}
-                            />
-                        </div>
-                    )}
+                    <div className="recipe-modal-image-wrapper">
+                        <img
+                            src={resolveImageUrl(recipe.imageUrl) || getCategoryDefaultImage(recipe.category)}
+                            alt={recipe.title}
+                            className="recipe-modal-image"
+                            style={{
+                                objectPosition: `${recipe.imagePositionX ?? 50}% ${recipe.imagePositionY ?? 50}%`
+                            }}
+                            onError={(e) => handleImageError(e, recipe.category)}
+                        />
+                    </div>
 
                     <header className="recipe-modal-header">
                         <p className="recipe-modal-label">

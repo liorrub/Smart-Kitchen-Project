@@ -21,6 +21,7 @@ function getCategoryClass(category) {
         breakfast: "recipe-modal-breakfast",
         lunch:     "recipe-modal-lunch",
         dinner:    "recipe-modal-dinner",
+        dessert:   "recipe-modal-dessert",
         snack:     "recipe-modal-snack"
     };
     return map[category] || "recipe-modal-default";

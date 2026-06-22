@@ -137,6 +137,21 @@
     color: white;
 }
 
+.recipe-card-dessert {
+    border-top: 4px solid #a855f7;
+}
+
+.recipe-card-dessert .recipe-card-category {
+    background: rgba(243, 232, 255, 0.92);
+    color: #7c3aed;
+    border: 1px solid #d8b4fe;
+}
+
+.recipe-card-dessert .recipe-card-view-button {
+    background: #a855f7;
+    color: white;
+}
+
 .recipe-card-default {
     border-top: 4px solid #67d656;
 }
