@@ -4,7 +4,8 @@ const { getDiscoverUsers } = require("../models/userProfileModel");
 
 async function getDiscover(req, res, next) {
     try {
-        const creators = await getDiscoverUsers();
+        const viewerId = req.authUser?.userId || null;
+        const creators = await getDiscoverUsers(viewerId);
         res.json(creators);
     } catch (err) {
         next(err);
