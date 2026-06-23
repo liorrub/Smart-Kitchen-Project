@@ -11,6 +11,7 @@ import AvatarImage from "../components/AvatarImage";
 
 import { getUserProfile } from "../services/profileService";
 import { getFollowers, getFollowing } from "../services/followService";
+import { getRecipeById } from "../services/recipeService";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
@@ -133,6 +134,15 @@ function Profile() {
     const isChef = profile.userRole === "chef";
     const isInfluencer = profile.userRole === "influencer";
     const showRecipes = isChef && profile.recentRecipes?.length > 0;
+
+    async function handleRecipeClick(recipe) {
+        try {
+            const full = await getRecipeById(recipe.recipeId);
+            setSelectedRecipe(full || recipe);
+        } catch {
+            setSelectedRecipe(recipe);
+        }
+    }
 
     const heroStats = [
         { value: profile.recipeCount, label: "Recipes" },
@@ -361,7 +371,7 @@ function Profile() {
                             <RecipeCard
                                 key={recipe.recipeId}
                                 recipe={recipe}
-                                onClick={setSelectedRecipe}
+                                onClick={handleRecipeClick}
                             />
                         ))}
                     </div>

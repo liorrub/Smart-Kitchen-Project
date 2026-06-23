@@ -1,7 +1,13 @@
 "use strict";
 
 const { Op, Sequelize } = require("sequelize");
-const { MealPlanItem } = require("./index");
+const { MealPlanItem, sequelize } = require("./index");
+
+// Subquery that resolves a recipe's title for meal plan items of itemType 'recipe'.
+// Returns NULL for ingredient items or when the recipe no longer exists.
+const RECIPE_TITLE_SUBQUERY = sequelize.literal(
+    `(SELECT title FROM Recipes WHERE Recipes.recipeId = MealPlanItem.itemId AND MealPlanItem.itemType = 'recipe')`
+);
 
 // Strips Sequelize timestamps — original Meal Plan API never exposed createdAt or updatedAt.
 function toPlain(instance) {
@@ -12,6 +18,9 @@ function toPlain(instance) {
 async function getUserMealPlan(userId) {
     const rows = await MealPlanItem.findAll({
         where: { userId },
+        attributes: {
+            include: [[RECIPE_TITLE_SUBQUERY, "recipeTitle"]]
+        },
         order: [["mealId", "ASC"]]
     });
     return rows.map(toPlain);
@@ -62,6 +71,9 @@ async function filterMealPlan(userId, filters = {}) {
 
     const rows = await MealPlanItem.findAll({
         where,
+        attributes: {
+            include: [[RECIPE_TITLE_SUBQUERY, "recipeTitle"]]
+        },
         order: [["mealId", "ASC"]]
     });
 

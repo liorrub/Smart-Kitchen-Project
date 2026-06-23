@@ -43,7 +43,9 @@ async function getUserPublicProfile(userId, viewerId) {
             where: { creatorId: userId },
             attributes: [
                 "recipeId", "title", "category", "cuisine",
-                "difficulty", "totalTime", "servings", "tags"
+                "difficulty", "totalTime", "servings", "tags",
+                "imageUrl", "imagePositionX", "imagePositionY",
+                "calories", "prepTime", "cookTime", "instructions"
             ],
             order: [["recipeId", "DESC"]],
             limit: 4
@@ -142,9 +144,20 @@ async function searchPublicUsers(query, role) {
 }
 
 // Returns all chefs and influencers with aggregated stats for the Discover page.
-async function getDiscoverUsers() {
+// Pass viewerId to exclude users already followed by that viewer.
+async function getDiscoverUsers(viewerId) {
+    const where = { userRole: ["chef", "influencer"] };
+
+    if (viewerId) {
+        where[Op.and] = [
+            sequelize.literal(
+                `NOT EXISTS (SELECT 1 FROM UserFollows AS uf WHERE uf.followerId = ${sequelize.escape(viewerId)} AND uf.followeeId = User.userId)`
+            )
+        ];
+    }
+
     const users = await User.findAll({
-        where: { userRole: ["chef", "influencer"] },
+        where,
         attributes: [
             "userId", "firstName", "lastName",
             "city", "cookingLevel", "userRole",

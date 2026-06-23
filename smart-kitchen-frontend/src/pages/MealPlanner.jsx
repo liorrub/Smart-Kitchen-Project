@@ -530,7 +530,10 @@ function MealPlanner() {
         return recipeMap.get(Number(meal.itemId));
     }
 
-    // Return the display name for a meal chip based on its item type
+    // Return the display name for a meal chip based on its item type.
+    // For recipes: prefer the approved recipe from the local map, then the title
+    // embedded in the meal plan row (covers non-approved / orphaned references),
+    // then a safe unavailable label — never a fabricated "Recipe #id" string.
     function getItemLabel(meal) {
         if (meal.itemType === "ingredient") {
             const ingredient = ingredientMap.get(Number(meal.itemId));
@@ -538,7 +541,7 @@ function MealPlanner() {
         }
 
         const recipe = recipeMap.get(Number(meal.itemId));
-        return recipe?.title || `Recipe #${meal.itemId}`;
+        return recipe?.title || meal.recipeTitle || "Recipe unavailable";
     }
 
     function getMealsForDayAndType(date, mealType) {

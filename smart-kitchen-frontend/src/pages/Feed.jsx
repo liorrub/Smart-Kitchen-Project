@@ -88,13 +88,10 @@ function Feed() {
                 );
                 setFollowedIds(followedSet);
 
-                // Exclude the current user; show unfollowed creators first
-                const sorted = (Array.isArray(creatorData) ? creatorData : [])
-                    .filter(c => c.userId !== currentUser.userId)
-                    .sort((a, b) =>
-                        Number(followedSet.has(a.userId)) - Number(followedSet.has(b.userId))
-                    );
-                setCreators(sorted);
+                // Exclude the current user and anyone already followed
+                const filtered = (Array.isArray(creatorData) ? creatorData : [])
+                    .filter(c => c.userId !== currentUser.userId && !followedSet.has(c.userId));
+                setCreators(filtered);
 
                 setLikedIds(new Set(
                     Array.isArray(likedData) ? likedData.map(Number) : []
@@ -238,6 +235,18 @@ function Feed() {
                                     <FollowButton
                                         targetUserId={creator.userId}
                                         initialIsFollowing={followedIds.has(creator.userId)}
+                                        onFollowChange={(delta) => {
+                                            if (delta === 1) {
+                                                setCreators(prev => prev.filter(c => c.userId !== creator.userId));
+                                                setFollowedIds(prev => new Set([...prev, creator.userId]));
+                                            } else {
+                                                setFollowedIds(prev => {
+                                                    const next = new Set(prev);
+                                                    next.delete(creator.userId);
+                                                    return next;
+                                                });
+                                            }
+                                        }}
                                     />
                                 </div>
                             ))}
