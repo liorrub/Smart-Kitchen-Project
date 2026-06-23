@@ -2,7 +2,7 @@
 
 const { Op } = require("sequelize");
 const { PantryItem } = require("./index");
-const { isExpired } = require("../utils/dateHelper");
+const { isExpired } = require("../src/utils/dateHelper");
 
 // Strips Sequelize timestamps — original Pantry API never exposed createdAt or updatedAt.
 function toPlain(instance) {

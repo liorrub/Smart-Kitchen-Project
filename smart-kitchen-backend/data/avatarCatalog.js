@@ -39,7 +39,7 @@ function validateAvatarKeyMiddleware(req, res, next) {
 
     const error = validateAvatarKey(avatarKey);
     if (error) {
-        const { errorResponse } = require("../utils/responseHelper");
+        const { errorResponse } = require("../src/utils/responseHelper");
         return errorResponse(res, 400, "INVALID_AVATAR_KEY", error, { field: "avatarKey" });
     }
 

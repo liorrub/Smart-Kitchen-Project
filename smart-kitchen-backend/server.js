@@ -7,35 +7,35 @@ const cors = require("cors");
 
 const app = express();
 
-const { initSocket } = require("./socket/index");
+const { initSocket } = require("./src/socket/index");
 
 // Import middleware
-const logger = require("./middleware/logger");
-const notFoundHandler = require("./middleware/notFoundHandler");
-const errorHandler = require("./middleware/errorHandler");
+const logger = require("./src/middleware/logger");
+const notFoundHandler = require("./src/middleware/notFoundHandler");
+const errorHandler = require("./src/middleware/errorHandler");
 
 // Import routes
-const authRoutes = require("./routes/authRoutes");
-const usersRoutes = require("./routes/usersRoutes");
-const recipesRoutes = require("./routes/recipesRoutes");
-const ingredientsRoutes = require("./routes/ingredientsRoutes");
-const favoritesRoutes = require("./routes/favoritesRoutes");
-const pantryRoutes = require("./routes/pantryRoutes");
-const shoppingListRoutes = require("./routes/shoppingListRoutes");
-const mealPlanRoutes = require("./routes/mealPlanRoutes");
-const storesRoutes = require("./routes/storesRoutes");
-const aiRoutes = require("./routes/aiRoutes");
-const settingsRoutes = require("./routes/settingsRoutes");
-const optionsRoutes = require("./routes/optionsRoutes");
-const chefRequestsRoutes = require("./routes/chefRequestsRoutes");
-const recipeCommentsRoutes = require("./routes/recipeCommentsRoutes");
-const recipeLikesRoutes = require("./routes/recipeLikesRoutes");
-const discoverRoutes = require("./routes/discoverRoutes");
-const userFollowsRoutes = require("./routes/userFollowsRoutes");
-const feedRoutes = require("./routes/feedRoutes");
-const notificationsRoutes = require("./routes/notificationsRoutes");
-const commentLikesRoutes = require("./routes/commentLikesRoutes");
-const reviewReportsRoutes = require("./routes/reviewReportsRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const usersRoutes = require("./src/routes/usersRoutes");
+const recipesRoutes = require("./src/routes/recipesRoutes");
+const ingredientsRoutes = require("./src/routes/ingredientsRoutes");
+const favoritesRoutes = require("./src/routes/favoritesRoutes");
+const pantryRoutes = require("./src/routes/pantryRoutes");
+const shoppingListRoutes = require("./src/routes/shoppingListRoutes");
+const mealPlanRoutes = require("./src/routes/mealPlanRoutes");
+const storesRoutes = require("./src/routes/storesRoutes");
+const aiRoutes = require("./src/routes/aiRoutes");
+const settingsRoutes = require("./src/routes/settingsRoutes");
+const optionsRoutes = require("./src/routes/optionsRoutes");
+const chefRequestsRoutes = require("./src/routes/chefRequestsRoutes");
+const recipeCommentsRoutes = require("./src/routes/recipeCommentsRoutes");
+const recipeLikesRoutes = require("./src/routes/recipeLikesRoutes");
+const discoverRoutes = require("./src/routes/discoverRoutes");
+const userFollowsRoutes = require("./src/routes/userFollowsRoutes");
+const feedRoutes = require("./src/routes/feedRoutes");
+const notificationsRoutes = require("./src/routes/notificationsRoutes");
+const commentLikesRoutes = require("./src/routes/commentLikesRoutes");
+const reviewReportsRoutes = require("./src/routes/reviewReportsRoutes");
 
 // Parse JSON request bodies
 app.use(express.json());
