@@ -544,4 +544,4 @@ Do not rename or delete files in that directory.
 
 ## Authors
 
-Ellen Levin — Assignment 4, Smart Kitchen Project
+Ellen Levin and Lior Rubinshtein
