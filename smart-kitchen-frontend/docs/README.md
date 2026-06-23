@@ -1,4 +1,8 @@
-# Smart Kitchen Frontend
+# Smart Kitchen — Frontend
+
+> **Part of the Smart Kitchen full-stack application.**
+> - [Root README (full-system setup)](../../README.md)
+> - [Backend Documentation](../../smart-kitchen-backend/docs/README.md)
 
 ## Project Overview
 
@@ -103,12 +107,56 @@ A Discover page for exploring recipes beyond the user's immediate feed.
 
 ---
 
-## Installation
+## Installation and Running
+
+The frontend requires the backend to be running first. For complete setup instructions see the [Root README](../../README.md). For backend-only setup see the [Backend Documentation](../../smart-kitchen-backend/docs/README.md).
+
+### Quick backend preparation (new database)
+
+Run these commands in a separate terminal before starting the frontend:
+
+```powershell
+cd smart-kitchen-backend
+npm install
+npx sequelize-cli db:migrate
+npx sequelize-cli db:seed:all
+npm start
+```
+
+> [!WARNING]
+> Run `npx sequelize-cli db:seed:all` only when preparing a new or empty development database. Running all seeders again on a populated database may create duplicate records or fail due to database constraints.
+
+For an existing database (already migrated and seeded), skip `db:seed:all`:
+
+```powershell
+cd smart-kitchen-backend
+npm install
+npx sequelize-cli db:migrate
+npm start
+```
+
+### Install frontend dependencies
 
 ```powershell
 cd smart-kitchen-frontend
 npm install
 ```
+
+### Start the frontend
+
+```powershell
+npm start
+```
+
+The frontend starts at **http://localhost:5173**.
+
+### Production build
+
+```powershell
+npm run build
+```
+
+Output is written to `smart-kitchen-frontend/build/`.
 
 ---
 
@@ -273,7 +321,11 @@ On error:
 {
   "success": false,
   "data": null,
-  "error": "Human-readable error message"
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Missing required fields",
+    "details": { "field": "email" }
+  }
 }
 ```
 
@@ -554,6 +606,18 @@ Navigate to **[http://localhost:5173](http://localhost:5173)** in your browser a
 
 ---
 
+## Screenshots and Assignment 4 Submission
+
+Assignment 4 submission screenshots are stored in:
+
+```
+smart-kitchen-frontend/docs/Screenshots/
+```
+
+Do not rename or delete files in that directory.
+
+---
+
 ## Assignment 4 Coverage
 
 | Requirement | Frontend participation |
@@ -564,3 +628,11 @@ Navigate to **[http://localhost:5173](http://localhost:5173)** in your browser a
 | Sequelize ORM | Consumed transparently — the frontend receives normalized JSON from the backend's Sequelize queries |
 | Socket.IO | The frontend connects via `socket.io-client`; live recipe discussion and notification delivery use custom events on both sides |
 | AI integration | Frontend sends user inputs to backend AI endpoints; Gemini is called only server-side; results are displayed in `AIAssistant.jsx` and persisted as history in MySQL |
+
+---
+
+## Related Documentation
+
+- [Root README — full-system setup and overview](../../README.md)
+- [Backend Documentation](../../smart-kitchen-backend/docs/README.md)
+- [API Reference](../../smart-kitchen-backend/docs/API_REFERENCE.md)
