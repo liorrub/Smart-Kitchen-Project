@@ -38,16 +38,6 @@ const CANONICAL_LIKES = [
     { userId: 5,  commentId: 103 },
     { userId: 7,  commentId: 103 },
 
-    // Comment 104 (author: 1) — 3 likes
-    { userId: 4,  commentId: 104 },
-    { userId: 7,  commentId: 104 },
-    { userId: 9,  commentId: 104 },
-
-    // Comment 105 (author: 12) — 3 likes
-    { userId: 1,  commentId: 105 },
-    { userId: 4,  commentId: 105 },
-    { userId: 5,  commentId: 105 },
-
     // Comment 106 (author: 7) — 4 likes
     { userId: 1,  commentId: 106 },
     { userId: 4,  commentId: 106 },
@@ -84,14 +74,6 @@ const CANONICAL_LIKES = [
     { userId: 5,  commentId: 112 },
     { userId: 8,  commentId: 112 },
     { userId: 9,  commentId: 112 },
-
-    // Comment 113 — reply (author: 9) — 2 likes
-    { userId: 1,  commentId: 113 },
-    { userId: 4,  commentId: 113 },
-
-    // Comment 114 — reply (author: 19) — 2 likes
-    { userId: 5,  commentId: 114 },
-    { userId: 9,  commentId: 114 },
 
     // Comment 115 — reply (author: 17) — 2 likes
     { userId: 7,  commentId: 115 },

@@ -21,20 +21,6 @@
     "unit": "gram"
   },
   {
-    "recipeIngredientId": 4,
-    "recipeId": 103,
-    "ingredientId": 6,
-    "quantity": 100,
-    "unit": "gram"
-  },
-  {
-    "recipeIngredientId": 5,
-    "recipeId": 103,
-    "ingredientId": 9,
-    "quantity": 2,
-    "unit": "piece"
-  },
-  {
     "recipeIngredientId": 6,
     "recipeId": 104,
     "ingredientId": 10,
@@ -110,27 +96,6 @@
     "ingredientId": 20,
     "quantity": 200,
     "unit": "gram"
-  },
-  {
-    "recipeIngredientId": 17,
-    "recipeId": 103,
-    "ingredientId": 11,
-    "quantity": 2,
-    "unit": "piece"
-  },
-  {
-    "recipeIngredientId": 18,
-    "recipeId": 103,
-    "ingredientId": 86,
-    "quantity": 1,
-    "unit": "tbsp"
-  },
-  {
-    "recipeIngredientId": 19,
-    "recipeId": 103,
-    "ingredientId": 22,
-    "quantity": 1,
-    "unit": "piece"
   },
   {
     "recipeIngredientId": 20,

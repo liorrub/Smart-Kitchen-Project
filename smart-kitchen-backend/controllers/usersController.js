@@ -113,6 +113,15 @@ async function createSingleUser(req, res, next) {
             );
         }
 
+        if (!req.body.username) {
+            return errorResponse(
+                res,
+                400,
+                "MISSING_FIELD",
+                "Username is required"
+            );
+        }
+
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         const newUser = await createUser({
@@ -124,7 +133,9 @@ async function createSingleUser(req, res, next) {
             city: req.body.city,
             cookingLevel: req.body.cookingLevel,
             age: req.body.age,
-            preferences: req.body.preferences ?? null
+            preferences: req.body.preferences ?? null,
+            username: req.body.username,
+            avatarKey: req.body.avatarKey
         });
 
         return successResponse(

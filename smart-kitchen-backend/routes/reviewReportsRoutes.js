@@ -20,7 +20,7 @@ router.get(
 );
 
 // Update a review report's status
-router.patch(
+router.put(
     "/:reportId",
     validateIdParam("reportId"),
     authorize("admin"),

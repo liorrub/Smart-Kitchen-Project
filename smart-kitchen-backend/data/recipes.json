@@ -42,27 +42,6 @@
     ]
   },
   {
-    "recipeId": 103,
-    "title": "Israeli Breakfast Bowl",
-    "instructions": "Chop vegetables, add cheese and serve.",
-    "difficulty": "easy",
-    "cuisine": "israeli",
-    "category": "breakfast",
-    "creatorId": 1,
-    "prepTime": 10,
-    "cookTime": 0,
-    "totalTime": 10,
-    "servings": 2,
-    "calories": 280,
-    "tags": [
-      "healthy",
-      "easy"
-    ],
-    "allergens": [
-      "dairy"
-    ]
-  },
-  {
     "recipeId": 104,
     "title": "Protein Yogurt Snack",
     "instructions": "Mix yogurt and toppings and serve cold.",
