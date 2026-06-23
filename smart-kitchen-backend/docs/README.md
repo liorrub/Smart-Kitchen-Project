@@ -1,4 +1,9 @@
-# Smart Kitchen API
+# Smart Kitchen — Backend
+
+> **Part of the Smart Kitchen full-stack application.**
+> - [Root README (full-system setup)](../../README.md)
+> - [Frontend Documentation](../../smart-kitchen-frontend/docs/README.md)
+> - [API Reference](API_REFERENCE.md)
 
 A backend REST API for the Smart Kitchen project.
 The system supports user management, recipes with an approval workflow, ingredients, pantry tracking, shopping lists with city-based store recommendations, meal planning, chef account requests, real-time recipe discussions via Socket.IO, social features (follows, likes, feeds, notifications), and AI-powered food suggestions via Google Gemini.
@@ -57,33 +62,95 @@ GEMINI_MODEL=gemini-3.1-flash-lite
 
 ---
 
-## Database Setup
+## Installation and Database Setup
 
-### Create the database in MySQL
+### Fresh database setup (first time or new empty database)
+
+Use this process when setting up from scratch or when the target database has no tables yet.
+
+```bash
+cd smart-kitchen-backend
+npm install
+```
+
+Create the database. Either use the Sequelize CLI (requires CREATE DATABASE privilege):
+
+```bash
+npx sequelize-cli db:create
+```
+
+Or connect to MySQL directly:
 
 ```sql
 CREATE DATABASE smart_kitchen_enriched CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### Run migrations (creates all tables)
+Run all migrations:
 
 ```bash
 npx sequelize-cli db:migrate
 ```
 
-### Seed initial data
+> [!WARNING]
+> Run `npx sequelize-cli db:seed:all` only when preparing a new or empty development database. Running all seeders again on a populated database may create duplicate records or fail due to database constraints.
 
 ```bash
 npx sequelize-cli db:seed:all
 ```
 
-This seeds: users (40 records), ingredients, recipes with ingredients, recipe comments, AI history, favorites, chef requests, pantry items, shopping list, meal plan items, stores, ingredient-store price data, recipe likes, user follows, notifications, comment likes, reviews, and recipe image URLs.
-
-### Reset database (drop all tables and re-run)
+Start the backend:
 
 ```bash
-npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all
+npm start
 ```
+
+### Existing database setup (database already migrated and seeded)
+
+Use this process on subsequent starts when the database already contains tables and data.
+
+```bash
+cd smart-kitchen-backend
+npm install
+npx sequelize-cli db:migrate
+npm start
+```
+
+Only new pending migrations run — already-applied migrations are skipped automatically.
+
+### Verifying migration status
+
+To see which migrations have been applied without making any changes:
+
+```bash
+npx sequelize-cli db:migrate:status
+```
+
+### What the seeders create
+
+The 18 seeder files populate the following data when run against a fresh database:
+
+| Seeder | Data created |
+|---|---|
+| `seed-users` | 40 users across all roles (user, chef, influencer, admin) |
+| `seed-ingredients` | Global ingredient catalog |
+| `seed-recipes` | Recipe records with metadata |
+| `seed-recipe-ingredients` | Ingredient links for each recipe |
+| `seed-favorites` | Saved recipe relationships |
+| `seed-pantry-items` | Per-user pantry inventory |
+| `seed-shopping-list` | Per-user shopping list entries |
+| `seed-meal-plan-items` | Per-user meal plan records |
+| `seed-stores` | Local store records |
+| `seed-ingredient-stores` | Ingredient-store price data |
+| `seed-reviews` | Recipe reviews and ratings |
+| `seed-chef-requests` | Chef upgrade request records |
+| `seed-recipe-likes` | Recipe like relationships |
+| `seed-user-follows` | User follow relationships |
+| `seed-recipe-comments` | Recipe discussion comments |
+| `seed-notifications` | User notification records |
+| `seed-comment-likes` | Comment like relationships |
+| `update-recipe-image-urls` | Applies image URL data to recipe records |
+
+AI history is **not seeded** — it accumulates through normal application usage of the AI tools.
 
 ---
 
@@ -218,7 +285,7 @@ All endpoints return a consistent JSON response structure:
 ```json
 {
   "success": true,
-  "data": { ... },
+  "data": { },
   "error": null
 }
 ```
@@ -506,3 +573,11 @@ For full endpoint documentation see [API_REFERENCE.md](API_REFERENCE.md).
 | 409 | `DUPLICATE_REPORT` | User already reported this review |
 | 409 | `REQUEST_ALREADY_EXISTS` | Pending chef request already exists |
 | 500 | `SERVER_ERROR` | Unexpected server error |
+
+---
+
+## Related Documentation
+
+- [Root README — full-system setup and overview](../../README.md)
+- [Frontend Documentation](../../smart-kitchen-frontend/docs/README.md)
+- [API Reference](API_REFERENCE.md)
