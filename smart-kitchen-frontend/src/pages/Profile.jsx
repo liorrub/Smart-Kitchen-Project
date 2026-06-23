@@ -205,6 +205,7 @@ function Profile() {
                     <div className="profile-action-area">
                         {canShowFollowButton && (
                             <FollowButton
+                                key={profileUserId}
                                 targetUserId={profileUserId}
                                 initialIsFollowing={profile.isFollowedByMe}
                                 onFollowChange={(delta) =>

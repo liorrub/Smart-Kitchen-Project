@@ -233,19 +233,23 @@ function Feed() {
                                         </div>
                                     </Link>
                                     <FollowButton
+                                        key={creator.userId}
                                         targetUserId={creator.userId}
                                         initialIsFollowing={followedIds.has(creator.userId)}
                                         onFollowChange={(delta) => {
-                                            if (delta === 1) {
-                                                setCreators(prev => prev.filter(c => c.userId !== creator.userId));
-                                                setFollowedIds(prev => new Set([...prev, creator.userId]));
-                                            } else {
-                                                setFollowedIds(prev => {
-                                                    const next = new Set(prev);
-                                                    next.delete(creator.userId);
-                                                    return next;
-                                                });
-                                            }
+                                            // Keep followedIds in sync (drives initialIsFollowing on next mount)
+                                            setFollowedIds(prev => {
+                                                const next = new Set(prev);
+                                                if (delta === 1) next.add(creator.userId);
+                                                else next.delete(creator.userId);
+                                                return next;
+                                            });
+                                            // Update follower count on the card without removing it from view
+                                            setCreators(prev => prev.map(c =>
+                                                c.userId === creator.userId
+                                                    ? { ...c, followerCount: (c.followerCount ?? 0) + delta }
+                                                    : c
+                                            ));
                                         }}
                                     />
                                 </div>

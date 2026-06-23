@@ -1,6 +1,6 @@
 import "./FollowButton.css";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { followUser, unfollowUser } from "../services/followService";
 
@@ -15,9 +15,11 @@ import { followUser, unfollowUser } from "../services/followService";
 function FollowButton({ targetUserId, initialIsFollowing, onFollowChange }) {
     const [isFollowing, setIsFollowing] = useState(Boolean(initialIsFollowing));
     const [loading, setLoading]         = useState(false);
-    const [isHovered, setIsHovered]     = useState(false);
 
-    const showUnfollowState = isFollowing && !loading && isHovered;
+    // Sync state when the prop changes (e.g. parent re-fetches profile data)
+    useEffect(() => {
+        setIsFollowing(Boolean(initialIsFollowing));
+    }, [targetUserId]);
 
     async function handleClick() {
         if (loading) return;
@@ -36,17 +38,15 @@ function FollowButton({ targetUserId, initialIsFollowing, onFollowChange }) {
             console.error("Follow action failed:", err);
         } finally {
             setLoading(false);
-            setIsHovered(false);
         }
     }
 
     let buttonClass = "follow-btn ";
-    if (loading)               buttonClass += "follow-btn--loading";
-    else if (showUnfollowState) buttonClass += "follow-btn--unfollow";
-    else if (isFollowing)       buttonClass += "follow-btn--following";
-    else                        buttonClass += "follow-btn--unfollowed";
+    if (loading)        buttonClass += "follow-btn--loading";
+    else if (isFollowing) buttonClass += "follow-btn--unfollow";
+    else                  buttonClass += "follow-btn--unfollowed";
 
-    const buttonText = loading ? "Updating..." : showUnfollowState ? "Unfollow" : isFollowing ? "Following" : "Follow";
+    const buttonText = loading ? "Updating..." : isFollowing ? "Unfollow" : "Follow";
     const ariaLabel  = isFollowing ? "Unfollow" : "Follow";
 
     return (
@@ -56,10 +56,6 @@ function FollowButton({ targetUserId, initialIsFollowing, onFollowChange }) {
             onClick={handleClick}
             disabled={loading}
             aria-label={ariaLabel}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onFocus={() => setIsHovered(true)}
-            onBlur={() => setIsHovered(false)}
         >
             {buttonText}
         </button>
