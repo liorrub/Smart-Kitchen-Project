@@ -24,12 +24,6 @@
     "createdAt": "2026-05-09T12:00:00Z"
   },
   {
-    "favoriteId": 5,
-    "userId": 3,
-    "recipeId": 103,
-    "createdAt": "2026-05-10T09:00:00Z"
-  },
-  {
     "favoriteId": 6,
     "userId": 5,
     "recipeId": 104,
@@ -186,12 +180,6 @@
     "createdAt": "2026-05-19T10:00:00Z"
   },
   {
-    "favoriteId": 32,
-    "userId": 8,
-    "recipeId": 103,
-    "createdAt": "2026-05-19T11:00:00Z"
-  },
-  {
     "favoriteId": 33,
     "userId": 8,
     "recipeId": 130,
@@ -322,12 +310,6 @@
     "userId": 14,
     "recipeId": 101,
     "createdAt": "2026-05-27T09:00:00Z"
-  },
-  {
-    "favoriteId": 55,
-    "userId": 14,
-    "recipeId": 103,
-    "createdAt": "2026-05-27T10:00:00Z"
   },
   {
     "favoriteId": 56,
@@ -468,12 +450,6 @@
     "createdAt": "2026-06-04T09:00:00Z"
   },
   {
-    "favoriteId": 79,
-    "userId": 24,
-    "recipeId": 103,
-    "createdAt": "2026-06-04T10:00:00Z"
-  },
-  {
     "favoriteId": 80,
     "userId": 24,
     "recipeId": 133,
@@ -544,12 +520,6 @@
     "userId": 30,
     "recipeId": 109,
     "createdAt": "2026-06-08T11:00:00Z"
-  },
-  {
-    "favoriteId": 99,
-    "userId": 34,
-    "recipeId": 103,
-    "createdAt": "2026-06-11T09:00:00Z"
   },
   {
     "favoriteId": 100,

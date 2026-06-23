@@ -44,17 +44,6 @@
     "createdAt": "2026-05-08T18:20:00Z"
   },
   {
-    "reviewId": 5,
-    "userId": 4,
-    "recipeId": 103,
-    "rating": 5,
-    "title": "Fresh breakfast",
-    "comment": "Simple and delicious.",
-    "isInfluencer": false,
-    "helpfulVotes": 3,
-    "createdAt": "2026-05-10T12:00:00Z"
-  },
-  {
     "reviewId": 6,
     "userId": 6,
     "recipeId": 104,

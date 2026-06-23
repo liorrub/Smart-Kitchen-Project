@@ -7,10 +7,10 @@
 // notificationIds 19 and 29 were removed (belonged to demo userId 32).
 
 const SEEDED_IDS = [
-    ...Array.from({ length: 18 }, (_, i) => i + 1),  // 1–18
-    20,                                                 // skip 19
-    ...Array.from({ length: 8 }, (_, i) => i + 21),   // 21–28
-    ...Array.from({ length: 21 }, (_, i) => i + 30)   // 30–50
+    ...Array.from({ length: 18 }, (_, i) => i + 1),                              // 1–18
+    20,                                                                             // skip 19
+    ...Array.from({ length: 8 }, (_, i) => i + 21),                              // 21–28
+    ...Array.from({ length: 21 }, (_, i) => i + 30).filter(id => ![38, 42, 48].includes(id))  // 30–50, skip 38/42/48 (recipe 103)
 ];
 
 const NOW = new Date("2026-06-21T10:00:00Z");
@@ -70,11 +70,9 @@ module.exports = {
             { notificationId: 35, userId: 1,  type: "comment_reply", message: "Daniel Levi replied to your comment.",  sourceUserId: 4,  entityId: 101, entityType: "recipe", commentId: 109, isRead: true,  createdAt: ago(10), updatedAt: ago(10) },
             { notificationId: 36, userId: 4,  type: "comment_reply", message: "Gal Meirov replied to your comment.",   sourceUserId: 15, entityId: 101, entityType: "recipe", commentId: 110, isRead: true,  createdAt: ago(9),  updatedAt: ago(9) },
             { notificationId: 37, userId: 5,  type: "comment_reply", message: "Avi Shapiro replied to your comment.",  sourceUserId: 7,  entityId: 102, entityType: "recipe", commentId: 111, isRead: true,  createdAt: ago(9),  updatedAt: ago(9) },
-            { notificationId: 38, userId: 1,  type: "comment_reply", message: "Roi Katz replied to your comment.",     sourceUserId: 9,  entityId: 103, entityType: "recipe", commentId: 113, isRead: false, createdAt: ago(7),  updatedAt: ago(7) },
             { notificationId: 39, userId: 8,  type: "comment_reply", message: "Daniel Levi replied to your comment.",  sourceUserId: 4,  entityId: 102, entityType: "recipe", commentId: 112, isRead: false, createdAt: ago(7),  updatedAt: ago(7) },
             { notificationId: 40, userId: 7,  type: "comment_reply", message: "Itai Barak replied to your comment.",   sourceUserId: 17, entityId: 104, entityType: "recipe", commentId: 115, isRead: true,  createdAt: ago(5),  updatedAt: ago(5) },
             { notificationId: 41, userId: 9,  type: "comment_reply", message: "Maya David replied to your comment.",   sourceUserId: 5,  entityId: 105, entityType: "recipe", commentId: 116, isRead: false, createdAt: ago(4),  updatedAt: ago(4) },
-            { notificationId: 42, userId: 12, type: "comment_reply", message: "Eran Hazan replied to your comment.",   sourceUserId: 19, entityId: 103, entityType: "recipe", commentId: 114, isRead: false, createdAt: ago(3),  updatedAt: ago(3) },
             { notificationId: 43, userId: 6,  type: "comment_reply", message: "Daniel Levi replied to your comment.",  sourceUserId: 4,  entityId: 106, entityType: "recipe", commentId: 117, isRead: false, createdAt: ago(2),  updatedAt: ago(2) },
             { notificationId: 44, userId: 1,  type: "comment_reply", message: "Tali Ben-David replied to your comment.", sourceUserId: 8, entityId: 101, entityType: "recipe", commentId: 118, isRead: false, createdAt: ago(1), updatedAt: ago(1) },
 
@@ -83,7 +81,6 @@ module.exports = {
             { notificationId: 45, userId: 7,  type: "mention", message: "Daniel Levi mentioned you in a comment.", sourceUserId: 4,  entityId: 101, entityType: "recipe", commentId: 119, isRead: true,  createdAt: ago(8),    updatedAt: ago(8) },
             { notificationId: 46, userId: 5,  type: "mention", message: "Gal Meirov mentioned you in a comment.", sourceUserId: 15, entityId: 102, entityType: "recipe", commentId: 120, isRead: false, createdAt: ago(6),    updatedAt: ago(6) },
             { notificationId: 47, userId: 12, type: "mention", message: "Itai Barak mentioned you in a comment.", sourceUserId: 17, entityId: 104, entityType: "recipe", commentId: 121, isRead: true,  createdAt: ago(5),    updatedAt: ago(5) },
-            { notificationId: 48, userId: 4,  type: "mention", message: "Roi Katz mentioned you in a comment.",   sourceUserId: 9,  entityId: 103, entityType: "recipe", commentId: 122, isRead: false, createdAt: ago(3),    updatedAt: ago(3) },
             { notificationId: 49, userId: 8,  type: "mention", message: "Eran Hazan mentioned you in a comment.", sourceUserId: 19, entityId: 105, entityType: "recipe", commentId: 123, isRead: false, createdAt: ago(2),    updatedAt: ago(2) },
             { notificationId: 50, userId: 1,  type: "mention", message: "Shir Mizrahi mentioned you in a comment.", sourceUserId: 6, entityId: 106, entityType: "recipe", commentId: 124, isRead: false, createdAt: ago(1, 2), updatedAt: ago(1, 2) }
         ];

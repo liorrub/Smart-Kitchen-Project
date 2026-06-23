@@ -33,9 +33,9 @@ function authorize(...allowedRoles) {
             if (!resolved) {
                 return errorResponse(
                     res,
-                    403,
-                    "FORBIDDEN",
-                    "You do not have permission to perform this action."
+                    401,
+                    "UNAUTHORIZED",
+                    "Authentication is required."
                 );
             }
 
@@ -62,9 +62,9 @@ async function allowSelfOrAdmin(req, res, next) {
         if (!resolved) {
             return errorResponse(
                 res,
-                403,
-                "FORBIDDEN",
-                "You do not have permission to perform this action."
+                401,
+                "UNAUTHORIZED",
+                "Authentication is required."
             );
         }
 
@@ -96,9 +96,9 @@ async function allowSelfOnly(req, res, next) {
         if (!resolved) {
             return errorResponse(
                 res,
-                403,
-                "FORBIDDEN",
-                "You do not have permission to perform this action."
+                401,
+                "UNAUTHORIZED",
+                "Authentication is required."
             );
         }
 
