@@ -20,3 +20,40 @@
     font-size: 14px;
     font-weight: 700;
 }
+
+/* ==========================================================================
+   Label override — match FormField visual style (Register / Settings)
+   Scoped to .city-picker-field so IngredientPicker is not affected.
+   ========================================================================== */
+
+.city-picker-field label {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: normal;
+    color: #46ae6b;
+    margin: 0 0 6px;
+    padding: 0;
+}
+
+/* ==========================================================================
+   Input override — match FormField visual style (Register / Settings)
+   Scoped to .city-picker-field so IngredientPicker is not affected.
+   ========================================================================== */
+
+.city-picker-field .ingredient-picker-input {
+    height: 54px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: Arial, sans-serif;
+}
+
+.city-picker-field .ingredient-picker-input:focus {
+    border-color: #7f9f68;
+    box-shadow: 0 0 0 4px rgba(127, 159, 104, 0.18);
+}
+
+.city-picker-field .ingredient-picker-input::placeholder {
+    color: revert;
+    font-weight: 700;
+}

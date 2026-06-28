@@ -184,7 +184,7 @@ function CityPicker({
 
     return (
         <div
-            className={`ingredient-picker-field ${wrapperClassName}`.trim()}
+            className={`ingredient-picker-field city-picker-field ${wrapperClassName}`.trim()}
             ref={containerRef}
         >
             {label && <label>{label}</label>}
