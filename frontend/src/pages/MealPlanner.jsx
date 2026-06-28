@@ -10,6 +10,7 @@ import FormCard from "../components/FormCard";
 import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
+import RecipeDetailsModal from "../components/RecipeDetailsModal";
 
 import { getIngredients } from "../services/ingredientsService";
 import {
@@ -152,6 +153,8 @@ function MealPlanner() {
     const [editingMeal, setEditingMeal] = useState(null);
     const [mealToDelete, setMealToDelete] = useState(null);
     const [isMealModalOpen, setIsMealModalOpen] = useState(false);
+    const [recipeSearch, setRecipeSearch] = useState("");
+    const [selectedRecipeForDetails, setSelectedRecipeForDetails] = useState(null);
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -197,6 +200,15 @@ function MealPlanner() {
             label: `${recipe.title} · ${recipe.calories || 0} cal`
         }));
     }, [recipes]);
+
+    // Recipes matching the current search query — capped at 8 results for performance.
+    const filteredRecipes = useMemo(() => {
+        const q = recipeSearch.trim().toLowerCase();
+        if (!q) return [];
+        return recipes
+            .filter((r) => r.title.toLowerCase().includes(q))
+            .slice(0, 8);
+    }, [recipeSearch, recipes]);
 
     // Build pantry dropdown options — one entry per unique ingredient in the user's pantry
     const pantryOptions = useMemo(() => {
@@ -341,12 +353,15 @@ function MealPlanner() {
         setIsMealModalOpen(false);
         setEditingMeal(null);
         setMealForm(EMPTY_MEAL_FORM);
+        setRecipeSearch("");
         setError("");
     }
 
-    // Reset itemId when the item type changes so the previous selection is cleared
+    // Reset itemId (and recipe search) when the item type changes so the previous selection is cleared
     function handleFormChange(event) {
         const { name, value } = event.target;
+
+        if (name === "itemType") setRecipeSearch("");
 
         setMealForm((previousForm) => ({
             ...previousForm,
@@ -741,10 +756,28 @@ function MealPlanner() {
                                                 </button>
                                             ) : (
                                                 <div className="meal-cell-items">
-                                                    {meals.map((meal) => (
+                                                    {meals.map((meal) => {
+                                                        const isRecipe = meal.itemType === "recipe";
+                                                        const linkedRecipe = isRecipe ? getRecipeForMeal(meal) : null;
+                                                        return (
                                                         <div
                                                             key={meal.mealId}
-                                                            className={`meal-chip meal-chip-${meal.mealType}`}
+                                                            className={[
+                                                                "meal-chip",
+                                                                `meal-chip-${meal.mealType}`,
+                                                                isRecipe && linkedRecipe ? "meal-chip-clickable" : ""
+                                                            ].filter(Boolean).join(" ")}
+                                                            onClick={() => {
+                                                                if (isRecipe && linkedRecipe) {
+                                                                    setSelectedRecipeForDetails(linkedRecipe);
+                                                                }
+                                                            }}
+                                                            role={isRecipe && linkedRecipe ? "button" : undefined}
+                                                            tabIndex={isRecipe && linkedRecipe ? 0 : undefined}
+                                                            title={isRecipe && linkedRecipe ? "View recipe details" : undefined}
+                                                            onKeyDown={isRecipe && linkedRecipe ? (e) => {
+                                                                if (e.key === "Enter") setSelectedRecipeForDetails(linkedRecipe);
+                                                            } : undefined}
                                                         >
                                                             <div>
                                                                 <strong>
@@ -760,24 +793,31 @@ function MealPlanner() {
                                                             <div className="meal-chip-actions">
                                                                 <button
                                                                     type="button"
-                                                                    onClick={() =>
-                                                                        openEditMealModal(meal)
-                                                                    }
+                                                                    title="Edit meal"
+                                                                    aria-label="Edit meal"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        openEditMealModal(meal);
+                                                                    }}
                                                                 >
-                                                                    Edit
+                                                                    ✏️
                                                                 </button>
 
                                                                 <button
                                                                     type="button"
-                                                                    onClick={() =>
-                                                                        openDeleteMealModal(meal)
-                                                                    }
+                                                                    title="Remove meal"
+                                                                    aria-label="Remove meal"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        openDeleteMealModal(meal);
+                                                                    }}
                                                                 >
-                                                                    ×
+                                                                    🗑️
                                                                 </button>
                                                             </div>
                                                         </div>
-                                                    ))}
+                                                        );
+                                                    })}
                                                 </div>
                                             )}
                                         </td>
@@ -868,19 +908,72 @@ function MealPlanner() {
                                     />
 
                                     {mealForm.itemType === "recipe" ? (
-                                        <CustomSelect
-                                            label="Recipe"
-                                            name="itemId"
-                                            value={mealForm.itemId}
-                                            onChange={handleFormChange}
-                                            options={recipeOptions}
-                                            placeholder="Choose recipe"
-                                            helperText={
-                                                recipeOptions.length === 0
-                                                    ? "No recipes are available."
-                                                    : ""
-                                            }
-                                        />
+                                        <div className="meal-recipe-picker">
+                                            <span className="meal-recipe-picker-label">Recipe</span>
+
+                                            {mealForm.itemId && (
+                                                <div className="meal-recipe-selected">
+                                                    <div className="meal-recipe-selected-info">
+                                                        <strong>
+                                                            {recipeMap.get(Number(mealForm.itemId))?.title || "Selected recipe"}
+                                                        </strong>
+                                                        <span>
+                                                            {recipeMap.get(Number(mealForm.itemId))?.calories || 0} cal
+                                                        </span>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        className="meal-recipe-clear"
+                                                        onClick={() => {
+                                                            setMealForm((p) => ({ ...p, itemId: "" }));
+                                                            setRecipeSearch("");
+                                                        }}
+                                                        aria-label="Clear recipe selection"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            <input
+                                                type="text"
+                                                className="meal-recipe-search"
+                                                value={recipeSearch}
+                                                onChange={(e) => setRecipeSearch(e.target.value)}
+                                                placeholder={mealForm.itemId ? "Search to change recipe…" : "Search recipes by name…"}
+                                                autoComplete="off"
+                                            />
+
+                                            {recipeSearch.trim().length > 0 && (
+                                                <div className="meal-recipe-dropdown">
+                                                    {filteredRecipes.length === 0 ? (
+                                                        <div className="meal-recipe-no-results">
+                                                            No recipes match "{recipeSearch}"
+                                                        </div>
+                                                    ) : (
+                                                        filteredRecipes.map((recipe) => (
+                                                            <button
+                                                                key={recipe.recipeId}
+                                                                type="button"
+                                                                className="meal-recipe-option"
+                                                                onMouseDown={(e) => {
+                                                                    e.preventDefault();
+                                                                    setMealForm((p) => ({ ...p, itemId: recipe.recipeId }));
+                                                                    setRecipeSearch("");
+                                                                }}
+                                                            >
+                                                                <span className="meal-recipe-option-name">{recipe.title}</span>
+                                                                <span className="meal-recipe-option-cal">{recipe.calories || 0} cal</span>
+                                                            </button>
+                                                        ))
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {recipes.length === 0 && (
+                                                <p className="meal-recipe-no-results">No recipes are available.</p>
+                                            )}
+                                        </div>
                                     ) : (
                                         <CustomSelect
                                             label="Pantry Item"
@@ -920,6 +1013,13 @@ function MealPlanner() {
                     isDeleting={deleting}
                     onConfirm={confirmDeleteMeal}
                     onCancel={cancelDeleteMeal}
+                />
+            )}
+
+            {selectedRecipeForDetails && (
+                <RecipeDetailsModal
+                    recipe={selectedRecipeForDetails}
+                    onClose={() => setSelectedRecipeForDetails(null)}
                 />
             )}
         </div>

@@ -601,6 +601,193 @@
 }
 
 /* ==========================================================================
+   Recipe search picker (inside Add/Edit meal modal)
+   ========================================================================== */
+
+.meal-recipe-picker {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.meal-recipe-picker-label {
+    color: #1f3d2b;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.meal-recipe-selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1.5px solid #9dd4a5;
+    background: #e9fbe5;
+}
+
+.meal-recipe-selected-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.meal-recipe-selected-info strong {
+    color: #1f3d2b;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.meal-recipe-selected-info span {
+    color: #2a7545;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.meal-recipe-clear {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(31, 61, 43, 0.12);
+    color: #1f3d2b;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.meal-recipe-clear:hover {
+    background: rgba(31, 61, 43, 0.22);
+}
+
+.meal-recipe-search {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #d1e8d5;
+    border-radius: 12px;
+    background: #fffefa;
+    color: #1f3d2b;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.meal-recipe-search:focus {
+    border-color: #46ae6b;
+    box-shadow: 0 0 0 3px rgba(70, 174, 107, 0.15);
+}
+
+.meal-recipe-search::placeholder {
+    color: #9aae9f;
+    font-weight: 600;
+}
+
+.meal-recipe-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    margin-top: 4px;
+    padding: 6px;
+    border-radius: 14px;
+    border: 1.5px solid #d1e8d5;
+    background: #fffefa;
+    box-shadow: 0 12px 32px rgba(31, 61, 43, 0.14);
+    max-height: 220px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.meal-recipe-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 12px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.14s ease;
+}
+
+.meal-recipe-option:hover {
+    background: #e9fbe5;
+}
+
+.meal-recipe-option-name {
+    color: #1f3d2b;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    text-align: left;
+}
+
+.meal-recipe-option-cal {
+    flex-shrink: 0;
+    color: #2a7545;
+    font-size: 12px;
+    font-weight: 800;
+    background: #e9fbe5;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.meal-recipe-no-results {
+    padding: 10px 12px;
+    color: #617160;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* ==========================================================================
+   Clickable meal chip (opens recipe details)
+   ========================================================================== */
+
+.meal-chip-clickable {
+    cursor: pointer;
+    transition:
+        box-shadow 0.18s ease,
+        transform 0.18s ease;
+}
+
+.meal-chip-clickable:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(31, 61, 43, 0.12);
+}
+
+/* Enlarge icon buttons so emoji render clearly */
+.meal-chip-actions button {
+    font-size: 15px;
+    line-height: 1;
+}
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 
