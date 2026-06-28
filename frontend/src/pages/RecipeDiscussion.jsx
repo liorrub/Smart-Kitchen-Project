@@ -395,7 +395,7 @@ function RecipeDiscussion() {
 
                     <div className="discussion-live-bar">
                         <span className="discussion-viewers">
-                            👁 {viewerCount} {viewerCount === 1 ? "user" : "users"} viewing
+                            👁 {Math.max(1, viewerCount)} {Math.max(1, viewerCount) === 1 ? "user" : "users"} viewing
                         </span>
                         {typingText && (
                             <span className="discussion-typing">✏️ {typingText}</span>

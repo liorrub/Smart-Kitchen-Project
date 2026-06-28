@@ -1,6 +1,7 @@
 "use strict";
 
 const { Server } = require("socket.io");
+const { getUserById } = require("../../models/usersModel");
 const { registerRecipeDiscussion } = require("./recipeDiscussion");
 const { registerNotifications } = require("./notifications");
 
@@ -14,12 +15,30 @@ function initSocket(httpServer) {
         }
     });
 
-    // General connection logging
-    io.on("connection", (socket) => {
-        console.log(`[socket] client connected: ${socket.id}`);
+    // Auth middleware — runs during the handshake, BEFORE the client receives the
+    // CONNECT packet and BEFORE any connection handlers register their listeners.
+    // This guarantees socket.authUser is available synchronously in all handlers.
+    io.use(async (socket, next) => {
+        const userId = Number(socket.handshake.auth.userId);
+        if (!userId || !Number.isFinite(userId)) {
+            return next(new Error("Authentication failed: missing userId"));
+        }
+        try {
+            const user = await getUserById(userId);
+            if (!user) return next(new Error("Authentication failed: user not found"));
+            socket.authUser = user;
+            next();
+        } catch (err) {
+            console.error("[socket] auth middleware error:", err.message);
+            next(new Error("Authentication failed: server error"));
+        }
+    });
 
+    // General connection logging (socket.authUser already set by middleware)
+    io.on("connection", (socket) => {
+        console.log(`[socket] client connected: userId=${socket.authUser.userId} (${socket.id})`);
         socket.on("disconnect", () => {
-            console.log(`[socket] client disconnected: ${socket.id}`);
+            console.log(`[socket] client disconnected: userId=${socket.authUser.userId} (${socket.id})`);
         });
     });
 

@@ -4,29 +4,15 @@
 // Each authenticated user automatically joins user:<userId> on connection.
 // emitNotificationToUser broadcasts to all sockets in that room (multi-tab safe).
 
-const { getUserById } = require("../../models/usersModel");
-
 // Stored when registerNotifications(io) is called from socket/index.js
 let _io = null;
 
 function registerNotifications(io) {
     _io = io;
 
-    io.on("connection", async (socket) => {
-        const userId = Number(socket.handshake.auth.userId);
-
-        // Guard: invalid userId — recipeDiscussion.js will disconnect this socket
-        if (!userId || !Number.isFinite(userId)) return;
-
-        let user;
-        try {
-            user = await getUserById(userId);
-        } catch (err) {
-            console.error("[socket:notifications] user lookup failed:", err.message);
-            return;
-        }
-
-        if (!user) return;
+    // socket.authUser is set by io.use() middleware in socket/index.js — no async needed here.
+    io.on("connection", (socket) => {
+        const userId = socket.authUser.userId;
 
         // Join the personal notification room
         socket.join(`user:${userId}`);

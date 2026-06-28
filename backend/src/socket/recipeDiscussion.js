@@ -4,7 +4,6 @@
 // Manages real-time events for the recipe discussion page:
 // joining/leaving rooms, sending comments, and typing indicators.
 
-const { getUserById } = require("../../models/usersModel");
 const { RecipeComment, Recipe, User } = require("../../models");
 const { notify } = require("../services/notificationService");
 
@@ -23,33 +22,13 @@ function getRoomUniqueUserCount(io, room) {
 }
 
 // Registers all recipe discussion events on the Socket.IO server.
-// Each connection is validated against the userId sent in the handshake auth object.
+// socket.authUser is set by the io.use() middleware in socket/index.js before this fires.
 function registerRecipeDiscussion(io) {
-    io.on("connection", async (socket) => {
-        // Validate the connecting user before allowing any events
-        const userId = Number(socket.handshake.auth.userId);
-
-        if (!userId) {
-            socket.disconnect(true);
-            return;
-        }
-
-        let authUser;
-        try {
-            authUser = await getUserById(userId);
-        } catch (err) {
-            console.error("[socket] auth lookup failed:", err.message);
-            socket.disconnect(true);
-            return;
-        }
-
-        if (!authUser) {
-            socket.disconnect(true);
-            return;
-        }
-
-        socket.authUser = authUser;
-        console.log(`[socket] user authenticated: userId=${userId}, socket=${socket.id}`);
+    io.on("connection", (socket) => {
+        // authUser is guaranteed by middleware — handler is synchronous so all
+        // listeners are registered before the client can emit any events.
+        const userId = socket.authUser.userId;
+        console.log(`[socket] discussion handler: userId=${userId}, socket=${socket.id}`);
 
         // Track which recipe rooms this socket has joined so the disconnect handler
         // can broadcast updated counts even though socket.rooms is empty at that point.
