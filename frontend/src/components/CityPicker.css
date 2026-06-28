@@ -1,0 +1,22 @@
+/* Styles specific to the "Other" city mode in CityPicker. */
+
+.city-picker-other-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.city-picker-custom-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.city-picker-custom-label {
+    margin: 0;
+
+    color: #55705d;
+
+    font-size: 14px;
+    font-weight: 700;
+}

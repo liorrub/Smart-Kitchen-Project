@@ -1,0 +1,67 @@
+.not-found-page {
+    min-height: 60vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 48px 24px;
+}
+
+.not-found-card {
+    width: min(520px, 100%);
+    padding: 48px 40px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+
+    background: #ffffff;
+    border: 1px solid rgba(204, 96, 137, 0.3);
+    border-radius: 28px;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+}
+
+.not-found-code {
+    margin: 0 0 8px;
+
+    color: #b91c1c;
+
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.not-found-title {
+    margin: 0 0 16px;
+
+    color: #1f3d2b;
+
+    font-size: 1.9rem;
+    font-weight: 900;
+}
+
+.not-found-message {
+    margin: 0 0 32px;
+
+    color: #55705d;
+
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+/* Override danger variant: solid-filled from the start, matching the primary pattern but in pink. */
+.not-found-card .app-button-danger {
+    background: #cc6089;
+    color: #ffffff;
+    box-shadow: 0 10px 22px rgba(204, 96, 137, 0.22);
+}
+
+.not-found-card .app-button-danger:hover:not(:disabled) {
+    background: #b84d75;
+    box-shadow: 0 14px 28px rgba(204, 96, 137, 0.3);
+}
