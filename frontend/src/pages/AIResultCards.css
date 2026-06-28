@@ -301,6 +301,11 @@
     font-weight: 750;
 }
 
+/* Full-width instructions section rendered below the 2-col grid in the suggestion modal */
+.ai-sugg-instructions {
+    margin-top: 24px;
+}
+
 /* "Why this recipe?" explanation text in the modal */
 .ai-sugg-modal-why {
     margin: 0;

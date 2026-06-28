@@ -304,9 +304,18 @@ function AISuggestionModal({ suggestion, index, onClose }) {
                         <article className="recipe-detail-card">
                             <div className="recipe-card-title">
                                 <span>🧂</span>
-                                <h3>Main Ingredients</h3>
+                                <h3>Ingredients</h3>
                             </div>
-                            {Array.isArray(suggestion.mainIngredients) && suggestion.mainIngredients.length > 0 ? (
+                            {Array.isArray(suggestion.ingredients) && suggestion.ingredients.length > 0 ? (
+                                <ul className="ai-ingredient-list">
+                                    {suggestion.ingredients.map((ing, j) => (
+                                        <li key={j} className="ai-ingredient-item">
+                                            <span className="ai-ingredient-qty">{ing.quantity} {ing.unit}</span>
+                                            <span className="ai-ingredient-name">{ing.name}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : Array.isArray(suggestion.mainIngredients) && suggestion.mainIngredients.length > 0 ? (
                                 <ul className="ai-sugg-ing-list">
                                     {suggestion.mainIngredients.map((ing, j) => (
                                         <li key={j}>{ing}</li>
@@ -327,6 +336,23 @@ function AISuggestionModal({ suggestion, index, onClose }) {
                             </article>
                         )}
                     </section>
+
+                    {Array.isArray(suggestion.instructions) && suggestion.instructions.length > 0 && (
+                        <section className="recipe-detail-card ai-sugg-instructions">
+                            <div className="recipe-card-title">
+                                <span>📋</span>
+                                <h3>Preparation Steps</h3>
+                            </div>
+                            <ol className="ai-step-list">
+                                {suggestion.instructions.map((step, i) => (
+                                    <li key={i} className="ai-step-item">
+                                        <span className="ai-step-number">{i + 1}</span>
+                                        <span className="ai-step-text">{step}</span>
+                                    </li>
+                                ))}
+                            </ol>
+                        </section>
+                    )}
                 </div>
             </div>
         </div>

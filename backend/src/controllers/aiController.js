@@ -59,12 +59,14 @@ function buildSuggestionsPrompt(user, pantryItems = []) {
         ? `\n- Available pantry items: ${pantryItems.join(", ")}`
         : "";
 
-    return `You are a culinary recommendation assistant. Suggest 3 personalized recipe ideas.
+    return `You are a culinary recommendation assistant. Suggest 3 personalized recipes as complete, cook-ready recipes.
 
 User profile:
 - Dietary restrictions: ${dietary}
 - Favorite cuisines: ${cuisine}
 - Cooking skill level: ${user.cookingLevel || "beginner"}${pantryLine}
+
+Each recipe must include a full ingredients list with realistic quantities and units, and at least 5 ordered preparation steps that are practical and specific.
 
 Return ONLY a valid JSON array with exactly 3 items, no extra text, no markdown:
 [
@@ -75,6 +77,16 @@ Return ONLY a valid JSON array with exactly 3 items, no extra text, no markdown:
     "difficulty": "easy",
     "estimatedTime": "30 minutes",
     "mainIngredients": ["ingredient1", "ingredient2"],
+    "ingredients": [
+      { "name": "ingredient name", "quantity": "2", "unit": "cups" }
+    ],
+    "instructions": [
+      "Prepare all ingredients: wash, peel, and chop as needed.",
+      "Heat a pan over medium heat and add oil or butter.",
+      "Add the base ingredients and cook, stirring occasionally.",
+      "Add remaining ingredients and season to taste.",
+      "Finish cooking until done, then plate and serve hot."
+    ],
     "whySuggested": "Brief reason this matches the user"
   }
 ]`;
