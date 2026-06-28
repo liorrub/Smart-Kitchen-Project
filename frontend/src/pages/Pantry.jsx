@@ -36,6 +36,8 @@ const locationOptions = [
     { value: "freezer", label: "Freezer" }
 ];
 
+const PAGE_SIZE = 9;
+
 // Format a raw date value as a short localized "DD/MM/YYYY" string.
 function formatDate(value) {
     if (!value) {
@@ -124,6 +126,7 @@ function Pantry() {
     });
 
     const [filter, setFilter] = useState("all");
+    const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
@@ -204,6 +207,11 @@ function Pantry() {
         };
     }, [editingItem]);
 
+    // Reset to page 1 when the filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter]);
+
     // Filter items expiring within 7 days for the warning banner at the top of the page.
     const expiringSoonItems = useMemo(() => {
         return pantryItems.filter((item) => isItemExpiringSoon(item));
@@ -225,6 +233,12 @@ function Pantry() {
 
         return pantryItems;
     }, [pantryItems, filter]);
+
+    const totalPages = Math.max(1, Math.ceil(visibleItems.length / PAGE_SIZE));
+    const pagedItems = useMemo(
+        () => visibleItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+        [visibleItems, currentPage]
+    );
 
     const totalCount = pantryItems.length;
 
@@ -904,7 +918,7 @@ function Pantry() {
                     </div>
                 ) : (
                     <div className="pantry-items-list">
-                        {visibleItems.map((item) => {
+                        {pagedItems.map((item) => {
                             const expired = isItemExpired(item);
                             const expiringSoon = isItemExpiringSoon(item);
 
@@ -983,6 +997,27 @@ function Pantry() {
                                 </article>
                             );
                         })}
+                    </div>
+                )}
+                {visibleItems.length > 0 && totalPages > 1 && (
+                    <div className="pantry-pagination">
+                        <button
+                            type="button"
+                            className="pantry-pagination-btn"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(p => p - 1)}
+                        >
+                            ← Previous
+                        </button>
+                        <span className="pantry-pagination-info">Page {currentPage} of {totalPages}</span>
+                        <button
+                            type="button"
+                            className="pantry-pagination-btn"
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(p => p + 1)}
+                        >
+                            Next →
+                        </button>
                     </div>
                 )}
             </section>

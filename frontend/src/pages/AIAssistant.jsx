@@ -26,6 +26,8 @@ import { API_BASE_URL } from "../utils/apiConfig";
 import { getAuthHeaders, getStoredUser } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
 
+const HISTORY_PAGE_SIZE = 8;
+
 const AI_FEATURES = [
     {
         id: "recipe-generator",
@@ -414,6 +416,7 @@ function AIAssistant() {
     const [aiError, setAiError]         = useState("");
     const [selectedSuggestion, setSelectedSuggestion]       = useState(null);
     const [selectedSuggestionIdx, setSelectedSuggestionIdx] = useState(0);
+    const [historyPage, setHistoryPage] = useState(1);
 
     // Load history, ingredient catalog, and user's pantry on mount
     useEffect(() => {
@@ -462,6 +465,7 @@ function AIAssistant() {
         try {
             const data = await getAIHistory();
             setHistory(normalizeHistory(data));
+            setHistoryPage(1);
         } catch {
             // non-critical — history display is secondary to the AI result
         }
@@ -584,6 +588,12 @@ function AIAssistant() {
     }, [pantryItems, allIngredients]);
 
     const visibleHistory = useMemo(() => history, [history]);
+
+    const totalHistoryPages = Math.max(1, Math.ceil(visibleHistory.length / HISTORY_PAGE_SIZE));
+    const pagedHistory = useMemo(
+        () => visibleHistory.slice((historyPage - 1) * HISTORY_PAGE_SIZE, historyPage * HISTORY_PAGE_SIZE),
+        [visibleHistory, historyPage]
+    );
 
     // ── Render ──────────────────────────────────────────────────────────────
 
@@ -821,7 +831,7 @@ function AIAssistant() {
 
                 {!loadingHistory && visibleHistory.length > 0 && (
                     <div className="ai-history-list">
-                        {visibleHistory.map((historyItem) => (
+                        {pagedHistory.map((historyItem) => (
                             <div
                                 key={historyItem.historyId}
                                 className={[
@@ -856,6 +866,27 @@ function AIAssistant() {
                                 </button>
                             </div>
                         ))}
+                    </div>
+                )}
+                {visibleHistory.length > 0 && totalHistoryPages > 1 && (
+                    <div className="ai-pagination">
+                        <button
+                            type="button"
+                            className="ai-pagination-btn"
+                            disabled={historyPage === 1}
+                            onClick={() => setHistoryPage(p => p - 1)}
+                        >
+                            ← Previous
+                        </button>
+                        <span className="ai-pagination-info">Page {historyPage} of {totalHistoryPages}</span>
+                        <button
+                            type="button"
+                            className="ai-pagination-btn"
+                            disabled={historyPage === totalHistoryPages}
+                            onClick={() => setHistoryPage(p => p + 1)}
+                        >
+                            Next →
+                        </button>
                     </div>
                 )}
             </FormCard>

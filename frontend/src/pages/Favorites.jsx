@@ -20,12 +20,15 @@ import { API_BASE_URL } from "../utils/apiConfig";
 
 const RECIPES_API_URL = `${API_BASE_URL}/recipes`;
 
+const PAGE_SIZE = 8;
+
 function Favorites() {
     const [favorites, setFavorites] = useState([]);
     const [recipes, setRecipes] = useState([]);
     const [selectedRecipe, setSelectedRecipe] = useState(null);
 
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
     const [removingRecipeId, setRemovingRecipeId] = useState(null);
     const [error, setError] = useState("");
     const [loadError, setLoadError] = useState("");
@@ -118,6 +121,12 @@ function Favorites() {
     const quickRecipesCount = favoriteRecipes.filter(
         (favorite) => Number(favorite.recipe.totalTime || 0) <= 30
     ).length;
+
+    const totalPages = Math.max(1, Math.ceil(favoriteRecipes.length / PAGE_SIZE));
+    const pagedRecipes = useMemo(
+        () => favoriteRecipes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+        [favoriteRecipes, currentPage]
+    );
 
     function handleRemoveClick(recipe) {
         setConfirmRemove(recipe);
@@ -268,7 +277,7 @@ function Favorites() {
                     </div>
                 ) : (
                     <div className="favorites-grid">
-                        {favoriteRecipes.map((favorite) => (
+                        {pagedRecipes.map((favorite) => (
                             <RecipeCard
                                 key={favorite.favoriteId}
                                 recipe={favorite.recipe}
@@ -283,6 +292,27 @@ function Favorites() {
                                 favoriteLoadingText="Removing..."
                             />
                         ))}
+                    </div>
+                )}
+                {favoriteRecipes.length > 0 && totalPages > 1 && (
+                    <div className="favorites-pagination">
+                        <button
+                            type="button"
+                            className="favorites-pagination-btn"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(p => p - 1)}
+                        >
+                            ← Previous
+                        </button>
+                        <span className="favorites-pagination-info">Page {currentPage} of {totalPages}</span>
+                        <button
+                            type="button"
+                            className="favorites-pagination-btn"
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(p => p + 1)}
+                        >
+                            Next →
+                        </button>
                     </div>
                 )}
             </section>

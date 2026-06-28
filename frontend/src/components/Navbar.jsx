@@ -1,6 +1,6 @@
 import "./Navbar.css";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import logo from "../assets/logo.png";
@@ -42,6 +42,35 @@ const menuLinks = [
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+    const menuWrapperRef = useRef(null);
+    const searchAreaRef = useRef(null);
+
+    // Close the menu dropdown and search popover when clicking outside them
+    useEffect(() => {
+        function handleOutside(e) {
+            if (isMenuOpen && menuWrapperRef.current && !menuWrapperRef.current.contains(e.target)) {
+                setIsMenuOpen(false);
+            }
+            if (isSearchOpen && searchAreaRef.current && !searchAreaRef.current.contains(e.target)) {
+                setIsSearchOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleOutside);
+        return () => document.removeEventListener("mousedown", handleOutside);
+    }, [isMenuOpen, isSearchOpen]);
+
+    // Close both on Escape key
+    useEffect(() => {
+        function handleEscape(e) {
+            if (e.key === "Escape") {
+                setIsMenuOpen(false);
+                setIsSearchOpen(false);
+            }
+        }
+        document.addEventListener("keydown", handleEscape);
+        return () => document.removeEventListener("keydown", handleEscape);
+    }, []);
 
     const { user, setUser } = useAuth();
     const storedUser = getStoredUser();
@@ -97,7 +126,7 @@ function Navbar() {
                     Feed
                 </NavLink>
 
-                <div className="navbar-menu-wrapper">
+                <div className="navbar-menu-wrapper" ref={menuWrapperRef}>
                     <button
                         type="button"
                         className={
@@ -143,7 +172,7 @@ function Navbar() {
                 </NavLink>
             </nav>
 
-            <div className="navbar-search-area">
+            <div className="navbar-search-area" ref={searchAreaRef}>
                 <button
                     type="button"
                     className="navbar-search-btn"

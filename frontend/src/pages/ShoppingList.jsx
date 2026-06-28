@@ -31,6 +31,8 @@ const unitOptions = [
     { value: "pack", label: "Pack" }
 ];
 
+const PAGE_SIZE = 9;
+
 // Local wrapper: reads from sessionStorage (tab-local) so each tab keeps its own user.
 function getStoredUser() {
     try {
@@ -53,6 +55,7 @@ function ShoppingList() {
     });
 
     const [filter, setFilter] = useState("all");
+    const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
@@ -71,6 +74,11 @@ function ShoppingList() {
         loadPageData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // Reset to page 1 when the filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter]);
 
     // Load shopping list, ingredients, stores, and recommendations in parallel on page open.
     async function loadPageData() {
@@ -186,6 +194,12 @@ function ShoppingList() {
 
         return shoppingItems;
     }, [shoppingItems, filter]);
+
+    const totalPages = Math.max(1, Math.ceil(visibleItems.length / PAGE_SIZE));
+    const pagedItems = useMemo(
+        () => visibleItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+        [visibleItems, currentPage]
+    );
 
     // Index stores by storeId for fast lookups when resolving recommendation details.
     const storesById = useMemo(() => {
@@ -669,7 +683,7 @@ function ShoppingList() {
                     </div>
                 ) : (
                     <div className="shopping-items-list">
-                        {visibleItems.map((item) => (
+                        {pagedItems.map((item) => (
                             <article
                                 key={item.shoppingItemId}
                                 className={
@@ -715,6 +729,27 @@ function ShoppingList() {
                                 </button>
                             </article>
                         ))}
+                    </div>
+                )}
+                {visibleItems.length > 0 && totalPages > 1 && (
+                    <div className="shopping-pagination">
+                        <button
+                            type="button"
+                            className="shopping-pagination-btn"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(p => p - 1)}
+                        >
+                            ← Previous
+                        </button>
+                        <span className="shopping-pagination-info">Page {currentPage} of {totalPages}</span>
+                        <button
+                            type="button"
+                            className="shopping-pagination-btn"
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(p => p + 1)}
+                        >
+                            Next →
+                        </button>
                     </div>
                 )}
             </section>
