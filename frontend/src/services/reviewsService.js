@@ -90,7 +90,7 @@ export async function getReviewReports(status) {
 
 // Admin: update a review report's status.
 export async function updateReviewReport(reportId, data) {
-    const response = await axios.patch(
+    const response = await axios.put(
         `${API_BASE_URL}/review-reports/${reportId}`,
         data,
         { headers: getAuthHeaders() }
