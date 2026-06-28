@@ -116,7 +116,11 @@ function RecipeDiscussion() {
         const socket = connectSocket(currentUser.userId);
         socketRef.current = socket;
 
-        socket.emit("joinRecipeRoom", { recipeId: Number(recipeId) });
+        // Defined before registering listeners so it can be referenced in the
+        // "connect" handler (reconnect) and in the initial join below.
+        function joinRoom() {
+            socket.emit("joinRecipeRoom", { recipeId: Number(recipeId) });
+        }
 
         // Append incoming comment to the local list
         socket.on("newRecipeComment", (comment) => {
@@ -145,6 +149,8 @@ function RecipeDiscussion() {
             );
         });
 
+        // roomUserCount is registered BEFORE the joinRoom emit so the initial
+        // response from the server is never missed.
         socket.on("roomUserCount", ({ count }) => {
             setViewerCount(count);
         });
@@ -176,7 +182,15 @@ function RecipeDiscussion() {
             );
         });
 
+        // Re-join the room automatically after a reconnect (server restart, network drop).
+        // Without this, the user would be absent from the room and show count 0.
+        socket.on("connect", joinRoom);
+
+        // All listeners are registered — now safe to emit the join.
+        joinRoom();
+
         return () => {
+            socket.off("connect", joinRoom);
             socket.emit("leaveRecipeRoom", { recipeId: Number(recipeId) });
             socket.off("newRecipeComment");
             socket.off("recipeCommentEdited");

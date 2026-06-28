@@ -51,10 +51,15 @@ function registerRecipeDiscussion(io) {
         socket.authUser = authUser;
         console.log(`[socket] user authenticated: userId=${userId}, socket=${socket.id}`);
 
+        // Track which recipe rooms this socket has joined so the disconnect handler
+        // can broadcast updated counts even though socket.rooms is empty at that point.
+        const joinedRecipeRooms = new Set();
+
         // Join the recipe room and broadcast the updated viewer count
         socket.on("joinRecipeRoom", ({ recipeId }) => {
             const room = `recipe-${recipeId}`;
             socket.join(room);
+            joinedRecipeRooms.add(room);
             const count = getRoomUniqueUserCount(io, room);
             io.to(room).emit("roomUserCount", { count });
             console.log(`[socket] joinRecipeRoom: userId=${userId} joined recipe-${recipeId} (${count} unique viewers)`);
@@ -64,6 +69,7 @@ function registerRecipeDiscussion(io) {
         socket.on("leaveRecipeRoom", ({ recipeId }) => {
             const room = `recipe-${recipeId}`;
             socket.leave(room);
+            joinedRecipeRooms.delete(room);
             const count = getRoomUniqueUserCount(io, room);
             io.to(room).emit("roomUserCount", { count });
             console.log(`[socket] leaveRecipeRoom: userId=${userId} left recipe-${recipeId} (${count} unique viewers)`);
@@ -248,15 +254,17 @@ function registerRecipeDiscussion(io) {
             socket.to(room).emit("userStoppedTyping", { userId: socket.authUser.userId });
         });
 
-        // On disconnect, clear the typing indicator in every room this socket was in
+        // On disconnect: socket.rooms is empty at this point in Socket.IO 4.x,
+        // so we use joinedRecipeRooms (tracked manually above) to broadcast
+        // the updated viewer count and clear the typing indicator for each room.
         socket.on("disconnect", () => {
             console.log(`[socket] discussion disconnect: userId=${userId} (socket=${socket.id})`);
-            for (const room of socket.rooms) {
-                // socket.rooms always includes the socket's own id — skip it
-                if (room !== socket.id) {
-                    socket.to(room).emit("userStoppedTyping", { userId: socket.authUser.userId });
-                }
+            for (const room of joinedRecipeRooms) {
+                const count = getRoomUniqueUserCount(io, room);
+                io.to(room).emit("roomUserCount", { count });
+                io.to(room).emit("userStoppedTyping", { userId: socket.authUser.userId });
             }
+            joinedRecipeRooms.clear();
         });
     });
 }
