@@ -131,7 +131,7 @@ Recipe objects include an `ingredients` array with full ingredient details. Reci
 | Method | Path | Access | Headers | Query Params | Request Body | Success Response Example | Error Response Example | Status Codes |
 |---|---|---|---|---|---|---|---|---|
 | GET | `/api/recipes` | public | None | `category`, `cuisine`, `difficulty`, `creatorId` | None | `{"success":true,"data":[{"recipeId":101,"title":"Simple Pasta","instructions":"...","difficulty":"easy","cuisine":"italian","category":"dinner","creatorId":1,"prepTime":30,"cookTime":20,"totalTime":50,"servings":2,"calories":400,"tags":["quick","easy"],"allergens":["gluten"],"approvalStatus":"approved","imageUrl":"/uploads/recipes/pasta.jpg","imagePositionX":50,"imagePositionY":50,"ingredients":[{"recipeIngredientId":1,"ingredientId":1,"name":"Flour","category":"pantry","isAllergen":true,"quantity":200,"unit":"gram"}]}],"error":null}` | — | 200 |
-| GET | `/api/recipes/my-recipes` | influencer, chef, admin | `x-user-id`, `x-user-role` | None | None | `{"success":true,"data":[{"recipeId":201,"title":"My Pending Recipe","approvalStatus":"pending","creatorId":6,"ingredients":[...]}],"error":null}` | `{"success":false,"data":null,"error":{"code":"FORBIDDEN","message":"You do not have permission to perform this action.","details":{}}}` | 200, 403 |
+| GET | `/api/recipes/my-recipes` | influencer only | `x-user-id`, `x-user-role: influencer` | None | None | `{"success":true,"data":[{"recipeId":201,"title":"My Pending Recipe","approvalStatus":"pending","creatorId":6,"ingredients":[...]}],"error":null}` | `{"success":false,"data":null,"error":{"code":"FORBIDDEN","message":"You do not have permission to perform this action.","details":{}}}` | 200, 403 |
 | GET | `/api/recipes/pending/count` | admin only | `x-user-id`, `x-user-role: admin` | None | None | `{"success":true,"data":{"count":3},"error":null}` | `{"success":false,"data":null,"error":{"code":"FORBIDDEN","message":"You do not have permission to perform this action.","details":{}}}` | 200, 403 |
 | GET | `/api/recipes/pending` | admin only | `x-user-id`, `x-user-role: admin` | None | None | `{"success":true,"data":[{"recipeId":201,"title":"My Pending Recipe","approvalStatus":"pending","creatorId":6,"ingredients":[...]}],"error":null}` | `{"success":false,"data":null,"error":{"code":"FORBIDDEN","message":"You do not have permission to perform this action.","details":{}}}` | 200, 403 |
 | GET | `/api/recipes/:id` | public (approved) / self or admin (non-approved) | `x-user-id`, `x-user-role` (optional for approved) | None | None | `{"success":true,"data":{"recipeId":101,"title":"Simple Pasta","approvalStatus":"approved","imageUrl":"/uploads/recipes/pasta.jpg","imagePositionX":50,"imagePositionY":50,"ingredients":[...]},"error":null}` | `{"success":false,"data":null,"error":{"code":"RECIPE_NOT_FOUND","message":"Recipe not found","details":{}}}` | 200, 404 |
@@ -326,7 +326,7 @@ A user cannot submit a new request while one with `"pending"` status exists. Aft
 | Method | Path | Access | Headers | Success Response Example | Error Response Example | Status Codes |
 |---|---|---|---|---|---|---|
 | POST | `/api/users/:id/follow` | any authenticated user | `x-user-id`, `x-user-role` | `{"success":true,"data":{"followId":5,"followerId":4,"followeeId":1,"createdAt":"2026-06-22T10:00:00.000Z"},"error":null}` | `{"success":false,"data":null,"error":{"code":"FORBIDDEN","message":"You cannot follow yourself","details":{}}}` | 201, 400, 403, 404, 409 |
-| DELETE | `/api/users/:id/unfollow` | any authenticated user | `x-user-id`, `x-user-role` | `{"success":true,"data":{"message":"Unfollowed successfully"},"error":null}` | `{"success":false,"data":null,"error":{"code":"NOT_FOLLOWING","message":"You are not following this user","details":{}}}` | 200, 403, 404 |
+| DELETE | `/api/users/:id/follow` | any authenticated user | `x-user-id`, `x-user-role` | `{"success":true,"data":{"message":"Unfollowed successfully"},"error":null}` | `{"success":false,"data":null,"error":{"code":"NOT_FOLLOWING","message":"You are not following this user","details":{}}}` | 200, 403, 404 |
 | GET | `/api/users/:id/followers` | any authenticated user | `x-user-id`, `x-user-role` | `{"success":true,"data":[{"userId":4,"firstName":"Daniel","lastName":"Levi","username":"daniel_levi","avatarKey":"masculine","userRole":"user"}],"error":null}` | — | 200, 403 |
 | GET | `/api/users/:id/following` | any authenticated user | `x-user-id`, `x-user-role` | `{"success":true,"data":[{"userId":1,"firstName":"Lior","lastName":"Rubinshtein","username":"lior_rubinshtein","avatarKey":"chef_masculine","userRole":"chef"}],"error":null}` | — | 200, 403 |
 
@@ -348,13 +348,13 @@ A user cannot submit a new request while one with `"pending"` status exists. Aft
 
 ---
 
-# Discover
+# Feed Creators
 
 | Method | Path | Access | Headers | Success Response Example | Status Codes |
 |---|---|---|---|---|---|
-| GET | `/api/discover` | any authenticated user | `x-user-id`, `x-user-role` | `{"success":true,"data":[{"userId":1,"firstName":"Lior","lastName":"Rubinshtein","username":"lior_rubinshtein","avatarKey":"chef_masculine","userRole":"chef","city":"Gan Yavne","cookingLevel":"advanced","recipeCount":3,"avgRating":4.5,"reviewCount":8,"followerCount":0}],"error":null}` | 200, 401 |
+| GET | `/api/feed/creators` | any authenticated user | `x-user-id`, `x-user-role` | `{"success":true,"data":[{"userId":1,"firstName":"Lior","lastName":"Rubinshtein","username":"lior_rubinshtein","avatarKey":"chef_masculine","userRole":"chef","city":"Gan Yavne","cookingLevel":"advanced","recipeCount":3,"avgRating":4.5,"reviewCount":8,"followerCount":0}],"error":null}` | 200, 401 |
 
-**Note:** Returns all users with `userRole` of `chef` or `influencer`, ordered by `recipeCount` descending. Includes aggregated stats (`recipeCount`, `avgRating`, `reviewCount`).
+**Note:** Returns all users with `userRole` of `chef` or `influencer`, ordered by `recipeCount` descending. Includes aggregated stats (`recipeCount`, `avgRating`, `reviewCount`). Used by the Feed page carousel ("Creators you may like").
 
 ---
 
@@ -392,7 +392,7 @@ A user cannot submit a new request while one with `"pending"` status exists. Aft
 |---|---|---|---|---|---|---|---|---|
 | GET | `/api/review-reports/count` | admin only | `x-user-id`, `x-user-role: admin` | None | None | `{"success":true,"data":{"count":5},"error":null}` | `{"success":false,"data":null,"error":{"code":"FORBIDDEN","message":"You do not have permission to perform this action.","details":{}}}` | 200, 403 |
 | GET | `/api/review-reports` | admin only | `x-user-id`, `x-user-role: admin` | `status` (open/dismissed/actioned) | None | `{"success":true,"data":[{"reportId":1,"reviewId":3,"reporterUserId":4,"reason":"spam","details":null,"status":"open","reviewedByUserId":null,"reviewedAt":null,"createdAt":"2026-06-10T10:00:00.000Z"}],"error":null}` | `{"success":false,"data":null,"error":{"code":"FORBIDDEN","message":"You do not have permission to perform this action.","details":{}}}` | 200, 403 |
-| PATCH | `/api/review-reports/:reportId` | admin only | `x-user-id`, `x-user-role: admin`, `Content-Type: application/json` | None | `{"status":"dismissed"}` | `{"success":true,"data":{"reportId":1,"status":"dismissed","reviewedByUserId":2,"reviewedAt":"2026-06-22T10:00:00.000Z"},"error":null}` | `{"success":false,"data":null,"error":{"code":"REPORT_NOT_FOUND","message":"Report not found","details":{}}}` | 200, 400, 403, 404 |
+| PUT | `/api/review-reports/:reportId` | admin only | `x-user-id`, `x-user-role: admin`, `Content-Type: application/json` | None | `{"status":"dismissed"}` | `{"success":true,"data":{"reportId":1,"status":"dismissed","reviewedByUserId":2,"reviewedAt":"2026-06-22T10:00:00.000Z"},"error":null}` | `{"success":false,"data":null,"error":{"code":"REPORT_NOT_FOUND","message":"Report not found","details":{}}}` | 200, 400, 403, 404 |
 | DELETE | `/api/review-reports/:reportId/delete-review` | admin only | `x-user-id`, `x-user-role: admin` | None | None | `{"success":true,"data":{"message":"Review deleted through moderation"},"error":null}` | `{"success":false,"data":null,"error":{"code":"REPORT_NOT_FOUND","message":"Report not found","details":{}}}` | 200, 403, 404 |
 
 **Valid `status` values:** `open`, `dismissed`, `actioned`  

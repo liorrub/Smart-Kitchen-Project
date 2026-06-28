@@ -1,34 +1,13 @@
 {
   "info": {
-    "_postman_id": "450b2ef8-e64a-45a0-b257-b0b24d9e3502",
+    "_postman_id": "97f82f53-bff3-4f08-a3a5-3b62da1573b1",
     "name": "Smart Kitchen API",
-    "description": "Reduced collection (~71 requests). Run in order: Test Setup first, Cleanup last.\n\nSeeded users:\n- adminId=2 (Ellen Levin)\n- chefId=1 (Lior Rubinshtein)\n- influencerId=6 (Shir Mizrahi)\n- userId=4 (Daniel Levi)\n\nTest data is created fresh each run and deleted in Cleanup.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "description": "Reduced collection (~90 requests). Run in order: Test Setup first, Cleanup last.\n\nSeeded users:\n- adminId=2 (Ellen Levin)\n- chefId=1 (Lior Rubinshtein)\n- influencerId=6 (Shir Mizrahi)\n- userId=4 (Daniel Levi)\n\nTest data is created fresh each run and deleted in Cleanup.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53456678",
+    "_collection_link": "https://go.postman.co/collection/53456678-97f82f53-bff3-4f08-a3a5-3b62da1573b1?source=collection_link"
   },
-  "variable": [
-    { "key": "baseUrl",                "value": "http://localhost:3000/api" },
-    { "key": "adminId",                "value": "2" },
-    { "key": "adminRole",              "value": "admin" },
-    { "key": "chefId",                 "value": "1" },
-    { "key": "chefRole",               "value": "chef" },
-    { "key": "influencerId",           "value": "6" },
-    { "key": "influencerRole",         "value": "influencer" },
-    { "key": "userId",                 "value": "4" },
-    { "key": "userRole",               "value": "user" },
-    { "key": "testUserId",             "value": "" },
-    { "key": "testRecipeId",           "value": "" },
-    { "key": "testInfluencerRecipeId", "value": "" },
-    { "key": "testReviewId",           "value": "" },
-    { "key": "testPantryItemId",       "value": "" },
-    { "key": "testShoppingItemId",     "value": "" },
-    { "key": "testMealPlanItemId",     "value": "" },
-    { "key": "testChefRequestId",      "value": "" },
-    { "key": "testIngredientId",       "value": "" },
-    { "key": "testAiHistoryId",        "value": "" },
-    { "key": "testReportId",           "value": "" }
-  ],
   "item": [
-
     {
       "name": "1. Test Setup",
       "item": [
@@ -40,12 +19,10 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "// Clear all test variables from any previous run so stale IDs don't cause 404s",
                   "var vars = ['testUserId','testRecipeId','testInfluencerRecipeId','testReviewId',",
                   "  'testPantryItemId','testShoppingItemId','testMealPlanItemId',",
                   "  'testChefRequestId','testIngredientId','testAiHistoryId','testReportId'];",
                   "vars.forEach(function(v) { pm.collectionVariables.set(v, ''); });",
-                  "// Store a unique timestamp for email/username to prevent email collision on repeat runs",
                   "pm.collectionVariables.set('testRunTs', Date.now());"
                 ]
               }
@@ -65,24 +42,70 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"Kitchen\",\n  \"email\": \"testuser.{{testRunTs}}@test.com\",\n  \"password\": \"TestPass123\",\n  \"username\": \"kitchen_{{testRunTs}}\",\n  \"userRole\": \"user\",\n  \"city\": \"Tel Aviv\",\n  \"preferences\": {},\n  \"cookingLevel\": \"beginner\",\n  \"age\": 25\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "2. Auth",
       "item": [
+        {
+          "name": "Register New User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Demo\",\n  \"lastName\": \"User\",\n  \"email\": \"demo.register@test.com\",\n  \"password\": \"DemoPass123\",\n  \"username\": \"demo_register\",\n  \"city\": \"Tel Aviv\",\n  \"cookingLevel\": \"beginner\",\n  \"age\": 28,\n  \"avatarKey\": \"healthy_feminine\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
         {
           "name": "Login - Chef",
           "request": {
@@ -91,9 +114,22 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"lior@project.com\",\n  \"password\": \"password_1\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
           },
           "response": []
         },
@@ -105,9 +141,22 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"ellen@project.com\",\n  \"password\": \"password_2\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
           },
           "response": []
         },
@@ -119,9 +168,22 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"shir@project.com\",\n  \"password\": \"password_6\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
           },
           "response": []
         },
@@ -133,26 +195,114 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"ellen@project.com\",\n  \"password\": \"wrongpass\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User (auth/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "3. Users & Settings",
       "item": [
         {
-          "name": "Get Current User",
+          "name": "Get Current User (users/me)",
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id", "value": "{{chefId}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth","me"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
           },
           "response": []
         },
@@ -161,10 +311,50 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/search?q=lior",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "lior"
+                }
+              ]
+            }
           },
           "response": []
         },
@@ -173,10 +363,27 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/1", "host": ["{{baseUrl}}"], "path": ["users","1"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
           },
           "response": []
         },
@@ -185,7 +392,17 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/users/1/profile", "host": ["{{baseUrl}}"], "path": ["users","1","profile"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/1/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "profile"
+              ]
+            }
           },
           "response": []
         },
@@ -194,15 +411,36 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"cookingLevel\": \"intermediate\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -211,15 +449,37 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"currentPassword\": \"TestPass123\",\n  \"newPassword\": \"TestPass456\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/change-password", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","change-password"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "change-password"
+              ]
+            }
           },
           "response": []
         },
@@ -228,9 +488,26 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id", "value": "{{chefId}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/settings", "host": ["{{baseUrl}}"], "path": ["settings"] }
+            "url": {
+              "raw": "{{baseUrl}}/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settings"
+              ]
+            }
           },
           "response": []
         },
@@ -239,20 +516,57 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id", "value": "{{testUserId}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"city\": \"Haifa\",\n  \"preferences\": {\n    \"dietary\": [\"vegetarian\"],\n    \"cuisine\": [\"italian\"]\n  }\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/settings", "host": ["{{baseUrl}}"], "path": ["settings"] }
+            "url": {
+              "raw": "{{baseUrl}}/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Form Options",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/options",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "options"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "4. Recipes",
       "item": [
@@ -261,7 +575,15 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/recipes", "host": ["{{baseUrl}}"], "path": ["recipes"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes"
+              ]
+            }
           },
           "response": []
         },
@@ -270,7 +592,104 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/recipes/101", "host": ["{{baseUrl}}"], "path": ["recipes","101"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/101",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "101"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Pending Recipes Count - Admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/recipes/pending/count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "pending",
+                "count"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Pending Recipes Queue - Admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/recipes/pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "pending"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Recipes - Influencer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{influencerId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{influencerRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/recipes/my-recipes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "my-recipes"
+              ]
+            }
           },
           "response": []
         },
@@ -292,15 +711,35 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Protein Omelette\",\n  \"instructions\": \"Beat eggs, cook in pan, add cheese.\",\n  \"difficulty\": \"easy\",\n  \"cuisine\": \"israeli\",\n  \"category\": \"breakfast\",\n  \"creatorId\": 1,\n  \"prepTime\": 10,\n  \"cookTime\": 10,\n  \"totalTime\": 20,\n  \"servings\": 1,\n  \"calories\": 350,\n  \"tags\": [\"quick\", \"high-protein\"],\n  \"allergens\": [\"eggs\", \"dairy\"],\n  \"ingredients\": [\n    { \"ingredientId\": 2, \"quantity\": 2, \"unit\": \"piece\" },\n    { \"ingredientId\": 6, \"quantity\": 50, \"unit\": \"gram\" }\n  ]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/recipes", "host": ["{{baseUrl}}"], "path": ["recipes"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes"
+              ]
+            }
           },
           "response": []
         },
@@ -322,15 +761,35 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{influencerId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{influencerRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{influencerId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{influencerRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"My Vegan Salad\",\n  \"instructions\": \"Mix vegetables, add dressing, serve fresh.\",\n  \"difficulty\": \"easy\",\n  \"cuisine\": \"israeli\",\n  \"category\": \"lunch\",\n  \"creatorId\": 6,\n  \"prepTime\": 15,\n  \"cookTime\": 0,\n  \"totalTime\": 15,\n  \"servings\": 2,\n  \"calories\": 200,\n  \"tags\": [\"vegan\", \"quick\"],\n  \"allergens\": [],\n  \"ingredients\": [\n    { \"ingredientId\": 4, \"quantity\": 3, \"unit\": \"piece\" }\n  ]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/recipes", "host": ["{{baseUrl}}"], "path": ["recipes"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes"
+              ]
+            }
           },
           "response": []
         },
@@ -339,27 +798,36 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"difficulty\": \"medium\",\n  \"calories\": 450\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/recipes/{{testRecipeId}}", "host": ["{{baseUrl}}"], "path": ["recipes","{{testRecipeId}}"] }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Pending Recipes Queue - Admin",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
-            ],
-            "url": { "raw": "{{baseUrl}}/recipes/pending", "host": ["{{baseUrl}}"], "path": ["recipes","pending"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/{{testRecipeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "{{testRecipeId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -368,16 +836,172 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/recipes/{{testInfluencerRecipeId}}/approve", "host": ["{{baseUrl}}"], "path": ["recipes","{{testInfluencerRecipeId}}","approve"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/{{testInfluencerRecipeId}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "{{testInfluencerRecipeId}}",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Recipe - Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Recipe does not meet quality guidelines.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/recipes/{{testInfluencerRecipeId}}/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "{{testInfluencerRecipeId}}",
+                "reject"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Favorites",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1/favorites",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "favorites"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Favorite",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipeId\": 101\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/favorites",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "favorites"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Favorite",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/favorites/101",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "favorites",
+                "101"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "5. Reviews",
       "item": [
@@ -386,9 +1010,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id", "value": "{{chefId}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/recipes/101/reviews", "host": ["{{baseUrl}}"], "path": ["recipes","101","reviews"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/101/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "101",
+                "reviews"
+              ]
+            }
           },
           "response": []
         },
@@ -410,15 +1053,37 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 5,\n  \"title\": \"Excellent recipe!\",\n  \"comment\": \"Loved this recipe, made it twice already.\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/recipes/101/reviews", "host": ["{{baseUrl}}"], "path": ["recipes","101","reviews"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/101/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "101",
+                "reviews"
+              ]
+            }
           },
           "response": []
         },
@@ -427,15 +1092,38 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 4,\n  \"title\": \"Still Good\",\n  \"comment\": \"Changed my mind slightly\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/recipes/101/reviews/{{testReviewId}}", "host": ["{{baseUrl}}"], "path": ["recipes","101","reviews","{{testReviewId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/101/reviews/{{testReviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "101",
+                "reviews",
+                "{{testReviewId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -444,10 +1132,30 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/recipes/101/reviews/1/helpful", "host": ["{{baseUrl}}"], "path": ["recipes","101","reviews","1","helpful"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/101/reviews/1/helpful",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "101",
+                "reviews",
+                "1",
+                "helpful"
+              ]
+            }
           },
           "response": []
         },
@@ -469,33 +1177,101 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reason\": \"spam\",\n  \"details\": \"This review looks like promotional content.\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/recipes/101/reviews/{{testReviewId}}/report", "host": ["{{baseUrl}}"], "path": ["recipes","101","reviews","{{testReviewId}}","report"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/101/reviews/{{testReviewId}}/report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "101",
+                "reviews",
+                "{{testReviewId}}",
+                "report"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "6. Review Reports",
       "item": [
+        {
+          "name": "Get Reports Count - Admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/review-reports/count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "review-reports",
+                "count"
+              ]
+            }
+          },
+          "response": []
+        },
         {
           "name": "Get All Reports - Admin",
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/review-reports", "host": ["{{baseUrl}}"], "path": ["review-reports"] }
+            "url": {
+              "raw": "{{baseUrl}}/review-reports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "review-reports"
+              ]
+            }
           },
           "response": []
         },
@@ -504,21 +1280,71 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"dismissed\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/review-reports/{{testReportId}}", "host": ["{{baseUrl}}"], "path": ["review-reports","{{testReportId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/review-reports/{{testReportId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "review-reports",
+                "{{testReportId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Review Through Moderation - Admin",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/review-reports/{{testReportId}}/delete-review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "review-reports",
+                "{{testReportId}}",
+                "delete-review"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "7. Comments & Likes",
       "item": [
@@ -527,7 +1353,17 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/recipes/101/comments", "host": ["{{baseUrl}}"], "path": ["recipes","101","comments"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/101/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "101",
+                "comments"
+              ]
+            }
           },
           "response": []
         },
@@ -536,16 +1372,123 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{userId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{userRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{userId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{userRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/comments/100/likes", "host": ["{{baseUrl}}"], "path": ["comments","100","likes"] }
+            "url": {
+              "raw": "{{baseUrl}}/comments/100/likes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "comments",
+                "100",
+                "likes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Like Recipe",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/recipes/101/like",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "101",
+                "like"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unlike Recipe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/recipes/101/like",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "101",
+                "like"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Liked Recipes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1/likes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "likes"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "8. Stores & Ingredients",
       "item": [
@@ -554,7 +1497,15 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/ingredients", "host": ["{{baseUrl}}"], "path": ["ingredients"] }
+            "url": {
+              "raw": "{{baseUrl}}/ingredients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ingredients"
+              ]
+            }
           },
           "response": []
         },
@@ -563,7 +1514,16 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/ingredients/1", "host": ["{{baseUrl}}"], "path": ["ingredients","1"] }
+            "url": {
+              "raw": "{{baseUrl}}/ingredients/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ingredients",
+                "1"
+              ]
+            }
           },
           "response": []
         },
@@ -585,15 +1545,35 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Avocado\",\n  \"category\": \"produce\",\n  \"isAllergen\": false\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\n  \"name\": \"Avocado\",\n  \"category\": \"vegetable\",\n  \"isAllergen\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/ingredients", "host": ["{{baseUrl}}"], "path": ["ingredients"] }
+            "url": {
+              "raw": "{{baseUrl}}/ingredients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ingredients"
+              ]
+            }
           },
           "response": []
         },
@@ -602,15 +1582,36 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Avocado Ripe\",\n  \"category\": \"produce\",\n  \"isAllergen\": false\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\n  \"name\": \"Avocado Ripe\",\n  \"category\": \"vegetable\",\n  \"isAllergen\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/ingredients/{{testIngredientId}}", "host": ["{{baseUrl}}"], "path": ["ingredients","{{testIngredientId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/ingredients/{{testIngredientId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ingredients",
+                "{{testIngredientId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -619,7 +1620,17 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/ingredients/1/stores", "host": ["{{baseUrl}}"], "path": ["ingredients","1","stores"] }
+            "url": {
+              "raw": "{{baseUrl}}/ingredients/1/stores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ingredients",
+                "1",
+                "stores"
+              ]
+            }
           },
           "response": []
         },
@@ -628,7 +1639,15 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/stores", "host": ["{{baseUrl}}"], "path": ["stores"] }
+            "url": {
+              "raw": "{{baseUrl}}/stores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stores"
+              ]
+            }
           },
           "response": []
         },
@@ -637,9 +1656,27 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id", "value": "{{chefId}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/stores/nearby", "host": ["{{baseUrl}}"], "path": ["stores","nearby"] }
+            "url": {
+              "raw": "{{baseUrl}}/stores/nearby",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stores",
+                "nearby"
+              ]
+            }
           },
           "response": []
         },
@@ -648,13 +1685,21 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/stores/1", "host": ["{{baseUrl}}"], "path": ["stores","1"] }
+            "url": {
+              "raw": "{{baseUrl}}/stores/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stores",
+                "1"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "9. Pantry & Shopping List",
       "item": [
@@ -663,10 +1708,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/1/pantry", "host": ["{{baseUrl}}"], "path": ["users","1","pantry"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/1/pantry",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "pantry"
+              ]
+            }
           },
           "response": []
         },
@@ -688,15 +1751,37 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ingredientId\": 1,\n  \"quantity\": 2,\n  \"unit\": \"piece\",\n  \"expiryDate\": \"2027-01-01T00:00:00Z\",\n  \"location\": \"fridge\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/pantry", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","pantry"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/pantry",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "pantry"
+              ]
+            }
           },
           "response": []
         },
@@ -705,15 +1790,38 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"quantity\": 5\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/pantry/{{testPantryItemId}}", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","pantry","{{testPantryItemId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/pantry/{{testPantryItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "pantry",
+                "{{testPantryItemId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -722,10 +1830,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/1/shopping-list", "host": ["{{baseUrl}}"], "path": ["users","1","shopping-list"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/1/shopping-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "shopping-list"
+              ]
+            }
           },
           "response": []
         },
@@ -747,15 +1873,68 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ingredientId\": 1,\n  \"quantity\": 2,\n  \"unit\": \"kg\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/shopping-list", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","shopping-list"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/shopping-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "shopping-list"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Shopping List from Expired Pantry",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1/shopping-list/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "shopping-list",
+                "generate"
+              ]
+            }
           },
           "response": []
         },
@@ -764,10 +1943,29 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/shopping-list/recommendations", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","shopping-list","recommendations"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/shopping-list/recommendations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "shopping-list",
+                "recommendations"
+              ]
+            }
           },
           "response": []
         },
@@ -776,21 +1974,43 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"quantity\": 5,\n  \"completed\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/shopping-list/{{testShoppingItemId}}", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","shopping-list","{{testShoppingItemId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/shopping-list/{{testShoppingItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "shopping-list",
+                "{{testShoppingItemId}}"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "10. Meal Plan",
       "item": [
@@ -799,10 +2019,28 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/1/meal-plan", "host": ["{{baseUrl}}"], "path": ["users","1","meal-plan"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/1/meal-plan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "meal-plan"
+              ]
+            }
           },
           "response": []
         },
@@ -824,15 +2062,68 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"date\": \"2026-07-01\",\n  \"mealType\": \"lunch\",\n  \"itemType\": \"recipe\",\n  \"itemId\": 101,\n  \"calories\": 500,\n  \"notes\": \"Healthy lunch\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/meal-plan", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","meal-plan"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/meal-plan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "meal-plan"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Meal Plan Item",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/meal-plan/{{testMealPlanItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "meal-plan",
+                "{{testMealPlanItemId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -841,21 +2132,43 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"notes\": \"Updated meal note\",\n  \"calories\": 550\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/meal-plan/{{testMealPlanItemId}}", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","meal-plan","{{testMealPlanItemId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/meal-plan/{{testMealPlanItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "meal-plan",
+                "{{testMealPlanItemId}}"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "11. Chef Requests & Admin Approval",
       "item": [
@@ -877,15 +2190,35 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reason\": \"I love cooking and want to share my recipes with the community.\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/chef-requests", "host": ["{{baseUrl}}"], "path": ["chef-requests"] }
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests"
+              ]
+            }
           },
           "response": []
         },
@@ -894,10 +2227,27 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/chef-requests/my", "host": ["{{baseUrl}}"], "path": ["chef-requests","my"] }
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests",
+                "my"
+              ]
+            }
           },
           "response": []
         },
@@ -906,10 +2256,26 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/chef-requests", "host": ["{{baseUrl}}"], "path": ["chef-requests"] }
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests"
+              ]
+            }
           },
           "response": []
         },
@@ -918,28 +2284,107 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/chef-requests/{{testChefRequestId}}/approve", "host": ["{{baseUrl}}"], "path": ["chef-requests","{{testChefRequestId}}","approve"] }
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests/{{testChefRequestId}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests",
+                "{{testChefRequestId}}",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Chef Request (already-approved — expects 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// After Approve, this request is no longer pending — 400 is the expected outcome.",
+                  "pm.test('Expected 400 for already-processed request', function() {",
+                  "  pm.expect(pm.response.code).to.equal(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/chef-requests/{{testChefRequestId}}/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "chef-requests",
+                "{{testChefRequestId}}",
+                "reject"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "12. Social & Notifications",
       "item": [
         {
-          "name": "Follow User (chef)",
+          "name": "Follow User",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "chef",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/6/follow", "host": ["{{baseUrl}}"], "path": ["users","6","follow"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/6/follow",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "6",
+                "follow"
+              ]
+            }
           },
           "response": []
         },
@@ -948,10 +2393,58 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{influencerId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{influencerRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{influencerId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{influencerRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/6/followers", "host": ["{{baseUrl}}"], "path": ["users","6","followers"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/6/followers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "6",
+                "followers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Following",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1/following",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "following"
+              ]
+            }
           },
           "response": []
         },
@@ -960,10 +2453,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "chef",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/6/follow", "host": ["{{baseUrl}}"], "path": ["users","6","follow"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/6/follow",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "6",
+                "follow"
+              ]
+            }
           },
           "response": []
         },
@@ -972,22 +2483,55 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{userId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{userRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{userId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{userRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/feed", "host": ["{{baseUrl}}"], "path": ["feed"] }
+            "url": {
+              "raw": "{{baseUrl}}/feed",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "feed"
+              ]
+            }
           },
           "response": []
         },
         {
-          "name": "Get Discover Creators",
+          "name": "Get Suggested Creators (Feed)",
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{userId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{userRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{userId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{userRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/discover", "host": ["{{baseUrl}}"], "path": ["discover"] }
+            "url": {
+              "raw": "{{baseUrl}}/feed/creators",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "feed",
+                "creators"
+              ]
+            }
           },
           "response": []
         },
@@ -996,14 +2540,60 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
             "url": {
               "raw": "{{baseUrl}}/notifications?limit=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["notifications"],
-              "query": [{ "key": "limit", "value": "10" }]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Unread Notification Count",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/unread-count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "unread-count"
+              ]
             }
           },
           "response": []
@@ -1013,16 +2603,62 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/notifications/read-all", "host": ["{{baseUrl}}"], "path": ["notifications","read-all"] }
+            "url": {
+              "raw": "{{baseUrl}}/notifications/read-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "read-all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark One Notification Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/1/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "1",
+                "read"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "13. AI",
       "item": [
@@ -1047,15 +2683,38 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"inputData\": {\n    \"ingredients\": [\"egg\", \"cheese\", \"tomato\"],\n    \"constraints\": \"vegetarian, under 30 minutes\"\n  }\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/1/ai/generate-recipe", "host": ["{{baseUrl}}"], "path": ["users","1","ai","generate-recipe"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/1/ai/generate-recipe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "ai",
+                "generate-recipe"
+              ]
+            }
           },
           "response": []
         },
@@ -1064,15 +2723,38 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"inputData\": {\n    \"preferences\": [\"vegetarian\", \"quick meals\"]\n  }\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/1/ai/suggestions", "host": ["{{baseUrl}}"], "path": ["users","1","ai","suggestions"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/1/ai/suggestions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "ai",
+                "suggestions"
+              ]
+            }
           },
           "response": []
         },
@@ -1081,15 +2763,38 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"inputData\": {\n    \"ingredient\": \"butter\",\n    \"context\": \"baking a cake\",\n    \"dietary\": \"vegan\"\n  }\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/users/1/ai/substitute", "host": ["{{baseUrl}}"], "path": ["users","1","ai","substitute"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/1/ai/substitute",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "ai",
+                "substitute"
+              ]
+            }
           },
           "response": []
         },
@@ -1098,16 +2803,98 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/1/ai/history", "host": ["{{baseUrl}}"], "path": ["users","1","ai","history"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/1/ai/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "ai",
+                "history"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single AI History Item",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1/ai/history/{{testAiHistoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "ai",
+                "history",
+                "{{testAiHistoryId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete AI History Item",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1/ai/history/{{testAiHistoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "ai",
+                "history",
+                "{{testAiHistoryId}}"
+              ]
+            }
           },
           "response": []
         }
       ]
     },
-
     {
       "name": "14. Cleanup",
       "item": [
@@ -1116,22 +2903,28 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "x-user-id",   "value": "{{userId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{userRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{userId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{userRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/comments/100/likes", "host": ["{{baseUrl}}"], "path": ["comments","100","likes"] }
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Test Review",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
-            ],
-            "url": { "raw": "{{baseUrl}}/recipes/101/reviews/{{testReviewId}}", "host": ["{{baseUrl}}"], "path": ["recipes","101","reviews","{{testReviewId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/comments/100/likes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "comments",
+                "100",
+                "likes"
+              ]
+            }
           },
           "response": []
         },
@@ -1140,10 +2933,29 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/pantry/{{testPantryItemId}}", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","pantry","{{testPantryItemId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/pantry/{{testPantryItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "pantry",
+                "{{testPantryItemId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -1152,10 +2964,29 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/shopping-list/{{testShoppingItemId}}", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","shopping-list","{{testShoppingItemId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/shopping-list/{{testShoppingItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "shopping-list",
+                "{{testShoppingItemId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -1164,10 +2995,29 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "x-user-id",   "value": "{{testUserId}}", "type": "text" },
-              { "key": "x-user-role", "value": "user",           "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{testUserId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "user",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}/meal-plan/{{testMealPlanItemId}}", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}","meal-plan","{{testMealPlanItemId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}/meal-plan/{{testMealPlanItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}",
+                "meal-plan",
+                "{{testMealPlanItemId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -1176,10 +3026,27 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/ingredients/{{testIngredientId}}", "host": ["{{baseUrl}}"], "path": ["ingredients","{{testIngredientId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/ingredients/{{testIngredientId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ingredients",
+                "{{testIngredientId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -1188,10 +3055,27 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "x-user-id",   "value": "{{chefId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{chefRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{chefId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{chefRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/recipes/{{testRecipeId}}", "host": ["{{baseUrl}}"], "path": ["recipes","{{testRecipeId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/{{testRecipeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "{{testRecipeId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -1200,10 +3084,27 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/recipes/{{testInfluencerRecipeId}}", "host": ["{{baseUrl}}"], "path": ["recipes","{{testInfluencerRecipeId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/recipes/{{testInfluencerRecipeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recipes",
+                "{{testInfluencerRecipeId}}"
+              ]
+            }
           },
           "response": []
         },
@@ -1212,19 +3113,137 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "x-user-id",   "value": "{{adminId}}",   "type": "text" },
-              { "key": "x-user-role", "value": "{{adminRole}}", "type": "text" }
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              }
             ],
-            "url": { "raw": "{{baseUrl}}/users/{{testUserId}}", "host": ["{{baseUrl}}"], "path": ["users","{{testUserId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/users/{{testUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{testUserId}}"
+              ]
+            }
           },
           "response": []
         }
       ]
     }
-
   ],
   "event": [
-    { "listen": "prerequest", "script": { "type": "text/javascript", "exec": [""] } },
-    { "listen": "test",       "script": { "type": "text/javascript", "exec": [""] } }
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "adminId",
+      "value": "2"
+    },
+    {
+      "key": "adminRole",
+      "value": "admin"
+    },
+    {
+      "key": "chefId",
+      "value": "1"
+    },
+    {
+      "key": "chefRole",
+      "value": "chef"
+    },
+    {
+      "key": "influencerId",
+      "value": "6"
+    },
+    {
+      "key": "influencerRole",
+      "value": "influencer"
+    },
+    {
+      "key": "userId",
+      "value": "4"
+    },
+    {
+      "key": "userRole",
+      "value": "user"
+    },
+    {
+      "key": "testUserId",
+      "value": ""
+    },
+    {
+      "key": "testRecipeId",
+      "value": ""
+    },
+    {
+      "key": "testInfluencerRecipeId",
+      "value": ""
+    },
+    {
+      "key": "testReviewId",
+      "value": ""
+    },
+    {
+      "key": "testPantryItemId",
+      "value": ""
+    },
+    {
+      "key": "testShoppingItemId",
+      "value": ""
+    },
+    {
+      "key": "testMealPlanItemId",
+      "value": ""
+    },
+    {
+      "key": "testChefRequestId",
+      "value": ""
+    },
+    {
+      "key": "testIngredientId",
+      "value": ""
+    },
+    {
+      "key": "testAiHistoryId",
+      "value": ""
+    },
+    {
+      "key": "testReportId",
+      "value": ""
+    },
+    {
+      "key": "testRunTs",
+      "value": ""
+    }
   ]
 }

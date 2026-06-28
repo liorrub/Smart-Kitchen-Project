@@ -104,21 +104,26 @@ Smart-Kitchen-Project/
 │   └── package.json
 └── backend/
     ├── server.js                          ← Express + Socket.IO entry point
-    ├── routes/                            ← Express routers (21 files)
-    ├── controllers/                       ← Request handlers (19 files)
+    ├── .sequelizerc                       ← Tells Sequelize CLI where folders live
+    ├── .env.example                       ← Variable names with safe placeholders
+    ├── config/
+    │   └── sequelize-config.js            ← Sequelize CLI configuration
+    ├── data/                              ← JSON seed source files
     ├── models/                            ← Sequelize model definitions
     ├── migrations/                        ← Sequelize schema migrations (28 files)
     ├── seeders/                           ← Sequelize seed data (18 files)
-    ├── services/
-    │   ├── geminiService.js               ← Google Gemini API integration
-    │   └── notificationService.js         ← Notification creation + Socket.IO emit
-    ├── socket/                            ← Socket.IO event handlers
-    ├── middleware/                        ← Auth, logger, error handler, upload
-    ├── config/
-    │   └── sequelize-config.js            ← Sequelize CLI configuration
-    ├── .sequelizerc                       ← Tells Sequelize CLI where folders live
-    ├── .env.example                       ← Variable names with safe placeholders
+    ├── scripts/                           ← Utility scripts (reset DB, etc.)
     ├── uploads/                           ← Recipe image storage (auto-created)
+    ├── src/
+    │   ├── routes/                        ← Express routers (21 files)
+    │   ├── controllers/                   ← Request handlers (19 files)
+    │   ├── services/
+    │   │   ├── geminiService.js           ← Google Gemini API integration
+    │   │   └── notificationService.js     ← Notification creation + Socket.IO emit
+    │   ├── socket/                        ← Socket.IO event handlers
+    │   ├── middleware/                    ← Auth, logger, error handler, upload
+    │   ├── utils/                         ← Shared helpers
+    │   └── validators/                    ← Request validation schemas
     └── docs/
         ├── README.md                      ← Backend detailed documentation
         └── API_REFERENCE.md              ← Full endpoint reference
@@ -409,7 +414,7 @@ x-user-role: <user | chef | influencer | admin>
 | Recipe Reviews | `/api/recipes/:id/reviews` |
 | Review Reports | `/api/review-reports` |
 | Recipe Comments | `/api/recipes/:id/comments` |
-| Recipe Likes | `/api/recipes/:id/likes` |
+| Recipe Likes | `/api/recipes/:id/like` |
 | Comment Likes | `/api/comments/:id/likes` |
 | Ingredients | `/api/ingredients` |
 | Stores | `/api/stores` |
@@ -419,9 +424,9 @@ x-user-role: <user | chef | influencer | admin>
 | Meal Plan | `/api/users/:id/meal-plan` |
 | AI | `/api/users/:id/ai/*` |
 | Chef Requests | `/api/chef-requests` |
-| User Follows | `/api/users/:id/follows` |
+| User Follows | `/api/users/:id/follow` |
 | Feed | `/api/feed` |
-| Discover | `/api/discover` |
+| Feed Creators | `/api/feed/creators` |
 | Notifications | `/api/notifications` |
 | Options | `/api/options` |
 

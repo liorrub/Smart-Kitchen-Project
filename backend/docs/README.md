@@ -193,30 +193,37 @@ backend/
 ├── .env                         # Environment variables (not committed)
 ├── .env.example                 # Environment variable template
 ├── .sequelizerc                 # Sequelize CLI configuration
-├── middleware/
-│   ├── auth.js                  # Role-based authorization middleware
-│   ├── errorHandler.js          # Global error handler
-│   ├── logger.js                # Request logging middleware (masks passwords)
-│   ├── notFoundHandler.js       # 404 handler for unmatched routes
-│   └── upload.js                # Multer config for recipe image uploads (5 MB max)
-├── routes/                      # Express router files (21 files)
-├── controllers/                 # Business logic and request handlers (19 files)
+├── config/
+│   └── sequelize-config.js      # Sequelize CLI database config
+├── data/                        # JSON source files used by seeders
 ├── models/                      # Sequelize model definitions and query functions
 ├── migrations/                  # Sequelize database migrations (28 files)
 ├── seeders/                     # Sequelize seed data (18 files)
-├── services/
-│   ├── geminiService.js         # Google Gemini API integration
-│   └── notificationService.js   # Notification creation + Socket.IO emit
-├── socket/
-│   ├── index.js                 # Socket.IO server initialization
-│   ├── recipeDiscussion.js      # Real-time comment events
-│   └── notifications.js         # Real-time notification events
-├── validators/                  # Request validation helpers
-├── utils/
-│   └── responseHelper.js        # successResponse / errorResponse helpers
-├── data/                        # JSON source files used by seeders
-└── uploads/
-    └── recipes/                 # Uploaded recipe images (created automatically)
+├── scripts/                     # Utility scripts (reset DB, etc.)
+├── uploads/
+│   └── recipes/                 # Uploaded recipe images (served by /uploads static route)
+├── src/
+│   ├── routes/                  # Express router files (21 files)
+│   ├── controllers/             # Business logic and request handlers (19 files)
+│   ├── services/
+│   │   ├── geminiService.js     # Google Gemini API integration
+│   │   └── notificationService.js # Notification creation + Socket.IO emit
+│   ├── socket/
+│   │   ├── index.js             # Socket.IO server initialization
+│   │   ├── recipeDiscussion.js  # Real-time comment events
+│   │   └── notifications.js     # Real-time notification events
+│   ├── middleware/
+│   │   ├── auth.js              # Role-based authorization middleware
+│   │   ├── errorHandler.js      # Global error handler
+│   │   ├── logger.js            # Request logging middleware (masks passwords)
+│   │   ├── notFoundHandler.js   # 404 handler for unmatched routes
+│   │   └── upload.js            # Multer config for recipe image uploads (5 MB max)
+│   ├── validators/              # Request validation helpers
+│   └── utils/
+│       └── responseHelper.js    # successResponse / errorResponse helpers
+└── docs/
+    ├── README.md                # Backend detailed documentation
+    └── API_REFERENCE.md         # Full endpoint reference
 ```
 
 ---
@@ -486,7 +493,7 @@ docs/Smart Kitchen API.postman_collection.json
 | **Chef Requests** | 5 |
 | **User Follows** | 4 |
 | **Feed** | 1 |
-| **Discover** | 1 |
+| **Feed Creators** | 1 |
 | **Notifications** | 4 |
 | **Comment Likes** | 2 |
 | **Review Reports** | 4 |
@@ -518,7 +525,7 @@ For full endpoint documentation see [API_REFERENCE.md](API_REFERENCE.md).
 - Chef account request workflow (submit, review, approve, reject)
 - Real-time recipe discussions via Socket.IO (comments, replies, @mentions, typing indicators, viewer count)
 - User follow / unfollow with social feed (recipes from followed creators)
-- Discover page — lists all chefs and influencers with stats
+- Feed creators carousel (`GET /api/feed/creators`) — lists all chefs and influencers with stats, used by the Feed page
 - Public user profiles with follower/following counts
 - Real-time notifications via Socket.IO (follows, recipe approval/rejection, replies, @mentions, helpful votes, chef request decisions, comment likes)
 - AI-powered recipe generation, meal suggestions, and ingredient substitutions via Google Gemini

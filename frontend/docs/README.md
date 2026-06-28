@@ -73,9 +73,9 @@ Three Gemini-backed tools are available at `/ai-assistant` (see [AI Integration]
 
 A personal overview showing meal planning summaries, pantry status, shopping list totals, and quick-action shortcuts.
 
-### Discovery
+### Feed
 
-A Discover page for exploring recipes beyond the user's immediate feed.
+A social feed showing approved recipes from creators the user follows, plus a "Creators you may like" carousel (powered by `GET /api/feed/creators`) that surfaces chefs and influencers the user has not yet followed.
 
 ### Administration
 
@@ -261,7 +261,6 @@ All routes below `/` and `/register` require the user to be logged in. Unauthent
 | `/ai-assistant` | AIAssistant | All users | AI-powered recipe and ingredient tools |
 | `/settings` | Settings | All users | Edit profile, avatar, and preferences |
 | `/profile/:id` | Profile | All users | View any user's public profile |
-| `/discover` | Discover | All users | Explore recipes and users |
 | `/users` | Users | Admin | Manage all user accounts |
 | `/ingredients` | Ingredients | Admin | Manage the global ingredient catalog |
 | `/recipe-management` | RecipeManagement | Chef / Admin | Create, edit, and delete recipes |
@@ -339,19 +338,19 @@ The helper `getResponseData(response)` in `src/utils/apiUtils.js` extracts `resp
 | Users | `/api/users` | `userService.js`, `profileService.js` |
 | Recipes | `/api/recipes` | `recipeService.js` |
 | Ingredients | `/api/ingredients` | `ingredientsService.js` |
-| Pantry | `/api/users/:id/pantry` | `mealPlanService.js` (pantry via user) |
-| Shopping list | `/api/users/:id/shopping-list` | `mealPlanService.js` |
+| Pantry | `/api/users/:id/pantry` | direct Axios calls (Pantry page) |
+| Shopping list | `/api/users/:id/shopping-list` | direct Axios calls (ShoppingList page) |
 | Meal plan | `/api/users/:id/meal-plan` | `mealPlanService.js` |
 | Favorites | `/api/users/:id/favorites` | `favoritesService.js` |
 | Reviews | `/api/recipes/:id/reviews` | `reviewsService.js` |
 | Recipe comments | `/api/recipes/:id/comments` | `recipeCommentsService.js` |
 | Comment likes | `/api/comments/:id/likes` | `commentLikeService.js` |
-| Recipe likes | `/api/recipes/:id/likes` | `likeService.js` |
-| User follows | `/api/users/:id/follows` | `followService.js` |
+| Recipe likes | `/api/recipes/:id/like` | `likeService.js` |
+| User follows | `/api/users/:id/follow` | `followService.js` |
 | Notifications | `/api/notifications` | `notificationService.js` |
 | AI tools | `/api/users/:id/ai/*` | `aiHistoryService.js` |
-| Discovery | `/api/discover` | `discoverService.js` |
-| Feed | `/api/feed` | (inline in Feed page) |
+| Feed Creators | `/api/feed/creators` | `feedCreatorsService.js` |
+| Feed | `/api/feed` | `followService.js` (getFeed) |
 | Settings | `/api/settings` | `settingsService.js` |
 | Chef requests | `/api/chef-requests` | `chefRequestService.js` |
 | Options (enums) | `/api/options` | `optionsService.js` |
