@@ -245,70 +245,143 @@
     transform: translateY(-1px);
 }
 
+/* ── 1050px: Switch from 4-col grid to compact 2-row flex.
+      Row 1: logo left | search + action icons right.
+      Row 2: full-width nav links pill.
+      Nothing stacks as giant vertical blocks. ── */
 @media (max-width: 1050px) {
     .navbar {
-        grid-template-columns: 1fr;
-        justify-items: center;
-        gap: 16px;
-        width: calc(100% - 32px);
-    }
-
-    .navbar-links {
+        display: flex;
         flex-wrap: wrap;
-        justify-content: center;
+        align-items: center;
+        gap: 8px 12px;
+        width: calc(100% - 32px);
+        margin: 10px auto 0;
+        padding: 6px 0;
     }
 
+    /* Row 1, left — logo */
+    .navbar-brand {
+        order: 1;
+        flex-shrink: 0;
+    }
+
+    .navbar-logo-image {
+        width: 130px;
+    }
+
+    /* Row 1, right — search (margin-left: auto pushes it and following items right) */
+    .navbar-search-area {
+        order: 2;
+        margin-left: auto;
+    }
+
+    /* Row 1, right — user action icons */
     .navbar-user {
-        margin-left: 0;
-        justify-content: center;
+        order: 3;
+        gap: 8px;
+        justify-content: flex-end;
+        flex-wrap: nowrap;
+    }
+
+    /* Hide welcome pill — saves horizontal space; profile accessible via Settings */
+    .user-pill {
+        display: none;
+    }
+
+    .logout-button {
+        padding: 7px 12px;
+        font-size: 13px;
+        border-radius: 14px;
+    }
+
+    /* Row 2 — full-width nav links */
+    .navbar-links {
+        order: 4;
+        flex-basis: 100%;
+        width: 100%;
+        justify-content: flex-start;
+        border-radius: 18px;
+        flex-shrink: 1;
+    }
+
+    .navbar-link {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    /* Anchor dropdown to left edge of wrapper so it never overflows viewport */
+    .navbar-dropdown {
+        left: 0;
+        transform: none;
+        right: auto;
     }
 }
 
-@media (max-width: 650px) {
+/* ── 900px: Tighten for split-screen / small tablet ── */
+@media (max-width: 900px) {
+    .navbar {
+        gap: 6px 10px;
+    }
+
+    .navbar-logo-image {
+        width: 110px;
+    }
+
+    .navbar-user {
+        gap: 6px;
+    }
+
+    .logout-button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .navbar-link {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+}
+
+/* ── 600px: Narrow mobile / iPhone ── */
+@media (max-width: 600px) {
+    .navbar {
+        width: calc(100% - 16px);
+        margin-top: 8px;
+        gap: 4px 6px;
+    }
+
+    .navbar-logo-image {
+        width: 90px;
+    }
+
+    .logout-button {
+        padding: 5px 8px;
+        font-size: 11px;
+        border-radius: 12px;
+    }
+
+    .navbar-links {
+        padding: 5px 8px;
+        gap: 2px;
+    }
+
+    .navbar-link {
+        padding: 5px 7px;
+        font-size: 11px;
+    }
+
+    /* Anchor search popover to viewport on very narrow screens */
     .navbar-search-popover {
-        /* On small screens anchor to viewport edge so it stays visible */
         position: fixed;
-        top: 70px;
+        top: 56px;
         left: 8px;
         right: 8px;
         width: auto;
     }
 
-    .navbar {
-        width: calc(100% - 28px);
-        margin-top: 14px;
-        padding: 8px 0;
-    }
-
-    .navbar-logo-image {
-        width: 190px;
-    }
-
-    .navbar-links {
-        width: 100%;
-        border-radius: 24px;
-    }
-
-    .navbar-link {
-        flex: 1;
-        text-align: center;
-    }
-
-    .navbar-user {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .user-pill,
-    .logout-button {
-        width: 100%;
-        box-sizing: border-box;
-        text-align: center;
-    }
-
     .navbar-dropdown {
-        left: 0;
-        transform: none;
+        width: 190px;
     }
 }
 
