@@ -1,14 +1,19 @@
 import "./Users.css";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import PageErrorState from "../components/PageErrorState";
 import AppButton from "../components/AppButton";
+import AvatarPicker from "../components/AvatarPicker";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import CustomSelect from "../components/CustomSelect";
 import DataTable from "../components/DataTable";
 import FormCard from "../components/FormCard";
 import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
+
+import { AVATAR_DEFAULT } from "../utils/avatarCatalog";
 
 import {
     getUsers,
@@ -19,7 +24,10 @@ import {
 
 import { validateUserManagementForm } from "../validators/userValidator";
 import { formatText } from "../utils/formatUtils";
-import { COOKING_LEVEL_OPTIONS } from "../constants/options";
+import { CITY_OPTIONS, COOKING_LEVEL_OPTIONS } from "../constants/options";
+import CityPicker from "../components/CityPicker";
+
+const PAGE_SIZE = 10;
 
 const ROLE_OPTIONS = [
     { value: "user", label: "User" },
@@ -33,6 +41,8 @@ const EMPTY_USER_FORM = {
     lastName: "",
     email: "",
     password: "",
+    username: "",
+    avatarKey: AVATAR_DEFAULT,
     city: "",
     age: "",
     userRole: "user",
@@ -54,6 +64,7 @@ function Users() {
 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
 
     const currentUser = JSON.parse(
         sessionStorage.getItem("user") || "null"
@@ -83,13 +94,32 @@ function Users() {
             const data = await getUsers();
 
             setUsers(Array.isArray(data) ? data : []);
+            setCurrentPage(1);
         } catch (error) {
             console.error(error);
-            setError("Failed to load users.");
+            setError(
+                !error.response
+                    ? "Unable to connect to the server. Please try again in a few moments."
+                    : "Failed to load users."
+            );
         } finally {
             setLoading(false);
         }
     }
+
+    const sortedUsers = useMemo(
+        () => [...users].sort((a, b) =>
+            a.firstName.localeCompare(b.firstName) ||
+            a.lastName.localeCompare(b.lastName)
+        ),
+        [users]
+    );
+
+    const totalPages = Math.max(1, Math.ceil(sortedUsers.length / PAGE_SIZE));
+    const paginatedUsers = useMemo(
+        () => sortedUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+        [sortedUsers, currentPage]
+    );
 
     function clearMessages() {
         setError("");
@@ -156,6 +186,7 @@ function Users() {
             firstName: newUser.firstName.trim(),
             lastName: newUser.lastName.trim(),
             email: newUser.email.trim(),
+            username: newUser.username.trim().toLowerCase(),
             city: newUser.city.trim(),
             age: Number(newUser.age),
             preferences: []
@@ -212,7 +243,9 @@ function Users() {
             age: Number(editingUser.age),
             userRole: editingUser.userRole,
             cookingLevel: editingUser.cookingLevel,
-            preferences: editingUser.preferences || []
+            preferences: editingUser.preferences || [],
+            avatarKey: editingUser.avatarKey,
+            username: editingUser.username?.trim().toLowerCase() || ""
         };
 
         const validationError = validateUserManagementForm(
@@ -313,10 +346,10 @@ function Users() {
     if (error && users.length === 0) {
         return (
             <div className="users-page">
-                <FormCard
-                    title="Something went wrong"
-                    description={error}
-                    className="users-error-card"
+                <PageErrorState
+                    title="Users Error"
+                    message={error}
+                    onRetry={loadUsers}
                 />
             </div>
         );
@@ -461,11 +494,21 @@ function Users() {
                                     />
 
                                     <FormField
-                                        label="City"
+                                        label="Username"
                                         type="text"
+                                        name="username"
+                                        placeholder="e.g. lior_99 (letters, numbers, underscore)"
+                                        value={newUser.username}
+                                        onChange={handleNewUserChange}
+                                    />
+
+                                    <CityPicker
+                                        label="City"
                                         name="city"
                                         value={newUser.city}
                                         onChange={handleNewUserChange}
+                                        cities={CITY_OPTIONS}
+                                        placeholder="Search or select city..."
                                     />
 
                                     <FormField
@@ -494,6 +537,13 @@ function Users() {
                                         options={COOKING_LEVEL_OPTIONS}
                                     />
                                 </div>
+
+                                <AvatarPicker
+                                    value={newUser.avatarKey}
+                                    onChange={(key) =>
+                                        setNewUser(prev => ({ ...prev, avatarKey: key }))
+                                    }
+                                />
                             </form>
                         </FormCard>
                         </div>
@@ -587,8 +637,21 @@ function Users() {
                                     />
 
                                     <FormField
-                                        label="City"
+                                        label="Username"
                                         type="text"
+                                        value={editingUser.username || ""}
+                                        placeholder="e.g. lior_99"
+                                        onChange={(event) =>
+                                            handleEditingFieldChange(
+                                                "username",
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+
+                                    <CityPicker
+                                        label="City"
+                                        name="city"
                                         value={editingUser.city}
                                         onChange={(event) =>
                                             handleEditingFieldChange(
@@ -596,6 +659,8 @@ function Users() {
                                                 event.target.value
                                             )
                                         }
+                                        cities={CITY_OPTIONS}
+                                        placeholder="Search or select city..."
                                     />
 
                                     <FormField
@@ -646,6 +711,13 @@ function Users() {
                                         options={COOKING_LEVEL_OPTIONS}
                                     />
                                 </div>
+
+                                <AvatarPicker
+                                    value={editingUser.avatarKey}
+                                    onChange={(key) =>
+                                        setEditingUser(prev => ({ ...prev, avatarKey: key }))
+                                    }
+                                />
                             </form>
                         </FormCard>
                         </div>
@@ -654,42 +726,13 @@ function Users() {
             )}
 
             {userToDelete && (
-                <div
-                    className="users-modal-overlay"
-                    onClick={cancelDeleteUser}
-                >
-                    <div
-                        className="users-modal users-confirm-modal"
-                        onClick={(event) => event.stopPropagation()}
-                    >
-                        <FormCard
-                            label="Delete user"
-                            title="Are you sure?"
-                            description={`Delete ${userToDelete.firstName} ${userToDelete.lastName}? This action cannot be undone.`}
-                            className="users-delete-card users-confirm-card"
-                            actions={
-                                <>
-                                    <AppButton
-                                        type="button"
-                                        variant="danger"
-                                        disabled={deleting}
-                                        onClick={confirmDeleteUser}
-                                    >
-                                        {deleting ? "Deleting..." : "Yes, delete"}
-                                    </AppButton>
-
-                                    <AppButton
-                                        type="button"
-                                        variant="secondary"
-                                        onClick={cancelDeleteUser}
-                                    >
-                                        Cancel
-                                    </AppButton>
-                                </>
-                            }
-                        />
-                    </div>
-                </div>
+                <ConfirmDeleteModal
+                    label="Delete user"
+                    description={`Delete ${userToDelete.firstName} ${userToDelete.lastName}? This action cannot be undone.`}
+                    isDeleting={deleting}
+                    onConfirm={confirmDeleteUser}
+                    onCancel={cancelDeleteUser}
+                />
             )}
 
             <FormCard
@@ -698,10 +741,6 @@ function Users() {
             >
                 <DataTable
                     columns={[
-                        {
-                            key: "userId",
-                            label: "ID"
-                        },
                         {
                             key: "firstName",
                             label: "First Name"
@@ -764,8 +803,32 @@ function Users() {
                             )
                         }
                     ]}
-                    data={users}
+                    data={paginatedUsers}
                 />
+
+                {totalPages > 1 && (
+                    <div className="users-pagination">
+                        <button
+                            type="button"
+                            className="users-pagination-btn"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(p => p - 1)}
+                        >
+                            ← Previous
+                        </button>
+                        <span className="users-pagination-info">
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        <button
+                            type="button"
+                            className="users-pagination-btn"
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(p => p + 1)}
+                        >
+                            Next →
+                        </button>
+                    </div>
+                )}
             </FormCard>
         </div>
     );

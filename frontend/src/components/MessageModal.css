@@ -67,8 +67,9 @@
     color: #444;
 }
 
-.message-modal-error button {
-    background: #000000;
+.message-modal-error > button {
+    background: #cc6089;
+    color: white;
 }
 
 /* Success message style */

@@ -13,7 +13,8 @@ import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PasswordField from "../components/PasswordField";
 import { validateRegisterForm } from "../validators/userValidator";
-import { COOKING_LEVEL_OPTIONS } from "../constants/options";
+import { CITY_OPTIONS, COOKING_LEVEL_OPTIONS } from "../constants/options";
+import CityPicker from "../components/CityPicker";
 import AvatarPicker from "../components/AvatarPicker";
 import { AVATAR_DEFAULT } from "../utils/avatarCatalog";
 
@@ -252,13 +253,13 @@ function Register() {
                     </div>
 
                     <div className="reg-form-row">
-                        <FormField
+                        <CityPicker
                             label="City"
-                            type="text"
                             name="city"
-                            placeholder="Your city"
                             value={formData.city}
                             onChange={handleChange}
+                            cities={CITY_OPTIONS}
+                            placeholder="Search or select city..."
                         />
                         <FormField
                             label="Age"

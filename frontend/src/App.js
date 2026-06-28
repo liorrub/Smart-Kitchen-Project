@@ -23,12 +23,14 @@ import ChefRecipes from "./pages/ChefRecipes";
 import RecipeDiscussion from "./pages/RecipeDiscussion";
 import RecipePage from "./pages/RecipePage";
 import Profile from "./pages/Profile";
-import Discover from "./pages/Discover";
 import Feed from "./pages/Feed";
 import FoodieMyRecipes from "./pages/FoodieMyRecipes";
+import NotFound from "./pages/NotFound";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function App() {
     return (
+        <ErrorBoundary>
         <AuthProvider>
             <NotificationProvider>
             <PendingRecipeProvider>
@@ -128,11 +130,6 @@ function App() {
                             />
 
                             <Route
-                                path="/discover"
-                                element={<Discover />}
-                            />
-
-                            <Route
                                 path="/feed"
                                 element={<Feed />}
                             />
@@ -140,6 +137,11 @@ function App() {
                             <Route
                                 path="/foodie/my-recipes"
                                 element={<FoodieMyRecipes />}
+                            />
+
+                            <Route
+                                path="*"
+                                element={<NotFound />}
                             />
 
                         </Route>
@@ -152,6 +154,7 @@ function App() {
             </PendingRecipeProvider>
             </NotificationProvider>
         </AuthProvider>
+        </ErrorBoundary>
     );
 }
 

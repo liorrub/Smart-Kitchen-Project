@@ -2,6 +2,7 @@ import "./Recipes.css";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
 import RecipeCard from "../components/RecipeCard";
@@ -540,36 +541,13 @@ function RecipeManagement() {
                 onClose={() => setSelectedRecipe(null)}
             />
 
-            {/* Delete confirmation modal */}
             {confirmDeleteRecipe && (
-                <div className="message-modal-overlay">
-                    <div className="message-modal-card message-modal-error">
-                        <h3>Delete Recipe</h3>
-
-                        <p>
-                            Are you sure you want to delete &quot;{confirmDeleteRecipe.title}&quot;?
-                            This action cannot be undone.
-                        </p>
-
-                        <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "8px" }}>
-                            <AppButton
-                                type="button"
-                                variant="secondary"
-                                onClick={() => setConfirmDeleteRecipe(null)}
-                            >
-                                Cancel
-                            </AppButton>
-
-                            <AppButton
-                                type="button"
-                                variant="danger"
-                                onClick={handleConfirmDelete}
-                            >
-                                Confirm Delete
-                            </AppButton>
-                        </div>
-                    </div>
-                </div>
+                <ConfirmDeleteModal
+                    label="Delete recipe"
+                    description={`Delete "${confirmDeleteRecipe.title}"? This action cannot be undone.`}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={() => setConfirmDeleteRecipe(null)}
+                />
             )}
 
             {/* ----------------------------------------------------------------

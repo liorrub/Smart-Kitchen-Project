@@ -2,11 +2,7 @@ import axios from "axios";
 
 import { getAuthHeaders } from "../utils/authUtils";
 import { API_BASE_URL } from "../utils/apiConfig";
-
-// Uses ?? so an explicit null in data.data is returned as-is (unlike the shared version which would fall back).
-function getResponseData(response) {
-    return response.data?.data ?? null;
-}
+import { getNestedResponseData } from "../utils/apiUtils";
 
 // Submit a new chef role request with a reason message.
 export async function submitChefRequest(reason) {
@@ -15,7 +11,7 @@ export async function submitChefRequest(reason) {
         { reason },
         { headers: getAuthHeaders() }
     );
-    return getResponseData(response);
+    return getNestedResponseData(response);
 }
 
 // Fetch all pending chef requests (admin only).
@@ -24,7 +20,7 @@ export async function getChefRequests() {
         `${API_BASE_URL}/chef-requests`,
         { headers: getAuthHeaders() }
     );
-    return getResponseData(response) || [];
+    return getNestedResponseData(response) || [];
 }
 
 // Fetch the current user's most recent chef request to check its status.
@@ -33,7 +29,7 @@ export async function getMyChefRequest() {
         `${API_BASE_URL}/chef-requests/my`,
         { headers: getAuthHeaders() }
     );
-    return getResponseData(response);
+    return getNestedResponseData(response);
 }
 
 // Approve a pending chef request and grant the chef role to the requester.
@@ -43,7 +39,7 @@ export async function approveChefRequest(requestId) {
         {},
         { headers: getAuthHeaders() }
     );
-    return getResponseData(response);
+    return getNestedResponseData(response);
 }
 
 // Reject a pending chef request.
@@ -53,5 +49,5 @@ export async function rejectChefRequest(requestId) {
         {},
         { headers: getAuthHeaders() }
     );
-    return getResponseData(response);
+    return getNestedResponseData(response);
 }

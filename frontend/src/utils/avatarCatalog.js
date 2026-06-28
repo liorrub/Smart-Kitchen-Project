@@ -1,4 +1,4 @@
-// Mirrors the backend catalog at smart-kitchen-backend/data/avatarCatalog.js.
+// Mirrors the backend catalog at backend/data/avatarCatalog.js.
 // Each key maps to src/assets/avatars/<key>.png.
 // Provides display metadata used in AvatarPicker (aria-labels only — not shown visually).
 

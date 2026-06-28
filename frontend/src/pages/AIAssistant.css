@@ -199,6 +199,18 @@
     line-height: 1.4;
 }
 
+.ai-history-success {
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #f0faf0;
+    border: 1px dashed #a3d9a5;
+    color: #2e6b30;
+    font-size: 14px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
 .ai-history-list {
     display: flex;
     flex-direction: column;

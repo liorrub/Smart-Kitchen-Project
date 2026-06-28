@@ -3,6 +3,8 @@ import "./Favorites.css";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
+import PageErrorState from "../components/PageErrorState";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import MessageModal from "../components/MessageModal";
 import PageHero from "../components/PageHero";
 import RecipeCard from "../components/RecipeCard";
@@ -26,7 +28,9 @@ function Favorites() {
     const [loading, setLoading] = useState(true);
     const [removingRecipeId, setRemovingRecipeId] = useState(null);
     const [error, setError] = useState("");
+    const [loadError, setLoadError] = useState("");
     const [success, setSuccess] = useState("");
+    const [confirmRemove, setConfirmRemove] = useState(null);
 
     const storedUser = getStoredUser();
 
@@ -53,11 +57,10 @@ function Favorites() {
             } catch (err) {
                 console.error("Favorites loading error:", err);
 
-                setError(
-                    getErrorMessage(
-                        err,
-                        "Failed to load favorites."
-                    )
+                setLoadError(
+                    !err.response
+                        ? "Unable to connect to the server. Please try again in a few moments."
+                        : getErrorMessage(err, "Failed to load favorites.")
                 );
             } finally {
                 setLoading(false);
@@ -116,6 +119,16 @@ function Favorites() {
         (favorite) => Number(favorite.recipe.totalTime || 0) <= 30
     ).length;
 
+    function handleRemoveClick(recipe) {
+        setConfirmRemove(recipe);
+    }
+
+    async function handleConfirmRemove() {
+        const recipe = confirmRemove;
+        setConfirmRemove(null);
+        await handleRemoveFavorite(recipe);
+    }
+
     // Remove a recipe from favorites and update the local list on success.
     async function handleRemoveFavorite(recipe) {
         if (!storedUser?.userId) {
@@ -164,6 +177,18 @@ function Favorites() {
                         Please wait while we prepare your saved recipes.
                     </p>
                 </div>
+            </div>
+        );
+    }
+
+    if (loadError) {
+        return (
+            <div className="favorites-page">
+                <PageErrorState
+                    title="Favorites Error"
+                    message={loadError}
+                    onRetry={() => window.location.reload()}
+                />
             </div>
         );
     }
@@ -250,7 +275,7 @@ function Favorites() {
                                 onClick={setSelectedRecipe}
                                 showFavoriteButton
                                 isFavorite
-                                onFavoriteClick={handleRemoveFavorite}
+                                onFavoriteClick={handleRemoveClick}
                                 favoriteLoading={
                                     removingRecipeId === favorite.recipe.recipeId
                                 }
@@ -261,6 +286,16 @@ function Favorites() {
                     </div>
                 )}
             </section>
+
+            {confirmRemove && (
+                <ConfirmDeleteModal
+                    label="Remove from favorites"
+                    description={`Remove "${confirmRemove.title}" from your favorites?`}
+                    confirmText="Yes, remove"
+                    onConfirm={handleConfirmRemove}
+                    onCancel={() => setConfirmRemove(null)}
+                />
+            )}
         </div>
     );
 }

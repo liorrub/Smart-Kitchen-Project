@@ -9,11 +9,12 @@ import RecipeDetailsModal from "../components/RecipeDetailsModal";
 import FollowButton from "../components/FollowButton";
 
 import { getFeed, getFollowing } from "../services/followService";
-import { getDiscoverCreators } from "../services/discoverService";
+import { getSuggestedCreators } from "../services/feedCreatorsService";
 import { getUserLikedRecipeIds, likeRecipe, unlikeRecipe } from "../services/likeService";
 import { getUserFavorites, addFavorite, removeFavorite } from "../services/favoritesService";
 
 import { ROLE_LABELS } from "../utils/roleLabels";
+import PageErrorState from "../components/PageErrorState";
 import AvatarImage from "../components/AvatarImage";
 
 const ROLE_BADGE_CLASSES = {
@@ -75,7 +76,7 @@ function Feed() {
                 const [feedData, creatorData, followingData, likedData, favData] =
                     await Promise.all([
                         getFeed(),
-                        getDiscoverCreators().catch(() => []),
+                        getSuggestedCreators().catch(() => []),
                         getFollowing(currentUser.userId).catch(() => []),
                         getUserLikedRecipeIds(currentUser.userId).catch(() => []),
                         getUserFavorites(currentUser.userId).catch(() => [])
@@ -99,8 +100,12 @@ function Feed() {
                 setFavoriteIds(new Set(
                     Array.isArray(favData) ? favData.map(f => f.recipeId) : []
                 ));
-            } catch {
-                setError("Could not load your feed. Please try again.");
+            } catch (err) {
+                setError(
+                    !err.response
+                        ? "Unable to connect to the server. Please try again in a few moments."
+                        : "Could not load your feed. Please try again."
+                );
             } finally {
                 setLoading(false);
             }
@@ -166,7 +171,12 @@ function Feed() {
         return (
             <div className="feed-page">
                 <FeedHero />
-                <div className="feed-status feed-status--error">{error}</div>
+                <PageErrorState
+                    title="Feed Error"
+                    message={error}
+                    onRetry={() => window.location.reload()}
+                    retryText="Refresh Page"
+                />
             </div>
         );
     }
@@ -279,9 +289,6 @@ function Feed() {
                         <p className="feed-empty-sub">
                             Follow chefs and Foodies to start building your Feed.
                         </p>
-                        <Link to="/discover" className="feed-browse-link">
-                            Discover Creators
-                        </Link>
                     </div>
                 ) : (
                     <div className="feed-grid">

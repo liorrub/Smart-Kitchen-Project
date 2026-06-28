@@ -46,7 +46,28 @@
 }
 
 .feed-status--error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
     color: #c44;
+}
+
+.feed-retry-button {
+    padding: 10px 28px;
+    border: none;
+    border-radius: 999px;
+    background: #cc6089;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s ease;
+}
+
+.feed-retry-button:hover {
+    background: #b84d75;
 }
 
 /* ==========================================================================
@@ -236,7 +257,7 @@
 }
 
 /* ==========================================================================
-   Role badge (scoped copy — matches Profile.css and Discover.css tokens)
+   Role badge (scoped copy — matches Profile.css tokens)
    ========================================================================== */
 
 .feed-role-badge {
@@ -371,23 +392,6 @@
     margin: 0;
     max-width: 320px;
     line-height: 1.55;
-}
-
-.feed-browse-link {
-    display: inline-block;
-    margin-top: 4px;
-    padding: 10px 26px;
-    background: #46ae6b;
-    color: #fff;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 800;
-    text-decoration: none;
-    transition: background 0.18s ease;
-}
-
-.feed-browse-link:hover {
-    background: #3a9a5c;
 }
 
 /* ==========================================================================

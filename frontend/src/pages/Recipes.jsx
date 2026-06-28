@@ -3,6 +3,7 @@ import "./Recipes.css";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
+import PageErrorState from "../components/PageErrorState";
 import CustomSelect from "../components/CustomSelect";
 import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
@@ -75,6 +76,7 @@ function Recipes() {
     const [favoriteLoadingRecipeId, setFavoriteLoadingRecipeId] = useState(null);
     const [likeLoadingRecipeId, setLikeLoadingRecipeId] = useState(null);
     const [error, setError] = useState("");
+    const [loadError, setLoadError] = useState("");
     const [success, setSuccess] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -111,11 +113,10 @@ function Recipes() {
             } catch (err) {
                 console.error("Recipes page loading error:", err);
 
-                setError(
-                    getErrorMessage(
-                        err,
-                        "Failed to load recipes."
-                    )
+                setLoadError(
+                    !err.response
+                        ? "Unable to connect to the server. Please try again in a few moments."
+                        : getErrorMessage(err, "Failed to load recipes.")
                 );
             } finally {
                 setLoading(false);
@@ -349,6 +350,18 @@ function Recipes() {
                         Please wait while we prepare the recipe collection.
                     </p>
                 </div>
+            </div>
+        );
+    }
+
+    if (loadError) {
+        return (
+            <div className="recipes-page">
+                <PageErrorState
+                    title="Recipes Error"
+                    message={loadError}
+                    onRetry={() => window.location.reload()}
+                />
             </div>
         );
     }

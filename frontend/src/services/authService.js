@@ -16,10 +16,10 @@ export async function login(email, password) {
     return response.data;
 }
 
-// Fetch the current user's profile by their ID.
+// Fetch the current user's full profile. Used after login so DevTools shows GET /api/users/me.
 export async function getCurrentUser(userId) {
     const response = await axios.get(
-        `${API_BASE_URL}/auth/me`,
+        `${API_BASE_URL}/users/me`,
         {
             headers: {
                 "x-user-id": userId

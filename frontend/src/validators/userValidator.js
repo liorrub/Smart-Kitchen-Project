@@ -119,10 +119,6 @@ export function validateRegisterForm(formData) {
         return "City is required";
     }
 
-    if (!isValidName(formData.city)) {
-        return "City must contain only letters, spaces or hyphen, and be at least 2 characters long";
-    }
-
     if (isEmpty(formData.age)) {
         return "Age is required";
     }
@@ -179,10 +175,6 @@ export function validateUserManagementForm(userData, isNewUser = false) {
         return "City is required";
     }
 
-    if (!isValidName(userData.city)) {
-        return "City must contain only letters, spaces or hyphen, and be at least 2 characters long";
-    }
-
     if (isEmpty(userData.userRole)) {
         return "User role is required";
     }
@@ -210,6 +202,14 @@ export function validateUserManagementForm(userData, isNewUser = false) {
 
         if (userData.password.length < 6) {
             return "Password must be at least 6 characters";
+        }
+
+        if (isEmpty(userData.username)) {
+            return "Username is required";
+        }
+
+        if (!isValidUsername(userData.username)) {
+            return "Username must be 3–30 characters, start with a letter, and contain only letters, numbers, underscores, or periods";
         }
     }
 

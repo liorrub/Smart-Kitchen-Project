@@ -2,7 +2,7 @@
 
 > **Part of the Smart Kitchen full-stack application.**
 > - [Root README (full-system setup)](../../README.md)
-> - [Backend Documentation](../../smart-kitchen-backend/docs/README.md)
+> - [Backend Documentation](../../backend/docs/README.md)
 
 ## Project Overview
 
@@ -109,14 +109,14 @@ A Discover page for exploring recipes beyond the user's immediate feed.
 
 ## Installation and Running
 
-The frontend requires the backend to be running first. For complete setup instructions see the [Root README](../../README.md). For backend-only setup see the [Backend Documentation](../../smart-kitchen-backend/docs/README.md).
+The frontend requires the backend to be running first. For complete setup instructions see the [Root README](../../README.md). For backend-only setup see the [Backend Documentation](../../backend/docs/README.md).
 
 ### Quick backend preparation (new database)
 
 Run these commands in a separate terminal before starting the frontend:
 
 ```powershell
-cd smart-kitchen-backend
+cd backend
 npm install
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
@@ -129,7 +129,7 @@ npm start
 For an existing database (already migrated and seeded), skip `db:seed:all`:
 
 ```powershell
-cd smart-kitchen-backend
+cd backend
 npm install
 npx sequelize-cli db:migrate
 npm start
@@ -138,7 +138,7 @@ npm start
 ### Install frontend dependencies
 
 ```powershell
-cd smart-kitchen-frontend
+cd frontend
 npm install
 ```
 
@@ -156,7 +156,7 @@ The frontend starts at **http://localhost:5173**.
 npm run build
 ```
 
-Output is written to `smart-kitchen-frontend/build/`.
+Output is written to `frontend/build/`.
 
 ---
 
@@ -177,7 +177,7 @@ If the backend runs on a different port, update these two files before starting 
 ## Running the Application
 
 ```powershell
-cd smart-kitchen-frontend
+cd frontend
 npm start
 ```
 
@@ -190,29 +190,29 @@ The backend must be running at `http://localhost:3000` before logging in or usin
 ## Production Build
 
 ```powershell
-cd smart-kitchen-frontend
+cd frontend
 npm run build
 ```
 
-The optimized output is written to `smart-kitchen-frontend/build/`. Serve with any static file server.
+The optimized output is written to `frontend/build/`. Serve with any static file server.
 
 ---
 
 ## Backend and Database Dependency
 
-The backend lives in `smart-kitchen-backend/` at the repository root.
+The backend lives in `backend/` at the repository root.
 
 ### Start the backend
 
 ```powershell
-cd smart-kitchen-backend
+cd backend
 node server.js
 ```
 
 Or with auto-reload during development:
 
 ```powershell
-cd smart-kitchen-backend
+cd backend
 npm run dev
 ```
 
@@ -220,14 +220,14 @@ npm run dev
 
 The backend uses **Sequelize ORM** (v6) with the `mysql2` driver to connect to a MySQL database. The database name is `smart_kitchen_enriched` by default.
 
-Create a `.env` file at `smart-kitchen-backend/.env` before starting the server. Use `smart-kitchen-backend/.env.example` as the template — it contains all required variable names with placeholder values and never includes real credentials.
+Create a `.env` file at `backend/.env` before starting the server. Use `backend/.env.example` as the template — it contains all required variable names with placeholder values and never includes real credentials.
 
 ### Migrations and seeders
 
 Run migrations once on a new database to create all tables:
 
 ```powershell
-cd smart-kitchen-backend
+cd backend
 npx sequelize-cli db:migrate
 ```
 
@@ -273,7 +273,7 @@ All routes below `/` and `/register` require the user to be logged in. Unauthent
 ## Frontend Project Structure
 
 ```
-smart-kitchen-frontend/src/
+frontend/src/
 ├── assets/          # Static images: logo, login carousel, user avatars
 ├── components/      # Reusable UI elements (Navbar, Sidebar, RecipeCard,
 │                    #   RecipeDetailsModal, ReviewCard, CommentItem, etc.)
@@ -423,7 +423,7 @@ The connection is established by `connectSocket(userId)` and managed by `Notific
 
 ## AI Integration
 
-The AI Assistant page (`/ai-assistant`) provides three tools, each backed by the Google Gemini API through the backend. The Gemini API key is stored exclusively in `smart-kitchen-backend/.env` and is never sent to or visible in the frontend.
+The AI Assistant page (`/ai-assistant`) provides three tools, each backed by the Google Gemini API through the backend. The Gemini API key is stored exclusively in `backend/.env` and is never sent to or visible in the frontend.
 
 ### Tool 1 — Recipe Generator
 
@@ -515,7 +515,7 @@ CREATE DATABASE smart_kitchen_enriched CHARACTER SET utf8mb4 COLLATE utf8mb4_uni
 ### 2. Configure backend environment variables
 
 ```powershell
-cd smart-kitchen-backend
+cd backend
 Copy-Item .env.example .env
 ```
 
@@ -524,7 +524,7 @@ Open `.env` and fill in your MySQL credentials and a valid Gemini API key. Do no
 ### 3. Run migrations
 
 ```powershell
-cd smart-kitchen-backend
+cd backend
 npx sequelize-cli db:migrate
 ```
 
@@ -549,7 +549,7 @@ The backend listens at `http://localhost:3000`.
 In a separate terminal:
 
 ```powershell
-cd smart-kitchen-frontend
+cd frontend
 npm start
 ```
 
@@ -575,7 +575,7 @@ Navigate to **[http://localhost:5173](http://localhost:5173)** in your browser a
 - **Gemini API key required** — the AI tools return an error if `GEMINI_API_KEY` is not set in the backend `.env`.
 - **External image URLs** — category default images and recipe images hosted externally depend on third-party availability. If an external URL becomes unreachable, the next fallback in the chain is used.
 - **Backend and MySQL required** — the frontend cannot display any data if the backend or database is not running.
-- **Uploaded images tied to backend** — recipe images uploaded through the app are stored in `smart-kitchen-backend/uploads/` and served statically. Moving or restarting the backend with a different uploads directory will break existing image URLs.
+- **Uploaded images tied to backend** — recipe images uploaded through the app are stored in `backend/uploads/` and served statically. Moving or restarting the backend with a different uploads directory will break existing image URLs.
 - **Session is tab-local** — session state is stored in `sessionStorage`. Each browser tab maintains an independent login, which is required for the two-tab Socket.IO demo but means logging out in one tab does not affect others.
 - **Role-restricted pages** — navigating to `/recipe-management`, `/users`, or `/ingredients` as a non-admin/chef returns an error or empty state; access control is enforced by the backend.
 
@@ -585,23 +585,23 @@ Navigate to **[http://localhost:5173](http://localhost:5173)** in your browser a
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| All API calls return network errors | Backend not running | Run `node server.js` in `smart-kitchen-backend/` |
+| All API calls return network errors | Backend not running | Run `node server.js` in `backend/` |
 | Login fails silently | MySQL connection failure | Verify credentials in `.env` and that MySQL is running |
-| "GEMINI_API_KEY is missing" in backend console | Key not set | Add `GEMINI_API_KEY=your_key` to `smart-kitchen-backend/.env` |
+| "GEMINI_API_KEY is missing" in backend console | Key not set | Add `GEMINI_API_KEY=your_key` to `backend/.env` |
 | AI tools return 500 errors | Invalid or missing Gemini key | Set a valid key in `.env` and restart the backend |
-| Port 3000 already in use | Another process on port 3000 | Change `PORT` in `smart-kitchen-backend/.env` and update `src/utils/apiConfig.js` and `src/services/socketService.js` accordingly |
-| Port 5173 already in use | Another process on port 5173 | Set `PORT=5174` in a `smart-kitchen-frontend/.env` file |
-| Uploaded recipe images not loading | Backend uploads directory missing or wrong path | Ensure `smart-kitchen-backend/uploads/` exists and the backend is running |
+| Port 3000 already in use | Another process on port 3000 | Change `PORT` in `backend/.env` and update `src/utils/apiConfig.js` and `src/services/socketService.js` accordingly |
+| Port 5173 already in use | Another process on port 5173 | Set `PORT=5174` in a `frontend/.env` file |
+| Uploaded recipe images not loading | Backend uploads directory missing or wrong path | Ensure `backend/uploads/` exists and the backend is running |
 | CORS errors in browser console | Backend CORS not configured for the frontend port | The backend uses `cors()` with default settings; if you change the frontend port, no change is needed unless you add strict origin rules |
 
 ---
 
 ## Security Notes
 
-- **Never commit `.env`** — `smart-kitchen-backend/.env` is listed in `.gitignore`. Use `.env.example` for documentation of variable names only.
-- **Never expose the Gemini API key** — the key is loaded exclusively in `smart-kitchen-backend/services/geminiService.js` and is never included in any API response or frontend bundle.
+- **Never commit `.env`** — `backend/.env` is listed in `.gitignore`. Use `.env.example` for documentation of variable names only.
+- **Never expose the Gemini API key** — the key is loaded exclusively in `backend/services/geminiService.js` and is never included in any API response or frontend bundle.
 - **Never expose database credentials** — DB credentials live only in the backend `.env` file.
-- **Do not submit `node_modules`** — both `smart-kitchen-frontend/node_modules/` and `smart-kitchen-backend/node_modules/` are excluded by `.gitignore`.
+- **Do not submit `node_modules`** — both `frontend/node_modules/` and `backend/node_modules/` are excluded by `.gitignore`.
 - **`.env.example` is safe to commit** — it contains only placeholder values and serves as setup documentation for other developers.
 
 ---
@@ -611,7 +611,7 @@ Navigate to **[http://localhost:5173](http://localhost:5173)** in your browser a
 Assignment 4 submission screenshots are stored in:
 
 ```
-smart-kitchen-frontend/docs/Screenshots/
+frontend/docs/Screenshots/
 ```
 
 Do not rename or delete files in that directory.
@@ -634,5 +634,5 @@ Do not rename or delete files in that directory.
 ## Related Documentation
 
 - [Root README — full-system setup and overview](../../README.md)
-- [Backend Documentation](../../smart-kitchen-backend/docs/README.md)
-- [API Reference](../../smart-kitchen-backend/docs/API_REFERENCE.md)
+- [Backend Documentation](../../backend/docs/README.md)
+- [API Reference](../../backend/docs/API_REFERENCE.md)

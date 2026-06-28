@@ -2,7 +2,9 @@ import "./Ingredients.css";
 
 import { useEffect, useMemo, useState } from "react";
 
+import PageErrorState from "../components/PageErrorState";
 import AppButton from "../components/AppButton";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import CustomSelect from "../components/CustomSelect";
 import FormCard from "../components/FormCard";
 import FormField from "../components/FormField";
@@ -59,11 +61,15 @@ const ALLERGEN_OPTIONS = [
     }
 ];
 
+const PAGE_SIZE = 10;
+
 function Ingredients() {
     const [ingredients, setIngredients] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const [error, setError] = useState("");
+    const [loadError, setLoadError] = useState("");
     const [message, setMessage] = useState("");
 
     const [formData, setFormData] = useState(EMPTY_FORM_DATA);
@@ -89,6 +95,12 @@ function Ingredients() {
         };
     }, [isFormModalOpen, ingredientToDelete]);
 
+    const totalPages = Math.max(1, Math.ceil(ingredients.length / PAGE_SIZE));
+    const paginatedIngredients = useMemo(
+        () => ingredients.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+        [ingredients, currentPage]
+    );
+
     // Count allergen ingredients for the hero stats section.
     const allergenCount = useMemo(() => {
         return ingredients.filter((ingredient) => ingredient.isAllergen).length;
@@ -103,17 +115,23 @@ function Ingredients() {
 
     // Fetch all ingredients from the server and update the table.
     async function loadIngredients() {
+        setLoadError("");
         try {
             setLoading(true);
 
             const data = await getIngredients();
 
             setIngredients(Array.isArray(data) ? data : []);
+            setCurrentPage(1);
             setError("");
         } catch (err) {
             console.error("Ingredients loading error:", err);
 
-            setError("Failed to load ingredients.");
+            setLoadError(
+                !err.response
+                    ? "Unable to connect to the server. Please try again in a few moments."
+                    : "Failed to load ingredients."
+            );
         } finally {
             setLoading(false);
         }
@@ -258,6 +276,18 @@ function Ingredients() {
         );
     }
 
+    if (loadError) {
+        return (
+            <div className="ingredients-page">
+                <PageErrorState
+                    title="Ingredients Error"
+                    message={loadError}
+                    onRetry={() => { setLoadError(""); loadIngredients(); }}
+                />
+            </div>
+        );
+    }
+
     return (
         <div className="ingredients-page">
             <MessageModal
@@ -318,7 +348,6 @@ function Ingredients() {
                     <table className="ingredients-table">
                         <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
                             <th>Category</th>
                             <th>Allergen</th>
@@ -327,10 +356,8 @@ function Ingredients() {
                         </thead>
 
                         <tbody>
-                        {ingredients.map((ingredient) => (
+                        {paginatedIngredients.map((ingredient) => (
                             <tr key={ingredient.ingredientId}>
-                                <td>{ingredient.ingredientId}</td>
-
                                 <td>
                                     <strong className="ingredient-name">
                                         {ingredient.name}
@@ -393,6 +420,30 @@ function Ingredients() {
                         <p>
                             Add your first ingredient to start building the kitchen database.
                         </p>
+                    </div>
+                )}
+
+                {totalPages > 1 && (
+                    <div className="ingredients-pagination">
+                        <button
+                            type="button"
+                            className="ingredients-pagination-btn"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(p => p - 1)}
+                        >
+                            ← Previous
+                        </button>
+                        <span className="ingredients-pagination-info">
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        <button
+                            type="button"
+                            className="ingredients-pagination-btn"
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(p => p + 1)}
+                        >
+                            Next →
+                        </button>
                     </div>
                 )}
             </section>
@@ -491,42 +542,13 @@ function Ingredients() {
             )}
 
             {ingredientToDelete && (
-                <div
-                    className="ingredient-modal-overlay"
-                    onClick={cancelDeleteIngredient}
-                >
-                    <div
-                        className="ingredient-confirm-modal"
-                        onClick={(event) => event.stopPropagation()}
-                    >
-                        <FormCard
-                            label="Delete ingredient"
-                            title="Are you sure?"
-                            description={`Delete ${ingredientToDelete.name}? This action cannot be undone.`}
-                            className="ingredient-confirm-card"
-                            actions={
-                                <>
-                                    <AppButton
-                                        type="button"
-                                        variant="danger"
-                                        disabled={deleting}
-                                        onClick={confirmDeleteIngredient}
-                                    >
-                                        {deleting ? "Deleting..." : "Yes, delete"}
-                                    </AppButton>
-
-                                    <AppButton
-                                        type="button"
-                                        variant="secondary"
-                                        onClick={cancelDeleteIngredient}
-                                    >
-                                        Cancel
-                                    </AppButton>
-                                </>
-                            }
-                        />
-                    </div>
-                </div>
+                <ConfirmDeleteModal
+                    label="Delete ingredient"
+                    description={`Delete ${ingredientToDelete.name}? This action cannot be undone.`}
+                    isDeleting={deleting}
+                    onConfirm={confirmDeleteIngredient}
+                    onCancel={cancelDeleteIngredient}
+                />
             )}
         </div>
     );

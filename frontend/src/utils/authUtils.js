@@ -16,7 +16,7 @@ export function getAuthHeadersForUser(user) {
     };
 }
 
-// Build auth headers by reading the current user from localStorage.
+// Build auth headers by reading the current user from sessionStorage.
 export function getAuthHeaders() {
     return getAuthHeadersForUser(getStoredUser());
 }

@@ -3,6 +3,9 @@ import "./ShoppingList.css";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
+import PageErrorState from "../components/PageErrorState";
+import AppButton from "../components/AppButton";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import CreateProductModal from "../components/CreateProduct";
 import CreateProductButton from "../components/CreateProductButton";
 import CustomSelect from "../components/CustomSelect";
@@ -55,8 +58,11 @@ function ShoppingList() {
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
 
     const [error, setError] = useState("");
+    const [loadError, setLoadError] = useState("");
     const [success, setSuccess] = useState("");
     const [noCitySet, setNoCitySet] = useState(false);
+    const [noStoresForCity, setNoStoresForCity] = useState(false);
+    const [confirmDeleteItem, setConfirmDeleteItem] = useState(null);
 
     const storedUser = getStoredUser();
     const activeMessage = success || error;
@@ -68,6 +74,7 @@ function ShoppingList() {
 
     // Load shopping list, ingredients, stores, and recommendations in parallel on page open.
     async function loadPageData() {
+        setLoadError("");
         try {
             setLoading(true);
             setError("");
@@ -122,20 +129,23 @@ function ShoppingList() {
             setIngredients(getResponseData(ingredientsResponse));
             if (storesResponse?._noCityError) {
                 setNoCitySet(true);
+                setNoStoresForCity(false);
                 setStores([]);
             } else {
-                setStores(getResponseData(storesResponse));
+                const storeList = getResponseData(storesResponse);
+                setStores(storeList);
+                setNoCitySet(false);
+                setNoStoresForCity(storeList.length === 0);
             }
             setStoreRecommendations(getResponseData(recommendationsResponse));
         } catch (err) {
             console.error("Shopping list loading error:", err);
             console.error("Server response:", err.response?.data);
 
-            setError(
-                getErrorMessage(
-                    err,
-                    "Failed to load shopping list."
-                )
+            setLoadError(
+                !err.response
+                    ? "Unable to connect to the server. Please try again in a few moments."
+                    : getErrorMessage(err, "Failed to load shopping list.")
             );
         } finally {
             setLoading(false);
@@ -391,6 +401,16 @@ function ShoppingList() {
         }
     }
 
+    function handleDeleteClick(item) {
+        setConfirmDeleteItem(item);
+    }
+
+    async function handleConfirmDelete() {
+        const item = confirmDeleteItem;
+        setConfirmDeleteItem(null);
+        await deleteItem(item.shoppingItemId);
+    }
+
     // Delete a shopping item and refresh store recommendations afterward.
     async function deleteItem(itemId) {
         try {
@@ -473,6 +493,18 @@ function ShoppingList() {
         );
     }
 
+    if (loadError) {
+        return (
+            <div className="shopping-page">
+                <PageErrorState
+                    title="Shopping List Error"
+                    message={loadError}
+                    onRetry={() => { setLoadError(""); loadPageData(); }}
+                />
+            </div>
+        );
+    }
+
     return (
         <div className="shopping-page">
             {activeMessage && (
@@ -519,6 +551,12 @@ function ShoppingList() {
             {noCitySet && (
                 <div className="shopping-city-notice">
                     📍 Please set your city in your profile to see nearby store suggestions.
+                </div>
+            )}
+
+            {noStoresForCity && (
+                <div className="shopping-city-notice">
+                    🏪 No stores found in your city yet. Check back soon!
                 </div>
             )}
 
@@ -671,9 +709,7 @@ function ShoppingList() {
                                 <button
                                     type="button"
                                     className="delete-shopping-button"
-                                    onClick={() =>
-                                        deleteItem(item.shoppingItemId)
-                                    }
+                                    onClick={() => handleDeleteClick(item)}
                                 >
                                     Delete
                                 </button>
@@ -682,6 +718,15 @@ function ShoppingList() {
                     </div>
                 )}
             </section>
+
+            {confirmDeleteItem && (
+                <ConfirmDeleteModal
+                    label="Delete shopping item"
+                    description={`Delete "${getIngredientName(confirmDeleteItem.ingredientId)}" from your shopping list? This action cannot be undone.`}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={() => setConfirmDeleteItem(null)}
+                />
+            )}
         </div>
     );
 }

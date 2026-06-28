@@ -2,6 +2,7 @@ import "./Settings.css";
 
 import { useEffect, useState } from "react";
 
+import PageErrorState from "../components/PageErrorState";
 import AppButton from "../components/AppButton";
 import CustomSelect from "../components/CustomSelect";
 import FormField from "../components/FormField";
@@ -20,7 +21,8 @@ import {
     updateSettings
 } from "../services/settingsService";
 import { getMyChefRequest, submitChefRequest } from "../services/chefRequestService";
-import { COOKING_LEVEL_OPTIONS } from "../constants/options";
+import { CITY_OPTIONS, COOKING_LEVEL_OPTIONS } from "../constants/options";
+import CityPicker from "../components/CityPicker";
 
 const DIETARY_OPTIONS = [
     "vegan",
@@ -49,6 +51,7 @@ function Settings() {
         firstName: "",
         lastName: "",
         email: "",
+        city: "",
         age: "",
         cookingLevel: "beginner",
         preferences: {
@@ -80,6 +83,7 @@ function Settings() {
     // Message states
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
+    const [loadError, setLoadError] = useState("");
     const [passwordSuccess, setPasswordSuccess] = useState("");
     const [passwordError, setPasswordError] = useState("");
 
@@ -105,6 +109,7 @@ function Settings() {
                     firstName: data.firstName || "",
                     lastName: data.lastName || "",
                     email: data.email || "",
+                    city: data.city || "",
                     age: data.age || "",
                     cookingLevel: data.cookingLevel || "beginner",
                     preferences: {
@@ -126,7 +131,11 @@ function Settings() {
             } catch (err) {
                 console.error(err);
 
-                setError("Failed to load settings.");
+                setLoadError(
+                    !err.response
+                        ? "Unable to connect to the server. Please try again in a few moments."
+                        : "Failed to load settings."
+                );
             } finally {
                 setLoading(false);
             }
@@ -251,6 +260,7 @@ function Settings() {
                 firstName: formData.firstName.trim(),
                 lastName: formData.lastName.trim(),
                 email: formData.email.trim(),
+                city: formData.city.trim(),
                 age: Number(formData.age),
                 cookingLevel: formData.cookingLevel,
                 preferences: formData.preferences,
@@ -360,6 +370,18 @@ function Settings() {
         );
     }
 
+    if (loadError) {
+        return (
+            <div className="settings-page">
+                <PageErrorState
+                    title="Settings Error"
+                    message={loadError}
+                    onRetry={() => window.location.reload()}
+                />
+            </div>
+        );
+    }
+
     return (
         <div className="settings-page">
             <MessageModal
@@ -460,6 +482,15 @@ function Settings() {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Enter email"
+                        />
+
+                        <CityPicker
+                            label="City"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleChange}
+                            cities={CITY_OPTIONS}
+                            placeholder="Search or select city..."
                         />
 
                         <FormField

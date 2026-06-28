@@ -2,7 +2,9 @@ import "./MealPlanner.css";
 
 import { useEffect, useMemo, useState } from "react";
 
+import PageErrorState from "../components/PageErrorState";
 import AppButton from "../components/AppButton";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import CustomSelect from "../components/CustomSelect";
 import FormCard from "../components/FormCard";
 import FormField from "../components/FormField";
@@ -156,6 +158,7 @@ function MealPlanner() {
     const [deleting, setDeleting] = useState(false);
 
     const [error, setError] = useState("");
+    const [loadError, setLoadError] = useState("");
     const [success, setSuccess] = useState("");
 
     const storedUser = getStoredUser();
@@ -286,11 +289,10 @@ function MealPlanner() {
             } catch (err) {
                 console.error("Meal planner loading error:", err);
 
-                setError(
-                    getErrorMessage(
-                        err,
-                        "Failed to load meal planner."
-                    )
+                setLoadError(
+                    !err.response
+                        ? "Unable to connect to the server. Please try again in a few moments."
+                        : getErrorMessage(err, "Failed to load meal planner.")
                 );
             } finally {
                 setLoading(false);
@@ -574,6 +576,18 @@ function MealPlanner() {
                 <FormCard
                     title="Loading meal planner..."
                     description="Please wait while we prepare your weekly meal plan."
+                />
+            </div>
+        );
+    }
+
+    if (loadError) {
+        return (
+            <div className="meal-planner-page">
+                <PageErrorState
+                    title="Meal Planner Error"
+                    message={loadError}
+                    onRetry={() => window.location.reload()}
                 />
             </div>
         );
@@ -900,44 +914,13 @@ function MealPlanner() {
             )}
 
             {mealToDelete && (
-                <div
-                    className="meal-modal-overlay"
-                    onClick={cancelDeleteMeal}
-                >
-                    <div
-                        className="meal-confirm-modal"
-                        onClick={(event) => event.stopPropagation()}
-                    >
-                        <FormCard
-                            label="Delete meal"
-                            title="Remove this meal?"
-                            description={`Remove ${formatMealType(mealToDelete.mealType)} from ${mealToDelete.date}?`}
-                            className="meal-confirm-card"
-                            actions={
-                                <>
-                                    <AppButton
-                                        type="button"
-                                        variant="danger"
-                                        disabled={deleting}
-                                        onClick={confirmDeleteMeal}
-                                    >
-                                        {deleting
-                                            ? "Deleting..."
-                                            : "Yes, delete"}
-                                    </AppButton>
-
-                                    <AppButton
-                                        type="button"
-                                        variant="secondary"
-                                        onClick={cancelDeleteMeal}
-                                    >
-                                        Cancel
-                                    </AppButton>
-                                </>
-                            }
-                        />
-                    </div>
-                </div>
+                <ConfirmDeleteModal
+                    label="Delete meal"
+                    description={`Remove ${formatMealType(mealToDelete.mealType)} from ${mealToDelete.date}?`}
+                    isDeleting={deleting}
+                    onConfirm={confirmDeleteMeal}
+                    onCancel={cancelDeleteMeal}
+                />
             )}
         </div>
     );

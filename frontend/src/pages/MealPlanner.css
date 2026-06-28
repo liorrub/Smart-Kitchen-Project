@@ -588,28 +588,6 @@
     box-shadow: 0 10px 22px rgba(42, 117, 69, 0.18);
 }
 
-/* ==========================================================================
-   Delete confirmation modal
-   ========================================================================== */
-
-.meal-confirm-modal {
-    position: relative;
-    z-index: 9999;
-
-    width: min(560px, calc(100vw - 48px));
-
-    animation: mealModalPopIn 0.22s ease;
-}
-
-.meal-confirm-card {
-    margin: 0;
-    text-align: center;
-}
-
-.meal-confirm-card .form-card-actions {
-    justify-content: center;
-}
-
 @keyframes mealModalPopIn {
     from {
         opacity: 0;
@@ -646,8 +624,7 @@
         padding: 16px;
     }
 
-    .meal-modal,
-    .meal-confirm-modal {
+    .meal-modal {
         width: 100%;
     }
 }

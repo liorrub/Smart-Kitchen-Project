@@ -1,5 +1,8 @@
 import "./Pantry.css";
 
+import PageErrorState from "../components/PageErrorState";
+import AppButton from "../components/AppButton";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import PageHero from "../components/PageHero";
 import MessageModal from "../components/MessageModal";
 import { useEffect, useMemo, useState } from "react";
@@ -124,6 +127,7 @@ function Pantry() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
+    const [loadError, setLoadError] = useState("");
     const [success, setSuccess] = useState("");
     const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
 
@@ -137,6 +141,7 @@ function Pantry() {
     });
     const [editSaving, setEditSaving] = useState(false);
     const [editError, setEditError] = useState("");
+    const [confirmDeleteItem, setConfirmDeleteItem] = useState(null);
 
     const storedUser = getStoredUser();
 
@@ -174,11 +179,10 @@ function Pantry() {
                 console.error("Pantry loading error:", err);
                 console.error("Server response:", err.response?.data);
 
-                setError(
-                    getErrorMessage(
-                        err,
-                        "Failed to load pantry."
-                    )
+                setLoadError(
+                    !err.response
+                        ? "Unable to connect to the server. Please try again in a few moments."
+                        : getErrorMessage(err, "Failed to load pantry.")
                 );
             } finally {
                 setLoading(false);
@@ -389,6 +393,16 @@ function Pantry() {
         }
     }
 
+    function handleDeletePantryClick(item) {
+        setConfirmDeleteItem(item);
+    }
+
+    async function handleConfirmDeletePantry() {
+        const item = confirmDeleteItem;
+        setConfirmDeleteItem(null);
+        await deletePantryItem(item.pantryItemId);
+    }
+
     // Delete a pantry item on the server and remove it from the local list.
     async function deletePantryItem(pantryItemId) {
         try {
@@ -529,6 +543,18 @@ function Pantry() {
         );
     }
 
+    if (loadError) {
+        return (
+            <div className="pantry-page">
+                <PageErrorState
+                    title="Pantry Error"
+                    message={loadError}
+                    onRetry={() => window.location.reload()}
+                />
+            </div>
+        );
+    }
+
     return (
         <div className="pantry-page">
             <MessageModal
@@ -539,6 +565,7 @@ function Pantry() {
 
             <MessageModal
                 type="error"
+                title="Pantry Error"
                 message={error}
                 onClose={() => setError("")}
             />
@@ -949,11 +976,7 @@ function Pantry() {
                                     <button
                                         type="button"
                                         className="delete-pantry-button"
-                                        onClick={() =>
-                                            deletePantryItem(
-                                                item.pantryItemId
-                                            )
-                                        }
+                                        onClick={() => handleDeletePantryClick(item)}
                                     >
                                         Delete
                                     </button>
@@ -963,6 +986,15 @@ function Pantry() {
                     </div>
                 )}
             </section>
+
+            {confirmDeleteItem && (
+                <ConfirmDeleteModal
+                    label="Delete pantry item"
+                    description={`Delete "${getIngredientName(confirmDeleteItem.ingredientId)}" from your pantry? This action cannot be undone.`}
+                    onConfirm={handleConfirmDeletePantry}
+                    onCancel={() => setConfirmDeleteItem(null)}
+                />
+            )}
         </div>
     );
 }

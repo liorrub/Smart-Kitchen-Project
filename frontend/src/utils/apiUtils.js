@@ -8,7 +8,8 @@ export function getResponseDataOrBody(response) {
     return response.data?.data || response.data;
 }
 
-// Access data.data directly with no fallback — use only when a successful response with data is guaranteed.
+// Access data.data directly with no fallback. Returns null when data.data is null, which is correct
+// for endpoints that intentionally return { data: null } to mean "none exists".
 export function getNestedResponseData(response) {
     return response.data.data;
 }

@@ -9,7 +9,7 @@ import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PasswordField from "../components/PasswordField";
 
-import { login } from "../services/authService";
+import { getCurrentUser, login } from "../services/authService";
 import { validateLogin } from "../validators/userValidator";
 import { useAuth } from "../context/AuthContext";
 
@@ -94,14 +94,19 @@ function Login() {
         try {
             setLoading(true);
 
-            const result = await login(email, password);
+            const loginResult = await login(email, password);
+            const loginData = loginResult.data;
 
-            setUser(result.data);
+            // Fetch the full user profile so DevTools shows GET /api/users/me after login.
+            const meResult = await getCurrentUser(loginData.userId);
+            const meData = meResult.data;
+
+            setUser(meData);
 
             // sessionStorage is tab-local — each tab can hold a different logged-in user
             sessionStorage.setItem(
                 "user",
-                JSON.stringify(result.data)
+                JSON.stringify(meData)
             );
 
             navigate("/dashboard");

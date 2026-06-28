@@ -214,29 +214,11 @@
 }
 
 /* ==========================================================================
-   Delete confirmation modal
-   ========================================================================== */
-
-.users-confirm-modal {
-    width: min(560px, calc(100vw - 48px));
-}
-
-.users-confirm-card {
-    margin: 0;
-    text-align: center;
-}
-
-.users-confirm-card .form-card-actions {
-    justify-content: center;
-}
-
-/* ==========================================================================
    Forms
    ========================================================================== */
 
 .users-create-card,
-.users-edit-card,
-.users-delete-card {
+.users-edit-card {
     margin-top: 0;
 }
 
@@ -285,8 +267,7 @@
         padding: 80px 14px 14px;
     }
 
-    .users-modal,
-    .users-confirm-modal {
+    .users-modal {
         width: 100%;
         max-height: 90vh;
     }
@@ -295,4 +276,67 @@
         gap: 12px;
         flex-wrap: wrap;
     }
+}
+
+/* ==========================================================================
+   Pagination controls
+   ========================================================================== */
+
+.users-pagination {
+    margin-top: 24px;
+    padding: 20px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.users-pagination-btn {
+    height: 44px;
+    padding: 0 22px;
+
+    border: 1px solid #cde8c7;
+    border-radius: 999px;
+
+    background: #fffefa;
+    color: #2a7545;
+
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.users-pagination-btn:hover:not(:disabled) {
+    background: #67d656;
+    color: white;
+    border-color: #67d656;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(42, 117, 69, 0.2);
+}
+
+.users-pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    color: #9bb39f;
+    border-color: #d8e8d0;
+}
+
+.users-pagination-info {
+    padding: 10px 18px;
+
+    border-radius: 999px;
+    background: #e9fbe5;
+    border: 1px solid #cde8c7;
+
+    color: #1f3d2b;
+
+    font-size: 14px;
+    font-weight: 900;
 }

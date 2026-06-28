@@ -19,7 +19,7 @@ function FollowButton({ targetUserId, initialIsFollowing, onFollowChange }) {
     // Sync state when the prop changes (e.g. parent re-fetches profile data)
     useEffect(() => {
         setIsFollowing(Boolean(initialIsFollowing));
-    }, [targetUserId]);
+    }, [targetUserId, initialIsFollowing]);
 
     async function handleClick() {
         if (loading) return;

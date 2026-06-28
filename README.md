@@ -3,9 +3,9 @@
 A complete full-stack recipe and pantry management application built for Assignment 4.
 
 **Detailed documentation:**
-- [Frontend Documentation](smart-kitchen-frontend/docs/README.md)
-- [Backend Documentation](smart-kitchen-backend/docs/README.md)
-- [API Reference](smart-kitchen-backend/docs/API_REFERENCE.md)
+- [Frontend Documentation](frontend/docs/README.md)
+- [Backend Documentation](backend/docs/README.md)
+- [API Reference](backend/docs/API_REFERENCE.md)
 
 ---
 
@@ -81,7 +81,7 @@ Browser (http://localhost:5173)
 ```
 
 Socket.IO shares port 3000 with the REST API via a single `http.Server` instance.
-Uploaded recipe images are stored in `smart-kitchen-backend/uploads/` and served statically at `http://localhost:3000/uploads/`.
+Uploaded recipe images are stored in `backend/uploads/` and served statically at `http://localhost:3000/uploads/`.
 
 ---
 
@@ -90,7 +90,7 @@ Uploaded recipe images are stored in `smart-kitchen-backend/uploads/` and served
 ```
 Smart-Kitchen-Project/
 ├── README.md                              ← This file
-├── smart-kitchen-frontend/
+├── frontend/
 │   ├── src/
 │   │   ├── pages/                         ← Route-level page components
 │   │   ├── components/                    ← Reusable UI components
@@ -102,7 +102,7 @@ Smart-Kitchen-Project/
 │   │   ├── README.md                      ← Frontend detailed documentation
 │   │   └── Screenshots/                   ← Assignment 4 submission screenshots
 │   └── package.json
-└── smart-kitchen-backend/
+└── backend/
     ├── server.js                          ← Express + Socket.IO entry point
     ├── routes/                            ← Express routers (21 files)
     ├── controllers/                       ← Request handlers (19 files)
@@ -146,7 +146,7 @@ Follow these steps in order. Use two separate terminals.
 #### Step 1: Enter the backend folder and install dependencies
 
 ```powershell
-cd smart-kitchen-backend
+cd backend
 npm install
 ```
 
@@ -229,7 +229,7 @@ The backend is now available at **http://localhost:3000**. The API base path is 
 #### Step 7: Enter the frontend folder and install dependencies
 
 ```powershell
-cd smart-kitchen-frontend
+cd frontend
 npm install
 ```
 
@@ -272,7 +272,7 @@ The frontend has no `.env` file. The API base URL (`http://localhost:3000/api`) 
 **Terminal 1 — Backend (first time setup)**
 
 ```powershell
-cd smart-kitchen-backend
+cd backend
 npm install
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
@@ -285,7 +285,7 @@ npm start
 **Terminal 2 — Frontend**
 
 ```powershell
-cd smart-kitchen-frontend
+cd frontend
 npm install
 npm start
 ```
@@ -294,11 +294,11 @@ npm start
 
 ```powershell
 # Terminal 1
-cd smart-kitchen-backend
+cd backend
 npm start
 
 # Terminal 2
-cd smart-kitchen-frontend
+cd frontend
 npm start
 ```
 
@@ -306,7 +306,7 @@ npm start
 
 ## Environment Variables
 
-All variables are defined in `smart-kitchen-backend/.env.example`. The frontend requires no `.env` file.
+All variables are defined in `backend/.env.example`. The frontend requires no `.env` file.
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
@@ -319,7 +319,7 @@ All variables are defined in `smart-kitchen-backend/.env.example`. The frontend 
 | `GEMINI_API_KEY` | Yes (AI) | — | Google Gemini API key |
 | `GEMINI_MODEL` | No | `gemini-3.1-flash-lite` | Gemini model name |
 
-The Gemini API key is loaded exclusively by `smart-kitchen-backend/services/geminiService.js`. It is never included in any API response, never logged, and never sent to the frontend.
+The Gemini API key is loaded exclusively by `backend/services/geminiService.js`. It is never included in any API response, never logged, and never sent to the frontend.
 
 ---
 
@@ -425,7 +425,7 @@ x-user-role: <user | chef | influencer | admin>
 | Notifications | `/api/notifications` |
 | Options | `/api/options` |
 
-Full endpoint reference: [smart-kitchen-backend/docs/API_REFERENCE.md](smart-kitchen-backend/docs/API_REFERENCE.md)
+Full endpoint reference: [backend/docs/API_REFERENCE.md](backend/docs/API_REFERENCE.md)
 
 ---
 
@@ -503,7 +503,7 @@ Every successful AI call is saved to the `AiHistory` MySQL table. History is use
 Assignment 4 submission screenshots are located at:
 
 ```
-smart-kitchen-frontend/docs/Screenshots/
+frontend/docs/Screenshots/
 ```
 
 Do not rename or delete files in that directory.
@@ -524,7 +524,7 @@ Do not rename or delete files in that directory.
 ## Security Notes
 
 - **Never commit `.env`** — it is listed in `.gitignore`. Only `.env.example` (with placeholder values) is committed.
-- **Never expose the Gemini API key** — it must live only in `smart-kitchen-backend/.env` and is loaded exclusively by `services/geminiService.js`. It never appears in any API response or log.
+- **Never expose the Gemini API key** — it must live only in `backend/.env` and is loaded exclusively by `services/geminiService.js`. It never appears in any API response or log.
 - **Never expose database credentials** — DB credentials live only in the backend `.env` file.
 - **Never submit `node_modules`** — both `node_modules` directories are excluded by `.gitignore`.
 - **Passwords are bcrypt-hashed** — plaintext passwords are never stored. The request logger masks the `password` field in request bodies.
@@ -536,9 +536,9 @@ Do not rename or delete files in that directory.
 
 | Document | Contents |
 |---|---|
-| [Frontend Documentation](smart-kitchen-frontend/docs/README.md) | React stack, routing, components, API communication, Socket.IO client, AI tools, image fallbacks, troubleshooting |
-| [Backend Documentation](smart-kitchen-backend/docs/README.md) | Express setup, Sequelize config, migrations, seeders, all Socket.IO events, Gemini service, file uploads, error codes, full user list |
-| [API Reference](smart-kitchen-backend/docs/API_REFERENCE.md) | All 98 endpoints with request and response schemas |
+| [Frontend Documentation](frontend/docs/README.md) | React stack, routing, components, API communication, Socket.IO client, AI tools, image fallbacks, troubleshooting |
+| [Backend Documentation](backend/docs/README.md) | Express setup, Sequelize config, migrations, seeders, all Socket.IO events, Gemini service, file uploads, error codes, full user list |
+| [API Reference](backend/docs/API_REFERENCE.md) | All 98 endpoints with request and response schemas |
 
 ---
 

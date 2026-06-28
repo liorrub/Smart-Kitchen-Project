@@ -4,8 +4,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
+import PageErrorState from "../components/PageErrorState";
 import PageHero from "../components/PageHero";
 import RecipeDetailsModal from "../components/RecipeDetailsModal";
+import AppButton from "../components/AppButton";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import MessageModal from "../components/MessageModal";
 import AdminRecipeApprovalSection from "../components/AdminRecipeApprovalSection";
 import AdminReviewReportSection from "../components/AdminReviewReportSection";
@@ -54,6 +57,7 @@ function Dashboard() {
     const [dashboardMessage, setDashboardMessage] = useState("");
     const [dashboardActionError, setDashboardActionError] = useState("");
     const [actionLoadingId, setActionLoadingId] = useState("");
+    const [confirmRemovePantry, setConfirmRemovePantry] = useState(null);
 
     // "user" fallback is only for display-level role branching — auth headers use getUserRole directly.
     const role = String(getUserRole(user) || "user").toLowerCase();
@@ -108,7 +112,11 @@ function Dashboard() {
             }
         } catch (error) {
             console.error(error);
-            setError("Failed to load dashboard");
+            setError(
+                !error.response
+                    ? "Unable to connect to the server. Please try again in a few moments."
+                    : "Failed to load dashboard."
+            );
         } finally {
             setLoading(false);
         }
@@ -407,6 +415,16 @@ function Dashboard() {
         }
     }
 
+    function handleRemovePantryClick(item) {
+        setConfirmRemovePantry(item);
+    }
+
+    async function handleConfirmRemovePantry() {
+        const item = confirmRemovePantry;
+        setConfirmRemovePantry(null);
+        await removePantryItemFromDashboard(item);
+    }
+
     // Delete a pantry item on the server and remove it from the local dashboard state.
     async function removePantryItemFromDashboard(item) {
         const pantryItemId = getItemId(item, "pantryItemId", "id");
@@ -573,19 +591,11 @@ function Dashboard() {
     if (error) {
         return (
             <main className="dashboard-page">
-                <div className="dashboard-state-card dashboard-error">
-                    <span>⚠️</span>
-                    <h1>Dashboard error</h1>
-                    <p>{error}</p>
-
-                    <button
-                        type="button"
-                        className="dashboard-primary-button"
-                        onClick={loadDashboard}
-                    >
-                        Try Again
-                    </button>
-                </div>
+                <PageErrorState
+                    title="Dashboard Error"
+                    message={error}
+                    onRetry={loadDashboard}
+                />
             </main>
         );
     }
@@ -862,9 +872,7 @@ function Dashboard() {
                                                     <button
                                                         type="button"
                                                         className="dashboard-tag dashboard-tag-button danger"
-                                                        onClick={() =>
-                                                            removePantryItemFromDashboard(item)
-                                                        }
+                                                        onClick={() => handleRemovePantryClick(item)}
                                                         disabled={
                                                             actionLoadingId ===
                                                             `remove-pantry-${pantryItemId}`
@@ -1003,6 +1011,16 @@ function Dashboard() {
                 <RecipeDetailsModal
                     recipe={selectedRecipe}
                     onClose={() => setSelectedRecipe(null)}
+                />
+            )}
+
+            {confirmRemovePantry && (
+                <ConfirmDeleteModal
+                    label="Remove pantry item"
+                    description={`Remove "${getIngredientName(confirmRemovePantry.ingredientId)}" from your pantry?`}
+                    confirmText="Yes, remove"
+                    onConfirm={handleConfirmRemovePantry}
+                    onCancel={() => setConfirmRemovePantry(null)}
                 />
             )}
         </main>

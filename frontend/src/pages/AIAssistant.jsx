@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import AppButton from "../components/AppButton";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import FormCard from "../components/FormCard";
 import MultiIngredientPicker from "../components/MultiIngredientPicker";
 import PageHero from "../components/PageHero";
@@ -369,6 +370,8 @@ function AIAssistant() {
     const [history, setHistory]               = useState([]);
     const [loadingHistory, setLoadingHistory] = useState(true);
     const [historyError, setHistoryError]     = useState("");
+    const [confirmDeleteHistory, setConfirmDeleteHistory] = useState(null);
+    const [historySuccess, setHistorySuccess] = useState("");
 
     // Feature state
     const [allIngredients, setAllIngredients]   = useState([]);
@@ -506,11 +509,18 @@ function AIAssistant() {
         }
     }
 
-    async function handleDeleteHistory(e, historyId) {
+    function handleDeleteHistoryClick(e, historyItem) {
         e.stopPropagation();
+        setConfirmDeleteHistory(historyItem);
+    }
+
+    async function handleConfirmDeleteHistory() {
+        const historyItem = confirmDeleteHistory;
+        setConfirmDeleteHistory(null);
         try {
-            await deleteAIHistoryItem(historyId);
-            setHistory((prev) => prev.filter((h) => h.historyId !== historyId));
+            await deleteAIHistoryItem(historyItem.historyId);
+            setHistory((prev) => prev.filter((h) => h.historyId !== historyItem.historyId));
+            setHistorySuccess("History item deleted successfully.");
         } catch {
             // silent — item will still show until next refresh
         }
@@ -749,6 +759,10 @@ function AIAssistant() {
                     <div className="ai-history-warning">{historyError}</div>
                 )}
 
+                {historySuccess && (
+                    <div className="ai-history-success">{historySuccess}</div>
+                )}
+
                 {!loadingHistory && !historyError && history.length === 0 && (
                     <div className="ai-history-warning">
                         No AI requests yet. Use one of the tools above to create your first result.
@@ -785,7 +799,7 @@ function AIAssistant() {
                                 <button
                                     type="button"
                                     className="ai-history-delete"
-                                    onClick={(e) => handleDeleteHistory(e, historyItem.historyId)}
+                                    onClick={(e) => handleDeleteHistoryClick(e, historyItem)}
                                     aria-label="Delete history item"
                                 >
                                     ✕
@@ -801,6 +815,15 @@ function AIAssistant() {
                     suggestion={selectedSuggestion}
                     index={selectedSuggestionIdx}
                     onClose={() => setSelectedSuggestion(null)}
+                />
+            )}
+
+            {confirmDeleteHistory && (
+                <ConfirmDeleteModal
+                    label="Delete history item"
+                    description="Delete this AI history item? This action cannot be undone."
+                    onConfirm={handleConfirmDeleteHistory}
+                    onCancel={() => setConfirmDeleteHistory(null)}
                 />
             )}
         </div>

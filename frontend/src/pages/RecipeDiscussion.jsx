@@ -7,6 +7,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import CommentItem from "../components/CommentItem";
 import CommentInput from "../components/CommentInput";
 import AppButton from "../components/AppButton";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 
 import { getRecipeById } from "../services/recipeService";
 import { getComments } from "../services/recipeCommentsService";
@@ -460,31 +461,12 @@ function RecipeDiscussion() {
 
             {/* ── Delete confirmation modal ── */}
             {confirmDeleteComment && (
-                <div
-                    className="message-modal-overlay"
-                    onClick={() => setConfirmDeleteComment(null)}
-                >
-                    <div
-                        className="message-modal-card message-modal-error"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <p>Are you sure you want to delete this comment?</p>
-                        <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "8px" }}>
-                            <AppButton
-                                variant="secondary"
-                                onClick={() => setConfirmDeleteComment(null)}
-                            >
-                                Cancel
-                            </AppButton>
-                            <AppButton
-                                variant="danger"
-                                onClick={handleConfirmDelete}
-                            >
-                                Delete
-                            </AppButton>
-                        </div>
-                    </div>
-                </div>
+                <ConfirmDeleteModal
+                    label="Delete comment"
+                    description="Delete this comment? This action cannot be undone."
+                    onConfirm={handleConfirmDelete}
+                    onCancel={() => setConfirmDeleteComment(null)}
+                />
             )}
         </div>
     );
