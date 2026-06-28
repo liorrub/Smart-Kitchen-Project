@@ -845,16 +845,18 @@ function Dashboard() {
                                                     <strong>
                                                         {getIngredientName(item.ingredientId)}
                                                     </strong>
-                                                    <p>Expires: {formatDate(item.expiryDate)}</p>
+                                                    <p>
+                                                        Expires: {formatDate(item.expiryDate)}
+                                                        <span className="expiring-days-hint">
+                                                            {" · "}
+                                                            {daysLeft === 0
+                                                                ? "Expires today"
+                                                                : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}
+                                                        </span>
+                                                    </p>
                                                 </div>
 
-                                                <div className="dashboard-mini-actions">
-                                                    <span className="dashboard-tag warning">
-                                                        {daysLeft === 0
-                                                            ? "Today"
-                                                            : `${daysLeft} days`}
-                                                    </span>
-
+                                                <div className="expiring-item-actions">
                                                     <button
                                                         type="button"
                                                         className="dashboard-tag dashboard-tag-button"
@@ -871,7 +873,7 @@ function Dashboard() {
 
                                                     <button
                                                         type="button"
-                                                        className="dashboard-tag dashboard-tag-button danger"
+                                                        className="dashboard-tag dashboard-tag-button expiring-remove"
                                                         onClick={() => handleRemovePantryClick(item)}
                                                         disabled={
                                                             actionLoadingId ===

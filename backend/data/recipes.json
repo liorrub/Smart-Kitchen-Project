@@ -42,6 +42,30 @@
     ]
   },
   {
+    "recipeId": 103,
+    "title": "Herb & Cheese Omelette",
+    "instructions": "Beat 3 eggs with a pinch of salt and a splash of milk until yolks and whites are fully uniform. Melt butter in a non-stick pan over medium heat until it foams. Pour in the egg mixture. As it begins to set around the edges, gently push inward with a spatula while slightly tilting the pan. When the surface is barely set but still glossy, scatter grated cheese and fresh parsley over one half. Fold in half and slide onto a warm plate.",
+    "difficulty": "easy",
+    "cuisine": "american",
+    "category": "breakfast",
+    "creatorId": 1,
+    "prepTime": 5,
+    "cookTime": 5,
+    "totalTime": 10,
+    "servings": 1,
+    "calories": 280,
+    "tags": [
+      "quick",
+      "easy",
+      "high-protein"
+    ],
+    "allergens": [
+      "dairy",
+      "eggs"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1516876437184-593fda40c7ce?w=800"
+  },
+  {
     "recipeId": 104,
     "title": "Protein Yogurt Snack",
     "instructions": "Mix yogurt and toppings and serve cold.",
@@ -1543,5 +1567,134 @@
       "soy",
       "eggs"
     ]
+  },
+  {
+    "recipeId": 178,
+    "title": "Tropical Smoothie Bowl",
+    "instructions": "Blend frozen banana with a splash of milk until thick. Pour into a bowl. Top with fresh blueberries, sliced banana, a drizzle of honey, and a sprinkle of oats and chia seeds. Serve immediately before the base melts.",
+    "difficulty": "easy",
+    "cuisine": "american",
+    "category": "breakfast",
+    "creatorId": 6,
+    "prepTime": 5,
+    "cookTime": 0,
+    "totalTime": 5,
+    "servings": 1,
+    "calories": 320,
+    "tags": [
+      "quick",
+      "easy",
+      "healthy",
+      "vegan"
+    ],
+    "allergens": [],
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBdfx5UXY50-OjEWQeQVH1AKKMLJQx6PMY1VDPMXRztw&s=10",
+    "approvalStatus": "approved",
+    "reviewedByUserId": 2,
+    "reviewedAt": "2026-06-05T10:00:00Z"
+  },
+  {
+    "recipeId": 179,
+    "title": "Overnight Oats with Banana",
+    "instructions": "Combine oats and milk in a jar. Stir in yogurt, honey, and chia seeds. Cover and refrigerate overnight. In the morning, top with sliced banana and an extra drizzle of honey if desired.",
+    "difficulty": "easy",
+    "cuisine": "american",
+    "category": "breakfast",
+    "creatorId": 21,
+    "prepTime": 5,
+    "cookTime": 0,
+    "totalTime": 5,
+    "servings": 1,
+    "calories": 380,
+    "tags": [
+      "easy",
+      "healthy"
+    ],
+    "allergens": [
+      "dairy"
+    ],
+    "imageUrl": "https://detoxinista.com/wp-content/uploads/2021/05/banana-overnight-oats-recipe.jpg",
+    "approvalStatus": "approved",
+    "reviewedByUserId": 3,
+    "reviewedAt": "2026-06-08T11:00:00Z"
+  },
+  {
+    "recipeId": 180,
+    "title": "Protein Oat Pancakes",
+    "instructions": "Blend oats, eggs, milk, and honey into a smooth batter. Heat a lightly oiled non-stick pan over medium heat. Pour small circles of batter. Cook 2 minutes per side until golden. Serve with fresh fruit.",
+    "difficulty": "easy",
+    "cuisine": "american",
+    "category": "breakfast",
+    "creatorId": 6,
+    "prepTime": 5,
+    "cookTime": 10,
+    "totalTime": 15,
+    "servings": 2,
+    "calories": 290,
+    "tags": [
+      "quick",
+      "easy",
+      "high-protein"
+    ],
+    "allergens": [
+      "dairy",
+      "eggs"
+    ],
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrgfl7Ht6j9lKemk-Ola4nRgCB0usagzhrMtjF6e-IptWaY4GeC_qcRfE&s=10",
+    "approvalStatus": "rejected",
+    "reviewedByUserId": 2,
+    "reviewedAt": "2026-06-03T09:00:00Z",
+    "rejectionReason": "Ingredient quantities are incomplete. Please resubmit with full measurements."
+  },
+  {
+    "recipeId": 181,
+    "title": "Berry Chia Overnight Oats",
+    "instructions": "Mix oats, chia seeds, and milk in a jar. Refrigerate overnight. In the morning, top with blueberries, a spoonful of yogurt, and a drizzle of honey.",
+    "difficulty": "easy",
+    "cuisine": "american",
+    "category": "breakfast",
+    "creatorId": 36,
+    "prepTime": 5,
+    "cookTime": 0,
+    "totalTime": 5,
+    "servings": 1,
+    "calories": 360,
+    "tags": [
+      "easy",
+      "healthy",
+      "vegan"
+    ],
+    "allergens": [
+      "dairy"
+    ],
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzcmfbrJtVBClj3rpD_MPTS2JaWYKk_d7-bFWwDL8-f6efK6bQX6aB2M4&s=10",
+    "approvalStatus": "pending"
+  },
+  {
+    "recipeId": 182,
+    "title": "Golden Milk Smoothie",
+    "instructions": "Warm milk gently in a small saucepan over low heat. Add turmeric, ginger, and honey. Stir until combined — do not boil. Remove from heat and blend until frothy. Pour over ice or serve warm.",
+    "difficulty": "easy",
+    "cuisine": "american",
+    "category": "breakfast",
+    "creatorId": 21,
+    "prepTime": 3,
+    "cookTime": 5,
+    "totalTime": 8,
+    "servings": 1,
+    "calories": 190,
+    "tags": [
+      "quick",
+      "easy",
+      "healthy"
+    ],
+    "allergens": [
+      "dairy"
+    ],
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRREjoHxyvlYP2E-XT84t9SJqRvJyuDg-gzQNnyOIdEq4MPpnvEGpb5tyyO&s=10",
+    "approvalStatus": "rejected",
+    "reviewedByUserId": 3,
+    "reviewedAt": "2026-06-01T14:00:00Z",
+    "rejectionReason": "Instructions do not specify ingredient quantities. Please resubmit with complete measurements."
   }
 ]

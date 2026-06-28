@@ -442,9 +442,8 @@
 
 .dashboard-mini-item {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
+    flex-direction: column;
+    gap: 10px;
 
     padding: 14px;
 
@@ -455,12 +454,14 @@
 }
 
 .dashboard-mini-item > div:first-child {
-    flex: 1;
     min-width: 0;
 }
 
 .dashboard-mini-item strong {
+    display: block;
     color: #2d2118;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .dashboard-mini-item p {
@@ -471,9 +472,41 @@
 .dashboard-mini-actions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    flex-wrap: wrap;
     gap: 8px;
-    flex-shrink: 0;
+}
+
+.expiring-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.expiring-item-actions .dashboard-tag-button:not(.expiring-remove) {
+    flex: 1;
+    text-align: center;
+}
+
+.expiring-days-hint {
+    color: #7c3300;
+    font-weight: 700;
+}
+
+.dashboard-tag.expiring-remove {
+    white-space: nowrap;
+    color: #8a3152;
+    background: #f8e9ee;
+}
+
+.dashboard-tag.expiring-remove:hover:not(:disabled) {
+    color: white;
+    background: #cc6089;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(78, 52, 35, 0.12);
+}
+
+.dashboard-tag.expiring-remove:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 .dashboard-tag {
@@ -623,5 +656,45 @@
 @media (max-width: 900px) {
     .dashboard-management-grid {
         grid-template-columns: repeat(2, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-alerts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-management-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-chef-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-button-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-button-row .dashboard-primary-button {
+        min-width: unset;
+        width: 100%;
     }
 }

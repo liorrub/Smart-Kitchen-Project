@@ -7,10 +7,11 @@
 // notificationIds 19 and 29 were removed (belonged to demo userId 32).
 
 const SEEDED_IDS = [
-    ...Array.from({ length: 18 }, (_, i) => i + 1),                              // 1–18
-    20,                                                                             // skip 19
-    ...Array.from({ length: 8 }, (_, i) => i + 21),                              // 21–28
-    ...Array.from({ length: 21 }, (_, i) => i + 30).filter(id => ![38, 42, 48].includes(id))  // 30–50, skip 38/42/48 (recipe 103)
+    ...Array.from({ length: 18 }, (_, i) => i + 1),   // 1–18
+    20,                                                  // skip 19
+    ...Array.from({ length: 8 }, (_, i) => i + 21),   // 21–28
+    ...Array.from({ length: 21 }, (_, i) => i + 30),  // 30–50 (38/42/48 now restored — recipe 103 exists)
+    ...Array.from({ length: 23 }, (_, i) => i + 51)   // 51–73 (new notifications)
 ];
 
 const NOW = new Date("2026-06-21T10:00:00Z");
@@ -63,6 +64,11 @@ module.exports = {
             { notificationId: 33, userId: 16, type: "chef_rejected", message: "Your chef request has been reviewed and was not approved at this time.", sourceUserId: 2, entityId: 14, entityType: "chef_request", isRead: false, createdAt: ago(37),  updatedAt: ago(37) },
             { notificationId: 34, userId: 18, type: "chef_rejected", message: "Your chef request has been reviewed and was not approved at this time.", sourceUserId: 3, entityId: 15, entityType: "chef_request", isRead: true,  createdAt: ago(34),  updatedAt: ago(34) },
 
+            // ── Restored notifications (38/42/48) — needed recipe 103 to exist ──
+            { notificationId: 38, userId:  1, type: "comment_reply", message: "Roi Katz replied to your comment.",    sourceUserId:  9, entityId: 103, entityType: "recipe", commentId: 113, isRead: false, createdAt: ago(12), updatedAt: ago(12) },
+            { notificationId: 42, userId: 12, type: "comment_reply", message: "Eran Hazan replied to your comment.",  sourceUserId: 19, entityId: 103, entityType: "recipe", commentId: 114, isRead: false, createdAt: ago(11), updatedAt: ago(11) },
+            { notificationId: 48, userId:  4, type: "mention",       message: "Roi Katz mentioned you in a comment.", sourceUserId:  9, entityId: 103, entityType: "recipe", commentId: 122, isRead: false, createdAt: ago(9),  updatedAt: ago(9)  },
+
             // ── Comment reply notifications (35–44) ────────────────────────────
             // entityId = recipeId, entityType = "recipe", commentId = triggering reply commentId
             // Recipe IDs start at 101 in the enriched database (Simple Pasta=101, Tofu Stir-fry=102, etc.)
@@ -82,7 +88,41 @@ module.exports = {
             { notificationId: 46, userId: 5,  type: "mention", message: "Gal Meirov mentioned you in a comment.", sourceUserId: 15, entityId: 102, entityType: "recipe", commentId: 120, isRead: false, createdAt: ago(6),    updatedAt: ago(6) },
             { notificationId: 47, userId: 12, type: "mention", message: "Itai Barak mentioned you in a comment.", sourceUserId: 17, entityId: 104, entityType: "recipe", commentId: 121, isRead: true,  createdAt: ago(5),    updatedAt: ago(5) },
             { notificationId: 49, userId: 8,  type: "mention", message: "Eran Hazan mentioned you in a comment.", sourceUserId: 19, entityId: 105, entityType: "recipe", commentId: 123, isRead: false, createdAt: ago(2),    updatedAt: ago(2) },
-            { notificationId: 50, userId: 1,  type: "mention", message: "Shir Mizrahi mentioned you in a comment.", sourceUserId: 6, entityId: 106, entityType: "recipe", commentId: 124, isRead: false, createdAt: ago(1, 2), updatedAt: ago(1, 2) }
+            { notificationId: 50, userId: 1,  type: "mention", message: "Shir Mizrahi mentioned you in a comment.", sourceUserId: 6, entityId: 106, entityType: "recipe", commentId: 124, isRead: false, createdAt: ago(1, 2), updatedAt: ago(1, 2) },
+
+            // ── New recipe_comment notifications (51–58) ────────────────────────
+            // Fires when someone comments on a recipe; userId = recipe creator
+            { notificationId: 51, userId:  1, type: "recipe_comment", message: "Daniel Levi commented on your recipe.",    sourceUserId:  4, entityId: 103, entityType: "recipe", commentId: 125, isRead: false, createdAt: ago(8), updatedAt: ago(8) },
+            { notificationId: 52, userId:  1, type: "recipe_comment", message: "Tali Ben-David commented on your recipe.", sourceUserId:  8, entityId: 103, entityType: "recipe", commentId: 126, isRead: false, createdAt: ago(7), updatedAt: ago(7) },
+            { notificationId: 53, userId:  1, type: "recipe_comment", message: "Avi Shapiro commented on your recipe.",    sourceUserId:  7, entityId: 107, entityType: "recipe", commentId: 127, isRead: true,  createdAt: ago(6), updatedAt: ago(6) },
+            { notificationId: 54, userId:  1, type: "recipe_comment", message: "Roi Katz commented on your recipe.",       sourceUserId:  9, entityId: 108, entityType: "recipe", commentId: 128, isRead: true,  createdAt: ago(5), updatedAt: ago(5) },
+            { notificationId: 55, userId:  5, type: "recipe_comment", message: "Daniel Levi commented on your recipe.",    sourceUserId:  4, entityId: 113, entityType: "recipe", commentId: 129, isRead: false, createdAt: ago(5), updatedAt: ago(5) },
+            { notificationId: 56, userId:  9, type: "recipe_comment", message: "Maya David commented on your recipe.",     sourceUserId:  5, entityId: 116, entityType: "recipe", commentId: 130, isRead: true,  createdAt: ago(4), updatedAt: ago(4) },
+            { notificationId: 57, userId:  7, type: "recipe_comment", message: "Itai Barak commented on your recipe.",     sourceUserId: 17, entityId: 118, entityType: "recipe", commentId: 131, isRead: false, createdAt: ago(3), updatedAt: ago(3) },
+            { notificationId: 58, userId:  8, type: "recipe_comment", message: "Rivka Stern commented on your recipe.",    sourceUserId: 14, entityId: 122, entityType: "recipe", commentId: 132, isRead: false, createdAt: ago(2), updatedAt: ago(2) },
+
+            // ── New recipe_approved / recipe_rejected notifications (59–62) ──────
+            { notificationId: 59, userId:  6, type: "recipe_approved", message: "Your recipe 'Tropical Smoothie Bowl' has been approved!",      sourceUserId: 2, entityId: 178, entityType: "recipe", commentId: null, isRead: true,  createdAt: ago(24), updatedAt: ago(24) },
+            { notificationId: 60, userId: 21, type: "recipe_approved", message: "Your recipe 'Overnight Oats with Banana' has been approved!",  sourceUserId: 3, entityId: 179, entityType: "recipe", commentId: null, isRead: true,  createdAt: ago(21), updatedAt: ago(21) },
+            { notificationId: 61, userId:  6, type: "recipe_rejected", message: "Your recipe 'Protein Oat Pancakes' was not approved.",         sourceUserId: 2, entityId: 180, entityType: "recipe", commentId: null, isRead: true,  createdAt: ago(27), updatedAt: ago(27) },
+            { notificationId: 62, userId: 21, type: "recipe_rejected", message: "Your recipe 'Golden Milk Smoothie' was not approved.",         sourceUserId: 3, entityId: 182, entityType: "recipe", commentId: null, isRead: true,  createdAt: ago(30), updatedAt: ago(30) },
+
+            // ── New follow notifications (63–67) — from 5 new follows ───────────
+            { notificationId: 63, userId:  9, type: "follow", message: "Rivka Stern started following you.",  sourceUserId: 14, entityId: 14, entityType: "user", commentId: null, isRead: false, createdAt: ago(6), updatedAt: ago(6) },
+            { notificationId: 64, userId:  7, type: "follow", message: "Gal Meirov started following you.",   sourceUserId: 15, entityId: 15, entityType: "user", commentId: null, isRead: false, createdAt: ago(5), updatedAt: ago(5) },
+            { notificationId: 65, userId:  8, type: "follow", message: "Itai Barak started following you.",   sourceUserId: 17, entityId: 17, entityType: "user", commentId: null, isRead: false, createdAt: ago(4), updatedAt: ago(4) },
+            { notificationId: 66, userId: 21, type: "follow", message: "Eran Hazan started following you.",   sourceUserId: 19, entityId: 19, entityType: "user", commentId: null, isRead: false, createdAt: ago(3), updatedAt: ago(3) },
+            { notificationId: 67, userId: 36, type: "follow", message: "Gal Meirov started following you.",   sourceUserId: 15, entityId: 15, entityType: "user", commentId: null, isRead: false, createdAt: ago(2), updatedAt: ago(2) },
+
+            // ── New mention notifications (68–70) ────────────────────────────────
+            { notificationId: 68, userId:  1, type: "mention", message: "Tali Ben-David mentioned you in a comment.", sourceUserId:  8, entityId: 103, entityType: "recipe", commentId: 138, isRead: false, createdAt: ago(3), updatedAt: ago(3) },
+            { notificationId: 69, userId:  9, type: "mention", message: "Itai Barak mentioned you in a comment.",    sourceUserId: 17, entityId: 116, entityType: "recipe", commentId: 139, isRead: false, createdAt: ago(2), updatedAt: ago(2) },
+            { notificationId: 70, userId:  7, type: "mention", message: "Rivka Stern mentioned you in a comment.",   sourceUserId: 14, entityId: 118, entityType: "recipe", commentId: 140, isRead: false, createdAt: ago(1), updatedAt: ago(1) },
+
+            // ── New comment_reply notifications (71–73) ──────────────────────────
+            { notificationId: 71, userId:  4, type: "comment_reply", message: "Maya David replied to your comment.",  sourceUserId:  5, entityId: 103, entityType: "recipe", commentId: 133, isRead: false, createdAt: ago(7), updatedAt: ago(7) },
+            { notificationId: 72, userId:  8, type: "comment_reply", message: "Avi Shapiro replied to your comment.", sourceUserId:  7, entityId: 103, entityType: "recipe", commentId: 134, isRead: false, createdAt: ago(6), updatedAt: ago(6) },
+            { notificationId: 73, userId:  9, type: "comment_reply", message: "Avi Shapiro replied to your comment.", sourceUserId:  7, entityId: 108, entityType: "recipe", commentId: 135, isRead: true,  createdAt: ago(4), updatedAt: ago(4) }
         ];
 
         await queryInterface.bulkInsert("Notifications", rows, {});

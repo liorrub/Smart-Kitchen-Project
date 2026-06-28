@@ -89,7 +89,45 @@ const CANONICAL_LIKES = [
 
     // Comment 118 — reply (author: 8) — 2 likes
     { userId: 4,  commentId: 118 },
-    { userId: 5,  commentId: 118 }
+    { userId: 5,  commentId: 118 },
+
+    // ── Restored comment likes (104, 105, 113, 114 — were missing with recipe 103) ──
+    // Comment 104 (author: 1)
+    { userId: 4, commentId: 104 }, { userId: 5, commentId: 104 }, { userId: 7, commentId: 104 },
+    // Comment 105 (author: 12)
+    { userId: 4, commentId: 105 }, { userId: 8, commentId: 105 },
+    // Comment 113 — reply (author: 9)
+    { userId: 1, commentId: 113 }, { userId: 5, commentId: 113 },
+    // Comment 114 — reply (author: 19)
+    { userId: 5, commentId: 114 },
+
+    // ── New comment likes (125–140) ───────────────────────────────────────────
+    // Comment 125 (author: 4) — 4 likes
+    { userId: 1, commentId: 125 }, { userId: 5, commentId: 125 }, { userId: 7, commentId: 125 }, { userId: 9, commentId: 125 },
+    // Comment 126 (author: 8) — 3 likes
+    { userId: 1, commentId: 126 }, { userId: 4, commentId: 126 }, { userId: 5, commentId: 126 },
+    // Comment 127 (author: 7) — 3 likes
+    { userId: 1, commentId: 127 }, { userId: 5, commentId: 127 }, { userId: 9, commentId: 127 },
+    // Comment 128 (author: 9) — 4 likes
+    { userId: 1, commentId: 128 }, { userId: 5, commentId: 128 }, { userId: 7, commentId: 128 }, { userId: 12, commentId: 128 },
+    // Comment 129 (author: 4) — 3 likes
+    { userId: 1, commentId: 129 }, { userId: 5, commentId: 129 }, { userId: 9, commentId: 129 },
+    // Comment 130 (author: 5) — 3 likes
+    { userId: 4, commentId: 130 }, { userId: 7, commentId: 130 }, { userId: 18, commentId: 130 },
+    // Comment 131 (author: 17) — 2 likes
+    { userId: 5, commentId: 131 }, { userId: 7, commentId: 131 },
+    // Comment 132 (author: 14) — 2 likes
+    { userId: 5, commentId: 132 }, { userId: 7, commentId: 132 },
+    // Comment 133 — reply (author: 5) — 2 likes
+    { userId: 4, commentId: 133 }, { userId: 7, commentId: 133 },
+    // Comment 134 — reply (author: 7) — 2 likes
+    { userId: 4, commentId: 134 }, { userId: 8, commentId: 134 },
+    // Comment 135 — reply (author: 7) — 2 likes
+    { userId: 5, commentId: 135 }, { userId: 9, commentId: 135 },
+    // Comment 136 — reply (author: 9) — 2 likes
+    { userId: 4, commentId: 136 }, { userId: 5, commentId: 136 },
+    // Comment 137 — reply (author: 18) — 2 likes
+    { userId: 5, commentId: 137 }, { userId: 9, commentId: 137 }
 ];
 
 module.exports = {

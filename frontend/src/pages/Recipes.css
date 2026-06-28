@@ -241,7 +241,7 @@
 }
 
 .chef-recipes-grid .recipe-card-actions {
-    justify-content: center;
+    display: none;
 }
 
 .chef-recipes-grid .recipe-card-extra-actions {
@@ -254,8 +254,14 @@
 
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
+    gap: 6px;
+}
+
+.chef-recipes-grid .chef-recipe-actions .recipe-card-view-button {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.8rem;
+    padding: 8px 10px;
 }
 
 /* ==========================================================================

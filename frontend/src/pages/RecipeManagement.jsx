@@ -1020,6 +1020,14 @@ function RecipeManagement() {
                                     onClick={setSelectedRecipe}
                                     actions={
                                         <div className="chef-recipe-actions">
+                                            <button
+                                                type="button"
+                                                className="recipe-card-view-button"
+                                                onClick={() => setSelectedRecipe(recipe)}
+                                            >
+                                                View Recipe
+                                            </button>
+
                                             <AppButton
                                                 type="button"
                                                 size="small"

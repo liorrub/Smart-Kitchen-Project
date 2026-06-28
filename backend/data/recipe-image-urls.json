@@ -358,5 +358,30 @@
     "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyiN9WS5TzcOToNu6ceCbWwVDnJJkIzN6eaKvo-7Elbg&s=10",
     "imagePositionX": 50,
     "imagePositionY": 50
+  },
+  "Tropical Smoothie Bowl": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBdfx5UXY50-OjEWQeQVH1AKKMLJQx6PMY1VDPMXRztw&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Overnight Oats with Banana": {
+    "imageUrl": "https://detoxinista.com/wp-content/uploads/2021/05/banana-overnight-oats-recipe.jpg",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Protein Oat Pancakes": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrgfl7Ht6j9lKemk-Ola4nRgCB0usagzhrMtjF6e-IptWaY4GeC_qcRfE&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Berry Chia Overnight Oats": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzcmfbrJtVBClj3rpD_MPTS2JaWYKk_d7-bFWwDL8-f6efK6bQX6aB2M4&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
+  },
+  "Golden Milk Smoothie": {
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRREjoHxyvlYP2E-XT84t9SJqRvJyuDg-gzQNnyOIdEq4MPpnvEGpb5tyyO&s=10",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   }
 }

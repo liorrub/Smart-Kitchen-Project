@@ -712,5 +712,35 @@
     "followerId": 38,
     "followeeId": 36,
     "createdAt": "2026-05-30T09:35:00Z"
+  },
+  {
+    "followId": 126,
+    "followerId": 14,
+    "followeeId": 9,
+    "createdAt": "2026-06-23T09:00:00Z"
+  },
+  {
+    "followId": 127,
+    "followerId": 15,
+    "followeeId": 7,
+    "createdAt": "2026-06-24T10:00:00Z"
+  },
+  {
+    "followId": 128,
+    "followerId": 17,
+    "followeeId": 8,
+    "createdAt": "2026-06-25T11:00:00Z"
+  },
+  {
+    "followId": 129,
+    "followerId": 19,
+    "followeeId": 21,
+    "createdAt": "2026-06-26T12:00:00Z"
+  },
+  {
+    "followId": 130,
+    "followerId": 15,
+    "followeeId": 36,
+    "createdAt": "2026-06-27T09:00:00Z"
   }
 ]
