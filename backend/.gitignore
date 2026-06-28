@@ -1,0 +1,9 @@
+# Node.js
+node_modules/
+
+.idea/
+
+# Environment files
+.env
+.env.local
+.env.*.local

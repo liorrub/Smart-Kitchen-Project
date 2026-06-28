@@ -1,0 +1,173 @@
+[
+  {
+    "requestId": 1,
+    "userId": 4,
+    "status": "pending",
+    "reason": "I love cooking and want to share my recipes with the community.",
+    "requestDate": "2026-06-01T09:00:00Z",
+    "reviewedDate": null,
+    "reviewedBy": null
+  },
+  {
+    "requestId": 2,
+    "userId": 5,
+    "status": "approved",
+    "reason": "I am an experienced home cook and would love to contribute recipes.",
+    "requestDate": "2026-05-20T14:30:00Z",
+    "reviewedDate": "2026-05-22T10:00:00Z",
+    "reviewedBy": 2
+  },
+  {
+    "requestId": 3,
+    "userId": 6,
+    "status": "rejected",
+    "reason": "I create food content online and want to publish my own recipes.",
+    "requestDate": "2026-05-25T11:15:00Z",
+    "reviewedDate": "2026-05-27T09:45:00Z",
+    "reviewedBy": 3
+  },
+  {
+    "requestId": 4,
+    "userId": 7,
+    "status": "approved",
+    "reason": "I have worked in professional kitchens for 8 years and want to share authentic Italian recipes.",
+    "requestDate": "2026-04-10T09:00:00Z",
+    "reviewedDate": "2026-04-12T11:00:00Z",
+    "reviewedBy": 2
+  },
+  {
+    "requestId": 5,
+    "userId": 8,
+    "status": "approved",
+    "reason": "I have a culinary degree and specialize in plant-based cooking.",
+    "requestDate": "2026-04-12T10:00:00Z",
+    "reviewedDate": "2026-04-14T09:00:00Z",
+    "reviewedBy": 3
+  },
+  {
+    "requestId": 6,
+    "userId": 9,
+    "status": "approved",
+    "reason": "I run a popular cooking channel and want to bring my Asian fusion recipes to this platform.",
+    "requestDate": "2026-04-15T08:30:00Z",
+    "reviewedDate": "2026-04-17T10:30:00Z",
+    "reviewedBy": 2
+  },
+  {
+    "requestId": 7,
+    "userId": 10,
+    "status": "approved",
+    "reason": "I am a trained pastry chef with 6 years of experience in fine dining.",
+    "requestDate": "2026-04-18T11:00:00Z",
+    "reviewedDate": "2026-04-20T09:00:00Z",
+    "reviewedBy": 2
+  },
+  {
+    "requestId": 8,
+    "userId": 11,
+    "status": "approved",
+    "reason": "I have been teaching cooking classes for 10 years and focus on traditional Israeli cuisine.",
+    "requestDate": "2026-04-20T14:00:00Z",
+    "reviewedDate": "2026-04-22T10:00:00Z",
+    "reviewedBy": 3
+  },
+  {
+    "requestId": 9,
+    "userId": 12,
+    "status": "approved",
+    "reason": "I specialize in vegan cooking and have developed over 200 original recipes.",
+    "requestDate": "2026-04-22T09:00:00Z",
+    "reviewedDate": "2026-04-24T11:00:00Z",
+    "reviewedBy": 2
+  },
+  {
+    "requestId": 10,
+    "userId": 13,
+    "status": "approved",
+    "reason": "I am a home cook with a passion for comfort food and baking.",
+    "requestDate": "2026-04-25T08:00:00Z",
+    "reviewedDate": "2026-04-27T09:30:00Z",
+    "reviewedBy": 2
+  },
+  {
+    "requestId": 12,
+    "userId": 14,
+    "status": "rejected",
+    "reason": "I make simple meals at home and think others might enjoy them.",
+    "requestDate": "2026-05-05T09:00:00Z",
+    "reviewedDate": "2026-05-07T10:00:00Z",
+    "reviewedBy": 3
+  },
+  {
+    "requestId": 13,
+    "userId": 15,
+    "status": "rejected",
+    "reason": "I like cooking for my friends on weekends.",
+    "requestDate": "2026-05-08T11:00:00Z",
+    "reviewedDate": "2026-05-10T09:00:00Z",
+    "reviewedBy": 2
+  },
+  {
+    "requestId": 14,
+    "userId": 16,
+    "status": "rejected",
+    "reason": "I cook healthy meals for my family daily and want to inspire others.",
+    "requestDate": "2026-05-12T08:00:00Z",
+    "reviewedDate": "2026-05-14T10:00:00Z",
+    "reviewedBy": 3
+  },
+  {
+    "requestId": 15,
+    "userId": 18,
+    "status": "rejected",
+    "reason": "I am passionate about plant-based cooking and have been vegan for 3 years.",
+    "requestDate": "2026-05-15T09:00:00Z",
+    "reviewedDate": "2026-05-17T11:00:00Z",
+    "reviewedBy": 3
+  },
+  {
+    "requestId": 16,
+    "userId": 23,
+    "status": "pending",
+    "reason": "I grew up helping my grandmother cook traditional Israeli dishes and want to preserve these recipes.",
+    "requestDate": "2026-06-05T09:00:00Z",
+    "reviewedDate": null,
+    "reviewedBy": null
+  },
+  {
+    "requestId": 17,
+    "userId": 24,
+    "status": "pending",
+    "reason": "I took several cooking courses abroad and want to share what I learned.",
+    "requestDate": "2026-06-08T10:00:00Z",
+    "reviewedDate": null,
+    "reviewedBy": null
+  },
+  {
+    "requestId": 18,
+    "userId": 25,
+    "status": "pending",
+    "reason": "I have been meal prepping for athletes for 2 years and have unique high-protein recipes.",
+    "requestDate": "2026-06-10T08:30:00Z",
+    "reviewedDate": null,
+    "reviewedBy": null
+  },
+  {
+    "requestId": 19,
+    "userId": 28,
+    "status": "pending",
+    "reason": "I am a nutritionist and want to share healthy, balanced recipes based on scientific principles.",
+    "requestDate": "2026-06-12T11:00:00Z",
+    "reviewedDate": null,
+    "reviewedBy": null
+  },
+  {
+    "requestId": 20,
+    "userId": 38,
+    "status": "pending",
+    "reason": "I have been experimenting with fusion cuisine for years and have a unique recipe collection.",
+    "requestDate": "2026-06-15T09:00:00Z",
+    "reviewedDate": null,
+    "reviewedBy": null
+  }
+]
