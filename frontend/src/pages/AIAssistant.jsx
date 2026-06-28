@@ -12,6 +12,8 @@ import FormCard from "../components/FormCard";
 import MultiIngredientPicker from "../components/MultiIngredientPicker";
 import PageHero from "../components/PageHero";
 
+import axios from "axios";
+
 import {
     getAIHistory,
     generateRecipeFromPantry,
@@ -20,7 +22,8 @@ import {
     deleteAIHistoryItem
 } from "../services/aiHistoryService";
 import { getIngredients } from "../services/ingredientsService";
-import { getAuthHeaders } from "../utils/authUtils";
+import { API_BASE_URL } from "../utils/apiConfig";
+import { getAuthHeaders, getStoredUser } from "../utils/authUtils";
 import { formatText } from "../utils/formatUtils";
 
 const AI_FEATURES = [
@@ -375,6 +378,7 @@ function AIAssistant() {
 
     // Feature state
     const [allIngredients, setAllIngredients]   = useState([]);
+    const [pantryItems, setPantryItems]         = useState([]);
     const [activeFeature, setActiveFeature]     = useState(null);
     const [selectedIngredientIds, setSelectedIngredientIds] = useState([]);
     const [constraints, setConstraints] = useState({ difficulty: "", prepTime: "", cookTime: "", servings: "" });
@@ -385,17 +389,24 @@ function AIAssistant() {
     const [selectedSuggestion, setSelectedSuggestion]       = useState(null);
     const [selectedSuggestionIdx, setSelectedSuggestionIdx] = useState(0);
 
-    // Load history and ingredient catalog on mount
+    // Load history, ingredient catalog, and user's pantry on mount
     useEffect(() => {
         async function init() {
             try {
                 setLoadingHistory(true);
-                const [historyData, ingredientsData] = await Promise.all([
+                const storedUser = getStoredUser();
+                const [historyData, ingredientsData, pantryData] = await Promise.all([
                     getAIHistory(),
-                    getIngredients(getAuthHeaders())
+                    getIngredients(getAuthHeaders()),
+                    storedUser?.userId
+                        ? axios.get(`${API_BASE_URL}/users/${storedUser.userId}/pantry`, { headers: getAuthHeaders() })
+                              .then((res) => res.data?.data || [])
+                              .catch(() => [])
+                        : Promise.resolve([])
                 ]);
                 setHistory(normalizeHistory(historyData));
                 setAllIngredients(Array.isArray(ingredientsData) ? ingredientsData : []);
+                setPantryItems(Array.isArray(pantryData) ? pantryData : []);
             } catch {
                 setHistoryError("Could not load AI history. Check your connection and try again.");
             } finally {
@@ -539,6 +550,13 @@ function AIAssistant() {
         }
     }
 
+    // Ingredient objects for only the items currently in the user's pantry.
+    // Used exclusively in the recipe-generator picker so users only see what they own.
+    const pantryIngredients = useMemo(() => {
+        const pantryIds = new Set(pantryItems.map((item) => item.ingredientId));
+        return allIngredients.filter((ing) => pantryIds.has(ing.ingredientId));
+    }, [pantryItems, allIngredients]);
+
     const visibleHistory = useMemo(() => history, [history]);
 
     // ── Render ──────────────────────────────────────────────────────────────
@@ -610,15 +628,21 @@ function AIAssistant() {
                     {/* Generate Recipe from Pantry */}
                     {activeFeature === "recipe-generator" && (
                         <div className="ai-panel-body">
-                            <p className="ai-panel-hint">Search and select the ingredients you have available, then optionally set recipe constraints.</p>
+                            <p className="ai-panel-hint">Select ingredients from your pantry, then optionally set recipe constraints.</p>
 
-                            <MultiIngredientPicker
-                                ingredients={allIngredients}
-                                selectedIds={selectedIngredientIds}
-                                onToggle={toggleIngredient}
-                                onClearAll={() => setSelectedIngredientIds([])}
-                                placeholder="Search and select ingredients..."
-                            />
+                            {pantryIngredients.length === 0 ? (
+                                <div className="ai-error-banner">
+                                    Your pantry is empty. Add ingredients to your pantry first.
+                                </div>
+                            ) : (
+                                <MultiIngredientPicker
+                                    ingredients={pantryIngredients}
+                                    selectedIds={selectedIngredientIds}
+                                    onToggle={toggleIngredient}
+                                    onClearAll={() => setSelectedIngredientIds([])}
+                                    placeholder="Search your pantry ingredients..."
+                                />
+                            )}
 
                             <div className="ai-constraints">
                                 <div className="ai-constraint-field">
