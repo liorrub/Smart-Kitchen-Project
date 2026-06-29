@@ -12,8 +12,6 @@ import PasswordField from "../components/PasswordField";
 import { getCurrentUser, login } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-
 import logo from "../assets/logo.png";
 
 import login1 from "../assets/login1.png";
@@ -30,6 +28,8 @@ import login11 from "../assets/login11.png";
 import login12 from "../assets/login12.png";
 import login13 from "../assets/login13.png";
 import login14 from "../assets/login14.png";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
 /* Text displayed under the logo */
 const subtitles = [
