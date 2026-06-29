@@ -16,6 +16,7 @@ function FormField({
                        ...props
                    }) {
     const inputId = id || name;
+    const errorId = error ? `${inputId}-error` : undefined;
 
     return (
         <div className={`form-field ${className}`.trim()}>
@@ -34,6 +35,8 @@ function FormField({
                 placeholder={placeholder}
                 disabled={disabled}
                 required={required}
+                aria-invalid={error ? "true" : undefined}
+                aria-describedby={errorId}
                 {...props}
             />
 
@@ -44,7 +47,7 @@ function FormField({
             )}
 
             {error && (
-                <small className="form-error-text">
+                <small id={errorId} className="form-error-text">
                     {error}
                 </small>
             )}

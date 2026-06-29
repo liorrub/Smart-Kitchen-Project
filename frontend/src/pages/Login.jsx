@@ -10,8 +10,9 @@ import MessageModal from "../components/MessageModal";
 import PasswordField from "../components/PasswordField";
 
 import { getCurrentUser, login } from "../services/authService";
-import { validateLogin } from "../validators/userValidator";
 import { useAuth } from "../context/AuthContext";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
 import logo from "../assets/logo.png";
 
@@ -61,7 +62,9 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const [error, setError] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [modalError, setModalError] = useState("");
     const [loading, setLoading] = useState(false);
     const [subtitleIndex, setSubtitleIndex] = useState(0);
 
@@ -82,12 +85,22 @@ function Login() {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        setError("");
+        setEmailError("");
+        setPasswordError("");
+        setModalError("");
 
-        const validationError = validateLogin(email, password);
+        if (!email.trim()) {
+            setEmailError("Email is required.");
+            return;
+        }
 
-        if (validationError) {
-            setError(validationError);
+        if (!EMAIL_REGEX.test(email.trim())) {
+            setEmailError("Please enter a valid email address.");
+            return;
+        }
+
+        if (!password) {
+            setPasswordError("Password is required.");
             return;
         }
 
@@ -110,10 +123,16 @@ function Login() {
             );
 
             navigate("/dashboard");
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            const code = err.response?.data?.error?.code;
 
-            setError("Login failed. Please check your credentials.");
+            if (code === "EMAIL_NOT_FOUND") {
+                setEmailError("No account was found with this email address.");
+            } else if (code === "INVALID_PASSWORD") {
+                setPasswordError("Incorrect password.");
+            } else {
+                setModalError("Login failed. Please try again later.");
+            }
         } finally {
             setLoading(false);
         }
@@ -124,8 +143,8 @@ function Login() {
             <MessageModal
                 type="error"
                 title="Login Error"
-                message={error}
-                onClose={() => setError("")}
+                message={modalError}
+                onClose={() => setModalError("")}
             />
 
             <FloatingFoodBackground
@@ -161,9 +180,10 @@ function Login() {
                         name="email"
                         placeholder="Enter your email"
                         value={email}
+                        error={emailError}
                         onChange={(event) => {
                             setEmail(event.target.value);
-                            setError("");
+                            setEmailError("");
                         }}
                     />
 
@@ -172,9 +192,10 @@ function Login() {
                         name="password"
                         placeholder="Enter your password"
                         value={password}
+                        error={passwordError}
                         onChange={(event) => {
                             setPassword(event.target.value);
-                            setError("");
+                            setPasswordError("");
                         }}
                     />
 

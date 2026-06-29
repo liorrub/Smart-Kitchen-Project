@@ -12,7 +12,7 @@ import FloatingFoodBackground from "../components/FloatingFoodBackground";
 import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PasswordField from "../components/PasswordField";
-import { validateRegisterForm } from "../validators/userValidator";
+import { validateRegisterField } from "../validators/userValidator";
 import { CITY_OPTIONS, COOKING_LEVEL_OPTIONS } from "../constants/options";
 import CityPicker from "../components/CityPicker";
 import AvatarPicker from "../components/AvatarPicker";
@@ -75,7 +75,9 @@ function Register() {
         avatarKey: AVATAR_DEFAULT
     });
 
-    const [error, setError] = useState("");
+    const [fieldErrors, setFieldErrors] = useState({});
+    const [touched, setTouched] = useState({});
+    const [modalError, setModalError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
     const [subtitleIndex, setSubtitleIndex] = useState(0);
@@ -100,26 +102,35 @@ function Register() {
         if (name === "age") {
             const digitsOnly = value.replace(/\D/g, "");
 
-            setFormData((prev) => ({
-                ...prev,
-                age: digitsOnly
-            }));
+            setFormData((prev) => ({ ...prev, age: digitsOnly }));
 
-            if (digitsOnly !== "" && Number(digitsOnly) > 120) {
-                setError("Please enter an age between 1 and 120.");
-            } else {
-                setError("");
+            if (touched.age) {
+                setFieldErrors((prev) => ({
+                    ...prev,
+                    age: validateRegisterField("age", digitsOnly)
+                }));
             }
 
             return;
         }
 
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
 
-        setError("");
+        if (touched[name]) {
+            setFieldErrors((prev) => ({
+                ...prev,
+                [name]: validateRegisterField(name, value)
+            }));
+        }
+    }
+
+    /* Returns an onBlur handler that marks a field as touched and validates it. */
+    function handleBlur(name) {
+        return function () {
+            setTouched((prev) => ({ ...prev, [name]: true }));
+            const err = validateRegisterField(name, formData[name] ?? "");
+            setFieldErrors((prev) => ({ ...prev, [name]: err }));
+        };
     }
 
     /* Prevents invalid characters inside the age field */
@@ -135,14 +146,25 @@ function Register() {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        setError("");
+        setModalError("");
 
-        const validationError = validateRegisterForm(formData);
+        // Validate all fields and surface every error at once
+        const fieldsToValidate = ["firstName", "lastName", "email", "password", "city", "age", "username"];
+        const newErrors = {};
+        const newTouched = {};
 
-        if (validationError) {
-            setError(validationError);
+        for (const name of fieldsToValidate) {
+            newTouched[name] = true;
+            newErrors[name] = validateRegisterField(name, formData[name] ?? "");
+        }
+
+        setTouched((prev) => ({ ...prev, ...newTouched }));
+        setFieldErrors((prev) => ({ ...prev, ...newErrors }));
+
+        if (fieldsToValidate.some((name) => newErrors[name])) {
             return;
         }
+
         try {
             setLoading(true);
 
@@ -159,28 +181,20 @@ function Register() {
             });
 
             setSuccess("Your account was created successfully.");
-        } catch (error) {
-            console.error(error.response?.data || error);
+        } catch (err) {
+            console.error(err.response?.data || err);
 
-            let errorMessage = "Registration failed. Please try again.";
+            const code = err.response?.data?.error?.code;
 
-            if (error.response?.data?.error?.message) {
-                errorMessage = error.response.data.error.message;
-            } else if (error.response?.data?.message) {
-                errorMessage = error.response.data.message;
+            if (code === "EMAIL_ALREADY_EXISTS") {
+                setFieldErrors((prev) => ({ ...prev, email: "This email is already registered." }));
+                setTouched((prev) => ({ ...prev, email: true }));
+            } else if (code === "USERNAME_TAKEN" || code === "INVALID_USERNAME") {
+                setFieldErrors((prev) => ({ ...prev, username: "This username is already taken. Please choose another." }));
+                setTouched((prev) => ({ ...prev, username: true }));
+            } else {
+                setModalError("Registration failed. Please try again.");
             }
-
-            if (errorMessage.includes("USERNAME_TAKEN") || errorMessage.toLowerCase().includes("username is already taken")) {
-                errorMessage = "Username is already taken. Please choose another.";
-            } else if (
-                error.response?.status === 409 ||
-                errorMessage.includes("EMAIL_ALREADY_EXISTS") ||
-                errorMessage.includes("already exists")
-            ) {
-                errorMessage = "Email already exists. Please use another email or login.";
-            }
-
-            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -191,7 +205,7 @@ function Register() {
             <MessageModal
                 type={success ? "success" : "error"}
                 title={success ? "Success" : "Registration Error"}
-                message={success || error}
+                message={success || modalError}
                 buttonText={success ? "Back to Login" : "Got It 👍"}
                 onClose={() => {
                     if (success) {
@@ -199,7 +213,7 @@ function Register() {
                         return;
                     }
 
-                    setError("");
+                    setModalError("");
                 }}
             />
 
@@ -240,7 +254,9 @@ function Register() {
                             name="firstName"
                             placeholder="First name"
                             value={formData.firstName}
+                            error={fieldErrors.firstName || ""}
                             onChange={handleChange}
+                            onBlur={handleBlur("firstName")}
                         />
                         <FormField
                             label="Last Name"
@@ -248,19 +264,28 @@ function Register() {
                             name="lastName"
                             placeholder="Last name"
                             value={formData.lastName}
+                            error={fieldErrors.lastName || ""}
                             onChange={handleChange}
+                            onBlur={handleBlur("lastName")}
                         />
                     </div>
 
                     <div className="reg-form-row">
-                        <CityPicker
-                            label="City"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            cities={CITY_OPTIONS}
-                            placeholder="Search or select city..."
-                        />
+                        <div className="reg-city-wrapper">
+                            <CityPicker
+                                label="City"
+                                name="city"
+                                value={formData.city}
+                                onChange={handleChange}
+                                cities={CITY_OPTIONS}
+                                placeholder="Search or select city..."
+                            />
+                            {fieldErrors.city && (
+                                <small className="form-error-text reg-city-error">
+                                    {fieldErrors.city}
+                                </small>
+                            )}
+                        </div>
                         <FormField
                             label="Age"
                             type="text"
@@ -270,8 +295,10 @@ function Register() {
                             maxLength="3"
                             placeholder="Your age"
                             value={formData.age}
+                            error={fieldErrors.age || ""}
                             onKeyDown={preventInvalidAgeKeys}
                             onChange={handleChange}
+                            onBlur={handleBlur("age")}
                         />
                     </div>
 
@@ -284,7 +311,9 @@ function Register() {
                         name="username"
                         placeholder="e.g. lior_99 (letters, numbers, underscore)"
                         value={formData.username}
+                        error={fieldErrors.username || ""}
                         onChange={handleChange}
+                        onBlur={handleBlur("username")}
                     />
 
                     <FormField
@@ -293,7 +322,9 @@ function Register() {
                         name="email"
                         placeholder="Enter your email"
                         value={formData.email}
+                        error={fieldErrors.email || ""}
                         onChange={handleChange}
+                        onBlur={handleBlur("email")}
                     />
 
                     <PasswordField
@@ -301,7 +332,9 @@ function Register() {
                         name="password"
                         placeholder="Enter your password"
                         value={formData.password}
+                        error={fieldErrors.password || ""}
                         onChange={handleChange}
+                        onBlur={handleBlur("password")}
                     />
 
                     {/* ── Preferences ── */}

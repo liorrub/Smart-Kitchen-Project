@@ -9,12 +9,13 @@ function PasswordField({
                            placeholder = "Enter your password",
                            disabled = false,
                            className = "",
+                           error = "",
                            ...props
                        }) {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className={`form-field password-field ${className}`.trim()}>
+        <div className={`form-field password-field${error ? " password-field--invalid" : ""} ${className}`.trim()}>
             {label && (
                 <label htmlFor={name}>
                     {label}
@@ -42,6 +43,12 @@ function PasswordField({
                     {showPassword ? "Hide" : "Show"}
                 </button>
             </div>
+
+            {error && (
+                <small className="form-error-text">
+                    {error}
+                </small>
+            )}
         </div>
     );
 }

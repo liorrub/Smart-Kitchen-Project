@@ -38,6 +38,18 @@
     box-shadow: 0 0 0 4px rgba(127, 159, 104, 0.18);
 }
 
+.form-field input[aria-invalid="true"],
+.form-field select[aria-invalid="true"] {
+    border-color: #cc6089;
+    box-shadow: 0 0 0 3px rgba(204, 96, 137, 0.12);
+}
+
+.form-field input[aria-invalid="true"]:focus,
+.form-field select[aria-invalid="true"]:focus {
+    border-color: #cc6089;
+    box-shadow: 0 0 0 4px rgba(204, 96, 137, 0.18);
+}
+
 .form-field input:disabled,
 .form-field select:disabled {
     color: #7f8d83;

@@ -30,13 +30,22 @@ async function login(req, res, next) {
             req.body.email
         );
 
-        const passwordMatch = user && await bcrypt.compare(req.body.password, user.password);
+        if (!user) {
+            return errorResponse(
+                res,
+                401,
+                "EMAIL_NOT_FOUND",
+                "No account was found with this email address"
+            );
+        }
+
+        const passwordMatch = await bcrypt.compare(req.body.password, user.password);
         if (!passwordMatch) {
             return errorResponse(
                 res,
                 401,
-                "INVALID_CREDENTIALS",
-                "Invalid email or password"
+                "INVALID_PASSWORD",
+                "Incorrect password"
             );
         }
 

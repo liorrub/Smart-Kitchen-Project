@@ -60,6 +60,50 @@ function isValidUsername(username) {
     return true;
 }
 
+// Validate a single Register field. Returns an error string, or "" if valid.
+export function validateRegisterField(name, value) {
+    const str = value !== null && value !== undefined ? String(value) : "";
+
+    switch (name) {
+        case "firstName":
+            if (isEmpty(str)) return "First name is required.";
+            if (!isValidName(str)) return "First name may contain letters, spaces, and hyphens only.";
+            return "";
+
+        case "lastName":
+            if (isEmpty(str)) return "Last name is required.";
+            if (!isValidName(str)) return "Last name may contain letters, spaces, and hyphens only.";
+            return "";
+
+        case "email":
+            if (isEmpty(str)) return "Email is required.";
+            if (!isValidEmail(str.trim())) return "Please enter a valid email address.";
+            return "";
+
+        case "password":
+            if (isEmpty(str)) return "Password is required.";
+            if (str.length < 6) return "Password must be at least 6 characters.";
+            return "";
+
+        case "city":
+            if (isEmpty(str)) return "City is required.";
+            return "";
+
+        case "age":
+            if (isEmpty(str)) return "Age is required.";
+            if (!isValidAge(str)) return "Age must be between 1 and 120.";
+            return "";
+
+        case "username":
+            if (isEmpty(str)) return "Username is required.";
+            if (!isValidUsername(str)) return "Username must be 3–30 characters, start with a letter, and contain only letters, numbers, underscores, or periods.";
+            return "";
+
+        default:
+            return "";
+    }
+}
+
 // Validate the login form. Returns an error message string or null if valid.
 export function validateLogin(email, password) {
     if (isEmpty(email)) {
