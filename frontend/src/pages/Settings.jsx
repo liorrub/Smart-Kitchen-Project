@@ -477,7 +477,7 @@ function Settings() {
 
                         <FormField
                             label="Email"
-                            type="email"
+                            type="text"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}

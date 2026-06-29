@@ -318,7 +318,7 @@ function Register() {
 
                     <FormField
                         label="Email"
-                        type="email"
+                        type="text"
                         name="email"
                         placeholder="Enter your email"
                         value={formData.email}

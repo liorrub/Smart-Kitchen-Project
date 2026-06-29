@@ -176,7 +176,7 @@ function Login() {
                 >
                     <FormField
                         label="Email"
-                        type="email"
+                        type="text"
                         name="email"
                         placeholder="Enter your email"
                         value={email}

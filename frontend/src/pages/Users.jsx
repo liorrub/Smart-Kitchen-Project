@@ -479,7 +479,7 @@ function Users() {
 
                                     <FormField
                                         label="Email"
-                                        type="email"
+                                        type="text"
                                         name="email"
                                         value={newUser.email}
                                         onChange={handleNewUserChange}
@@ -626,7 +626,7 @@ function Users() {
 
                                     <FormField
                                         label="Email"
-                                        type="email"
+                                        type="text"
                                         value={editingUser.email}
                                         onChange={(event) =>
                                             handleEditingFieldChange(
