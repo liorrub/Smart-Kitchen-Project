@@ -189,12 +189,71 @@
         },
         {
           "name": "Login - Invalid Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function() {",
+                  "  pm.expect(pm.response.code).to.equal(401);",
+                  "});",
+                  "pm.test('Error code is INVALID_PASSWORD', function() {",
+                  "  pm.expect(pm.response.json().error.code).to.equal('INVALID_PASSWORD');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"ellen@project.com\",\n  \"password\": \"wrongpass\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Email Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function() {",
+                  "  pm.expect(pm.response.code).to.equal(401);",
+                  "});",
+                  "pm.test('Error code is EMAIL_NOT_FOUND', function() {",
+                  "  pm.expect(pm.response.json().error.code).to.equal('EMAIL_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"noexist@notreal.test\",\n  \"password\": \"SomePass123\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1277,6 +1336,28 @@
         },
         {
           "name": "Dismiss Report - Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function() {",
+                  "  pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "pm.test('Response is successful', function() {",
+                  "  pm.expect(pm.response.json().success).to.be.true;",
+                  "});",
+                  "pm.test('Report status is dismissed', function() {",
+                  "  var data = pm.response.json().data;",
+                  "  if (data && data.status !== undefined) {",
+                  "    pm.expect(data.status).to.equal('dismissed');",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -1289,11 +1370,81 @@
                 "key": "x-user-role",
                 "value": "{{adminRole}}",
                 "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
               }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"dismissed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/review-reports/{{testReportId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "review-reports",
+                "{{testReportId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Actioned - Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function() {",
+                  "  pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "pm.test('Response is successful', function() {",
+                  "  pm.expect(pm.response.json().success).to.be.true;",
+                  "});",
+                  "pm.test('Report status is actioned', function() {",
+                  "  var data = pm.response.json().data;",
+                  "  if (data && data.status !== undefined) {",
+                  "    pm.expect(data.status).to.equal('actioned');",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-id",
+                "value": "{{adminId}}",
+                "type": "text"
+              },
+              {
+                "key": "x-user-role",
+                "value": "{{adminRole}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"actioned\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

@@ -560,7 +560,8 @@ For full endpoint documentation see [API_REFERENCE.md](API_REFERENCE.md).
 | 400 | `NO_FILE` | Image upload missing file |
 | 400 | `NO_CITY` | User has no city configured |
 | 401 | `UNAUTHORIZED` | Authentication required |
-| 401 | `INVALID_CREDENTIALS` | Wrong email or password |
+| 401 | `EMAIL_NOT_FOUND` | No account was found with this email address |
+| 401 | `INVALID_PASSWORD` | Incorrect password |
 | 403 | `FORBIDDEN` | Permission denied |
 | 404 | `NOT_FOUND` | Route not found |
 | 404 | `USER_NOT_FOUND` | User does not exist |
