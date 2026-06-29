@@ -18,7 +18,7 @@ const {
 const FOLLOWABLE_ROLES = ["chef", "influencer"];
 
 // Roles that are allowed to follow others.
-const ALLOWED_FOLLOWER_ROLES = ["user", "chef", "influencer"];
+const ALLOWED_FOLLOWER_ROLES = ["user", "chef", "influencer", "admin"];
 
 // POST /api/users/:id/follow
 async function follow(req, res, next) {
@@ -31,7 +31,7 @@ async function follow(req, res, next) {
             return errorResponse(res, 400, "SELF_FOLLOW", "You cannot follow yourself.");
         }
 
-        // Follower role check (admins are excluded per business rules)
+        // Follower role check
         if (!ALLOWED_FOLLOWER_ROLES.includes(req.authUser.userRole)) {
             return errorResponse(res, 403, "FORBIDDEN", "Your account role cannot follow users.");
         }

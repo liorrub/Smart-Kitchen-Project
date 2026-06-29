@@ -35,7 +35,7 @@ const LEVEL_ICONS = {
 const FOLLOWABLE_ROLES = ["chef", "influencer"];
 
 // Roles that are allowed to follow others
-const ALLOWED_FOLLOWER_ROLES = ["user", "chef", "influencer"];
+const ALLOWED_FOLLOWER_ROLES = ["user", "chef", "influencer", "admin"];
 
 function getRoleBadgeClass(role) {
     return ROLE_COLORS[role] || "profile-badge-user";
