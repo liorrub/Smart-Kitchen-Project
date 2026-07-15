@@ -454,7 +454,9 @@
 }
 
 .dashboard-mini-item > div:first-child {
+    width: 100%;
     min-width: 0;
+    max-width: 100%;
 }
 
 .dashboard-mini-item strong {
@@ -467,6 +469,66 @@
 .dashboard-mini-item p {
     margin-top: 4px;
     font-size: 0.9rem;
+}
+
+/* Meal Planner notes — long free text. Preserve manual line breaks and
+   wrap safely; never clamp or truncate. */
+.dashboard-mini-notes {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+/* ==========================================================================
+   Chef request reason — collapsible preview
+   ========================================================================== */
+
+.chef-request-reason {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* The collapsed/expanded text is now an explicit 150-character slice (see
+   ChefRequestReason in Dashboard.jsx) rather than a CSS line-clamp, so this
+   only needs to wrap the string safely — no clamp, no overflow measurement.
+   overflow-wrap: anywhere (not break-word) is intentional and scoped to
+   just this component: the card has plenty of width, normal sentences
+   still wrap at spaces first, and only a genuinely long unbroken string
+   needs character-level wrapping so it can never escape the card
+   horizontally. Do not copy this onto Meal Planner or other components. */
+.chef-request-reason-text {
+    margin: 0;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.chef-request-reason-toggle {
+    margin-top: 4px;
+    padding: 0;
+
+    border: none;
+    background: none;
+
+    color: #b45309;
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.chef-request-reason-toggle:hover {
+    color: #92400e;
+}
+
+.chef-request-reason-toggle:focus-visible {
+    outline: 2px solid #b45309;
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 .dashboard-mini-actions {

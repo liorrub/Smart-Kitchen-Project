@@ -58,8 +58,8 @@ function PageHero({
                                 </div>
                             )}
 
-                            <span>{stat.value}</span>
-                            <p>{stat.label}</p>
+                            <span title={String(stat.value)}>{stat.value}</span>
+                            <p title={stat.label}>{stat.label}</p>
                         </article>
                     ))}
                 </div>

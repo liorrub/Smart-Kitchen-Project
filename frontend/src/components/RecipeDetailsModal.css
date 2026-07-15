@@ -46,6 +46,12 @@
 .recipe-modal-body {
     flex: 1;
     overflow-y: auto;
+    /* Final local safeguard (not a global rule): the children that used to
+       cause horizontal overflow (bare `1fr` ingredient/instruction rows)
+       are fixed above, so this should never trigger in practice. It only
+       guards against a stray oversized element bleeding sideways instead
+       of the whole page gaining a horizontal scrollbar. */
+    overflow-x: hidden;
     padding: 10px 16px;
 }
 
@@ -387,13 +393,16 @@
 
 .recipe-simple-ingredients li {
     display: grid;
-    grid-template-columns: 1fr auto;
+    /* minmax(0, 1fr) — not a bare 1fr — so a long unbroken ingredient name
+       can't force this row (and the modal) wider than the section. */
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 18px;
     align-items: baseline;
 }
 
 .recipe-simple-ingredients div {
     min-width: 0;
+    max-width: 100%;
 }
 
 .recipe-simple-ingredients strong {
@@ -404,6 +413,7 @@
     font-size: 15px;
     font-weight: 900;
     line-height: 1.2;
+    overflow-wrap: anywhere;
 }
 
 .recipe-simple-ingredients p {
@@ -413,7 +423,7 @@
 
     font-size: 13px;
     font-weight: 850;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
 }
 
 /* ==========================================================================
@@ -433,7 +443,9 @@
 
 .recipe-simple-instructions li {
     display: grid;
-    grid-template-columns: auto 1fr;
+    /* minmax(0, 1fr) — not a bare 1fr — so a long unbroken instruction
+       string can't force this row wider than the Instructions section. */
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 9px;
 }
 
@@ -453,6 +465,7 @@
     font-size: 14px;
     font-weight: 750;
     line-height: 1.5;
+    overflow-wrap: anywhere;
 }
 
 .recipe-empty-text {
@@ -726,11 +739,7 @@
     }
 
     .recipe-simple-ingredients li {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: 3px;
-    }
-
-    .recipe-simple-ingredients p {
-        white-space: normal;
     }
 }

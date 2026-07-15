@@ -24,6 +24,7 @@ import {
 
 import { validateUserManagementForm } from "../validators/userValidator";
 import { formatText } from "../utils/formatUtils";
+import { TEXT_LIMITS } from "../constants/textLimits";
 import { CITY_OPTIONS, COOKING_LEVEL_OPTIONS } from "../constants/options";
 import CityPicker from "../components/CityPicker";
 
@@ -467,6 +468,8 @@ function Users() {
                                         name="firstName"
                                         value={newUser.firstName}
                                         onChange={handleNewUserChange}
+                                        maxLength={TEXT_LIMITS.firstName}
+                                        showCounter
                                     />
 
                                     <FormField
@@ -475,6 +478,8 @@ function Users() {
                                         name="lastName"
                                         value={newUser.lastName}
                                         onChange={handleNewUserChange}
+                                        maxLength={TEXT_LIMITS.lastName}
+                                        showCounter
                                     />
 
                                     <FormField
@@ -500,6 +505,8 @@ function Users() {
                                         placeholder="e.g. lior_99 (letters, numbers, underscore)"
                                         value={newUser.username}
                                         onChange={handleNewUserChange}
+                                        maxLength={TEXT_LIMITS.username}
+                                        showCounter
                                     />
 
                                     <CityPicker
@@ -509,6 +516,7 @@ function Users() {
                                         onChange={handleNewUserChange}
                                         cities={CITY_OPTIONS}
                                         placeholder="Search or select city..."
+                                        maxLength={TEXT_LIMITS.city}
                                     />
 
                                     <FormField
@@ -610,6 +618,8 @@ function Users() {
                                                 event.target.value
                                             )
                                         }
+                                        maxLength={TEXT_LIMITS.firstName}
+                                        showCounter
                                     />
 
                                     <FormField
@@ -622,6 +632,8 @@ function Users() {
                                                 event.target.value
                                             )
                                         }
+                                        maxLength={TEXT_LIMITS.lastName}
+                                        showCounter
                                     />
 
                                     <FormField
@@ -647,6 +659,8 @@ function Users() {
                                                 event.target.value
                                             )
                                         }
+                                        maxLength={TEXT_LIMITS.username}
+                                        showCounter
                                     />
 
                                     <CityPicker
@@ -661,6 +675,7 @@ function Users() {
                                         }
                                         cities={CITY_OPTIONS}
                                         placeholder="Search or select city..."
+                                        maxLength={TEXT_LIMITS.city}
                                     />
 
                                     <FormField

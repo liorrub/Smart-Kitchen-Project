@@ -13,6 +13,7 @@ import FormField from "../components/FormField";
 import MessageModal from "../components/MessageModal";
 import PasswordField from "../components/PasswordField";
 import { validateRegisterField } from "../validators/userValidator";
+import { TEXT_LIMITS } from "../constants/textLimits";
 import { CITY_OPTIONS, COOKING_LEVEL_OPTIONS } from "../constants/options";
 import CityPicker from "../components/CityPicker";
 import AvatarPicker from "../components/AvatarPicker";
@@ -257,6 +258,8 @@ function Register() {
                             error={fieldErrors.firstName || ""}
                             onChange={handleChange}
                             onBlur={handleBlur("firstName")}
+                            maxLength={TEXT_LIMITS.firstName}
+                            showCounter
                         />
                         <FormField
                             label="Last Name"
@@ -267,6 +270,8 @@ function Register() {
                             error={fieldErrors.lastName || ""}
                             onChange={handleChange}
                             onBlur={handleBlur("lastName")}
+                            maxLength={TEXT_LIMITS.lastName}
+                            showCounter
                         />
                     </div>
 
@@ -279,6 +284,7 @@ function Register() {
                                 onChange={handleChange}
                                 cities={CITY_OPTIONS}
                                 placeholder="Search or select city..."
+                                maxLength={TEXT_LIMITS.city}
                             />
                             {fieldErrors.city && (
                                 <small className="form-error-text reg-city-error">
@@ -314,6 +320,8 @@ function Register() {
                         error={fieldErrors.username || ""}
                         onChange={handleChange}
                         onBlur={handleBlur("username")}
+                        maxLength={TEXT_LIMITS.username}
+                        showCounter
                     />
 
                     <FormField

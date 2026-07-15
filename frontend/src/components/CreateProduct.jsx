@@ -3,6 +3,7 @@ import "./CreateProduct.css";
 import { useEffect, useState } from "react";
 import { createIngredient } from "../services/ingredientsService";
 import { getErrorMessage } from "../utils/apiUtils";
+import { TEXT_LIMITS } from "../constants/textLimits";
 import MessageModal from "./MessageModal";
 
 // List of category options shown in the product form.
@@ -154,6 +155,11 @@ function CreateProductModal({
             return;
         }
 
+        if (productName.length > TEXT_LIMITS.ingredientName) {
+            setError(`Product name must be at most ${TEXT_LIMITS.ingredientName} characters.`);
+            return;
+        }
+
         // Check if a product with the same name already exists.
         const existingIngredient = existingIngredients.find(
             (ingredient) =>
@@ -243,8 +249,13 @@ function CreateProductModal({
                                     updateField("name", event.target.value)
                                 }
                                 placeholder="Product name"
+                                maxLength={TEXT_LIMITS.ingredientName}
                                 autoFocus
                             />
+
+                            <small className="create-product-counter">
+                                {formData.name.length} / {TEXT_LIMITS.ingredientName}
+                            </small>
                         </div>
 
                         <ProductCustomSelect

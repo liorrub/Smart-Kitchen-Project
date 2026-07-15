@@ -80,11 +80,9 @@
 
 .ingredient-picker-selected-name {
     flex: 1;
+    min-width: 0;
 
-    overflow: hidden;
-
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
 
     color: #1f3d2b;
 

@@ -24,7 +24,8 @@ function CityPicker({
     onChange,
     cities = [],
     placeholder = "Search or select city...",
-    wrapperClassName = ""
+    wrapperClassName = "",
+    maxLength
 }) {
     const citiesWithoutOther = useMemo(
         () => cities.filter((c) => c !== "Other"),
@@ -219,8 +220,15 @@ function CityPicker({
                                 value={customCity}
                                 onChange={handleCustomCityChange}
                                 placeholder="Enter your city..."
+                                maxLength={maxLength}
                                 autoFocus
                             />
+
+                            {maxLength && (
+                                <small className="city-picker-counter">
+                                    {customCity.length} / {maxLength}
+                                </small>
+                            )}
                         </div>
                     </div>
                 ) : selectedCity ? (

@@ -30,6 +30,7 @@ import { getRecipeReviews } from "../services/reviewsService";
 import { validateRecipeForm } from "../validators/recipeValidation";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
+import { TEXT_LIMITS } from "../constants/textLimits";
 
 // Default empty state for the create recipe form
 const EMPTY_RECIPE_FORM_DATA = {
@@ -613,6 +614,8 @@ function RecipeManagement() {
                                             value={recipeFormData.title}
                                             onChange={handleRecipeFormChange}
                                             placeholder="Enter recipe title"
+                                            maxLength={TEXT_LIMITS.recipeTitle}
+                                            showCounter
                                         />
 
                                         <CustomSelect

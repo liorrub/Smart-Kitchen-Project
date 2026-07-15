@@ -1,3 +1,5 @@
+import "./DataTable.css";
+
 // Reusable table component used across admin pages
 function DataTable({
                        columns,
@@ -7,88 +9,103 @@ function DataTable({
     if (!data?.length) {
 
         return (
-            <p>
-                No data available.
-            </p>
+            <div className="data-table-empty">
+                <p>
+                    No data available.
+                </p>
+            </div>
         );
     }
 
     return (
 
-        <table
-            border="1"
-            cellPadding="10"
-            cellSpacing="0"
-            width="100%"
-        >
+        // Wrapper scrolls horizontally on its own so a wide table (many
+        // columns, or long cell content) never forces the whole page to
+        // scroll sideways.
+        <div className="data-table-wrapper">
+            <table className="data-table">
 
-            <thead>
+                <thead>
 
-            <tr>
+                <tr>
+
+                    {
+                        columns.map(
+                            column => (
+
+                                <th
+                                    key={column.key}
+                                >
+                                    {column.label}
+                                </th>
+
+                            )
+                        )
+                    }
+
+                </tr>
+
+                </thead>
+
+                <tbody>
 
                 {
-                    columns.map(
-                        column => (
+                    data.map(
+                        row => (
 
-                            <th
-                                key={column.key}
+                            <tr
+                                key={
+                                    row.id ||
+                                    row.userId ||
+                                    row.ingredientId ||
+                                    row.historyId
+                                }
                             >
-                                {column.label}
-                            </th>
+
+                                {
+                                    columns.map(
+                                        column => {
+                                            const cellValue = column.render
+                                                ? column.render(row)
+                                                : row[column.key];
+
+                                            // Only strings/numbers can safely take a title
+                                            // tooltip and word-break class; custom renderers
+                                            // (badges, buttons, etc.) render as-is.
+                                            const isPlainText =
+                                                typeof cellValue === "string" ||
+                                                typeof cellValue === "number";
+
+                                            const displayValue =
+                                                cellValue === null ||
+                                                cellValue === undefined ||
+                                                cellValue === ""
+                                                    ? "—"
+                                                    : cellValue;
+
+                                            return (
+                                                <td
+                                                    key={column.key}
+                                                    className={isPlainText ? "sk-text-wrap" : ""}
+                                                    title={isPlainText ? String(displayValue) : undefined}
+                                                >
+                                                    {displayValue}
+                                                </td>
+                                            );
+                                        }
+                                    )
+                                }
+
+                            </tr>
 
                         )
                     )
                 }
 
-            </tr>
+                </tbody>
 
-            </thead>
-
-            <tbody>
-
-            {
-                data.map(
-                    row => (
-
-                        <tr
-                            key={
-                                row.id ||
-                                row.userId ||
-                                row.ingredientId ||
-                                row.historyId
-                            }
-                        >
-
-                            {
-                                columns.map(
-                                    column => (
-
-                                        <td
-                                            key={column.key}
-                                        >
-
-                                            {
-                                                // Use custom renderer if provided
-                                                column.render
-                                                    ? column.render(row)
-                                                    : row[column.key]
-                                            }
-
-                                        </td>
-
-                                    )
-                                )
-                            }
-
-                        </tr>
-
-                    )
-                )
-            }
-
-            </tbody>
-
-        </table>
+            </table>
+        </div>
 
     );
 }

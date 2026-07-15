@@ -1,3 +1,5 @@
+import { TEXT_LIMITS } from "../constants/textLimits";
+
 const roles = [
     "user",
     "chef",
@@ -27,7 +29,7 @@ function isValidEmail(email) {
 }
 
 // Hebrew characters (א-ת) are allowed because some users have Hebrew names.
-function isValidName(value) {
+function isValidName(value, maxLength) {
     const nameRegex =
         /^[A-Za-zא-ת\s-]+$/;
 
@@ -35,8 +37,13 @@ function isValidName(value) {
 
     return (
         text.length >= 2 &&
+        text.length <= maxLength &&
         nameRegex.test(text)
     );
+}
+
+function isTooLong(value, maxLength) {
+    return value.trim().length > maxLength;
 }
 
 function isValidAge(age) {
@@ -52,7 +59,7 @@ function isValidAge(age) {
 function isValidUsername(username) {
     if (!username || typeof username !== "string") return false;
     const u = username.trim().toLowerCase();
-    if (u.length < 3 || u.length > 30) return false;
+    if (u.length < 3 || u.length > TEXT_LIMITS.username) return false;
     if (!/^[a-z]/.test(u)) return false;
     if (/[_.]$/.test(u)) return false;
     if (!/^[a-z0-9_.]+$/.test(u)) return false;
@@ -67,12 +74,14 @@ export function validateRegisterField(name, value) {
     switch (name) {
         case "firstName":
             if (isEmpty(str)) return "First name is required.";
-            if (!isValidName(str)) return "First name may contain letters, spaces, and hyphens only.";
+            if (isTooLong(str, TEXT_LIMITS.firstName)) return `First name must be at most ${TEXT_LIMITS.firstName} characters.`;
+            if (!isValidName(str, TEXT_LIMITS.firstName)) return "First name may contain letters, spaces, and hyphens only.";
             return "";
 
         case "lastName":
             if (isEmpty(str)) return "Last name is required.";
-            if (!isValidName(str)) return "Last name may contain letters, spaces, and hyphens only.";
+            if (isTooLong(str, TEXT_LIMITS.lastName)) return `Last name must be at most ${TEXT_LIMITS.lastName} characters.`;
+            if (!isValidName(str, TEXT_LIMITS.lastName)) return "Last name may contain letters, spaces, and hyphens only.";
             return "";
 
         case "email":
@@ -87,6 +96,7 @@ export function validateRegisterField(name, value) {
 
         case "city":
             if (isEmpty(str)) return "City is required.";
+            if (isTooLong(str, TEXT_LIMITS.city)) return `City must be at most ${TEXT_LIMITS.city} characters.`;
             return "";
 
         case "age":
@@ -96,7 +106,8 @@ export function validateRegisterField(name, value) {
 
         case "username":
             if (isEmpty(str)) return "Username is required.";
-            if (!isValidUsername(str)) return "Username must be 3–30 characters, start with a letter, and contain only letters, numbers, underscores, or periods.";
+            if (isTooLong(str, TEXT_LIMITS.username)) return `Username must be at most ${TEXT_LIMITS.username} characters.`;
+            if (!isValidUsername(str)) return `Username must be 3–${TEXT_LIMITS.username} characters, start with a letter, and contain only letters, numbers, underscores, or periods.`;
             return "";
 
         default:
@@ -131,7 +142,11 @@ export function validateRegisterForm(formData) {
         return "First name is required";
     }
 
-    if (!isValidName(formData.firstName)) {
+    if (isTooLong(formData.firstName, TEXT_LIMITS.firstName)) {
+        return `First name must be at most ${TEXT_LIMITS.firstName} characters`;
+    }
+
+    if (!isValidName(formData.firstName, TEXT_LIMITS.firstName)) {
         return "First name must contain only letters, spaces or hyphen, and be at least 2 characters long";
     }
 
@@ -139,7 +154,11 @@ export function validateRegisterForm(formData) {
         return "Last name is required";
     }
 
-    if (!isValidName(formData.lastName)) {
+    if (isTooLong(formData.lastName, TEXT_LIMITS.lastName)) {
+        return `Last name must be at most ${TEXT_LIMITS.lastName} characters`;
+    }
+
+    if (!isValidName(formData.lastName, TEXT_LIMITS.lastName)) {
         return "Last name must contain only letters, spaces or hyphen, and be at least 2 characters long";
     }
 
@@ -163,6 +182,10 @@ export function validateRegisterForm(formData) {
         return "City is required";
     }
 
+    if (isTooLong(formData.city, TEXT_LIMITS.city)) {
+        return `City must be at most ${TEXT_LIMITS.city} characters`;
+    }
+
     if (isEmpty(formData.age)) {
         return "Age is required";
     }
@@ -182,8 +205,12 @@ export function validateRegisterForm(formData) {
         return "Username is required";
     }
 
+    if (isTooLong(formData.username, TEXT_LIMITS.username)) {
+        return `Username must be at most ${TEXT_LIMITS.username} characters`;
+    }
+
     if (!isValidUsername(formData.username)) {
-        return "Username must be 3–30 characters, start with a letter, and contain only letters, numbers, underscores, or periods";
+        return `Username must be 3–${TEXT_LIMITS.username} characters, start with a letter, and contain only letters, numbers, underscores, or periods`;
     }
 
     return null;
@@ -195,7 +222,11 @@ export function validateUserManagementForm(userData, isNewUser = false) {
         return "First name is required";
     }
 
-    if (!isValidName(userData.firstName)) {
+    if (isTooLong(userData.firstName, TEXT_LIMITS.firstName)) {
+        return `First name must be at most ${TEXT_LIMITS.firstName} characters`;
+    }
+
+    if (!isValidName(userData.firstName, TEXT_LIMITS.firstName)) {
         return "First name must contain only letters, spaces or hyphen, and be at least 2 characters long";
     }
 
@@ -203,7 +234,11 @@ export function validateUserManagementForm(userData, isNewUser = false) {
         return "Last name is required";
     }
 
-    if (!isValidName(userData.lastName)) {
+    if (isTooLong(userData.lastName, TEXT_LIMITS.lastName)) {
+        return `Last name must be at most ${TEXT_LIMITS.lastName} characters`;
+    }
+
+    if (!isValidName(userData.lastName, TEXT_LIMITS.lastName)) {
         return "Last name must contain only letters, spaces or hyphen, and be at least 2 characters long";
     }
 
@@ -217,6 +252,10 @@ export function validateUserManagementForm(userData, isNewUser = false) {
 
     if (isEmpty(userData.city)) {
         return "City is required";
+    }
+
+    if (isTooLong(userData.city, TEXT_LIMITS.city)) {
+        return `City must be at most ${TEXT_LIMITS.city} characters`;
     }
 
     if (isEmpty(userData.userRole)) {
@@ -252,8 +291,12 @@ export function validateUserManagementForm(userData, isNewUser = false) {
             return "Username is required";
         }
 
+        if (isTooLong(userData.username, TEXT_LIMITS.username)) {
+            return `Username must be at most ${TEXT_LIMITS.username} characters`;
+        }
+
         if (!isValidUsername(userData.username)) {
-            return "Username must be 3–30 characters, start with a letter, and contain only letters, numbers, underscores, or periods";
+            return `Username must be 3–${TEXT_LIMITS.username} characters, start with a letter, and contain only letters, numbers, underscores, or periods`;
         }
     }
 

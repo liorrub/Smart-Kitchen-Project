@@ -124,7 +124,9 @@
     font-size: 15px;
     font-weight: 500;
     line-height: 1.55;
+    overflow-wrap: anywhere;
     word-break: break-word;
+    white-space: pre-wrap;
 }
 
 /* ==========================================================================

@@ -24,6 +24,7 @@ import {
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
 import { toLocalDateKey } from "../utils/dateUtils";
+import { TEXT_LIMITS } from "../constants/textLimits";
 
 const MEAL_TYPES = [
     {
@@ -382,6 +383,10 @@ function MealPlanner() {
 
         if (!mealForm.itemId) {
             return "Please choose an item.";
+        }
+
+        if (mealForm.notes.trim().length > TEXT_LIMITS.mealPlannerNotes) {
+            return `Notes must be at most ${TEXT_LIMITS.mealPlannerNotes} characters.`;
         }
 
         return null;
@@ -779,7 +784,7 @@ function MealPlanner() {
                                                                 if (e.key === "Enter") setSelectedRecipeForDetails(linkedRecipe);
                                                             } : undefined}
                                                         >
-                                                            <div>
+                                                            <div className="meal-chip-content">
                                                                 <strong>
                                                                     {getItemLabel(meal)}
                                                                 </strong>
@@ -992,11 +997,14 @@ function MealPlanner() {
 
                                     <FormField
                                         label="Notes"
-                                        type="text"
                                         name="notes"
                                         value={mealForm.notes}
                                         onChange={handleFormChange}
                                         placeholder="Optional note"
+                                        multiline
+                                        rows={3}
+                                        maxLength={TEXT_LIMITS.mealPlannerNotes}
+                                        showCounter
                                     />
                                 </div>
                             </form>

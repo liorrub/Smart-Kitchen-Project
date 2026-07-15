@@ -353,9 +353,11 @@
 
 .profile-user-name {
     flex: 1;
+    min-width: 0;
     font-size: 15px;
     font-weight: 700;
     color: #1f3d2b;
+    overflow-wrap: anywhere;
 }
 
 /* ==========================================================================

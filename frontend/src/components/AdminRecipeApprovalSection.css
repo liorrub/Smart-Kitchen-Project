@@ -85,6 +85,8 @@
     font-size: 14px;
     font-weight: 600;
     line-height: 1.55;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
 }
 
 .admin-queue-card-actions {

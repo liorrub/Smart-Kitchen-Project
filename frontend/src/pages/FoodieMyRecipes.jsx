@@ -27,6 +27,7 @@ import { getOptions } from "../services/optionsService";
 import { validateRecipeForm } from "../validators/recipeValidation";
 import { getErrorMessage } from "../utils/apiUtils";
 import { getStoredUser } from "../utils/authUtils";
+import { TEXT_LIMITS } from "../constants/textLimits";
 
 const EMPTY_RECIPE_FORM_DATA = {
     title: "",
@@ -385,7 +386,16 @@ function FoodieMyRecipes() {
                             >
                                 <form id="foodie-recipe-form" onSubmit={handleSaveRecipe}>
                                     <div className="recipe-form-grid">
-                                        <FormField label="Title" type="text" name="title" value={recipeFormData.title} onChange={handleRecipeFormChange} placeholder="Enter recipe title" />
+                                        <FormField
+                                            label="Title"
+                                            type="text"
+                                            name="title"
+                                            value={recipeFormData.title}
+                                            onChange={handleRecipeFormChange}
+                                            placeholder="Enter recipe title"
+                                            maxLength={TEXT_LIMITS.recipeTitle}
+                                            showCounter
+                                        />
                                         <CustomSelect label="Category" name="category" value={recipeFormData.category} onChange={handleRecipeFormChange} options={options.recipes.categories.map(c => ({ value: c, label: capitalize(c) }))} />
                                         <CustomSelect label="Cuisine" name="cuisine" value={recipeFormData.cuisine} onChange={handleRecipeFormChange} options={options.recipes.cuisines.map(c => ({ value: c, label: capitalize(c) }))} />
                                         <CustomSelect label="Difficulty" name="difficulty" value={recipeFormData.difficulty} onChange={handleRecipeFormChange} options={options.recipes.difficulties.map(d => ({ value: d, label: capitalize(d) }))} />

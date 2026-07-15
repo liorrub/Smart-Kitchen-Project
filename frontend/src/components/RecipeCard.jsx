@@ -75,12 +75,15 @@ function RecipeCard({
             {/* Card body */}
             <div className="recipe-card-inner">
                 <div className="recipe-card-content">
-                    <h3>{recipe.title}</h3>
+                    <h3 className="recipe-card-title">
+                        {recipe.title}
+                    </h3>
 
                     {showCreator && recipe.creator && (
                         <Link
                             to={`/profile/${recipe.creator.userId}`}
                             className="recipe-card-creator-link"
+                            title={`${recipe.creator.firstName} ${recipe.creator.lastName}`}
                             onClick={e => e.stopPropagation()}
                         >
                             by {recipe.creator.firstName} {recipe.creator.lastName}

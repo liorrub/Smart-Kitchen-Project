@@ -203,6 +203,17 @@
     line-height: 1.2;
 }
 
+/* The full title is always shown — no clamp, no ellipsis. A long unbroken
+   title wraps onto as many lines as it needs; .recipe-card-content's
+   flex: 1 (below) keeps the footer/actions pinned to the bottom of the
+   card either way, so a taller title just grows the card, it never pushes
+   buttons out or overlaps metadata. */
+.recipe-card-title {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+}
+
 .recipe-card-meta {
     margin-top: 10px;
 
@@ -237,6 +248,8 @@
 
     font-size: 12px;
     font-weight: 900;
+    overflow-wrap: anywhere;
+    max-width: 100%;
 }
 
 /* ==========================================================================
@@ -261,6 +274,7 @@
     font-size: 13px;
     font-weight: 800;
     line-height: 1.25;
+    overflow-wrap: anywhere;
 }
 
 .recipe-card-actions {
@@ -393,6 +407,7 @@
     font-size: 12px;
     font-weight: 700;
     text-decoration: none;
+    overflow-wrap: anywhere;
 }
 
 .recipe-card-creator-link:hover {

@@ -1,3 +1,5 @@
+import { TEXT_LIMITS } from "../constants/textLimits";
+
 // Validate the recipe create/edit form. Returns an error message string or an empty string if valid.
 export function validateRecipeForm(recipeData) {
     const title = recipeData.title.trim();
@@ -12,6 +14,10 @@ export function validateRecipeForm(recipeData) {
 
     if (!title) {
         return "Recipe title is required.";
+    }
+
+    if (title.length > TEXT_LIMITS.recipeTitle) {
+        return `Recipe title must be at most ${TEXT_LIMITS.recipeTitle} characters.`;
     }
 
     if (!isValidRecipeText(title)) {

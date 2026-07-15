@@ -23,6 +23,7 @@ import {
 import { getMyChefRequest, submitChefRequest } from "../services/chefRequestService";
 import { CITY_OPTIONS, COOKING_LEVEL_OPTIONS } from "../constants/options";
 import CityPicker from "../components/CityPicker";
+import { TEXT_LIMITS } from "../constants/textLimits";
 
 const DIETARY_OPTIONS = [
     "vegan",
@@ -152,6 +153,11 @@ function Settings() {
 
         if (!requestReason.trim()) {
             setError("Please provide a reason for your request.");
+            return;
+        }
+
+        if (requestReason.trim().length > TEXT_LIMITS.chefRequestMessage) {
+            setError(`Your reason must be at most ${TEXT_LIMITS.chefRequestMessage} characters.`);
             return;
         }
 
@@ -413,10 +419,10 @@ function Settings() {
                             className="summary-avatar"
                         />
 
-                        <div>
+                        <div className="summary-info">
                             <span>Current Profile</span>
 
-                            <strong>
+                            <strong title={`${formData.firstName} ${formData.lastName}`}>
                                 {formData.firstName} {formData.lastName}
                             </strong>
 
@@ -464,6 +470,8 @@ function Settings() {
                             value={formData.firstName}
                             onChange={handleChange}
                             placeholder="Enter first name"
+                            maxLength={TEXT_LIMITS.firstName}
+                            showCounter
                         />
 
                         <FormField
@@ -473,6 +481,8 @@ function Settings() {
                             value={formData.lastName}
                             onChange={handleChange}
                             placeholder="Enter last name"
+                            maxLength={TEXT_LIMITS.lastName}
+                            showCounter
                         />
 
                         <FormField
@@ -491,6 +501,7 @@ function Settings() {
                             onChange={handleChange}
                             cities={CITY_OPTIONS}
                             placeholder="Search or select city..."
+                            maxLength={TEXT_LIMITS.city}
                         />
 
                         <FormField
@@ -521,6 +532,8 @@ function Settings() {
                             value={formData.username}
                             onChange={handleChange}
                             placeholder="e.g. lior_99"
+                            maxLength={TEXT_LIMITS.username}
+                            showCounter
                         />
                     </div>
 
@@ -571,11 +584,14 @@ function Settings() {
                             <div className="settings-grid">
                                 <FormField
                                     label="Why do you want to become a chef?"
-                                    type="text"
                                     name="requestReason"
                                     value={requestReason}
                                     onChange={(e) => setRequestReason(e.target.value)}
                                     placeholder="Tell us a little about yourself and your cooking..."
+                                    multiline
+                                    rows={3}
+                                    maxLength={TEXT_LIMITS.chefRequestMessage}
+                                    showCounter
                                 />
                             </div>
 
@@ -609,11 +625,14 @@ function Settings() {
                                 <div className="settings-grid">
                                     <FormField
                                         label="Why do you want to become a chef?"
-                                        type="text"
                                         name="requestReason"
                                         value={requestReason}
                                         onChange={(e) => setRequestReason(e.target.value)}
                                         placeholder="Tell us a little about yourself and your cooking..."
+                                        multiline
+                                        rows={3}
+                                        maxLength={TEXT_LIMITS.chefRequestMessage}
+                                        showCounter
                                     />
                                 </div>
 
