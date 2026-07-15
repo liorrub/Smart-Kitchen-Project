@@ -33,7 +33,7 @@ npm install
 Copy `.env.example` to `.env` and fill in your values:
 
 ```bash
-cp .env.example .env
+cp .env.example.example .env.example
 ```
 
 Then edit `.env`:
