@@ -164,18 +164,25 @@
     border: 1px solid #e5efe0;
 }
 
+.ai-ingredient-item {
+    flex-wrap: wrap;
+}
+
 .ai-ingredient-qty {
     min-width: 80px;
     color: #2a7545;
     font-size: 13px;
     font-weight: 900;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
 }
 
 .ai-ingredient-name {
+    flex: 1;
+    min-width: 0;
     color: #1f3d2b;
     font-size: 14px;
     font-weight: 750;
+    overflow-wrap: anywhere;
 }
 
 .ai-step-list {
@@ -252,17 +259,15 @@
     line-height: 1;
 }
 
-/* Two-line clamp for the card description */
+/* Full description is always shown — no clamp, no ellipsis. The card grows
+   to fit; .ai-sugg-grid rows don't rely on equal card heights for layout. */
 .ai-sugg-card-desc {
     margin: 10px 0 0;
     color: #55705d;
     font-size: 13px;
     font-weight: 750;
     line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    overflow-wrap: anywhere;
 }
 
 /* Override recipe-modal-stats to 3 columns (suggestions have fewer data points) */
@@ -374,6 +379,7 @@
 
 /* Ratio/usage badge — same amber/honey tone as the number circle */
 .ai-substitute-ratio {
+    max-width: 100%;
     padding: 4px 12px;
     border-radius: 999px;
     background: #fff3dc;
@@ -381,7 +387,7 @@
     color: #7a4a00;
     font-size: 12px;
     font-weight: 900;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
 }
 
 .ai-substitute-prep {

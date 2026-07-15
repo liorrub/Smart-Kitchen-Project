@@ -12,7 +12,8 @@ const {
 
 const {
     validateIdParam,
-    validateRequiredFields
+    validateRequiredFields,
+    validateMaxLength
 } = require("../validators/commonValidator");
 
 const {
@@ -21,6 +22,14 @@ const {
     validateCookingLevel,
     validateUserRole
 } = require("../validators/userValidator");
+const { validateUsernameMiddleware } = require("../validators/usernameValidator");
+const { TEXT_LIMITS } = require("../validators/textLimits");
+
+const NAME_LENGTH_LIMITS = {
+    firstName: TEXT_LIMITS.firstName,
+    lastName: TEXT_LIMITS.lastName,
+    city: TEXT_LIMITS.city
+};
 
 // Only admin can view all users
 router.get(
@@ -60,6 +69,8 @@ router.post(
     validatePassword,
     validateCookingLevel,
     validateUserRole,
+    validateMaxLength(NAME_LENGTH_LIMITS),
+    validateUsernameMiddleware,
     usersController.createSingleUser
 );
 
@@ -77,6 +88,8 @@ router.put(
     validateIdParam(),
     allowSelfOrAdmin,
     validateEmail,
+    validateMaxLength(NAME_LENGTH_LIMITS),
+    validateUsernameMiddleware,
     usersController.updateSingleUser
 );
 

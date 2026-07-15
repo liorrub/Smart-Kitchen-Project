@@ -99,6 +99,7 @@
     display: flex;
     justify-content: flex-end;
     min-width: 0;
+    max-width: 100%;
 }
 
 
@@ -155,6 +156,13 @@
     line-height: 30px;
     font-weight: 850;
     letter-spacing: -0.35px;
+
+    /* A very large number or long value stays on one line and is clipped
+       with an ellipsis instead of wrapping and breaking out of the fixed
+       58px card height. Full value is still available via the title attr. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .page-hero-stat-card p {
@@ -181,9 +189,14 @@
     grid-template-columns: repeat(5, 104px);
 }
 
-/* Custom right side, like dashboard role card */
+/* Custom right side, like dashboard role card.
+   The side column is capped (not a bare `auto`) so unusually long content
+   placed inside it (e.g. Settings' profile summary card showing a very long
+   name) has a hard ceiling instead of being free to steal width from the
+   left `minmax(0, 1fr)` column — which is what previously squeezed the
+   intro text down to one character per line. */
 .page-hero-custom {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, min(420px, 42%));
 }
 
 /* Responsive */

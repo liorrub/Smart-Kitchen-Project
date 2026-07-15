@@ -1,14 +1,16 @@
 "use strict";
 
+const { TEXT_LIMITS } = require("./textLimits");
+
 // Username rules:
-//   3–30 characters
+//   3–TEXT_LIMITS.username characters
 //   lowercase letters, digits, underscore, period
 //   must start with a letter
 //   must not end with period or underscore
 //   no consecutive punctuation (__ .. _. ._)
 //   stored and compared as lowercase
 
-const USERNAME_REGEX = /^[a-z][a-z0-9_.]{1,28}[a-z0-9]$|^[a-z]{3,30}$/;
+const USERNAME_MAX = TEXT_LIMITS.username;
 
 // Characters that count as consecutive punctuation
 const CONSECUTIVE_PUNCT = /[_.][ _.]|[.][_.]|[_][.]/;
@@ -36,8 +38,8 @@ function validateUsername(raw) {
         return "Username must be at least 3 characters";
     }
 
-    if (username.length > 30) {
-        return "Username must be at most 30 characters";
+    if (username.length > USERNAME_MAX) {
+        return `Username must be at most ${USERNAME_MAX} characters`;
     }
 
     if (!/^[a-z]/.test(username)) {

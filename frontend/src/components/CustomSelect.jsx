@@ -100,7 +100,7 @@ function CustomSelect({
                     onClick={handleToggle}
                     disabled={disabled}
                 >
-                    <span>
+                    <span title={selectedOption?.label || placeholder}>
                         {selectedOption?.label || placeholder}
                     </span>
 

@@ -134,6 +134,14 @@
     box-shadow: 0 0 0 4px rgba(127, 159, 104, 0.18);
 }
 
+.create-product-counter {
+    align-self: flex-end;
+    color: #8a9e8e;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
 .create-product-select {
     position: relative;
 }

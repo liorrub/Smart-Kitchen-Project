@@ -148,7 +148,7 @@ function AdminReviewReportSection() {
                                     <div className="rr-card-review-preview">
                                         <strong>{report.review.title}</strong>
                                         {report.review.comment && (
-                                            <p>{report.review.comment.slice(0, 160)}{report.review.comment.length > 160 ? "…" : ""}</p>
+                                            <p>{report.review.comment}</p>
                                         )}
                                     </div>
                                 )}

@@ -21,6 +21,13 @@
    ========================================================================== */
 
 .settings-summary-card {
+    /* Hard ceiling so a very long first/last name wraps inside this card
+       instead of growing it (and the whole page-hero-side column) wider,
+       which is what previously squeezed the left intro column down to one
+       character per line. */
+    max-width: 100%;
+    min-width: 0;
+
     padding: 16px;
 
     background:
@@ -36,6 +43,12 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
+}
+
+.summary-info {
+    min-width: 0;
+    max-width: 100%;
 }
 
 .summary-avatar {
@@ -75,6 +88,7 @@
 
     font-size: 19px;
     font-weight: 900;
+    overflow-wrap: anywhere;
 }
 
 .summary-top p {
@@ -84,6 +98,7 @@
 
     font-size: 14px;
     font-weight: 700;
+    overflow-wrap: anywhere;
 }
 
 .summary-tags {

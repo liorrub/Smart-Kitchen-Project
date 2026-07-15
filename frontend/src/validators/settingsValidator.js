@@ -1,10 +1,12 @@
+import { TEXT_LIMITS } from "../constants/textLimits";
+
 // Hebrew characters (א-ת) are allowed because some users have Hebrew names.
 const NAME_REGEX = /^[A-Za-zא-ת\s-]+$/;
 
 function isValidUsername(username) {
     if (!username || typeof username !== "string") return false;
     const u = username.trim().toLowerCase();
-    if (u.length < 3 || u.length > 30) return false;
+    if (u.length < 3 || u.length > TEXT_LIMITS.username) return false;
     if (!/^[a-z]/.test(u)) return false;
     if (/[_.]$/.test(u)) return false;
     if (!/^[a-z0-9_.]+$/.test(u)) return false;
@@ -37,6 +39,14 @@ export function validateSettings(formData) {
         return "Please enter a valid email address";
     }
 
+    if (formData.firstName.trim().length > TEXT_LIMITS.firstName) {
+        return `First name must be at most ${TEXT_LIMITS.firstName} characters`;
+    }
+
+    if (formData.lastName.trim().length > TEXT_LIMITS.lastName) {
+        return `Last name must be at most ${TEXT_LIMITS.lastName} characters`;
+    }
+
     if (!NAME_REGEX.test(formData.firstName.trim())) {
         return "First name must contain letters only";
     }
@@ -57,12 +67,20 @@ export function validateSettings(formData) {
         return "City is required";
     }
 
+    if (formData.city.trim().length > TEXT_LIMITS.city) {
+        return `City must be at most ${TEXT_LIMITS.city} characters`;
+    }
+
     if (!formData.username || !formData.username.trim()) {
         return "Username is required";
     }
 
+    if (formData.username.trim().length > TEXT_LIMITS.username) {
+        return `Username must be at most ${TEXT_LIMITS.username} characters`;
+    }
+
     if (!isValidUsername(formData.username)) {
-        return "Username must be 3–30 characters, start with a letter, and contain only letters, numbers, underscores, or periods";
+        return `Username must be 3–${TEXT_LIMITS.username} characters, start with a letter, and contain only letters, numbers, underscores, or periods`;
     }
 
     return null;

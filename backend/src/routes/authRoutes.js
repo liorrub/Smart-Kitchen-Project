@@ -4,7 +4,8 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 
 const {
-    validateRequiredFields
+    validateRequiredFields,
+    validateMaxLength
 } = require("../validators/commonValidator");
 
 const {
@@ -14,6 +15,7 @@ const {
 } = require("../validators/userValidator");
 const { validateUsernameMiddleware } = require("../validators/usernameValidator");
 const { validateAvatarKeyMiddleware } = require("../../data/avatarCatalog");
+const { TEXT_LIMITS } = require("../validators/textLimits");
 
 // Register
 router.post(
@@ -31,6 +33,11 @@ router.post(
     validateEmail,
     validatePassword,
     validateCookingLevel,
+    validateMaxLength({
+        firstName: TEXT_LIMITS.firstName,
+        lastName: TEXT_LIMITS.lastName,
+        city: TEXT_LIMITS.city
+    }),
     validateUsernameMiddleware,
     validateAvatarKeyMiddleware,
     authController.register

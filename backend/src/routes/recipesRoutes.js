@@ -9,7 +9,8 @@ const {
 
 const {
     validateIdParam,
-    validateRequiredFields
+    validateRequiredFields,
+    validateMaxLength
 } = require("../validators/commonValidator");
 
 const {
@@ -19,6 +20,9 @@ const {
     validateRecipeIngredientsRequired,
     validateRecipeIngredientsOptional
 } = require("../validators/recipeValidator");
+
+const { TEXT_LIMITS } = require("../validators/textLimits");
+const recipeTitleLengthLimit = validateMaxLength({ title: TEXT_LIMITS.recipeTitle });
 
 const {
     validateReviewInput
@@ -76,6 +80,7 @@ router.post(
     validateDifficulty,
     validateCuisine,
     validateRecipeCategory,
+    recipeTitleLengthLimit,
     validateRecipeIngredientsRequired,
     recipesController.createSingleRecipe
 );
@@ -88,6 +93,7 @@ router.put(
     validateDifficulty,
     validateCuisine,
     validateRecipeCategory,
+    recipeTitleLengthLimit,
     validateRecipeIngredientsOptional,
     recipesController.updateSingleRecipe
 );

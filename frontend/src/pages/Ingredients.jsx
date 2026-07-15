@@ -20,6 +20,7 @@ import {
 
 import { validateIngredientForm } from "../validators/ingredientValidation";
 import { formatText } from "../utils/formatUtils";
+import { TEXT_LIMITS } from "../constants/textLimits";
 
 const EMPTY_FORM_DATA = {
     name: "",
@@ -516,6 +517,8 @@ function Ingredients() {
                                         value={formData.name}
                                         onChange={handleChange}
                                         placeholder="Enter ingredient name"
+                                        maxLength={TEXT_LIMITS.ingredientName}
+                                        showCounter
                                     />
 
                                     <CustomSelect

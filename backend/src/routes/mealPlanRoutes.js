@@ -15,13 +15,17 @@ const {
 
 const {
     validateIdParam,
-    validateRequiredFields
+    validateRequiredFields,
+    validateMaxLength
 } = require("../validators/commonValidator");
 
 const {
     validateMealType,
     validateItemType
 } = require("../validators/mealPlanValidator");
+
+const { TEXT_LIMITS } = require("../validators/textLimits");
+const mealNotesLengthLimit = validateMaxLength({ notes: TEXT_LIMITS.mealPlannerNotes });
 
 // Get full meal plan for user
 router.get(
@@ -53,6 +57,7 @@ router.post(
     ]),
     validateMealType,
     validateItemType,
+    mealNotesLengthLimit,
     createMeal
 );
 
@@ -64,6 +69,7 @@ router.put(
     allowSelfOrAdmin,
     validateMealType,
     validateItemType,
+    mealNotesLengthLimit,
     updateSingleMeal
 );
 

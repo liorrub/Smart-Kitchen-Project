@@ -386,13 +386,17 @@
    Meal chips
    ========================================================================== */
 
+/* Two-row layout: content (title/calories/notes) always gets the full card
+   width on its own row; actions sit in a second row aligned to the end.
+   Previously content and actions shared one row, which squeezed the text
+   into a sliver of width and, combined with overflow-wrap: anywhere, broke
+   ordinary words into unreadable fragments. */
 .meal-chip {
     padding: 12px;
 
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 9px;
+    flex-direction: column;
+    gap: 8px;
 
     border-radius: 16px;
     border: 1px solid #f0cdd8;
@@ -425,6 +429,12 @@
     color: #cc6089;
 }
 
+.meal-chip-content {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
 .meal-chip strong {
     display: block;
 
@@ -433,6 +443,12 @@
     font-size: 14px;
     font-weight: 900;
     line-height: 1.18;
+
+    /* Wrap normal text only between words; only force-break a single token
+       when it's genuinely too long to fit on its own line (a long unbroken
+       string), never split ordinary short words into fragments. */
+    overflow-wrap: break-word;
+    word-break: normal;
 }
 
 .meal-chip p {
@@ -443,11 +459,17 @@
     font-size: 12px;
     font-weight: 900;
     line-height: 1.25;
+    overflow-wrap: break-word;
+    word-break: normal;
 }
 
+/* Actions row — full width, buttons aligned to the end so they never share
+   horizontal space with (and squeeze) the title/notes above. */
 .meal-chip-actions {
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: flex-end;
     gap: 7px;
     flex-shrink: 0;
 }
@@ -640,9 +662,7 @@
     color: #1f3d2b;
     font-size: 13px;
     font-weight: 800;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
 }
 
 .meal-recipe-selected-info span {
@@ -740,9 +760,7 @@
     font-size: 13px;
     font-weight: 700;
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
     flex: 1;
     text-align: left;
 }

@@ -505,6 +505,15 @@
     font-weight: 800;
 }
 
+.recipe-selected-ingredient > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.recipe-selected-ingredient button {
+    flex-shrink: 0;
+}
+
 .recipe-selected-ingredient button {
     width: 26px;
     height: 26px;

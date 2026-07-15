@@ -1,6 +1,6 @@
 import "./Dashboard.css";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
@@ -715,7 +715,7 @@ function Dashboard() {
                                                 <div>
                                                     <strong>{getUserDisplayName(requester || {})}</strong>
                                                     <p>{formatDate(request.requestDate)}</p>
-                                                    {request.reason && <p>{request.reason}</p>}
+                                                    <ChefRequestReason text={request.reason} />
                                                 </div>
 
                                                 <div className="dashboard-mini-actions">
@@ -983,7 +983,9 @@ function Dashboard() {
 
                                                 <p>{formatDate(meal.date)}</p>
 
-                                                {meal.notes && <p>{meal.notes}</p>}
+                                                {meal.notes && (
+                                                    <p className="dashboard-mini-notes">{meal.notes}</p>
+                                                )}
                                             </div>
 
                                             <div className="dashboard-mini-actions">
@@ -1052,6 +1054,53 @@ function EmptyState({ text }) {
         <div className="dashboard-empty-state">
             <span>🌿</span>
             <p>{text}</p>
+        </div>
+    );
+}
+
+// Collapsed-preview length for the chef-request reason. Deterministic —
+// the toggle's presence depends only on this, not on any layout
+// measurement (no line-clamp, no scrollHeight/clientHeight comparison).
+const CHEF_REQUEST_PREVIEW_LENGTH = 150;
+
+// Collapsible chef-request reason. The full text always stays in React
+// state/props/API data — only the on-screen collapsed preview is a sliced
+// string, and only while collapsed. Expanding swaps back to the complete,
+// untouched text.
+function ChefRequestReason({ text }) {
+    const [expanded, setExpanded] = useState(false);
+    const reactId = useId();
+    const textId = `chef-request-reason-${reactId}`;
+
+    const normalizedText = text || "";
+    const isLong = normalizedText.length > CHEF_REQUEST_PREVIEW_LENGTH;
+
+    if (!normalizedText) {
+        return null;
+    }
+
+    const displayedText =
+        !expanded && isLong
+            ? `${normalizedText.slice(0, CHEF_REQUEST_PREVIEW_LENGTH)}…`
+            : normalizedText;
+
+    return (
+        <div className="chef-request-reason">
+            <p id={textId} className="chef-request-reason-text">
+                {displayedText}
+            </p>
+
+            {isLong && (
+                <button
+                    type="button"
+                    className="chef-request-reason-toggle"
+                    aria-expanded={expanded}
+                    aria-controls={textId}
+                    onClick={() => setExpanded((previous) => !previous)}
+                >
+                    {expanded ? "Show less" : "Read more"}
+                </button>
+            )}
         </div>
     );
 }

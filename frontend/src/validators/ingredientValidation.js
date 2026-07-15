@@ -1,3 +1,5 @@
+import { TEXT_LIMITS } from "../constants/textLimits";
+
 // Validate the ingredient create/edit form. Returns an error message string or an empty string if valid.
 export function validateIngredientForm(ingredientData) {
     const name = ingredientData.name.trim();
@@ -5,6 +7,10 @@ export function validateIngredientForm(ingredientData) {
 
     if (!name) {
         return "Ingredient name is required.";
+    }
+
+    if (name.length > TEXT_LIMITS.ingredientName) {
+        return `Ingredient name must be at most ${TEXT_LIMITS.ingredientName} characters.`;
     }
 
     if (!isValidIngredientText(name)) {

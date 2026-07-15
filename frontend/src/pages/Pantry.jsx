@@ -942,8 +942,8 @@ function Pantry() {
                                             {formatText(item.location)}
                                         </span>
 
-                                        <div>
-                                            <h3>
+                                        <div className="pantry-item-details">
+                                            <h3 title={getIngredientName(item.ingredientId)}>
                                                 {getIngredientName(
                                                     item.ingredientId
                                                 )}

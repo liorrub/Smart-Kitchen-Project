@@ -17,3 +17,27 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* ==========================================================================
+   Global safety net for user-generated content
+   ==========================================================================
+   These rules only change behavior when text would otherwise overflow its
+   container (e.g. a very long unbroken string). They are no-ops for normal
+   text, so they don't affect any existing screenshots/design. */
+
+h1, h2, h3, h4, h5, h6,
+p, span, a, li, td, th, label, blockquote, small, strong, em, button {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* Reusable utility class for user-generated text inside flex/grid cells —
+   wraps safely without ever truncating (used by DataTable). */
+.sk-text-wrap {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}

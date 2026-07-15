@@ -185,9 +185,7 @@ function AdminRecipeApprovalSection() {
 
                                     {recipe.instructions && (
                                         <p className="admin-queue-preview">
-                                            {recipe.instructions.length > 140
-                                                ? recipe.instructions.slice(0, 140) + "…"
-                                                : recipe.instructions}
+                                            {recipe.instructions}
                                         </p>
                                     )}
                                 </div>

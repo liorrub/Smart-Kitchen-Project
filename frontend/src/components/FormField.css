@@ -12,9 +12,11 @@
 }
 
 .form-field input,
-.form-field select {
+.form-field select,
+.form-field textarea {
     width: 100%;
-    height: 54px;
+    max-width: 100%;
+    min-width: 0;
     padding: 0 18px;
 
     border: 1px solid #d6d2c4;
@@ -31,27 +33,49 @@
     box-sizing: border-box;
 }
 
+.form-field input,
+.form-field select {
+    height: 54px;
+}
+
+/* Long free-text field (e.g. Meal Planner notes). Grows vertically only —
+   never horizontally past its own column — and keeps the user's manual
+   line breaks intact. */
+.form-field textarea {
+    min-height: 96px;
+    padding: 14px 18px;
+    line-height: 1.5;
+    font-weight: 500;
+    resize: vertical;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
 .form-field input:focus,
-.form-field select:focus {
+.form-field select:focus,
+.form-field textarea:focus {
     outline: none;
     border-color: #7f9f68;
     box-shadow: 0 0 0 4px rgba(127, 159, 104, 0.18);
 }
 
 .form-field input[aria-invalid="true"],
-.form-field select[aria-invalid="true"] {
+.form-field select[aria-invalid="true"],
+.form-field textarea[aria-invalid="true"] {
     border-color: #cc6089;
     box-shadow: 0 0 0 3px rgba(204, 96, 137, 0.12);
 }
 
 .form-field input[aria-invalid="true"]:focus,
-.form-field select[aria-invalid="true"]:focus {
+.form-field select[aria-invalid="true"]:focus,
+.form-field textarea[aria-invalid="true"]:focus {
     border-color: #cc6089;
     box-shadow: 0 0 0 4px rgba(204, 96, 137, 0.18);
 }
 
 .form-field input:disabled,
-.form-field select:disabled {
+.form-field select:disabled,
+.form-field textarea:disabled {
     color: #7f8d83;
     background: #eef3ea;
     border-color: #d6d2c4;
@@ -70,4 +94,20 @@
 
     font-size: 12px;
     font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.form-field-footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.form-field-counter {
+    flex-shrink: 0;
+    color: #8a9e8e;
+
+    font-size: 12px;
+    font-weight: 700;
 }

@@ -224,7 +224,7 @@
     box-sizing: border-box;
     padding: 14px 16px;
     display: grid;
-    grid-template-columns: 180px 1fr 120px auto;
+    grid-template-columns: 180px minmax(0, 1fr) 120px auto;
     align-items: center;
     gap: 14px;
     border-radius: 18px;
@@ -265,21 +265,17 @@
 }
 
 .ai-history-main strong {
-    overflow: hidden;
     color: #1f3d2b;
     font-size: 16px;
     font-weight: 900;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
 }
 
 .ai-history-main span {
-    overflow: hidden;
     color: #55705d;
     font-size: 13px;
     font-weight: 750;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
 }
 
 .ai-history-date {

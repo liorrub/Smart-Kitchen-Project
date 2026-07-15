@@ -47,7 +47,38 @@ function validateRequiredFields(requiredFields) {
     };
 }
 
+// Reject request bodies whose string fields exceed a maximum length.
+// `fieldLimits` maps body field name -> max character count, e.g.
+//   validateMaxLength({ firstName: 30, city: 50 })
+// Fields are only checked when present in the body (so this works for both
+// create, where the field is required elsewhere, and partial update).
+// Values are never truncated — an oversized value is rejected with 400 so
+// the caller can correct it and resubmit.
+function validateMaxLength(fieldLimits) {
+    return function (req, res, next) {
+        for (const [field, max] of Object.entries(fieldLimits)) {
+            const value = req.body[field];
+
+            if (typeof value === "string" && value.trim().length > max) {
+                return errorResponse(
+                    res,
+                    400,
+                    "VALIDATION_ERROR",
+                    `${field} must be at most ${max} characters`,
+                    {
+                        field,
+                        maxLength: max
+                    }
+                );
+            }
+        }
+
+        next();
+    };
+}
+
 module.exports = {
     validateIdParam,
-    validateRequiredFields
+    validateRequiredFields,
+    validateMaxLength
 };
