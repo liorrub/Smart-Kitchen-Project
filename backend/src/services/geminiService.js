@@ -1,7 +1,7 @@
 "use strict";
 
 // Gemini AI service — all Google AI calls go through this file.
-// The API key is loaded from .env and never exposed to the frontend.
+// The API key is loaded from .env.example and never exposed to the frontend.
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
